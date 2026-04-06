@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Evaluación Diagnóstica | Validación Bachillerato ICFES</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Variables de color institucional */
+        :root {
+            --primary-dark: #1a2e4a;
+            --primary-gold: #c9a84c;
+            --primary-gold-light: #e0bc6e;
+            --white: #ffffff;
+            --gray-bg: #F5F5F5;
+            --gray-border: #e0e0e0;
+            --text-dark: #2c3e4e;
+            --text-muted: #5d6e7e;
+            --success: #2e7d32;
+            --warning: #ed6c02;
+            --info: #0288d1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--gray-bg);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        /* Contenedor principal */
+        .diagnostic-container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 28px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* Encabezado */
+        .diagnostic-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #2a4568 100%);
+            padding: 1.8rem 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .diagnostic-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.3rem;
+        }
+
+        .diagnostic-header p {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-top: 0.3rem;
+        }
+
+        .badge-area {
+            display: inline-block;
+            background: rgba(201,168,76,0.2);
+            border: 1px solid var(--primary-gold);
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.8rem;
+            color: var(--primary-gold-light);
+        }
+
+        /* Barra de progreso y contador */
+        .progress-area {
+            padding: 1rem 2rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .progress-wrapper {
+            flex: 2;
+            min-width: 160px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--primary-dark);
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary-gold), var(--primary-gold-light));
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.25s ease;
+        }
+
+        .question-counter {
+            background: var(--gray-bg);
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        /* Tarjeta de pregunta */
+        .question-card {
+            padding: 2rem 2rem 1.5rem;
+            animation: fadeSlide 0.25s ease-out;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .area-tag {
+            display: inline-block;
+            background: var(--primary-dark);
+            color: var(--primary-gold);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            color: var(--text-dark);
+        }
+
+        /* Texto base (Lectura crítica) */
+        .base-text {
+            background: #f8f6ef;
+            border-left: 5px solid var(--primary-gold);
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            color: #2c3e4e;
+            font-style: normal;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        /* Tabla para gráficos */
+        .data-table {
+            background: #faf9fc;
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid #eee6dc;
+            font-size: 0.85rem;
+        }
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd4c0;
+            padding: 6px 10px;
+            text-align: center;
+        }
+        .data-table th {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        /* Opciones */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--white);
+            border: 1px solid var(--gray-border);
+            border-radius: 60px;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-item:hover {
+            background: #fefaf0;
+            border-color: var(--primary-gold);
+            transform: translateX(4px);
+        }
+
+        .option-item.selected {
+            background: #f3efdf;
+            border-color: var(--primary-gold);
+            box-shadow: 0 2px 8px rgba(201,168,76,0.2);
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #b9b9b9;
+            border-radius: 50%;
+            margin: 0;
+            position: relative;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        input[type="radio"]:checked {
+            border-color: var(--primary-gold);
+            background-color: var(--primary-gold);
+            box-shadow: inset 0 0 0 4px white;
+        }
+        .option-letter {
+            font-weight: 800;
+            background: var(--gray-bg);
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary-dark);
+        }
+        .option-text {
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        /* Navegación */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+        button {
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button:hover {
+            background: #0f233a;
+            transform: scale(1.02);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background: #e9ecef;
+            color: var(--primary-dark);
+        }
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+        .btn-submit {
+            background: var(--primary-gold);
+            color: var(--primary-dark);
+            font-weight: 800;
+        }
+        .btn-submit:hover {
+            background: #b8933e;
+            color: white;
+        }
+        .warning-msg {
+            font-size: 0.75rem;
+            color: #b9534e;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* Resultados */
+        .results-section {
+            padding: 2rem;
+            background: var(--white);
+            border-top: 2px solid var(--primary-gold);
+            animation: fadeSlide 0.3s;
+        }
+        .score-circle {
+            background: linear-gradient(135deg, var(--primary-dark), #2c4a72);
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .score-number {
+            font-size: 2.4rem;
+            font-weight: 800;
+        }
+        .level-badge {
+            background: var(--primary-gold);
+            color: var(--primary-dark);
+            font-weight: bold;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 0.6rem 0;
+        }
+        .motivational-message {
+            background: #fef7e0;
+            padding: 1.2rem;
+            border-radius: 20px;
+            margin: 1rem 0;
+        }
+        .btn-nivel {
+            background: linear-gradient(95deg, var(--primary-gold), #e0bc6e);
+            color: var(--primary-dark);
+            font-weight: bold;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .hide {
+            display: none;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--gray-border);
+        }
+        @media (max-width: 640px) {
+            .question-card { padding: 1.5rem; }
+            .option-item { padding: 0.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="diagnostic-container" id="appDiagnostico">
+    <div class="diagnostic-header">
+        <h1>📘 Diagnóstico ICFES</h1>
+        <p>Validación del Bachillerato · Curso preparatorio</p>
+        <div class="badge-area">📌 Evaluación diagnóstica · Saber 11</div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-area">
+        <div class="progress-wrapper">
+            <div class="progress-label">
+                <span>Progreso de respuestas</span>
+                <span id="answeredCount">0</span><span>/<span id="totalQuestionsSpan">0</span></span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="question-counter" id="questionCounter">Pregunta 1 / 0</div>
+    </div>
+
+    <!-- Área dinámica de pregunta -->
+    <div id="questionArea" class="question-card"></div>
+
+    <!-- Botones de navegación -->
+    <div style="padding: 0 2rem 1.5rem 2rem;">
+        <div class="nav-buttons">
+            <button id="prevBtn" class="btn-secondary">◀ Anterior</button>
+            <button id="nextBtn" class="">Siguiente ▶</button>
+        </div>
+        <div id="submitWarning" class="warning-msg"></div>
+        <div style="text-align: center; margin-top: 1rem;">
+            <button id="submitExamBtn" class="btn-submit">✅ Finalizar y calificar</button>
+        </div>
+    </div>
+
+    <!-- Resultados (oculto inicialmente) -->
+    <div id="resultsContainer" class="results-section hide"></div>
+    <footer>Instituto Innova · Simulacro diagnóstico estilo ICFES</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    //  BASE DE PREGUNTAS (12-20) | Selección múltiple única respuesta
+    // --------------------------------------------------------------
+    const QUESTIONS = [
+        // ----- LECTURA CRÍTICA (4 preguntas, con texto base) -----
+        { id: 0, area: "Lectura crítica", textBase: "“Las redes sociales han transformado la comunicación global, pero también han generado debates sobre privacidad y desinformación. Según diversos estudios, el 45% de los jóvenes admite haber compartido información sin verificar su veracidad. Expertos recomiendan desarrollar pensamiento crítico antes de interactuar en entornos digitales.”", question: "¿Cuál es la idea principal del texto anterior?", options: ["Las redes sociales son perjudiciales para los jóvenes.", "La privacidad es el único problema de las redes.", "Se requiere pensamiento crítico ante la desinformación en redes.", "El 45% de los jóvenes comparte información falsa voluntariamente."], correct: "C", explanation: "" },
+        { id: 1, area: "Lectura crítica", textBase: "“El consumo excesivo de plásticos de un solo uso está colapsando los ecosistemas marinos. Una botella puede tardar hasta 500 años en degradarse. Organizaciones ambientales promueven la economía circular como solución viable.”", question: "Según el fragmento, ¿qué se propone como alternativa al plástico desechable?", options: ["Prohibir totalmente los envases", "La economía circular", "Usar botellas más gruesas", "Aumentar el reciclaje sin cambios"], correct: "B", explanation: "" },
+        { id: 2, area: "Lectura crítica", textBase: "“La obra ‘Cien años de soledad’ de Gabriel García Márquez retrata la historia de Macondo y la familia Buendía, mezclando realidad y fantasía. Este estilo narrativo influenció la literatura universal.”", question: "¿Qué tipo de texto es el anterior y cuál es su intención principal?", options: ["Informativo - describir una obra literaria", "Argumentativo - convencer de leer el libro", "Narrativo - contar una anécdota", "Expositivo - explicar el realismo mágico"], correct: "A", explanation: "" },
+        { id: 3, area: "Lectura crítica", textBase: "“El gobierno anunció un plan de alfabetización digital para adultos mayores. El programa incluye talleres gratuitos en bibliotecas públicas durante seis meses. La meta es reducir la brecha generacional tecnológica.”", question: "Se infiere del texto que:", options: ["Los adultos mayores no quieren aprender tecnología.", "El plan busca facilitar el acceso a herramientas digitales.", "Las bibliotecas cobrarán por los talleres.", "El programa durará solo un mes."], correct: "B", explanation: "" },
+        // ----- MATEMÁTICAS (4 preguntas, al menos una con gráfico/tabla) -----
+        { id: 4, area: "Matemáticas", question: "Una camisa cuesta $80.000 y tiene un descuento del 25%. ¿Cuál es el precio final después del descuento?", options: ["$60.000", "$55.000", "$50.000", "$65.000"], correct: "A", explanation: "80.000 × 0.75 = 60.000" },
+        { id: 5, area: "Matemáticas", question: "La siguiente tabla muestra las ventas de una tienda en 4 meses: Enero 120, Febrero 150, Marzo 90, Abril 180. ¿Cuál fue el promedio mensual de ventas?", options: ["135", "140", "125", "130"], correct: "A", explanation: "(120+150+90+180)/4 = 135" },
+        { id: 6, area: "Matemáticas", question: "En un colegio, el 40% de los estudiantes practica fútbol, el 25% baloncesto y el resto no practica deportes. Si hay 600 estudiantes, ¿cuántos no practican deportes?", options: ["210", "180", "150", "240"], correct: "A", explanation: "40%+25%=65% → 35% no practica → 600×0.35=210" },
+        { id: 7, area: "Matemáticas", question: "Se lanza un dado común de 6 caras. ¿Cuál es la probabilidad de obtener un número mayor que 4?", options: ["1/6", "1/3", "1/2", "2/3"], correct: "B", explanation: "Casos favorables: 5,6 → 2/6 = 1/3" },
+        // ----- CIENCIAS NATURALES (3 preguntas) -----
+        { id: 8, area: "Ciencias naturales", question: "¿Cuál de los siguientes procesos corresponde a un cambio químico?", options: ["Derretir hielo", "Disolver azúcar en agua", "Quemar madera", "Romper un vidrio"], correct: "C", explanation: "La combustión genera nuevas sustancias." },
+        { id: 9, area: "Ciencias naturales", question: "Según la ley de la gravedad de Newton, la fuerza de atracción entre dos cuerpos depende de:", options: ["La masa y la distancia", "Solo la masa", "Solo la distancia", "La velocidad y la temperatura"], correct: "A", explanation: "F = G·(m1·m2)/r²" },
+        { id: 10, area: "Ciencias naturales", question: "Las mitocondrias son orgánulos celulares cuya función principal es:", options: ["Almacenar agua", "Realizar la fotosíntesis", "Producir energía (ATP)", "Sintetizar proteínas"], correct: "C", explanation: "Son centrales energéticas de la célula." },
+        // ----- SOCIALES Y CIUDADANAS (3 preguntas) -----
+        { id: 11, area: "Sociales y ciudadanas", question: "Colombia es un Estado Social de Derecho, organizado como:", options: ["República unitaria descentralizada", "República federal", "Monarquía constitucional", "Dictadura presidencialista"], correct: "A", explanation: "Constitución Política de Colombia, Artículo 1." },
+        { id: 12, area: "Sociales y ciudadanas", question: "La participación ciudadana en asuntos públicos se ejerce principalmente a través del:", options: ["Voto y control social", "Solo el voto", "Plebiscito exclusivo", "Manifestaciones violentas"], correct: "A", explanation: "Mecanismos como voto, revocatoria, cabildos abiertos." },
+        { id: 13, area: "Sociales y ciudadanas", question: "¿Cuál de los siguientes es un deber constitucional de los colombianos?", options: ["Respetar los derechos ajenos", "Obtener título profesional", "Pagar impuestos solo si se desea", "Servir en el ejército obligatoriamente"], correct: "A", explanation: "Artículo 95: respetar derechos ajenos y obrar con solidaridad." },
+        // ----- INGLÉS (2 preguntas, nivel básico) -----
+        { id: 14, area: "Inglés", question: "Select the correct option to complete: 'She _____ to the supermarket every Saturday.'", options: ["go", "goes", "going", "went"], correct: "B", explanation: "Present simple 3rd person singular: goes" },
+        { id: 15, area: "Inglés", question: "What is the meaning of 'library'?", options: ["Escuela", "Biblioteca", "Librería", "Teatro"], correct: "B", explanation: "Library = biblioteca" },
+    ];
+
+    const TOTAL = QUESTIONS.length;
+    let userAnswers = new Array(TOTAL).fill(null);       // almacena letra seleccionada (A,B,C,D)
+    let currentIndex = 0;
+    let examSubmitted = false;
+
+    // DOM elements
+    const questionArea = document.getElementById('questionArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitExamBtn');
+    const progressFill = document.getElementById('progressFill');
+    const answeredSpan = document.getElementById('answeredCount');
+    const totalSpan = document.getElementById('totalQuestionsSpan');
+    const questionCounterSpan = document.getElementById('questionCounter');
+    const resultsDiv = document.getElementById('resultsContainer');
+    const warningDiv = document.getElementById('submitWarning');
+
+    // Helper: contar respondidas
+    function countAnswered() {
+        return userAnswers.filter(ans => ans !== null).length;
+    }
+
+    function updateProgressAndCounter() {
+        const answered = countAnswered();
+        const percent = (answered / TOTAL) * 100;
+        progressFill.style.width = `${percent}%`;
+        answeredSpan.innerText = answered;
+        questionCounterSpan.innerText = `Pregunta ${currentIndex+1} / ${TOTAL}`;
+    }
+
+    // Render pregunta actual
+    function renderCurrentQuestion() {
+        if (examSubmitted) return;
+        const q = QUESTIONS[currentIndex];
+        let html = `<div class="area-tag">📌 ${q.area}</div>`;
+        if (q.textBase) {
+            html += `<div class="base-text">📖 ${q.textBase}</div>`;
+        }
+        // Para Matemáticas si se requiere tabla especial (ID 5 tiene tabla)
+        if (currentIndex === 5) {  // pregunta id 5 (ventas)
+            html += `<div class="data-table"><table><tr><th>Mes</th><th>Ventas</th></tr><tr><td>Enero</td><td>120</td></tr><tr><td>Febrero</td><td>150</td></tr><tr><td>Marzo</td><td>90</td></tr><tr><td>Abril</td><td>180</td></tr></table></div>`;
+        }
+        html += `<div class="question-text">${q.question}</div>`;
+        html += `<div class="options-list" id="optionsList">`;
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, idx) => {
+            const letter = letters[idx];
+            const isChecked = (userAnswers[currentIndex] === letter);
+            const selectedClass = isChecked ? 'selected' : '';
+            html += `
+                <div class="option-item ${selectedClass}" data-letter="${letter}">
+                    <input type="radio" name="questionRadio" value="${letter}" id="opt_${currentIndex}_${letter}" ${isChecked ? 'checked' : ''}>
+                    <span class="option-letter">${letter}</span>
+                    <span class="option-text">${opt}</span>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        questionArea.innerHTML = html;
+
+        // Event listeners para cada opción (click en div)
+        const optionDivs = document.querySelectorAll('.option-item');
+        optionDivs.forEach(div => {
+            const radio = div.querySelector('input[type="radio"]');
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    radio.checked = true;
+                }
+                radio.checked = true;
+                const letter = div.getAttribute('data-letter');
+                // actualizar respuesta
+                userAnswers[currentIndex] = letter;
+                // refrescar highlight
+                document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+                div.classList.add('selected');
+                updateProgressAndCounter();
+                // Limpiar warning general
+                warningDiv.innerText = '';
+            });
+            radio.addEventListener('change', () => {
+                if (radio.checked) {
+                    const letter = div.getAttribute('data-letter');
+                    userAnswers[currentIndex] = letter;
+                    document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+                    div.classList.add('selected');
+                    updateProgressAndCounter();
+                    warningDiv.innerText = '';
+                }
+            });
+        });
+        updateProgressAndCounter();
+    }
+
+    // Validar si todas respondidas
+    function allQuestionsAnswered() {
+        return userAnswers.every(ans => ans !== null);
+    }
+
+    // Calcular puntaje y nivel
+    function calculateScoreAndLevel() {
+        let correctCount = 0;
+        for (let i = 0; i < TOTAL; i++) {
+            const userAns = userAnswers[i];
+            if (userAns && userAns === QUESTIONS[i].correct) {
+                correctCount++;
+            }
+        }
+        const percent = (correctCount / TOTAL) * 100;
+        let level = "";
+        let message = "";
+        let recomendation = "";
+
+        if (percent <= 40) {
+            level = "Nivel A1 (Inicial)";
+            message = "¡Excelente inicio! Has dado el primer paso. Con dedicación, fortalecerás tus competencias.";
+            recomendation = "Te recomendamos comenzar desde el Nivel 0 para afianzar bases fundamentales.";
+        } else if (percent <= 60) {
+            level = "Nivel A2 (Básico)";
+            message = "Buen trabajo. Posees habilidades básicas, pero puedes mejorar tu desempeño con práctica constante.";
+            recomendation = "Concéntrate en lectura crítica y resolución de problemas matemáticos.";
+        } else if (percent <= 80) {
+            level = "Nivel B1 (Intermedio)";
+            message = "¡Muy bien! Tienes un nivel sólido. Continúa así para alcanzar la excelencia.";
+            recomendation = "Refuerza tus áreas de oportunidad con simulacros y análisis de errores.";
+        } else {
+            level = "Nivel B2 (Avanzado)";
+            message = "¡Felicitaciones! Demuestras un gran dominio. Estás listo para los niveles superiores.";
+            recomendation = "Enfócate en simulacros tipo ICFES y perfecciona tu estrategia.";
+        }
+        return { percent: Math.round(percent), correctCount, total: TOTAL, level, message, recomendation };
+    }
+
+    // Mostrar resultados y ocultar cuestionario
+    function showResults() {
+        const { percent, correctCount, total, level, message, recomendation } = calculateScoreAndLevel();
+        resultsDiv.innerHTML = `
+            <div style="text-align:center">
+                <div class="score-circle">
+                    <div class="score-number">${percent}%</div>
+                    <div style="font-size:0.8rem;">Aciertos: ${correctCount}/${total}</div>
+                </div>
+                <div class="level-badge">🏅 ${level}</div>
+                <div class="motivational-message">
+                    <p style="font-weight:bold; margin-bottom:6px;">✨ ${message}</p>
+                    <p style="font-size:0.9rem;">💡 ${recomendation}</p>
+                </div>
+                <a id="btn-volver"
+   href="https://institutoinnova.moodlecloud.com/mod/page/"
+   style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+📚 Ir al Nivel 0 – Introducción al curso</a>
+                <div style="margin-top: 1rem;">
+                    <button id="restartDiagnostic" style="background:#e9ecef; color:#1a2e4a;">🔄 Realizar nuevamente</button>
+                </div>
+            </div>
+        `;
+      const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/';
+
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (esMóvil) {
+    btn.href = appUrl;
+  }
+
+        resultsDiv.classList.remove('hide');
+        document.querySelector('.progress-area').style.display = 'none';
+        document.getElementById('questionArea').style.display = 'none';
+        document.querySelector('.nav-buttons').parentElement.style.display = 'none';
+        document.getElementById('submitExamBtn').style.display = 'none';
+        // Reiniciar opción
+        const restartBtn = document.getElementById('restartDiagnostic');
+        if (restartBtn) restartBtn.addEventListener('click', () => location.reload());
+    }
+
+    // Envío con validación
+    function handleSubmit() {
+        if (!allQuestionsAnswered()) {
+            const missing = userAnswers.reduce((acc, ans, idx) => ans === null ? acc + 1 : acc, 0);
+            warningDiv.innerText = `⚠️ Aún no has respondido ${missing} pregunta(s). Revisa todas las secciones antes de finalizar.`;
+            return;
+        }
+        examSubmitted = true;
+        showResults();
+    }
+
+    // Navegación
+    function goPrev() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrentQuestion();
+            updateProgressAndCounter();
+        }
+    }
+    function goNext() {
+        if (currentIndex < TOTAL - 1) {
+            currentIndex++;
+            renderCurrentQuestion();
+            updateProgressAndCounter();
+        } else {
+            // Si es la última, podríamos resaltar finalizar, pero no se mueve
+            if (allQuestionsAnswered()) {
+                warningDiv.innerText = "✅ Todas las preguntas están respondidas. Presiona 'Finalizar y calificar'.";
+            } else {
+                warningDiv.innerText = "📌 Completa todas las preguntas antes de enviar.";
+            }
+        }
+    }
+
+    // Inicialización
+    function init() {
+        totalSpan.innerText = TOTAL;
+        updateProgressAndCounter();
+        renderCurrentQuestion();
+        prevBtn.addEventListener('click', goPrev);
+        nextBtn.addEventListener('click', goNext);
+        submitBtn.addEventListener('click', handleSubmit);
+        // Desactivar submit duplicado
+    }
+    init();
+</script>
+</body>
+</html>

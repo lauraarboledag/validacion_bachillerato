@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz ICFES · Nivel 0 — Instituto Innova</title>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* =========================================
+       VARIABLES & RESET
+    ========================================= */
+    :root {
+      --azul:       #1a2e4a;
+      --azul-medio: #243d60;
+      --azul-claro: #2f5185;
+      --dorado:     #c9a84c;
+      --dorado-claro: #e2c478;
+      --dorado-pale: #f5e8c0;
+      --blanco:     #ffffff;
+      --gris-claro: #f4f6f9;
+      --gris:       #dce2ea;
+      --texto:      #1a2e4a;
+      --correcto:   #1e7e50;
+      --incorrecto: #c0392b;
+      --sombra:     0 8px 40px rgba(26,46,74,.18), 0 2px 8px rgba(26,46,74,.10);
+      --radio:      18px;
+      --tiempo:     150; /* segundos — cambia aquí si quieres */
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gris-claro);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 32px 16px 48px;
+      /* fondo texturizado sutil */
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(26,46,74,.07) 0%, transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(201,168,76,.08) 0%, transparent 50%);
+    }
+
+    /* =========================================
+       HEADER
+    ========================================= */
+    .header {
+      width: 100%;
+      max-width: 660px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      animation: fadeDown .5s ease both;
+    }
+
+    .header-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--azul);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(26,46,74,.25);
+    }
+
+    .header-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--azul);
+      line-height: 1.2;
+    }
+
+    .header-text p {
+      font-size: .8rem;
+      color: var(--azul-claro);
+      font-weight: 500;
+      letter-spacing: .4px;
+    }
+
+    /* badge nivel */
+    .badge-nivel {
+      margin-left: auto;
+      background: var(--azul);
+      color: var(--dorado);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 50px;
+      border: 1.5px solid var(--dorado);
+      white-space: nowrap;
+    }
+
+    /* =========================================
+       CARD PRINCIPAL
+    ========================================= */
+    .card {
+      width: 100%;
+      max-width: 660px;
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* franja dorada superior */
+    .card::before {
+      content: '';
+      display: block;
+      height: 5px;
+      background: linear-gradient(90deg, var(--azul) 0%, var(--dorado) 60%, var(--dorado-claro) 100%);
+    }
+
+    /* =========================================
+       BARRA DE PROGRESO + TEMPORIZADOR
+    ========================================= */
+    .quiz-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px 0;
+      gap: 12px;
+    }
+
+    .progreso-label {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--azul-claro);
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+
+    .progreso-bar-wrap {
+      flex: 1;
+      height: 7px;
+      background: var(--gris);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progreso-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--azul), var(--dorado));
+      border-radius: 99px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+
+    /* temporizador */
+    .temporizador {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--azul);
+      color: var(--dorado);
+      border-radius: 50px;
+      padding: 5px 14px 5px 10px;
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      transition: background .3s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .temporizador.urgente {
+      background: var(--incorrecto);
+      color: #fff;
+      animation: pulse .7s infinite;
+    }
+
+    .temporizador svg { width: 15px; height: 15px; fill: currentColor; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.06); }
+    }
+
+    /* =========================================
+       TIPO ETIQUETA
+    ========================================= */
+    .tipo-etiqueta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin: 18px 28px 0;
+    }
+
+    .tipo-identificacion { background: #eaf0fb; color: #2f5185; }
+    .tipo-distractor      { background: #fff4e0; color: #a06c00; }
+    .tipo-resolucion      { background: #e8f8ef; color: #1e7e50; }
+
+    /* =========================================
+       CUERPO DE PREGUNTA
+    ========================================= */
+    .pregunta-body {
+      padding: 16px 28px 24px;
+    }
+
+    /* contexto (cita o extracto) */
+    .contexto {
+      background: var(--gris-claro);
+      border-left: 4px solid var(--dorado);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      font-size: .9rem;
+      color: #3a4a60;
+      line-height: 1.65;
+      margin-bottom: 18px;
+      font-style: italic;
+      position: relative;
+    }
+
+    .contexto-label {
+      font-style: normal;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--dorado);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* enunciado */
+    .enunciado {
+      font-size: 1rem;
+      color: var(--texto);
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* =========================================
+       OPCIONES
+    ========================================= */
+    .opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .opcion {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      padding: 13px 16px;
+      border: 2px solid var(--gris);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color .22s, background .22s, transform .15s;
+      background: var(--blanco);
+      user-select: none;
+    }
+
+    .opcion:hover:not(.bloqueada) {
+      border-color: var(--dorado);
+      background: var(--dorado-pale);
+      transform: translateX(3px);
+    }
+
+    .opcion.seleccionada {
+      border-color: var(--azul);
+      background: #eaf0fb;
+    }
+
+    .opcion.correcta {
+      border-color: var(--correcto);
+      background: #e8f8ef;
+    }
+
+    .opcion.incorrecta {
+      border-color: var(--incorrecto);
+      background: #fdecea;
+    }
+
+    .opcion.bloqueada { cursor: default; pointer-events: none; }
+
+    /* letra de opción */
+    .opcion-letra {
+      min-width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--gris);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .82rem;
+      color: var(--azul);
+      transition: background .22s, color .22s;
+      flex-shrink: 0;
+    }
+
+    .opcion.seleccionada .opcion-letra { background: var(--azul); color: var(--blanco); }
+    .opcion.correcta   .opcion-letra   { background: var(--correcto); color: #fff; }
+    .opcion.incorrecta .opcion-letra   { background: var(--incorrecto); color: #fff; }
+
+    .opcion-texto {
+      font-size: .92rem;
+      color: var(--texto);
+      line-height: 1.5;
+      padding-top: 3px;
+    }
+
+    /* icono feedback */
+    .opcion-icono {
+      margin-left: auto;
+      font-size: 1rem;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .opcion.correcta   .opcion-icono,
+    .opcion.incorrecta .opcion-icono { opacity: 1; }
+
+    /* =========================================
+       FEEDBACK TEXTO
+    ========================================= */
+    .feedback-texto {
+      margin: 16px 0 0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: .88rem;
+      font-weight: 500;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .feedback-texto.correcto  { background: #e8f8ef; color: #155a35; border-left: 4px solid var(--correcto); }
+    .feedback-texto.incorrecto{ background: #fdecea; color: #8b1a1a; border-left: 4px solid var(--incorrecto); }
+    .feedback-texto.visible   { display: block; animation: fadeUp .35s ease both; }
+
+    /* =========================================
+       BOTÓN SIGUIENTE
+    ========================================= */
+    .footer-card {
+      padding: 0 28px 28px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-siguiente {
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+      color: var(--dorado-claro);
+      border: none;
+      border-radius: 50px;
+      padding: 13px 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(26,46,74,.3);
+      transition: transform .18s, box-shadow .18s, opacity .18s;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-siguiente.visible {
+      opacity: 1;
+      pointer-events: auto;
+      animation: fadeUp .35s .1s ease both;
+    }
+
+    .btn-siguiente:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,46,74,.35); }
+    .btn-siguiente:active{ transform: translateY(0); }
+
+    /* =========================================
+       PANTALLA INICIO
+    ========================================= */
+    #pantalla-inicio {
+      width: 100%;
+      max-width: 660px;
+      text-align: center;
+      animation: fadeDown .6s ease both;
+    }
+
+    .inicio-icon {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .inicio-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+
+    .inicio-subtitulo {
+      font-size: .95rem;
+      color: var(--azul-claro);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .inicio-info {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--blanco);
+      border: 1.5px solid var(--gris);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--azul);
+      box-shadow: 0 2px 8px rgba(26,46,74,.07);
+    }
+
+    .info-chip span { font-size: 1.1rem; }
+
+    .btn-iniciar {
+      background: linear-gradient(135deg, var(--dorado) 0%, var(--dorado-claro) 100%);
+      color: var(--azul);
+      border: none;
+      border-radius: 50px;
+      padding: 16px 48px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: .6px;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(201,168,76,.4);
+      transition: transform .18s, box-shadow .18s;
+    }
+
+    .btn-iniciar:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(201,168,76,.5); }
+    .btn-iniciar:active{ transform: translateY(0); }
+
+    /* =========================================
+       PANTALLA RESULTADOS
+    ========================================= */
+    #pantalla-resultado {
+      width: 100%;
+      max-width: 660px;
+      display: none;
+    }
+
+    #pantalla-resultado.visible {
+      display: block;
+      animation: fadeDown .6s ease both;
+    }
+
+    .resultado-card {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .resultado-header {
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+      padding: 36px 28px 28px;
+      position: relative;
+    }
+
+    .resultado-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 30px;
+      background: var(--blanco);
+      border-radius: var(--radio) var(--radio) 0 0;
+    }
+
+    .resultado-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; }
+
+    .resultado-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--blanco);
+      margin-bottom: 4px;
+    }
+
+    .resultado-subtitulo {
+      font-size: .9rem;
+      color: var(--dorado-claro);
+      letter-spacing: .4px;
+    }
+
+    .resultado-body { padding: 28px 36px 32px; }
+
+    /* puntuación circular */
+    .puntaje-circulo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--dorado) var(--pct), var(--gris) 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 6px;
+      box-shadow: 0 4px 20px rgba(201,168,76,.3);
+      position: relative;
+    }
+
+    .puntaje-circulo::after {
+      content: '';
+      position: absolute;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: var(--blanco);
+    }
+
+    .puntaje-numero {
+      position: relative;
+      z-index: 1;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--azul);
+      line-height: 1;
+    }
+
+    .puntaje-numero small {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      color: var(--azul-claro);
+      letter-spacing: .5px;
+    }
+
+    .mensaje-motivacional {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--azul);
+      line-height: 1.55;
+      margin: 18px 0 14px;
+    }
+
+    .feedback-areas {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .feedback-area-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--gris-claro);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .85rem;
+      color: var(--texto);
+      line-height: 1.5;
+    }
+
+    .feedback-area-item .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--dorado);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    /* =========================================
+       ANIMACIONES
+    ========================================= */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .pregunta-animada { animation: slideIn .35s cubic-bezier(.4,0,.2,1) both; }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+    @media (max-width: 500px) {
+      body { padding: 20px 10px 40px; }
+      .pregunta-body, .footer-card { padding-left: 18px; padding-right: 18px; }
+      .quiz-meta { padding-left: 18px; padding-right: 18px; }
+      .tipo-etiqueta { margin-left: 18px; }
+      .resultado-body { padding: 24px 20px 28px; }
+      .inicio-titulo { font-size: 1.55rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================
+       HEADER INSTITUCIONAL
+  ======================================= -->
+  <header class="header">
+    <div class="header-logo">🎓</div>
+    <div class="header-text">
+      <h1>Instituto Innova</h1>
+      <p>Preparación ICFES · Saber 11</p>
+    </div>
+    <div class="badge-nivel">Nivel 0</div>
+  </header>
+
+
+  <!-- ======================================
+       PANTALLA INICIO
+  ======================================= -->
+  <section id="pantalla-inicio">
+    <div class="card" style="padding:40px 32px 36px; text-align:center;">
+      <span class="inicio-icon">📝</span>
+      <h2 class="inicio-titulo">Mini Quiz de Inducción</h2>
+      <p class="inicio-subtitulo">
+        Aprende a identificar las partes de una pregunta tipo ICFES,<br>
+        reconocer distractores y practicar resolución rápida.
+      </p>
+      <div class="inicio-info">
+        <div class="info-chip"><span>❓</span> 5 preguntas</div>
+        <div class="info-chip"><span>⏱️</span> 2 min 30 seg</div>
+        <div class="info-chip"><span>🅰️</span> Única respuesta</div>
+      </div>
+      <button class="btn-iniciar" onclick="iniciarQuiz()">Comenzar Quiz →</button>
+    </div>
+  </section>
+
+
+  <!-- ======================================
+       PANTALLA QUIZ
+  ======================================= -->
+  <section id="pantalla-quiz" style="width:100%; max-width:660px; display:none;">
+
+    <div class="card">
+      <!-- Barra progreso + temporizador -->
+      <div class="quiz-meta">
+        <span class="progreso-label" id="progreso-label">Pregunta 1 de 5</span>
+        <div class="progreso-bar-wrap">
+          <div class="progreso-bar" id="progreso-bar"></div>
+        </div>
+        <div class="temporizador" id="temporizador">
+          <!-- icono reloj -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 10.41V7a1 1 0 10-2 0v6a1 1 0 00.29.71l3 3a1 1 0 001.42-1.42L13 12.41z"/>
+          </svg>
+          <span id="tiempo-texto">2:30</span>
+        </div>
+      </div>
+
+      <!-- Tipo de pregunta -->
+      <div id="tipo-etiqueta-container" style="padding: 0 28px; margin-top:18px;"></div>
+
+      <!-- Cuerpo animado -->
+      <div class="pregunta-body pregunta-animada" id="pregunta-container">
+        <!-- Se inyecta dinámicamente -->
+      </div>
+
+      <!-- Feedback -->
+      <div style="padding: 0 28px;">
+        <div class="feedback-texto" id="feedback-texto"></div>
+      </div>
+
+      <!-- Botón siguiente -->
+      <div class="footer-card" style="margin-top:12px;">
+        <button class="btn-siguiente" id="btn-siguiente" onclick="siguientePregunta()">
+          Siguiente <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ======================================
+       PANTALLA RESULTADO
+  ======================================= -->
+  <section id="pantalla-resultado">
+    <div class="resultado-card">
+
+      <div class="resultado-header">
+        <span class="resultado-emoji" id="resultado-emoji">🏆</span>
+        <h2 class="resultado-titulo" id="resultado-titulo">¡Quiz Completado!</h2>
+        <p class="resultado-subtitulo" id="resultado-subtitulo">Revisemos tu desempeño</p>
+      </div>
+
+      <div class="resultado-body">
+
+        <div class="puntaje-circulo" id="puntaje-circulo">
+          <div class="puntaje-numero" id="puntaje-numero">
+            0/5<small>PUNTOS</small>
+          </div>
+        </div>
+
+        <p class="mensaje-motivacional" id="mensaje-motivacional"></p>
+
+        <div class="feedback-areas" id="feedback-areas"></div>
+
+        <!-- BOTÓN VOLVER AL AULA VIRTUAL (etiqueta provista) -->
+        <div style="text-align:center;">
+          <a id="btn-volver"
+             href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=281"
+             style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+            🏫 Regresar al Aula Virtual
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ======================================
+       SCRIPT — LÓGICA DEL QUIZ
+  ======================================= -->
+  <script>
+
+    /* ----------------------------------------
+       1. BANCO DE PREGUNTAS
+    ---------------------------------------- */
+    const preguntas = [
+
+      /* ── PREGUNTA 1: Identificación de partes ── */
+      {
+        tipo: 'identificacion',
+        tipoLabel: '🔍 Identificación de partes',
+        tipoClass: 'tipo-identificacion',
+        contexto: `Lee el siguiente fragmento:
+"El calentamiento global ha provocado el deshielo de los polos, lo que genera el aumento del nivel del mar y afecta a las comunidades costeras de todo el mundo."`,
+        contextoLabel: 'Contexto (texto informativo)',
+        enunciado: '¿Cuál de los siguientes elementos representa el ENUNCIADO de una pregunta tipo ICFES basada en este texto?',
+        opciones: [
+          'A. El fragmento sobre el calentamiento global.',
+          'B. Las cuatro opciones de respuesta presentadas (A, B, C, D).',
+          'C. La pregunta que le pide al estudiante reflexionar sobre la idea principal del texto.',
+          'D. El puntaje que se asigna a la respuesta correcta.',
+        ],
+        correcta: 2, // índice 0-base → opción C
+        feedback: {
+          correcto: '✅ ¡Correcto! El ENUNCIADO es la pregunta o tarea que se le presenta al estudiante. El contexto es el texto/gráfico/tabla de apoyo, y las opciones son las posibles respuestas.',
+          incorrecto: '❌ Recuerda: el ENUNCIADO es la pregunta central que guía al estudiante. El contexto es el material de apoyo (texto, tabla o gráfico) y las opciones de respuesta van aparte.',
+        },
+      },
+
+      /* ── PREGUNTA 2: Identificación de partes ── */
+      {
+        tipo: 'identificacion',
+        tipoLabel: '🔍 Identificación de partes',
+        tipoClass: 'tipo-identificacion',
+        contexto: null,
+        enunciado: 'En una pregunta tipo ICFES, ¿cómo se llama la parte que presenta información adicional (un texto, una tabla o una imagen) para apoyar el enunciado?',
+        opciones: [
+          'A. Distractor',
+          'B. Contexto',
+          'C. Clave de respuesta',
+          'D. Competencia',
+        ],
+        correcta: 1,
+        feedback: {
+          correcto: '✅ ¡Muy bien! El CONTEXTO es el material de apoyo que complementa el enunciado. Puede ser un fragmento literario, una tabla de datos, un gráfico o una imagen.',
+          incorrecto: '❌ La respuesta es B. CONTEXTO. Es la información de apoyo (texto, tabla, gráfico) que le da al estudiante los datos necesarios para resolver el enunciado.',
+        },
+      },
+
+      /* ── PREGUNTA 3: Detección de distractores ── */
+      {
+        tipo: 'distractor',
+        tipoLabel: '🎯 Detección de distractores',
+        tipoClass: 'tipo-distractor',
+        contexto: `Pregunta de práctica:
+"La fotosíntesis es el proceso por el cual las plantas producen su propio alimento usando luz solar, agua y dióxido de carbono.
+¿Cuál es el gas que las plantas ABSORBEN durante la fotosíntesis?"
+A. Oxígeno  B. Nitrógeno  C. Dióxido de carbono  D. Hidrógeno`,
+        contextoLabel: 'Pregunta de ejemplo',
+        enunciado: '¿Cuál de las siguientes opciones es un DISTRACTOR evidente en la pregunta anterior? Es decir, ¿cuál opción parece razonable pero es claramente incorrecta?',
+        opciones: [
+          'A. Oxígeno — porque las plantas también lo producen, no lo absorben en la fotosíntesis.',
+          'B. Dióxido de carbono — porque es la respuesta correcta según el texto.',
+          'C. Nitrógeno — porque es un gas completamente ajeno al proceso descrito.',
+          'D. Hidrógeno — porque no se menciona en ningún contexto relacionado.',
+        ],
+        correcta: 0,
+        feedback: {
+          correcto: '✅ ¡Excelente análisis! El DISTRACTOR más eficaz es el Oxígeno (A), porque el estudiante sabe que las plantas y el oxígeno están relacionados, lo que genera confusión. Un buen distractor siempre parece plausible.',
+          incorrecto: '❌ El distractor más elaborado es A (Oxígeno). Aunque las plantas producen oxígeno, no lo ABSORBEN en la fotosíntesis. Este tipo de distractor aprovecha el conocimiento parcial del estudiante para generar confusión.',
+        },
+      },
+
+      /* ── PREGUNTA 4: Resolución rápida (comprensión lectora) ── */
+      {
+        tipo: 'resolucion',
+        tipoLabel: '⚡ Resolución rápida',
+        tipoClass: 'tipo-resolucion',
+        contexto: `"Aunque llovía con intensidad, Mariana decidió salir al parque. No quería perderse la inauguración del mural que su amigo había pintado durante tres meses."`,
+        contextoLabel: 'Texto breve',
+        enunciado: 'Según el texto, ¿cuál es la razón principal por la que Mariana sale a pesar de la lluvia?',
+        opciones: [
+          'A. Porque no tenía paraguas y necesitaba uno.',
+          'B. Porque quería caminar bajo la lluvia para relajarse.',
+          'C. Porque deseaba ver el mural recién inaugurado de su amigo.',
+          'D. Porque el parque quedaba muy cerca de su casa.',
+        ],
+        correcta: 2,
+        feedback: {
+          correcto: '✅ ¡Correcto! La clave estaba en la frase "no quería perderse la inauguración del mural de su amigo". Estrategia: identifica siempre la causa-efecto en el texto antes de responder.',
+          incorrecto: '❌ La respuesta es C. El texto dice explícitamente que Mariana no quería perderse la inauguración del mural de su amigo. Tip: subraya mentalmente la causa antes de leer las opciones.',
+        },
+      },
+
+      /* ── PREGUNTA 5: Resolución rápida (razonamiento lógico) ── */
+      {
+        tipo: 'resolucion',
+        tipoLabel: '⚡ Resolución rápida',
+        tipoClass: 'tipo-resolucion',
+        contexto: `Todos los deportistas del equipo A entrenan los lunes.
+Carlos entrena los lunes.`,
+        contextoLabel: 'Premisas lógicas',
+        enunciado: '¿Cuál de las siguientes conclusiones es VÁLIDA a partir de las premisas anteriores?',
+        opciones: [
+          'A. Carlos es definitivamente parte del equipo A.',
+          'B. No se puede concluir que Carlos pertenezca al equipo A con certeza.',
+          'C. Carlos es el mejor deportista del equipo A.',
+          'D. Todos los que entrenan los lunes son del equipo A.',
+        ],
+        correcta: 1,
+        feedback: {
+          correcto: '✅ ¡Muy bien! Razonaste correctamente. Que "todos los del equipo A entrenan lunes" NO implica que "todos los que entrenan lunes son del equipo A". Puede haber otros deportistas que también entrenen ese día. Esta es una falacia lógica común en las pruebas ICFES.',
+          incorrecto: '❌ La respuesta correcta es B. Las premisas dicen que los del equipo A entrenan lunes, pero no que SOLO ellos lo hacen. Carlos puede entrenar lunes y no ser del equipo A. Cuidado con inversiones lógicas en el examen.',
+        },
+      },
+
+    ]; // fin preguntas
+
+
+    /* ----------------------------------------
+       2. ESTADO GLOBAL
+    ---------------------------------------- */
+    let preguntaActual  = 0;    // índice de la pregunta actual
+    let puntaje         = 0;    // respuestas correctas
+    let respuestaDada   = false;// ¿ya respondió la pregunta actual?
+    let timerInterval   = null; // referencia al setInterval del temporizador
+    let segundosRestantes = 150; // 2:30
+
+    // rastreo por tipo (para feedback final)
+    const aciertos = { identificacion: 0, distractor: 0, resolucion: 0 };
+    const totales  = { identificacion: 0, distractor: 0, resolucion: 0 };
+
+
+    /* ----------------------------------------
+       3. FUNCIONES DE INTERFAZ
+    ---------------------------------------- */
+
+    /** Inicia el quiz desde la pantalla de bienvenida */
+    function iniciarQuiz() {
+      document.getElementById('pantalla-inicio').style.display = 'none';
+      document.getElementById('pantalla-quiz').style.display  = 'block';
+      iniciarTemporizador();
+      renderPregunta();
+    }
+
+    /** Renderiza la pregunta actual */
+    function renderPregunta() {
+      const q  = preguntas[preguntaActual];
+      respuestaDada = false;
+
+      // conteo de totales por tipo
+      totales[q.tipo]++;
+
+      // Progreso
+      document.getElementById('progreso-label').textContent =
+        `Pregunta ${preguntaActual + 1} de ${preguntas.length}`;
+      const pct = (preguntaActual / preguntas.length) * 100;
+      document.getElementById('progreso-bar').style.width = pct + '%';
+
+      // Etiqueta de tipo
+      document.getElementById('tipo-etiqueta-container').innerHTML =
+        `<span class="tipo-etiqueta ${q.tipoClass}">${q.tipoLabel}</span>`;
+
+      // Construir HTML del cuerpo
+      let html = '';
+
+      // Contexto (opcional)
+      if (q.contexto) {
+        html += `
+          <div class="contexto">
+            <span class="contexto-label">${q.contextoLabel}</span>
+            ${q.contexto}
+          </div>`;
+      }
+
+      // Enunciado
+      html += `<p class="enunciado">${q.enunciado}</p>`;
+
+      // Opciones
+      html += '<div class="opciones">';
+      q.opciones.forEach((texto, i) => {
+        const letra = ['A','B','C','D'][i];
+        html += `
+          <div class="opcion" id="opcion-${i}" onclick="seleccionar(${i})">
+            <div class="opcion-letra">${letra}</div>
+            <div class="opcion-texto">${texto.slice(3)}</div>
+            <span class="opcion-icono" id="icono-${i}"></span>
+          </div>`;
+      });
+      html += '</div>';
+
+      // Animar entrada
+      const container = document.getElementById('pregunta-container');
+      container.innerHTML = html;
+      container.classList.remove('pregunta-animada');
+      void container.offsetWidth; // forzar reflow
+      container.classList.add('pregunta-animada');
+
+      // Limpiar feedback y ocultar botón
+      const fb = document.getElementById('feedback-texto');
+      fb.className = 'feedback-texto';
+      fb.textContent = '';
+
+      const btn = document.getElementById('btn-siguiente');
+      btn.classList.remove('visible');
+      const esUltima = preguntaActual === preguntas.length - 1;
+      btn.textContent = esUltima ? '  Ver resultados  ' : '';
+      btn.innerHTML   = esUltima
+        ? 'Ver resultados <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>'
+        : 'Siguiente <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';
+    }
+
+
+    /** Gestiona la selección de una opción */
+    function seleccionar(indice) {
+      if (respuestaDada) return; // no permite cambiar respuesta
+      respuestaDada = true;
+
+      const q = preguntas[preguntaActual];
+      const esCorrecta = indice === q.correcta;
+
+      // Marcar opción seleccionada
+      document.getElementById(`opcion-${indice}`).classList.add('seleccionada', 'bloqueada');
+
+      // Dar feedback visual a todas las opciones
+      q.opciones.forEach((_, i) => {
+        const el     = document.getElementById(`opcion-${i}`);
+        const icono  = document.getElementById(`icono-${i}`);
+        el.classList.add('bloqueada');
+
+        if (i === q.correcta) {
+          el.classList.add('correcta');
+          icono.textContent = '✅';
+        } else if (i === indice && !esCorrecta) {
+          el.classList.add('incorrecta');
+          icono.textContent = '❌';
+        }
+      });
+
+      // Actualizar puntaje y aciertos por tipo
+      if (esCorrecta) {
+        puntaje++;
+        aciertos[q.tipo]++;
+      }
+
+      // Mostrar feedback textual
+      const fb = document.getElementById('feedback-texto');
+      fb.textContent  = esCorrecta ? q.feedback.correcto : q.feedback.incorrecto;
+      fb.className    = `feedback-texto ${esCorrecta ? 'correcto' : 'incorrecto'} visible`;
+
+      // Mostrar botón siguiente
+      document.getElementById('btn-siguiente').classList.add('visible');
+    }
+
+
+    /** Avanza a la siguiente pregunta o muestra resultados */
+    function siguientePregunta() {
+      preguntaActual++;
+      if (preguntaActual < preguntas.length) {
+        renderPregunta();
+      } else {
+        mostrarResultados();
+      }
+    }
+
+
+    /* ----------------------------------------
+       4. TEMPORIZADOR
+    ---------------------------------------- */
+    function iniciarTemporizador() {
+      actualizarDisplayTiempo();
+      timerInterval = setInterval(() => {
+        segundosRestantes--;
+        actualizarDisplayTiempo();
+
+        // urgencia en los últimos 30 segundos
+        const el = document.getElementById('temporizador');
+        if (segundosRestantes <= 30) el.classList.add('urgente');
+
+        if (segundosRestantes <= 0) {
+          clearInterval(timerInterval);
+          mostrarResultados();
+        }
+      }, 1000);
+    }
+
+    function actualizarDisplayTiempo() {
+      const min = Math.floor(segundosRestantes / 60);
+      const sec = segundosRestantes % 60;
+      document.getElementById('tiempo-texto').textContent =
+        `${min}:${sec.toString().padStart(2, '0')}`;
+    }
+
+
+    /* ----------------------------------------
+       5. PANTALLA DE RESULTADOS
+    ---------------------------------------- */
+    function mostrarResultados() {
+      clearInterval(timerInterval);
+      document.getElementById('pantalla-quiz').style.display = 'none';
+
+      const total = preguntas.length;
+      const ratio = puntaje / total;
+
+      // Emoji + título según desempeño
+      let emoji, titulo, subtitulo, mensaje;
+      if (ratio >= 0.8) {
+        emoji     = '🏆';
+        titulo    = '¡Excelente resultado!';
+        subtitulo = 'Demostraste dominio de los conceptos';
+        mensaje   = '¡Excelente! Ya tienes una buena base para afrontar el ICFES. Sigue así y llegarás muy lejos.';
+      } else if (ratio >= 0.5) {
+        emoji     = '💪';
+        titulo    = '¡Buen esfuerzo!';
+        subtitulo = 'Vas por buen camino';
+        mensaje   = 'Vas por buen camino, sigue practicando. Con constancia mejorarás tu desempeño en cada área.';
+      } else {
+        emoji     = '🌱';
+        titulo    = 'Apenas comienza';
+        subtitulo = 'Lo importante es dar el primer paso';
+        mensaje   = 'Vas comenzando, lo importante es que ya diste el primer paso. Repasa los conceptos y vuelve a intentarlo.';
+      }
+
+      document.getElementById('resultado-emoji').textContent    = emoji;
+      document.getElementById('resultado-titulo').textContent   = titulo;
+      document.getElementById('resultado-subtitulo').textContent= subtitulo;
+      document.getElementById('mensaje-motivacional').textContent = mensaje;
+
+      // Puntuación circular
+      const pct = (puntaje / total) * 100;
+      document.getElementById('puntaje-circulo').style.setProperty('--pct', `${pct}%`);
+      document.getElementById('puntaje-numero').innerHTML =
+        `${puntaje}/${total}<small>PUNTOS</small>`;
+
+      // Feedback por área
+      const nombresArea = {
+        identificacion: 'Identificación de partes',
+        distractor: 'Detección de distractores',
+        resolucion: 'Resolución rápida',
+      };
+
+      let feedbackHTML = '';
+      Object.keys(totales).forEach(tipo => {
+        if (totales[tipo] === 0) return;
+        const ac  = aciertos[tipo];
+        const tot = totales[tipo];
+        const porcentaje = Math.round((ac / tot) * 100);
+        let consejo = '';
+        if (porcentaje === 100) {
+          consejo = '¡Dominado! Continúa con este nivel de desempeño.';
+        } else if (porcentaje >= 50) {
+          consejo = `Vas bien, pero refuerza tu práctica en esta área.`;
+        } else {
+          consejo = `Debes mejorar en ${nombresArea[tipo].toLowerCase()}. Revisa los conceptos del Nivel 0.`;
+        }
+        feedbackHTML += `
+          <div class="feedback-area-item">
+            <div class="dot"></div>
+            <div><strong>${nombresArea[tipo]}</strong>: ${ac}/${tot} correctas (${porcentaje}%) — ${consejo}</div>
+          </div>`;
+      });
+      document.getElementById('feedback-areas').innerHTML = feedbackHTML;
+
+      // Mostrar pantalla
+      const pantalla = document.getElementById('pantalla-resultado');
+      pantalla.style.display = 'block';
+      setTimeout(() => pantalla.classList.add('visible'), 10);
+    }
+
+
+    /* ----------------------------------------
+       6. DETECCIÓN MÓVIL — botón Moodle
+    ---------------------------------------- */
+    (function() {
+      const btn    = document.getElementById('btn-volver');
+      const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=281';
+      const appUrl   = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=281';
+      const esMóvil  = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (esMóvil) btn.href = appUrl;
+    })();
+
+  </script>
+</body>
+</html>

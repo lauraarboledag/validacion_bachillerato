@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Estrategias de Lectura ICFES · Nivel 0 · Instituto Innova</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+/* === VARIABLES === */
+:root{
+  --az:#1a2e4a; --azm:#243d60; --azc:#2f5185; --azxl:#4a6fa5;
+  --do:#c9a84c; --dol:#e2c478; --dop:#f5e8c0;
+  --bl:#ffffff; --gf:#f0f3f8; --gr:#dce2ea; --gt:#8a9ab5;
+  --ve:#1e7e50; --vep:#e6f7ef;
+  --ro:#c0392b; --rop:#fdecea;
+  --na:#d97706;
+  --r:20px;
+  --sh:0 8px 40px rgba(26,46,74,.16),0 2px 10px rgba(26,46,74,.09);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--gf);color:var(--az);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:24px 14px 60px;
+  background-image:radial-gradient(ellipse at 5% 10%,rgba(26,46,74,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 95% 90%,rgba(201,168,76,.07) 0%,transparent 50%);
+}
+.wrap{width:100%;max-width:680px}
+
+/* === GLOBAL HEADER === */
+.g-header{
+  width:100%;max-width:680px;display:flex;align-items:center;gap:12px;
+  margin-bottom:22px;animation:fadeDown .5s ease both;
+}
+.logo-box{
+  width:46px;height:46px;background:var(--az);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  flex-shrink:0;box-shadow:0 4px 14px rgba(26,46,74,.25);
+}
+.logo-text h1{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--az);line-height:1.2}
+.logo-text p{font-size:.75rem;color:var(--azc);font-weight:500}
+.nivel-badge{
+  margin-left:auto;background:var(--az);color:var(--do);
+  font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  padding:5px 13px;border-radius:50px;border:1.5px solid var(--do);
+  white-space:nowrap;flex-shrink:0;
+}
+
+/* === PROGRESS BAR === */
+.prog-wrap{
+  width:100%;max-width:680px;margin-bottom:22px;
+  animation:fadeDown .5s .1s ease both;
+}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-lbl{font-size:.82rem;font-weight:700;color:var(--azc)}
+.score-chip{
+  display:flex;align-items:center;gap:5px;background:var(--bl);
+  border:1.5px solid var(--gr);border-radius:50px;padding:4px 12px;
+  font-size:.8rem;font-weight:700;color:var(--az);
+}
+.score-chip .star{color:var(--do);font-size:1rem}
+.prog-track{height:8px;background:var(--gr);border-radius:99px;overflow:hidden}
+.prog-fill{
+  height:100%;background:linear-gradient(90deg,var(--az),var(--do));
+  border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);width:0%
+}
+
+/* === CARD BASE === */
+.card{
+  background:var(--bl);border-radius:var(--r);box-shadow:var(--sh);
+  overflow:hidden;width:100%;position:relative;
+}
+.card::before{
+  content:'';display:block;height:5px;
+  background:linear-gradient(90deg,var(--az) 0%,var(--do) 60%,var(--dol) 100%);
+}
+
+/* === SCREEN SYSTEM === */
+.screen{display:none}
+.screen.active{display:block;animation:fadeDown .4s ease both}
+
+/* === INTRO === */
+.intro-inner{padding:36px 32px 32px;text-align:center}
+.intro-icon{font-size:3rem;margin-bottom:14px;display:block}
+.intro-titulo{
+  font-family:'Fraunces',serif;font-size:clamp(1.4rem,4vw,2rem);
+  color:var(--az);margin-bottom:10px;
+}
+.intro-desc{font-size:.93rem;color:var(--azc);line-height:1.65;margin-bottom:26px}
+.intro-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;margin-bottom:28px;
+}
+.intro-chip{
+  background:var(--gf);border:1.5px solid var(--gr);border-radius:12px;
+  padding:12px 14px;text-align:left;
+}
+.ic-ico{font-size:1.3rem;margin-bottom:5px;display:block}
+.ic-t{font-weight:700;font-size:.82rem;color:var(--az);display:block;margin-bottom:2px}
+.ic-d{font-size:.78rem;color:var(--gt);line-height:1.45}
+.btn-pri{
+  background:linear-gradient(135deg,var(--az) 0%,var(--azm) 100%);
+  color:var(--dol);border:none;border-radius:50px;padding:15px 40px;
+  font-family:'DM Sans',sans-serif;font-size:.97rem;font-weight:700;
+  letter-spacing:.6px;cursor:pointer;
+  box-shadow:0 6px 24px rgba(26,46,74,.3);
+  transition:transform .18s,box-shadow .18s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-pri:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(26,46,74,.38)}
+.btn-pri:active{transform:translateY(0)}
+
+/* === RETO HEADER === */
+.reto-hdr{
+  padding:20px 26px 0;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.reto-num{
+  font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;
+  color:var(--az);line-height:1;
+}
+.reto-tipo{
+  font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;padding:4px 11px;border-radius:50px;
+}
+.t-clave{background:#eaf0fb;color:var(--azc)}
+.t-tarea{background:#f3f0ff;color:#5b21b6}
+.t-grafico{background:#e0f2fe;color:#0369a1}
+.t-trampa{background:#fff7ed;color:var(--na)}
+.t-tiempo{background:var(--rop);color:var(--ro)}
+.reto-area{
+  margin-left:auto;font-size:.68rem;font-weight:600;
+  background:var(--gf);color:var(--gt);
+  padding:3px 10px;border-radius:50px;border:1px solid var(--gr);
+}
+
+/* === TIP === */
+.tip{
+  margin:16px 26px 0;
+  background:linear-gradient(135deg,var(--dop),#fef9f0);
+  border:1.5px solid var(--dol);border-radius:12px;
+  padding:11px 15px;display:flex;gap:10px;align-items:flex-start;
+  font-size:.82rem;color:#7c4a00;line-height:1.5;
+}
+.tip strong{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:#78350f;margin-bottom:2px}
+
+/* === RETO BODY / FOOTER === */
+.reto-body{padding:16px 26px 22px}
+.reto-footer{padding:0 26px 26px;display:flex;justify-content:flex-end}
+
+/* === CONTEXTO === */
+.ctx-box{
+  background:var(--gf);border-left:4px solid var(--do);
+  border-radius:0 12px 12px 0;padding:14px 16px;
+  font-size:.87rem;color:#3a4a60;line-height:1.65;margin-bottom:16px;
+}
+.ctx-lbl{
+  font-size:.67rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;color:var(--do);display:block;margin-bottom:5px;
+}
+.enunciado{
+  font-size:.97rem;font-weight:500;color:var(--az);
+  line-height:1.6;margin-bottom:18px;
+}
+
+/* === TOKENS (reto 1) === */
+.tokens{font-size:.96rem;line-height:2.4;color:var(--az);margin-bottom:16px}
+.tok{
+  display:inline-block;cursor:pointer;padding:3px 6px;
+  border-radius:7px;transition:background .2s,transform .15s;
+  border:1.5px solid transparent;
+}
+.tok:hover{background:var(--dop);border-color:var(--dol);transform:scale(1.06)}
+.tok.t-ok{background:var(--vep);border-color:var(--ve);color:var(--ve);font-weight:700;animation:bounce .35s ease}
+.tok.t-err{background:var(--rop);border-color:var(--ro);color:var(--ro);animation:shake .4s ease}
+.tok.t-hl{background:var(--dop);border-color:var(--do);font-weight:700}
+
+/* === OPCIONES MÚLTIPLE === */
+.ops-lista{display:flex;flex-direction:column;gap:10px}
+.op-btn{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 15px;
+  border:2px solid var(--gr);border-radius:12px;background:var(--bl);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;color:var(--az);line-height:1.5;text-align:left;
+  transition:border-color .2s,background .2s,transform .15s;
+}
+.op-btn:hover:not(:disabled){border-color:var(--do);background:var(--dop);transform:translateX(4px)}
+.op-btn:disabled{cursor:default;pointer-events:none}
+.op-chip{
+  min-width:28px;height:28px;background:var(--gf);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.75rem;color:var(--az);flex-shrink:0;
+  transition:background .2s,color .2s;
+}
+.op-btn.ok-op{border-color:var(--ve);background:var(--vep)}
+.op-btn.ok-op .op-chip{background:var(--ve);color:#fff}
+.op-btn.err-op{border-color:var(--ro);background:var(--rop)}
+.op-btn.err-op .op-chip{background:var(--ro);color:#fff}
+
+/* === GRAFICO === */
+.graf-wrap{
+  background:#f8fafc;border:1.5px solid var(--gr);
+  border-radius:14px;padding:18px 18px 14px;margin-bottom:18px;
+}
+.graf-tit{
+  font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--gt);text-align:center;margin-bottom:16px;
+}
+.barras{
+  display:flex;align-items:flex-end;gap:8px;
+  height:130px;justify-content:center;padding:0 8px;
+}
+.bar-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;max-width:80px}
+.bar{
+  width:100%;border-radius:6px 6px 0 0;
+  position:relative;min-width:28px;
+}
+.bar-val{
+  font-size:.7rem;font-weight:700;color:var(--az);
+  position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;
+}
+.bar-lbl{font-size:.7rem;color:var(--gt);text-align:center;font-weight:600}
+.graf-eje{width:100%;height:2px;background:var(--gr);border-radius:1px;margin-top:2px}
+
+/* === TIMER === */
+.timer-row{
+  display:flex;align-items:center;gap:12px;
+  justify-content:center;margin-bottom:18px;
+}
+.timer-circle{
+  width:66px;height:66px;border-radius:50%;background:var(--az);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  font-family:'Fraunces',serif;font-size:1.5rem;font-weight:900;
+  color:var(--do);box-shadow:0 4px 16px rgba(26,46,74,.25);
+  transition:background .3s;
+}
+.timer-circle.urgente{background:var(--ro);animation:pulse .6s infinite}
+.timer-sub{font-size:.6rem;color:rgba(255,255,255,.65);font-family:'DM Sans',sans-serif;margin-top:-4px}
+.preg-rapidas{display:flex;flex-direction:column;gap:14px}
+.pr-q{
+  background:var(--gf);border-radius:12px;
+  padding:14px 16px;border:1.5px solid var(--gr);
+}
+.pr-txt{font-size:.88rem;font-weight:600;color:var(--az);margin-bottom:10px;line-height:1.5}
+.pr-ops{display:flex;flex-wrap:wrap;gap:7px}
+.pr-op{
+  padding:7px 14px;border:1.5px solid var(--gr);border-radius:50px;
+  background:var(--bl);font-family:'DM Sans',sans-serif;
+  font-size:.82rem;font-weight:600;color:var(--az);cursor:pointer;
+  transition:all .18s;
+}
+.pr-op:hover:not(:disabled){border-color:var(--do);background:var(--dop)}
+.pr-op:disabled{cursor:default;pointer-events:none}
+.pr-op.pr-ok{border-color:var(--ve);background:var(--vep);color:var(--ve)}
+.pr-op.pr-err{border-color:var(--ro);background:var(--rop);color:var(--ro)}
+
+/* === FEEDBACK === */
+.fb{
+  border-radius:12px;padding:12px 15px;font-size:.87rem;
+  line-height:1.55;margin-top:14px;display:none;
+}
+.fb.vis{display:block;animation:fadeUp .3s ease both}
+.fb-ok{background:var(--vep);border-left:4px solid var(--ve);color:#155a35}
+.fb-err{background:var(--rop);border-left:4px solid var(--ro);color:#8b1a1a}
+.fb-info{background:#eef2ff;border-left:4px solid #6366f1;color:#3730a3}
+
+/* === BTN SIGUIENTE === */
+.btn-sig{
+  background:linear-gradient(135deg,var(--az),var(--azm));
+  color:var(--dol);border:none;border-radius:50px;
+  padding:12px 30px;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:700;letter-spacing:.6px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;
+  box-shadow:0 4px 18px rgba(26,46,74,.3);
+  transition:transform .18s,box-shadow .18s,opacity .2s;
+  opacity:0;pointer-events:none;
+}
+.btn-sig.vis{opacity:1;pointer-events:auto;animation:fadeUp .35s ease both}
+.btn-sig:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(26,46,74,.38)}
+
+/* === PANTALLA FINAL === */
+#screen-final{display:none}
+#screen-final.vis{display:block;animation:fadeDown .5s ease both}
+.f-header{
+  background:linear-gradient(135deg,var(--az) 0%,var(--azm) 100%);
+  padding:36px 28px 48px;position:relative;text-align:center;
+}
+.f-header::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:32px;background:var(--bl);border-radius:var(--r) var(--r) 0 0;
+}
+.f-emoji{font-size:3.2rem;display:block;margin-bottom:8px}
+.f-titulo{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--bl);margin-bottom:4px}
+.f-sub{font-size:.88rem;color:var(--dol)}
+.f-body{padding:28px 28px 32px;text-align:center}
+.puntaje-ring{
+  width:120px;height:120px;border-radius:50%;
+  background:conic-gradient(var(--do) var(--pct,0%),var(--gr) 0);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 8px;box-shadow:0 4px 20px rgba(201,168,76,.3);position:relative;
+}
+.puntaje-ring::after{
+  content:'';position:absolute;width:90px;height:90px;
+  border-radius:50%;background:var(--bl);
+}
+.puntaje-num{
+  position:relative;z-index:1;font-family:'Fraunces',serif;
+  font-size:1.8rem;font-weight:900;color:var(--az);line-height:1;
+}
+.puntaje-num small{
+  display:block;font-family:'DM Sans',sans-serif;
+  font-size:.65rem;font-weight:600;color:var(--gt);letter-spacing:.5px;
+}
+.niv-res{
+  display:inline-block;font-size:.78rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.9px;
+  padding:5px 16px;border-radius:50px;margin:14px 0 10px;
+}
+.niv-bajo{background:var(--rop);color:var(--ro)}
+.niv-medio{background:#fff7ed;color:var(--na)}
+.niv-alto{background:var(--vep);color:var(--ve)}
+.msg-final{font-size:.95rem;font-weight:500;color:var(--azm);line-height:1.6;margin-bottom:22px}
+.det-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:10px;margin-bottom:24px;
+}
+.det-item{background:var(--gf);border-radius:12px;padding:12px 10px;text-align:center}
+.det-ico{font-size:1.4rem;display:block;margin-bottom:4px}
+.det-val{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--az)}
+.det-lbl{font-size:.68rem;color:var(--gt);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.btns-f{display:flex;flex-direction:column;gap:12px;align-items:center}
+
+/* === CONFETTI === */
+.confetti-dot{
+  position:fixed;width:7px;height:7px;border-radius:50%;
+  animation:confetti-fall .8s ease forwards;pointer-events:none;z-index:9999;
+}
+@keyframes confetti-fall{
+  0%{transform:translateY(-10px) rotate(0);opacity:1}
+  100%{transform:translateY(70px) rotate(360deg);opacity:0}
+}
+
+/* === KEYFRAMES === */
+@keyframes fadeDown{
+  from{opacity:0;transform:translateY(-16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes bounce{
+  0%,100%{transform:scale(1)}50%{transform:scale(1.18)}
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}50%{transform:scale(1.07)}
+}
+
+/* === RESPONSIVE === */
+@media(max-width:500px){
+  .reto-hdr,.reto-body,.reto-footer,.intro-inner,.f-body,.f-header{
+    padding-left:16px;padding-right:16px;
+  }
+  .intro-grid{grid-template-columns:1fr 1fr}
+  .det-grid{grid-template-columns:1fr 1fr}
+  .barras{gap:4px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER GLOBAL -->
+<header class="g-header">
+  <div class="logo-box">📖</div>
+  <div class="logo-text">
+    <h1>Instituto Innova</h1>
+    <p>ICFES Saber 11 · Estrategias de Lectura</p>
+  </div>
+  <div class="nivel-badge">Nivel 0</div>
+</header>
+
+<!-- BARRA DE PROGRESO (oculta al inicio) -->
+<div class="prog-wrap" id="prog-wrap" style="display:none">
+  <div class="prog-top">
+    <span class="prog-lbl" id="prog-lbl">Reto 1 de 5</span>
+    <div class="score-chip"><span class="star">⭐</span><span id="score-disp">0</span> pts</div>
+  </div>
+  <div class="prog-track">
+    <div class="prog-fill" id="prog-fill"></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ============================================================
+     PANTALLA INICIO
+============================================================ -->
+<div class="card screen active" id="screen-intro">
+  <div class="intro-inner">
+    <span class="intro-icon">🧠</span>
+    <h2 class="intro-titulo">Estrategias básicas<br>de lectura de ítems</h2>
+    <p class="intro-desc">5 micro-retos interactivos para entrenar tu lectura estratégica y responder preguntas tipo ICFES con velocidad y precisión.</p>
+    <div class="intro-grid">
+      <div class="intro-chip"><span class="ic-ico">🔍</span><span class="ic-t">Palabras clave</span><span class="ic-d">Identifica el término que dirige la respuesta</span></div>
+      <div class="intro-chip"><span class="ic-ico">🧩</span><span class="ic-t">Tipo de tarea</span><span class="ic-d">¿Identificar, inferir, interpretar o aplicar?</span></div>
+      <div class="intro-chip"><span class="ic-ico">📊</span><span class="ic-t">Lee el gráfico</span><span class="ic-d">Interpreta datos visuales correctamente</span></div>
+      <div class="intro-chip"><span class="ic-ico">⚠️</span><span class="ic-t">Detecta la trampa</span><span class="ic-d">Reconoce distractores elaborados</span></div>
+      <div class="intro-chip"><span class="ic-ico">⏱️</span><span class="ic-t">Contra el tiempo</span><span class="ic-d">Rapidez y precisión bajo presión</span></div>
+    </div>
+    <button class="btn-pri" onclick="comenzar()">Empezar actividad →</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     RETO 1 — ENCUENTRA LA PALABRA CLAVE
+============================================================ -->
+<div class="card screen" id="screen-r1">
+  <div class="reto-hdr">
+    <div class="reto-num">01</div>
+    <span class="reto-tipo t-clave">🔍 Palabra clave</span>
+    <span class="reto-area">Razonamiento lógico</span>
+  </div>
+  <div class="tip">
+    <div>💡 <strong>Tip ICFES</strong>Palabras como EXCEPTO, NO, ÚNICAMENTE, SOLAMENTE o MÁS ADECUADO cambian completamente el sentido de la pregunta. ¡Identifícalas antes de leer las opciones!</div>
+  </div>
+  <div class="reto-body">
+    <p class="enunciado" style="margin-bottom:12px">Haz clic sobre la palabra que es la más importante para responder correctamente esta pregunta:</p>
+    <div class="ctx-box">
+      <span class="ctx-lbl">Contexto — Eliminatoria de fútbol (A3)</span>
+      En una eliminatoria participaron los equipos A, B, C y E (todos contra todos). El equipo A ganó 3 partidos, B no tiene empates, y C le ganó a B.
+    </div>
+    <div class="tokens" id="r1-tokens"></div>
+    <div class="fb" id="r1-fb"></div>
+  </div>
+  <div class="reto-footer">
+    <button class="btn-sig" id="r1-btn" onclick="ir(2)">Siguiente reto <svg style="width:13px;height:13px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+  </div>
+</div>
+
+<!-- ============================================================
+     RETO 2 — ¿QUÉ TE ESTÁN PREGUNTANDO?
+============================================================ -->
+<div class="card screen" id="screen-r2">
+  <div class="reto-hdr">
+    <div class="reto-num">02</div>
+    <span class="reto-tipo t-tarea">🧩 Tipo de tarea</span>
+    <span class="reto-area">Competencia lectora</span>
+  </div>
+  <div class="tip">
+    <div>💡 <strong>Tip ICFES</strong>El verbo del enunciado revela la operación mental: "¿cuál ES?" = identificar · "¿qué SE CONCLUYE?" = inferir · "¿qué SIGNIFICA?" = interpretar · "¿cómo APLICARÍAS?" = aplicar.</div>
+  </div>
+  <div class="reto-body">
+    <div class="ctx-box">
+      <span class="ctx-lbl">Texto — "Los fuegos" (fragmento del examen A3)</span>
+      "Cada persona brilla con luz propia entre todas las demás. No hay dos fuegos iguales. Hay fuegos grandes y fuegos chicos y fuegos de todos los colores. Hay gente de fuego sereno que ni se entera del viento; y gente de fuego loco que llena el aire de chispas. Algunos fuegos, fuegos bobos, no alumbran ni queman."
+    </div>
+    <p class="enunciado">¿Qué tipo de tarea mental te pide realizar la siguiente pregunta?<br><br><em style="color:var(--azc);font-size:.93rem">"Del texto se infiere que la gente de fuego sereno es aquella que se mantiene tranquila e indiferente ante los problemas."</em></p>
+    <div class="ops-lista" id="r2-ops"></div>
+    <div class="fb" id="r2-fb"></div>
+  </div>
+  <div class="reto-footer">
+    <button class="btn-sig" id="r2-btn" onclick="ir(3)">Siguiente reto <svg style="width:13px;height:13px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+  </div>
+</div>
+
+<!-- ============================================================
+     RETO 3 — LEE EL GRÁFICO CORRECTAMENTE
+============================================================ -->
+<div class="card screen" id="screen-r3">
+  <div class="reto-hdr">
+    <div class="reto-num">03</div>
+    <span class="reto-tipo t-grafico">📊 Lee el gráfico</span>
+    <span class="reto-area">Razonamiento lógico</span>
+  </div>
+  <div class="tip">
+    <div>💡 <strong>Tip ICFES</strong>Antes de responder, lee SIEMPRE el título del gráfico y los ejes. Nunca respondas mirando solo las barras más altas sin saber qué representan.</div>
+  </div>
+  <div class="reto-body">
+    <div class="graf-wrap">
+      <div class="graf-tit">Velocidad límite (km/h) según distancia al centro del pueblo</div>
+      <div class="barras" id="graf-barras"></div>
+      <div class="graf-eje"></div>
+    </div>
+    <p class="enunciado">Según el gráfico, a medida que un vehículo se acerca al centro del pueblo, la velocidad límite permitida:</p>
+    <div class="ops-lista" id="r3-ops"></div>
+    <div class="fb" id="r3-fb"></div>
+  </div>
+  <div class="reto-footer">
+    <button class="btn-sig" id="r3-btn" onclick="ir(4)">Siguiente reto <svg style="width:13px;height:13px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+  </div>
+</div>
+
+<!-- ============================================================
+     RETO 4 — DETECTA LA TRAMPA
+============================================================ -->
+<div class="card screen" id="screen-r4">
+  <div class="reto-hdr">
+    <div class="reto-num">04</div>
+    <span class="reto-tipo t-trampa">⚠️ Detecta la trampa</span>
+    <span class="reto-area">Competencia lectora</span>
+  </div>
+  <div class="tip">
+    <div>💡 <strong>Tip ICFES</strong>Los distractores más peligrosos mezclan información VERDADERA del texto con una afirmación FALSA. Verifica CADA parte de la opción antes de elegirla.</div>
+  </div>
+  <div class="reto-body">
+    <div class="ctx-box">
+      <span class="ctx-lbl">Texto — Historia de Biblos (examen A3)</span>
+      "Los fenicios no articularon sus dominios en una organización política y administrativa, y cada ciudad mantuvo su autonomía y una aguda rivalidad con las demás. Esta circunstancia facilitó su sometimiento a vasallaje por parte de los egipcios a partir del milenio II a.C., pero no impidió las relaciones con los egeos."
+    </div>
+    <p class="enunciado">¿Cuál de las siguientes afirmaciones es un DISTRACTOR TRAMPA? (Parece correcta pero contiene una falsedad oculta respecto al texto.)</p>
+    <div class="ops-lista" id="r4-ops"></div>
+    <div class="fb" id="r4-fb"></div>
+  </div>
+  <div class="reto-footer">
+    <button class="btn-sig" id="r4-btn" onclick="ir(5)">Último reto ⏱️ <svg style="width:13px;height:13px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+  </div>
+</div>
+
+<!-- ============================================================
+     RETO 5 — CONTRA EL TIEMPO
+============================================================ -->
+<div class="card screen" id="screen-r5">
+  <div class="reto-hdr">
+    <div class="reto-num">05</div>
+    <span class="reto-tipo t-tiempo">⏱️ Contra el tiempo</span>
+    <span class="reto-area">Velocidad + precisión</span>
+  </div>
+  <div class="tip">
+    <div>💡 <strong>Tip ICFES</strong>Con poco tiempo: lee el enunciado primero, descarta opciones absurdas y elige entre las 2 restantes. No dejes ninguna en blanco: el azar da 25 % de probabilidad.</div>
+  </div>
+  <div class="reto-body">
+    <div class="timer-row">
+      <div class="timer-circle" id="timer-circle">
+        <span id="timer-num">45</span>
+        <span class="timer-sub">seg</span>
+      </div>
+      <div style="font-size:.85rem;font-weight:600;color:var(--azc);line-height:1.55">
+        Responde las 3 preguntas<br>antes de que se acabe el tiempo.
+      </div>
+    </div>
+    <div class="preg-rapidas" id="r5-preg"></div>
+    <div class="fb" id="r5-fb"></div>
+  </div>
+  <div class="reto-footer">
+    <button class="btn-sig" id="r5-btn" onclick="verResultados()">Ver resultados 🏆 <svg style="width:13px;height:13px;fill:currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+  </div>
+</div>
+
+<!-- ============================================================
+     PANTALLA FINAL
+============================================================ -->
+<div class="card" id="screen-final">
+  <div class="f-header">
+    <span class="f-emoji" id="f-emoji">🏆</span>
+    <h2 class="f-titulo" id="f-titulo">¡Actividad completada!</h2>
+    <p class="f-sub" id="f-sub">Revisemos tu desempeño en lectura estratégica</p>
+  </div>
+  <div class="f-body">
+    <div class="puntaje-ring" id="f-ring">
+      <div class="puntaje-num" id="f-score">0<small>PUNTOS</small></div>
+    </div>
+    <div class="niv-res" id="f-nivel">—</div>
+    <p class="msg-final" id="f-msg"></p>
+    <div class="det-grid" id="f-det"></div>
+    <div class="btns-f">
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=297"
+         style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+      <button class="btn-pri" onclick="reiniciar()" style="font-size:.88rem;padding:12px 28px;margin-top:4px">🔄 Intentar de nuevo</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ===================== ESTADO ===================== */
+let pts = 0;
+let retoActual = 0;
+let timerInt = null;
+let tiempoSeg = 45;
+let r5Resp = 0;
+const aciertos = {r1:false,r2:false,r3:false,r4:false,r5:0};
+
+/* ===================== DATOS R1 =====================
+   Tokens de la pregunta — el token con clave:true es la respuesta
+*/
+const R1_SENTENCE = [
+  {t:'De',k:false},{t:'las',k:false},{t:'afirmaciones',k:false},
+  {t:'siguientes,',k:false},{t:'la',k:false},{t:'única',k:false},
+  {t:'que',k:false},{t:'NO',k:true},{t:'es',k:false},
+  {t:'posible',k:false},{t:'es:',k:false}
+];
+
+/* ===================== DATOS R2 ===================== */
+const R2_OPS = [
+  {l:'A', txt:'<strong>Identificar</strong> — ubicar un dato que el texto dice explícitamente.', ok:false,
+   exp:'Identificar sería si el texto dijera directamente que la gente de fuego sereno es tranquila. Pero eso no aparece literal; hay que <em>deducirlo</em>.'},
+  {l:'B', txt:'<strong>Inferir</strong> — deducir información que el texto no expresa de forma directa, pero que se desprende lógicamente.', ok:true,
+   exp:'✅ ¡Correcto! La palabra clave es <strong>"se infiere"</strong>. El texto describe que los de fuego sereno "ni se enteran del viento", lo que permite <em>concluir</em> que son tranquiles ante las adversidades, sin que el texto lo diga con esas palabras.'},
+  {l:'C', txt:'<strong>Interpretar</strong> — explicar el significado simbólico o figurado de una expresión del texto.', ok:false,
+   exp:'Interpretar se aplica cuando se analiza el significado metafórico de una expresión. Aquí la tarea es deducir una característica de las personas, no interpretar el símbolo del fuego como tal.'},
+  {l:'D', txt:'<strong>Aplicar</strong> — usar un concepto del texto en una situación nueva o diferente.', ok:false,
+   exp:'Aplicar requiere transferir el conocimiento del texto a un contexto externo. Aquí solo se pide deducir algo del mismo texto, no usarlo en otra situación.'}
+];
+
+/* ===================== DATOS R3 ===================== */
+const R3_GRAF = [
+  {d:'1 km',v:120,c:'#1a2e4a'},
+  {d:'½ km',v:40,c:'#2f5185'},
+  {d:'⅓ km',v:20,c:'#4a6fa5'},
+  {d:'¼ km',v:12,c:'#c9a84c'},
+  {d:'⅕ km',v:0,c:'#e2c478'}
+];
+const R3_OPS = [
+  {l:'A', txt:'Aumenta gradualmente hasta llegar al centro.', ok:false,
+   exp:'El gráfico muestra exactamente lo contrario: cada aviso tiene una velocidad MENOR que el anterior.'},
+  {l:'B', txt:'Se mantiene constante en todos los tramos.', ok:false,
+   exp:'El gráfico muestra 5 valores distintos: 120, 40, 20, 12 y 0 km/h. No hay constancia.'},
+  {l:'C', txt:'Disminuye progresivamente hasta llegar a cero (detenerse).', ok:true,
+   exp:'✅ ¡Correcto! El patrón es claro: 120 → 40 → 20 → 12 → 0 km/h. La velocidad disminuye cada vez más hasta que el vehículo debe detenerse completamente.'},
+  {l:'D', txt:'Varía sin ningún patrón definido, de forma irregular.', ok:false,
+   exp:'Hay un patrón perfectamente definido y descendente. Los valores no son irregulares: siempre bajan al acercarse al centro.'}
+];
+
+/* ===================== DATOS R4 ===================== */
+const R4_OPS = [
+  {l:'A', txt:'Los fenicios mantuvieron autonomía política entre sí, pero la rivalidad entre ciudades impidió totalmente cualquier relación con otros pueblos como los egeos.', ok:true,
+   exp:'⚠️ ¡Esta es la TRAMPA! La primera parte es verdadera (autonomía y rivalidad entre ciudades), pero la segunda es FALSA: el texto dice que la situación "NO impidió las relaciones con los egeos". El distractor combina una verdad con una mentira al final.'},
+  {l:'B', txt:'Los fenicios no tuvieron una organización política común y cada ciudad mantuvo su independencia.', ok:false,
+   exp:'Esta afirmación es completamente verdadera y literal según el texto. No contiene ninguna información falsa.'},
+  {l:'C', txt:'La falta de unión política entre los fenicios facilitó que los egipcios ejercieran vasallaje sobre ellos.', ok:false,
+   exp:'Esto es esencialmente lo que el texto afirma con el término "facilitó su sometimiento a vasallaje". Es verdadero, no es la trampa.'},
+  {l:'D', txt:'Los egipcios establecieron control sobre las ciudades fenicias a partir del milenio II a.C.', ok:false,
+   exp:'El texto lo dice explícitamente. Es una afirmación verdadera y directa del texto, no un distractor trampa.'}
+];
+
+/* ===================== DATOS R5 ===================== */
+const R5_Q = [
+  {
+    txt:'Según el texto "Los fuegos", ¿qué expresión describe a las personas que no generan impacto en otros?',
+    ops:['Fuego sereno','Fuego loco','Fuego bobo','Fuego ardiente'],
+    c:2,
+    exp:'Los "fuegos bobos" son los que "no alumbran ni queman": no generan ningún impacto.'
+  },
+  {
+    txt:'En la eliminatoria de fútbol (equipos A, B, C, E — todos contra todos), ¿cuántos partidos se jugaron?',
+    ops:['4 partidos','5 partidos','6 partidos','8 partidos'],
+    c:2,
+    exp:'Con 4 equipos todos contra todos: C(4,2) = 4!/(2!·2!) = 6 partidos.'
+  },
+  {
+    txt:'En el texto de la lora, "impávida" significa:',
+    ops:['Agresiva y violenta','Imperturbable, que no se altera','Asustada y nerviosa','Simpática y amigable'],
+    c:1,
+    exp:'"Impávida" = imperturbable, sin temor ni perturbación. La lora sigue igual sin importar la situación.'
+  }
+];
+
+/* ===================== NAVEGACIÓN ===================== */
+function comenzar(){
+  document.getElementById('screen-intro').classList.remove('active');
+  document.getElementById('prog-wrap').style.display='block';
+  ir(1);
+}
+function ir(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  retoActual=n;
+  actualizarProg(n);
+  const el=document.getElementById('screen-r'+n);
+  if(!el) return;
+  el.classList.add('active');
+  if(n===1) initR1();
+  if(n===2) initR2();
+  if(n===3) initR3();
+  if(n===4) initR4();
+  if(n===5) initR5();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function actualizarProg(n){
+  document.getElementById('prog-lbl').textContent='Reto '+n+' de 5';
+  document.getElementById('prog-fill').style.width=((n-1)/5*100)+'%';
+  document.getElementById('score-disp').textContent=pts;
+}
+
+/* ===================== RETO 1 ===================== */
+function initR1(){
+  const wrap=document.getElementById('r1-tokens');
+  wrap.innerHTML='';
+  R1_SENTENCE.forEach((item,i)=>{
+    const s=document.createElement('span');
+    s.className='tok';
+    s.textContent=item.t+' ';
+    s.dataset.k=item.k?'1':'0';
+    s.onclick=()=>clickTok(s);
+    wrap.appendChild(s);
+  });
+  resetFb('r1-fb');
+}
+function clickTok(s){
+  const ok=s.dataset.k==='1';
+  document.querySelectorAll('#r1-tokens .tok').forEach(t=>t.classList.remove('t-ok','t-err'));
+  const fb=document.getElementById('r1-fb');
+  if(ok){
+    s.classList.add('t-ok');
+    showFb('r1-fb','ok','✅ ¡Exacto! <strong>NO</strong> es la palabra clave. Transforma la pregunta: en lugar de buscar lo posible, debes buscar lo IMPOSIBLE. Este tipo de palabras aparece en muchas preguntas ICFES y cambia todo el enfoque.');
+    if(!aciertos.r1){pts+=2;aciertos.r1=true;}
+    actualizarScore();
+    showBtn('r1-btn');
+    confetti(s);
+  } else {
+    s.classList.add('t-err');
+    document.querySelectorAll('#r1-tokens .tok').forEach(t=>{
+      if(t.dataset.k==='1') t.classList.add('t-hl');
+    });
+    showFb('r1-fb','err','❌ No es esa. La palabra clave está resaltada en dorado: <strong>NO</strong>. Convierte la pregunta en búsqueda de lo imposible. Haz clic en el botón para continuar.');
+    showBtn('r1-btn');
+  }
+}
+
+/* ===================== RETO 2 ===================== */
+function initR2(){
+  renderOps('r2-ops', R2_OPS, 'r2');
+  resetFb('r2-fb');
+}
+
+/* ===================== RETO 3 ===================== */
+function initR3(){
+  // Barras
+  const wrap=document.getElementById('graf-barras');
+  wrap.innerHTML='';
+  const maxV=120;
+  R3_GRAF.forEach(d=>{
+    const pct=d.v===0?2:(d.v/maxV)*100;
+    const item=document.createElement('div');
+    item.className='bar-item';
+    item.innerHTML=`<div class="bar" style="height:${pct}%;background:${d.c}">
+      <span class="bar-val">${d.v===0?'Stop':d.v}</span></div>
+      <div class="bar-lbl">${d.d}</div>`;
+    wrap.appendChild(item);
+  });
+  renderOps('r3-ops', R3_OPS, 'r3');
+  resetFb('r3-fb');
+}
+
+/* ===================== RETO 4 ===================== */
+function initR4(){
+  renderOps('r4-ops', R4_OPS, 'r4');
+  resetFb('r4-fb');
+}
+
+/* ===================== RETO 5 ===================== */
+function initR5(){
+  tiempoSeg=45; r5Resp=0; aciertos.r5=0;
+  document.getElementById('timer-circle').classList.remove('urgente');
+  document.getElementById('timer-num').textContent='45';
+  resetFb('r5-fb');
+
+  const wrap=document.getElementById('r5-preg');
+  wrap.innerHTML='';
+  R5_Q.forEach((q,qi)=>{
+    const div=document.createElement('div');
+    div.className='pr-q';div.id='r5q'+qi;
+    let opsH='<div class="pr-ops">';
+    q.ops.forEach((o,oi)=>{
+      opsH+=`<button class="pr-op" id="r5q${qi}o${oi}" onclick="respRap(${qi},${oi})">${o}</button>`;
+    });
+    opsH+='</div>';
+    div.innerHTML=`<div class="pr-txt">${qi+1}. ${q.txt}</div>${opsH}`;
+    wrap.appendChild(div);
+  });
+
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    tiempoSeg--;
+    document.getElementById('timer-num').textContent=tiempoSeg;
+    if(tiempoSeg<=15) document.getElementById('timer-circle').classList.add('urgente');
+    if(tiempoSeg<=0){clearInterval(timerInt);tiempoAgotado();}
+  },1000);
+}
+
+function respRap(qi,oi){
+  const q=R5_Q[qi];
+  for(let i=0;i<q.ops.length;i++){
+    const b=document.getElementById('r5q'+qi+'o'+i);
+    if(b) b.disabled=true;
+  }
+  const btn=document.getElementById('r5q'+qi+'o'+oi);
+  if(oi===q.c){
+    btn.classList.add('pr-ok');
+    aciertos.r5++;pts+=1;
+    actualizarScore();
+    confetti(btn);
+  } else {
+    btn.classList.add('pr-err');
+    const cor=document.getElementById('r5q'+qi+'o'+q.c);
+    if(cor) cor.classList.add('pr-ok');
+  }
+  r5Resp++;
+  if(r5Resp===R5_Q.length){
+    clearInterval(timerInt);
+    showFb('r5-fb','info','🎯 Respondiste las 3 preguntas. Aciertos: <strong>'+aciertos.r5+'/3</strong>. Tiempo restante: '+tiempoSeg+'s. ¡Haz clic en "Ver resultados"!');
+    showBtn('r5-btn');
+  }
+}
+
+function tiempoAgotado(){
+  document.querySelectorAll('.pr-op').forEach(b=>b.disabled=true);
+  showFb('r5-fb','err','⏱️ ¡Tiempo agotado! Respondiste '+r5Resp+'/3 preguntas. Aciertos: <strong>'+aciertos.r5+'</strong>. Practica más velocidad lectora.');
+  showBtn('r5-btn');
+}
+
+/* ===================== RESULTADOS ===================== */
+function verResultados(){
+  clearInterval(timerInt);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('prog-wrap').style.display='none';
+
+  const pct=Math.min(Math.round((pts/10)*100),100);
+  let emoji,titulo,sub,nivel,nclass,msg;
+  if(pts>=8){
+    emoji='🏆';titulo='¡Lectura estratégica dominada!';sub='Desempeño sobresaliente';
+    nivel='Nivel: Alto';nclass='niv-alto';
+    msg='Excelente manejo de lectura tipo ICFES. Identificas palabras clave, el tipo de tarea, interpretas gráficos y reconoces trampas con gran precisión. ¡Estás listo/a para el examen!';
+  } else if(pts>=5){
+    emoji='💪';titulo='¡Buen desempeño!';sub='Vas bien, pero puedes mejorar';
+    nivel='Nivel: Medio';nclass='niv-medio';
+    msg='Vas por buen camino. Presta especial atención a las palabras clave del enunciado (NO, EXCEPTO, ÚNICAMENTE) y verifica cada parte de una opción antes de elegirla.';
+  } else {
+    emoji='📚';titulo='¡Sigue practicando!';sub='Necesitas fortalecer la lectura estratégica';
+    nivel='Nivel: Básico';nclass='niv-bajo';
+    msg='Necesitas fortalecer tu lectura estratégica. Comienza por leer siempre el enunciado primero y subrayar la palabra clave. Con práctica constante lo lograrás.';
+  }
+
+  document.getElementById('f-emoji').textContent=emoji;
+  document.getElementById('f-titulo').textContent=titulo;
+  document.getElementById('f-sub').textContent=sub;
+  document.getElementById('f-nivel').textContent=nivel;
+  document.getElementById('f-nivel').className='niv-res '+nclass;
+  document.getElementById('f-msg').textContent=msg;
+  document.getElementById('f-score').innerHTML=pts+'<small>PUNTOS</small>';
+  document.getElementById('f-ring').style.setProperty('--pct',pct+'%');
+
+  const dets=[
+    {ico:'🔍',val:aciertos.r1?'✅':'❌',lbl:'Palabra clave'},
+    {ico:'🧩',val:aciertos.r2?'✅':'❌',lbl:'Tipo de tarea'},
+    {ico:'📊',val:aciertos.r3?'✅':'❌',lbl:'Gráfico'},
+    {ico:'⚠️',val:aciertos.r4?'✅':'❌',lbl:'Trampa'},
+    {ico:'⏱️',val:aciertos.r5+'/3',lbl:'Velocidad'}
+  ];
+  const detWrap=document.getElementById('f-det');
+  detWrap.innerHTML='';
+  dets.forEach(d=>{
+    detWrap.innerHTML+=`<div class="det-item"><span class="det-ico">${d.ico}</span><div class="det-val">${d.val}</div><div class="det-lbl">${d.lbl}</div></div>`;
+  });
+
+  // Detección móvil
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+    document.getElementById('btn-volver').href='moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=297';
+  }
+
+  const fin=document.getElementById('screen-final');
+  fin.style.display='block';
+  setTimeout(()=>fin.classList.add('vis'),10);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(pts>=8) confettiGlobal();
+}
+
+function reiniciar(){
+  pts=0;retoActual=0;tiempoSeg=45;r5Resp=0;
+  aciertos.r1=false;aciertos.r2=false;aciertos.r3=false;aciertos.r4=false;aciertos.r5=0;
+  clearInterval(timerInt);
+  document.getElementById('screen-final').style.display='none';
+  document.getElementById('screen-final').classList.remove('vis');
+  document.getElementById('prog-wrap').style.display='none';
+  document.getElementById('score-disp').textContent=0;
+  document.getElementById('prog-fill').style.width='0%';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-intro').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===================== HELPERS ===================== */
+function renderOps(containerId, data, retoId){
+  const wrap=document.getElementById(containerId);
+  wrap.innerHTML='';
+  data.forEach((op,i)=>{
+    const btn=document.createElement('button');
+    btn.className='op-btn';
+    btn.innerHTML=`<div class="op-chip">${op.l}</div><div>${op.txt}</div>`;
+    btn.onclick=()=>responderOp(op,btn,containerId,retoId);
+    wrap.appendChild(btn);
+  });
+}
+
+function responderOp(op,btn,containerId,retoId){
+  document.querySelectorAll('#'+containerId+' .op-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById(retoId+'-fb');
+  if(op.ok){
+    btn.classList.add('ok-op');
+    showFb(retoId+'-fb','ok',op.exp);
+    if(!aciertos[retoId]){pts+=2;aciertos[retoId]=true;}
+    actualizarScore();
+    showBtn(retoId+'-btn');
+    confetti(btn);
+  } else {
+    btn.classList.add('err-op');
+    // Mostrar correcta
+    const all=document.querySelectorAll('#'+containerId+' .op-btn');
+    const dataArr=retoId==='r2'?R2_OPS:retoId==='r3'?R3_OPS:R4_OPS;
+    all.forEach((b,i)=>{if(dataArr[i]&&dataArr[i].ok) b.classList.add('ok-op');});
+    showFb(retoId+'-fb','err','❌ '+op.exp);
+    showBtn(retoId+'-btn');
+  }
+}
+
+function showBtn(id){
+  const b=document.getElementById(id);
+  if(b) b.classList.add('vis');
+}
+function actualizarScore(){
+  document.getElementById('score-disp').textContent=pts;
+}
+function showFb(id,tipo,html){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.className='fb fb-'+tipo+' vis';
+  el.innerHTML=html;
+  el.style.display='block';
+}
+function resetFb(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.className='fb';el.innerHTML='';el.style.display='none';
+}
+
+/* ===================== CONFETTI ===================== */
+function confetti(origen){
+  try{
+    const r=origen.getBoundingClientRect();
+    const cols=['#c9a84c','#1a2e4a','#e2c478','#4a6fa5','#fff'];
+    for(let i=0;i<8;i++){
+      const d=document.createElement('div');
+      d.className='confetti-dot';
+      d.style.left=(r.left+r.width/2+(Math.random()*40-20))+'px';
+      d.style.top=(r.top+window.scrollY)+'px';
+      d.style.background=cols[Math.floor(Math.random()*cols.length)];
+      d.style.animationDelay=(Math.random()*.25)+'s';
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(),950);
+    }
+  }catch(e){}
+}
+function confettiGlobal(){
+  const cols=['#c9a84c','#1a2e4a','#e2c478','#4a6fa5','#f5e8c0'];
+  for(let i=0;i<35;i++){
+    setTimeout(()=>{
+      const d=document.createElement('div');
+      d.className='confetti-dot';
+      d.style.left=Math.random()*100+'vw';
+      d.style.top='0px';
+      d.style.background=cols[Math.floor(Math.random()*cols.length)];
+      d.style.width=(6+Math.random()*6)+'px';
+      d.style.height=(6+Math.random()*6)+'px';
+      d.style.borderRadius=Math.random()>.5?'50%':'3px';
+      d.style.animationDuration=(0.8+Math.random()*.8)+'s';
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(),1600);
+    },i*55);
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ejercicio Práctico · Tipos de Preguntas ICFES · Validación del Bachillerato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
+<style>
+/* =============================================
+   VARIABLES Y RESET
+============================================= */
+:root{
+  --azul:#1a2e4a;
+  --azul-m:#243d60;
+  --azul-c:#2f5185;
+  --dorado:#c9a84c;
+  --dorado-l:#e2c478;
+  --dorado-p:#f5e8c0;
+  --blanco:#ffffff;
+  --gris-f:#f4f6f9;
+  --gris:#dce2ea;
+  --gris-t:#8a9ab5;
+  --verde:#1e7e50;
+  --verde-p:#e8f8ef;
+  --rojo:#c0392b;
+  --rojo-p:#fdecea;
+  --naranja:#d97706;
+  --naranja-p:#fff7ed;
+  --morado:#6d28d9;
+  --morado-p:#f5f3ff;
+  --sombra:0 6px 32px rgba(26,46,74,.13),0 2px 8px rgba(26,46,74,.08);
+  --radio:16px;
+  --print-hide:block;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--gris-f);
+  color:var(--azul);
+  line-height:1.6;
+  padding:32px 16px 64px;
+  background-image:
+    radial-gradient(circle at 10% 15%,rgba(26,46,74,.055) 0%,transparent 45%),
+    radial-gradient(circle at 90% 85%,rgba(201,168,76,.07) 0%,transparent 45%);
+}
+
+/* =============================================
+   PORTADA / HEADER
+============================================= */
+.portada{
+  max-width:800px;margin:0 auto 36px;
+  background:var(--azul);
+  border-radius:var(--radio);
+  overflow:hidden;
+  box-shadow:var(--sombra);
+  position:relative;
+}
+.portada-top{
+  padding:40px 40px 32px;
+  position:relative;
+  z-index:1;
+}
+.portada-top::before{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 80% 30%,rgba(201,168,76,.18) 0%,transparent 55%),
+    radial-gradient(circle at 10% 80%,rgba(47,81,133,.4) 0%,transparent 50%);
+  pointer-events:none;
+}
+.portada-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(201,168,76,.2);
+  border:1.5px solid rgba(201,168,76,.45);
+  color:var(--dorado-l);
+  font-size:.75rem;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;padding:5px 14px;border-radius:50px;
+  margin-bottom:16px;
+}
+.portada-titulo{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.5rem,4vw,2.4rem);
+  color:var(--blanco);
+  line-height:1.2;
+  margin-bottom:10px;
+}
+.portada-subtitulo{
+  font-size:.95rem;color:rgba(255,255,255,.72);
+  margin-bottom:24px;line-height:1.55;
+}
+.portada-chips{
+  display:flex;flex-wrap:wrap;gap:10px;
+}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.88);
+  font-size:.8rem;font-weight:600;
+  padding:6px 14px;border-radius:50px;
+}
+.chip span{font-size:1rem}
+.portada-franja{
+  background:linear-gradient(90deg,var(--azul-m),var(--dorado) 55%,var(--dorado-l));
+  padding:14px 40px;
+  display:flex;flex-wrap:wrap;gap:20px;
+  align-items:center;justify-content:space-between;
+}
+.portada-stat{
+  text-align:center;
+}
+.portada-stat-num{
+  display:block;
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;color:var(--azul);font-weight:900;
+}
+.portada-stat-label{
+  font-size:.72rem;color:var(--azul-m);font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;
+}
+
+/* =============================================
+   INTRO — TIEMPO E INSTRUCCIONES
+============================================= */
+.intro-card{
+  max-width:800px;margin:0 auto 28px;
+  background:var(--blanco);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  overflow:hidden;
+}
+.intro-card::before{
+  content:'';display:block;height:4px;
+  background:linear-gradient(90deg,var(--azul),var(--dorado));
+}
+.intro-body{padding:28px 32px 32px;}
+.intro-titulo{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;color:var(--azul);margin-bottom:16px;
+}
+.intro-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;margin-bottom:22px;
+}
+.intro-item{
+  background:var(--gris-f);
+  border-radius:12px;
+  padding:14px 16px;
+  border-left:4px solid var(--dorado);
+}
+.intro-item-titulo{
+  font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;
+  color:var(--dorado);margin-bottom:4px;
+}
+.intro-item-texto{font-size:.88rem;color:var(--azul-m);line-height:1.5}
+.alerta-tiempo{
+  background:linear-gradient(135deg,#fff7ed,#fef3c7);
+  border:1.5px solid #f59e0b;
+  border-radius:12px;
+  padding:14px 18px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.alerta-tiempo-icono{font-size:1.4rem;flex-shrink:0;margin-top:1px}
+.alerta-tiempo-texto{font-size:.88rem;color:#92400e;line-height:1.5}
+.alerta-tiempo-texto strong{color:#78350f}
+
+/* =============================================
+   SECCIONES
+============================================= */
+.seccion{
+  max-width:800px;margin:0 auto 12px;
+}
+.seccion-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:14px;
+}
+.seccion-num{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--azul);
+  color:var(--dorado);
+  font-weight:900;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.seccion-info{}
+.seccion-titulo{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;color:var(--azul);
+}
+.seccion-subtitulo{font-size:.78rem;color:var(--gris-t);font-weight:500}
+
+/* =============================================
+   TARJETA DE PREGUNTA
+============================================= */
+.pregunta-card{
+  background:var(--blanco);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  margin-bottom:20px;
+  overflow:hidden;
+  page-break-inside:avoid;
+}
+.pregunta-card::before{
+  content:'';display:block;height:4px;
+}
+/* colores por tipo */
+.tipo-estructura::before{background:linear-gradient(90deg,var(--azul),var(--azul-c))}
+.tipo-enunciado::before{background:linear-gradient(90deg,var(--morado),#a78bfa)}
+.tipo-contexto::before{background:linear-gradient(90deg,#0891b2,#22d3ee)}
+.tipo-distractor::before{background:linear-gradient(90deg,var(--naranja),#fbbf24)}
+.tipo-eliminacion::before{background:linear-gradient(90deg,#059669,#34d399)}
+.tipo-correcta::before{background:linear-gradient(90deg,var(--verde),#6ee7b7)}
+.tipo-presion::before{background:linear-gradient(90deg,var(--rojo),#f87171)}
+.tipo-errores::before{background:linear-gradient(90deg,#7c3aed,#c084fc)}
+
+.pregunta-top{
+  padding:18px 24px 0;
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;
+}
+.pregunta-num{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;font-weight:900;
+  color:var(--azul);line-height:1;
+}
+.pregunta-tipo-badge{
+  font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;
+  padding:3px 10px;border-radius:50px;
+}
+.badge-estructura{background:#eaf0fb;color:var(--azul-c)}
+.badge-enunciado{background:var(--morado-p);color:var(--morado)}
+.badge-contexto{background:#e0f2fe;color:#0369a1}
+.badge-distractor{background:var(--naranja-p);color:var(--naranja)}
+.badge-eliminacion{background:#ecfdf5;color:#065f46}
+.badge-correcta{background:var(--verde-p);color:var(--verde)}
+.badge-presion{background:var(--rojo-p);color:var(--rojo)}
+.badge-errores{background:var(--morado-p);color:#5b21b6}
+
+.pregunta-area-badge{
+  margin-left:auto;
+  font-size:.68rem;font-weight:600;
+  background:var(--gris-f);color:var(--gris-t);
+  padding:3px 10px;border-radius:50px;
+  border:1px solid var(--gris);
+}
+
+/* contexto */
+.contexto{
+  margin:16px 24px 0;
+  background:var(--gris-f);
+  border-left:4px solid var(--dorado);
+  border-radius:0 10px 10px 0;
+  padding:14px 18px;
+  font-size:.88rem;
+  color:#3a4a60;
+  line-height:1.65;
+}
+.contexto-label{
+  font-size:.68rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;
+  color:var(--dorado);display:block;margin-bottom:6px;
+}
+/* tabla dentro de contexto */
+.tabla-contexto{
+  width:100%;border-collapse:collapse;
+  font-size:.85rem;margin-top:8px;
+}
+.tabla-contexto th{
+  background:var(--azul);color:var(--blanco);
+  padding:7px 12px;text-align:center;font-weight:700;font-size:.78rem;
+}
+.tabla-contexto td{
+  padding:6px 12px;text-align:center;
+  border-bottom:1px solid var(--gris);
+}
+.tabla-contexto tr:nth-child(even) td{background:rgba(26,46,74,.04)}
+/* grafico ascii */
+.grafico-wrap{
+  background:#1e293b;border-radius:8px;
+  padding:14px 18px;font-family:monospace;
+  font-size:.8rem;color:#e2e8f0;
+  line-height:1.7;overflow-x:auto;
+  margin-top:8px;
+}
+.grafico-titulo{color:var(--dorado-l);font-weight:bold;margin-bottom:6px}
+
+/* enunciado */
+.enunciado{
+  padding:16px 24px 0;
+  font-size:.97rem;
+  font-weight:500;
+  color:var(--azul);
+  line-height:1.6;
+}
+
+/* presion de tiempo banner */
+.presion-banner{
+  margin:14px 24px 0;
+  background:linear-gradient(135deg,#fef2f2,#fee2e2);
+  border:1.5px solid #fca5a5;
+  border-radius:10px;
+  padding:12px 16px;
+  display:flex;gap:10px;align-items:center;
+  font-size:.85rem;color:#991b1b;font-weight:600;
+}
+
+/* opciones */
+.opciones{
+  padding:14px 24px 20px;
+  display:flex;flex-direction:column;gap:9px;
+}
+.opcion{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:11px 14px;
+  border:1.5px solid var(--gris);
+  border-radius:10px;
+  font-size:.9rem;
+  color:var(--azul);
+  line-height:1.5;
+  transition:border-color .2s,background .2s;
+}
+.opcion-letra{
+  min-width:28px;height:28px;
+  background:var(--gris-f);
+  border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.78rem;color:var(--azul);
+  flex-shrink:0;
+}
+
+/* =============================================
+   PANEL DE SOLUCIÓN
+============================================= */
+.solucion{
+  margin:0 24px 24px;
+  border-radius:12px;
+  overflow:hidden;
+  border:1.5px solid var(--gris);
+}
+.solucion-toggle{
+  width:100%;
+  background:var(--gris-f);
+  border:none;cursor:pointer;
+  padding:11px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'DM Sans',sans-serif;
+  font-size:.85rem;font-weight:700;color:var(--azul);
+  text-align:left;
+  transition:background .2s;
+}
+.solucion-toggle:hover{background:var(--dorado-p)}
+.solucion-toggle-icon{
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--azul);color:var(--blanco);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;flex-shrink:0;
+  transition:transform .3s;
+}
+.solucion-toggle.abierto .solucion-toggle-icon{transform:rotate(180deg)}
+.solucion-body{
+  display:none;
+  padding:18px 18px 20px;
+  background:var(--blanco);
+  border-top:1.5px solid var(--gris);
+}
+.solucion-body.visible{display:block}
+
+.sol-correcta{
+  display:flex;align-items:center;gap:10px;
+  background:var(--verde-p);
+  border:1.5px solid #6ee7b7;
+  border-radius:10px;padding:10px 14px;
+  margin-bottom:14px;
+}
+.sol-correcta-texto{font-size:.9rem;font-weight:700;color:var(--verde)}
+
+.sol-seccion-titulo{
+  font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.9px;
+  color:var(--gris-t);margin-bottom:8px;margin-top:14px;
+}
+.sol-explicacion{
+  font-size:.88rem;color:var(--azul-m);
+  line-height:1.6;
+  background:var(--gris-f);
+  border-radius:8px;padding:12px 14px;
+  margin-bottom:2px;
+}
+
+/* distractores */
+.distractor-item{
+  display:flex;gap:10px;align-items:flex-start;
+  font-size:.85rem;line-height:1.5;
+  padding:8px 10px;
+  border-radius:8px;
+  margin-bottom:6px;
+  background:#fef9f0;
+  border-left:3px solid var(--naranja);
+}
+.distractor-letra{
+  font-weight:800;color:var(--naranja);flex-shrink:0;
+}
+.distractor-texto{color:#7c4a00}
+
+/* estrategia */
+.estrategia{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--morado-p);
+  border:1.5px solid #c4b5fd;
+  border-radius:10px;padding:12px 14px;
+  font-size:.85rem;color:#4c1d95;
+  line-height:1.5;
+}
+.estrategia-icono{font-size:1.1rem;flex-shrink:0}
+
+/* tip */
+.tip-icfes{
+  max-width:800px;margin:0 auto 20px;
+  display:flex;gap:12px;align-items:flex-start;
+  background:linear-gradient(135deg,var(--dorado-p),#fef9f0);
+  border:1.5px solid var(--dorado-l);
+  border-radius:12px;padding:14px 18px;
+  font-size:.85rem;color:#7c4a00;
+  line-height:1.55;
+}
+.tip-icono{font-size:1.3rem;flex-shrink:0}
+.tip-texto strong{color:#78350f;display:block;margin-bottom:2px;font-size:.78rem;text-transform:uppercase;letter-spacing:.7px}
+
+/* separador de sección */
+.sep-seccion{
+  max-width:800px;margin:32px auto 24px;
+  display:flex;align-items:center;gap:16px;
+}
+.sep-linea{flex:1;height:1px;background:var(--gris)}
+.sep-texto{
+  font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;
+  color:var(--gris-t);white-space:nowrap;
+}
+
+/* =============================================
+   FOOTER
+============================================= */
+.footer{
+  max-width:800px;margin:40px auto 0;
+  background:var(--azul);
+  border-radius:var(--radio);
+  padding:28px 32px;
+  text-align:center;
+  color:rgba(255,255,255,.7);
+  font-size:.82rem;
+}
+.footer strong{color:var(--dorado-l)}
+
+/* =============================================
+   PRINT
+============================================= */
+@media print{
+  body{background:white;padding:12px}
+  .solucion-body{display:block!important}
+  .solucion-toggle{display:none}
+  .pregunta-card,.intro-card,.portada{box-shadow:none;border:1px solid #ccc}
+  .portada{background:var(--azul)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* =============================================
+   RESPONSIVE
+============================================= */
+@media(max-width:540px){
+  .portada-top,.intro-body,.pregunta-top,.enunciado,.opciones,.solucion,.contexto{padding-left:16px;padding-right:16px}
+  .portada-franja{padding:14px 16px}
+  .portada-titulo{font-size:1.4rem}
+  .solucion{margin-left:12px;margin-right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PORTADA
+============================================================ -->
+<div class="portada">
+  <div class="portada-top">
+    <div class="portada-badge">🎓 Instituto Innova · Validación del Bachillerato</div>
+    <h1 class="portada-titulo">Ejercicio Práctico<br>Tipos de Preguntas ICFES</h1>
+    <p class="portada-subtitulo">Domina la estructura, los distractores y las estrategias<br>para responder preguntas de selección múltiple con confianza.</p>
+    <div class="portada-chips">
+      <div class="chip"><span>📝</span> 15 preguntas</div>
+      <div class="chip"><span>⏱️</span> 20–25 minutos</div>
+      <div class="chip"><span>📶</span> Nivel básico–intermedio</div>
+      <div class="chip"><span>🎯</span> Única respuesta</div>
+    </div>
+  </div>
+  <div class="portada-franja">
+    <div class="portada-stat"><span class="portada-stat-num">8</span><span class="portada-stat-label">Habilidades trabajadas</span></div>
+    <div class="portada-stat"><span class="portada-stat-num">4</span><span class="portada-stat-label">Áreas del conocimiento</span></div>
+    <div class="portada-stat"><span class="portada-stat-num">~90s</span><span class="portada-stat-label">Por pregunta</span></div>
+    <div class="portada-stat"><span class="portada-stat-num">60</span><span class="portada-stat-label">Puntos posibles</span></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     INSTRUCCIONES Y TIEMPO
+============================================================ -->
+<div class="intro-card">
+  <div class="intro-body">
+    <h2 class="intro-titulo">⏱️ Información general y uso del tiempo</h2>
+    <div class="intro-grid">
+      <div class="intro-item">
+        <div class="intro-item-titulo">⏰ Tiempo total sugerido</div>
+        <div class="intro-item-texto"><strong>20 a 25 minutos</strong> para las 15 preguntas. Equivale a aproximadamente 90 segundos por pregunta.</div>
+      </div>
+      <div class="intro-item">
+        <div class="intro-item-titulo">📌 Distribución del tiempo</div>
+        <div class="intro-item-texto">Preguntas con contexto (texto/tabla/gráfico): hasta <strong>2 min</strong>. Preguntas directas: <strong>60 seg</strong>.</div>
+      </div>
+      <div class="intro-item">
+        <div class="intro-item-titulo">🔍 Cómo usar el ejercicio</div>
+        <div class="intro-item-texto">Responde cada pregunta antes de ver la solución. Haz clic en <strong>"Ver solución guiada"</strong> para revisarla.</div>
+      </div>
+      <div class="intro-item">
+        <div class="intro-item-titulo">🎯 Objetivo del ejercicio</div>
+        <div class="intro-item-texto">No memorizar respuestas: aprender a <strong>pensar estratégicamente</strong> ante cualquier pregunta tipo ICFES.</div>
+      </div>
+    </div>
+    <div class="alerta-tiempo">
+      <div class="alerta-tiempo-icono">⚡</div>
+      <div class="alerta-tiempo-texto"><strong>Consejo de arranque:</strong> Lee primero el enunciado, luego el contexto. Esto ahorra hasta 20 segundos por pregunta. Si una pregunta te bloquea más de 2 minutos, márcala y continúa. Regresa al final con el tiempo restante.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 1: ESTRUCTURA DE LA PREGUNTA   ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 1 · Estructura de la pregunta</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">1</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Estructura de la pregunta (2 preguntas)</div>
+      <div class="seccion-subtitulo">Identifica las partes: contexto, enunciado y opciones de respuesta</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 1 -->
+  <div class="pregunta-card tipo-estructura">
+    <div class="pregunta-top">
+      <div class="pregunta-num">01</div>
+      <span class="pregunta-tipo-badge badge-estructura">Estructura</span>
+      <span class="pregunta-area-badge">📚 Comprensión lectora</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Contexto — Texto informativo</span>
+      "Las abejas son fundamentales para la polinización de los cultivos. Se estima que el 75 % de los alimentos que consume el ser humano depende, directa o indirectamente, del trabajo de los polinizadores como las abejas."
+    </div>
+    <div class="enunciado">
+      Según el texto anterior, ¿qué porcentaje de los alimentos humanos depende de los polinizadores?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> El 25 % de los alimentos que consume el ser humano.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> El 50 % de los cultivos mundiales de frutas y verduras.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> El 75 % de los alimentos humanos, directa o indirectamente.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> El 100 % de los alimentos que existen en el planeta.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: C — El 75 % de los alimentos humanos, directa o indirectamente.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">El contexto (el texto de apoyo) dice explícitamente: <em>"el 75 % de los alimentos que consume el ser humano depende, directa o indirectamente, del trabajo de los polinizadores"</em>. La opción C reproduce fielmente ese dato. Cuando el enunciado pide un dato numérico que aparece en el contexto, la respuesta correcta siempre será la que lo refleje con exactitud.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">Confunde el porcentaje: 25 % es el complemento (los que NO dependen de polinizadores). Es un distractor aritmético típico.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">Introduce información no mencionada ("frutas y verduras") y cambia el porcentaje. Distractor por ampliación falsa del contexto.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">Exagera la cifra al 100 %. Distractor por generalización excesiva, frecuente en preguntas de comprensión.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">🎯</div><strong>Lectura literal:</strong> cuando el enunciado pide un dato que aparece en el contexto, regresa al texto, subraya la cifra o la idea y compárala opción por opción. No des respuesta desde la memoria; usa el contexto.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 2 -->
+  <div class="pregunta-card tipo-estructura">
+    <div class="pregunta-top">
+      <div class="pregunta-num">02</div>
+      <span class="pregunta-tipo-badge badge-estructura">Estructura</span>
+      <span class="pregunta-area-badge">🧠 Razonamiento</span>
+    </div>
+    <div class="enunciado">
+      En una pregunta tipo ICFES, la parte que presenta información adicional (un texto, una tabla o una imagen) para apoyar al estudiante se llama:
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Enunciado, porque es la pregunta principal que debe responder el estudiante.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Distractor, porque es la opción de respuesta que genera confusión.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Contexto, porque es el material de apoyo que proporciona los datos necesarios.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Clave, porque es la respuesta correcta entre las cuatro opciones.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: C — Contexto.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Una pregunta tipo ICFES tiene tres partes principales: (1) el <strong>contexto</strong>, que es el material de apoyo (texto, tabla, gráfico o situación); (2) el <strong>enunciado</strong>, que es la pregunta o tarea que debe resolver el estudiante; y (3) las <strong>opciones de respuesta</strong> (A, B, C, D), entre las cuales solo una es correcta (la <em>clave</em>) y las demás son <em>distractores</em>.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">"Enunciado" es otra parte real de la pregunta, pero NO es la que proporciona información de apoyo, sino la que formula la tarea.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">"Distractor" es una de las opciones de respuesta incorrectas, no una parte estructural de la pregunta.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">"Clave" es el nombre técnico de la respuesta correcta, no de la parte informativa de la pregunta.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">🗂️</div><strong>Definición precisa:</strong> en preguntas sobre vocabulario técnico, descarta primero las opciones que confunden dos términos conocidos (A y D son partes reales pero con funciones distintas). Esto reduce a 2 opciones en segundos.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 1 -->
+
+<div class="tip-icfes">
+  <div class="tip-icono">💡</div>
+  <div class="tip-texto"><strong>Tip ICFES #1</strong> — Antes de leer las opciones, lee el enunciado e intenta responder mentalmente. Si tu respuesta coincide con alguna opción, verifica que ninguna otra la supere en precisión. Esto evita que los distractores te influyan.</div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 2: TIPOS DE ENUNCIADO          ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 2 · Tipos de enunciado</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">2</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Tipos de enunciado (3 preguntas)</div>
+      <div class="seccion-subtitulo">Identificación, inferencia, interpretación y aplicación</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 3 — identificación directa -->
+  <div class="pregunta-card tipo-enunciado">
+    <div class="pregunta-top">
+      <div class="pregunta-num">03</div>
+      <span class="pregunta-tipo-badge badge-enunciado">Tipo: identificación</span>
+      <span class="pregunta-area-badge">📚 Lectura</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Texto breve</span>
+      "La Revolución Francesa, iniciada en 1789, fue un proceso político y social que puso fin al Antiguo Régimen en Francia y sentó las bases de la democracia moderna. Sus principales causas fueron la crisis económica, la desigualdad social y el absolutismo monárquico."
+    </div>
+    <div class="enunciado">
+      ¿En qué año comenzó la Revolución Francesa?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> 1776</div>
+      <div class="opcion"><div class="opcion-letra">B</div> 1789</div>
+      <div class="opcion"><div class="opcion-letra">C</div> 1804</div>
+      <div class="opcion"><div class="opcion-letra">D</div> 1815</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B — 1789.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Este es un enunciado de <strong>identificación directa</strong>: pide localizar un dato explícito en el texto. El contexto dice claramente "iniciada en 1789". No hay que inferir ni interpretar, solo localizar.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">1776 corresponde a la Declaración de Independencia de EE. UU. Distractor histórico plausible para quien confunde eventos.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">1804 es el año en que Napoleón se coronó Emperador. Distractor por fecha cercana al mismo proceso histórico.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">1815 corresponde a la derrota de Napoleón en Waterloo. Distractor por evento posterior relacionado.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">🔍</div><strong>Localización directa:</strong> en preguntas de identificación, el texto siempre contiene la respuesta. Regresa al contexto, busca el dato específico y compáralo con las opciones. No respondas de memoria si el dato está en el texto.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 4 — inferencia -->
+  <div class="pregunta-card tipo-enunciado">
+    <div class="pregunta-top">
+      <div class="pregunta-num">04</div>
+      <span class="pregunta-tipo-badge badge-enunciado">Tipo: inferencia</span>
+      <span class="pregunta-area-badge">📚 Lectura</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Texto narrativo</span>
+      "Al llegar a casa, Camila encontró la puerta entreabierta. Las luces estaban encendidas, aunque ella recordaba haberlas apagado antes de salir. En la cocina, había una taza de café humeante sobre la mesa."
+    </div>
+    <div class="enunciado">
+      ¿Qué se puede inferir a partir del texto?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Camila tiene mala memoria y olvidó apagar las luces.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Es probable que alguien haya estado o esté en la casa de Camila.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Camila preparó café antes de salir y lo olvidó sobre la mesa.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> La casa de Camila fue robada mientras ella estaba fuera.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B — Es probable que alguien haya estado o esté en la casa.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Este es un enunciado de <strong>inferencia</strong>: pide concluir algo que el texto no dice explícitamente, pero que se desprende lógicamente de las pistas dadas (puerta abierta, luces encendidas, café caliente). La inferencia correcta debe estar <em>sostenida por el texto</em>, sin ir más allá de lo que las evidencias permiten.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">El texto dice que Camila <em>recordaba</em> haber apagado las luces, lo que la descarta como olvidadiza. Es un distractor que invierte la información.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">Contradicción directa: si el café estaba humeante, no pudo haberlo dejado antes de salir (ya estaría frío). Distractor que viola la lógica del tiempo.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">Conclusión excesiva. El texto no aporta evidencia de robo; solo hay indicios de presencia humana. Distractor por exageración de la inferencia.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">🔗</div><strong>Inferencia moderada:</strong> la respuesta correcta en preguntas de inferencia nunca exagera ni minimiza. Si una opción dice algo "muy definitivo" (robo, mentira, certeza total), desconfía: las inferencias usan expresiones como "es probable", "podría ser", "sugiere que".</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 5 — aplicación -->
+  <div class="pregunta-card tipo-enunciado">
+    <div class="pregunta-top">
+      <div class="pregunta-num">05</div>
+      <span class="pregunta-tipo-badge badge-enunciado">Tipo: aplicación</span>
+      <span class="pregunta-area-badge">🔢 Matemáticas</span>
+    </div>
+    <div class="enunciado">
+      Pedro debe pagar una deuda en 4 días. Cada día paga el doble de lo que pagó el día anterior. Si el primer día pagó $5.000, ¿cuánto pagó en total durante los 4 días?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> $20.000</div>
+      <div class="opcion"><div class="opcion-letra">B</div> $40.000</div>
+      <div class="opcion"><div class="opcion-letra">C</div> $75.000</div>
+      <div class="opcion"><div class="opcion-letra">D</div> $80.000</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: C — $75.000.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Este es un enunciado de <strong>aplicación</strong>: pide usar un concepto (progresión geométrica) en una situación concreta. Día 1: $5.000 · Día 2: $10.000 · Día 3: $20.000 · Día 4: $40.000. Total = 5.000 + 10.000 + 20.000 + 40.000 = <strong>$75.000</strong>.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">$20.000 solo considera que cada día paga $5.000 (sin doblar). Distractor para quien ignora la progresión.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">$40.000 es solo lo que paga el último día (día 4), no la suma total. Distractor por tomar la última cifra como resultado.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">$80.000 proviene de calcular 5.000 × 2⁴ = 80.000, aplicando mal la fórmula (no es el total sino el quinto término).</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">✏️</div><strong>Operación paso a paso:</strong> en preguntas de aplicación matemática, escribe cada valor antes de sumar. Los distractores siempre corresponden a un error de cálculo común. Tomarte 20 segundos más previene errores costosos.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 2 -->
+
+<div class="tip-icfes">
+  <div class="tip-icono">💡</div>
+  <div class="tip-texto"><strong>Tip ICFES #2</strong> — Aprende a identificar el "verbo del enunciado": "¿cuál ES?" (identificación), "¿qué SE PUEDE CONCLUIR?" (inferencia), "¿qué SIGNIFICA?" (interpretación), "¿cuál SERÍA?" (aplicación). Ese verbo te dice qué tipo de operación mental debes hacer.</div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 3: INTERPRETACIÓN DE CONTEXTO  ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 3 · Interpretación de contexto</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">3</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Interpretación de contexto (3 preguntas)</div>
+      <div class="seccion-subtitulo">Texto corto · Tabla de datos · Gráfico</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 6 — texto -->
+  <div class="pregunta-card tipo-contexto">
+    <div class="pregunta-top">
+      <div class="pregunta-num">06</div>
+      <span class="pregunta-tipo-badge badge-contexto">Contexto: texto</span>
+      <span class="pregunta-area-badge">🌍 Ciencias naturales</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Texto informativo</span>
+      "El efecto invernadero es un proceso natural mediante el cual la atmósfera retiene parte del calor solar, manteniendo la temperatura de la Tierra en niveles habitables. Sin embargo, la quema de combustibles fósiles ha aumentado la concentración de gases de efecto invernadero, intensificando este proceso y provocando el calentamiento global."
+    </div>
+    <div class="enunciado">
+      Según el texto, ¿cuál es la diferencia entre el efecto invernadero natural y el calentamiento global?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Son el mismo fenómeno: el texto los usa como sinónimos.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> El efecto invernadero es natural y necesario; el calentamiento global es su intensificación por causas humanas.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> El calentamiento global ocurre en la estratosfera; el efecto invernadero, en la tropósfera.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> El efecto invernadero solo existe desde que el ser humano empezó a quemar combustibles.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">El texto distingue con claridad dos fenómenos: el efecto invernadero como proceso natural que "mantiene la temperatura en niveles habitables", y el calentamiento global como consecuencia de la intensificación de ese proceso por acción humana (quema de combustibles). La opción B recoge exactamente esta distinción.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">El texto NO los usa como sinónimos; los presenta como causa y efecto. Distractor por lectura superficial.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">Introduce información sobre capas atmosféricas que no aparece en el texto. Distractor por añadir conocimiento externo.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">Contradice el texto, que dice que el efecto invernadero es un "proceso natural" (preexistente). Distractor por inversión de la información.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">📄</div><strong>Anclar en el texto:</strong> cuando el enunciado pide comparar dos conceptos del contexto, busca el conector clave. Aquí: "Sin embargo…" señala el contraste entre los dos fenómenos. Los conectores (sin embargo, aunque, por el contrario) son señales de la respuesta.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 7 — tabla -->
+  <div class="pregunta-card tipo-contexto">
+    <div class="pregunta-top">
+      <div class="pregunta-num">07</div>
+      <span class="pregunta-tipo-badge badge-contexto">Contexto: tabla</span>
+      <span class="pregunta-area-badge">🔢 Matemáticas</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Tabla de datos — Resultados de una eliminatoria</span>
+      <table class="tabla-contexto">
+        <thead><tr><th>Equipo</th><th>Partidos jugados (PJ)</th><th>Partidos ganados (PG)</th><th>Partidos perdidos (PP)</th><th>Partidos empatados (PE)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>4</td><td>3</td><td>1</td><td>0</td></tr>
+          <tr><td><strong>B</strong></td><td>4</td><td>1</td><td>2</td><td>1</td></tr>
+          <tr><td><strong>C</strong></td><td>4</td><td>2</td><td>1</td><td>1</td></tr>
+          <tr><td><strong>D</strong></td><td>4</td><td>0</td><td>3</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="enunciado">
+      Según la tabla, ¿qué equipo tiene el mejor rendimiento si se calcula con la fórmula: <strong>Puntos = (PG × 3) + (PE × 1)</strong>?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Equipo A, con 9 puntos.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Equipo C, con 7 puntos.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Equipo B, con 4 puntos.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Equipo D, con 3 puntos.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: A — Equipo A con 9 puntos.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Aplicando la fórmula a cada equipo: A: (3×3)+(0×1)=<strong>9</strong> | B: (1×3)+(1×1)=4 | C: (2×3)+(1×1)=7 | D: (0×3)+(1×1)=1. El equipo A tiene 9 puntos, el máximo.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">C tiene 7 puntos, correcto el cálculo, pero inferior a A (9). Distractor para quien no calcula todos los equipos.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">B tiene 4 puntos, correcto, pero no es el mayor. Distractor por cálculo parcial.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">D solo tiene 1 punto (no 3 como indica la opción). La opción D también tiene un error de cálculo intencional.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">📊</div><strong>Lectura de tablas:</strong> siempre aplica la fórmula a TODOS los equipos/elementos antes de elegir. Los distractores muestran valores correctos pero de los elementos equivocados. Un cálculo parcial es el error más frecuente en preguntas con tablas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 8 — gráfico -->
+  <div class="pregunta-card tipo-contexto">
+    <div class="pregunta-top">
+      <div class="pregunta-num">08</div>
+      <span class="pregunta-tipo-badge badge-contexto">Contexto: gráfico</span>
+      <span class="pregunta-area-badge">🌍 Ciencias sociales</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Gráfico de barras — Ventas de libros (miles de ejemplares)</span>
+      <div class="grafico-wrap">
+        <div class="grafico-titulo">Ventas de libros por mes (miles de ejemplares)</div>
+        <pre>
+  80 ┤                              ████
+  70 ┤              ████            ████
+  60 ┤   ████       ████   ████    ████
+  50 ┤   ████       ████   ████    ████
+  40 ┤   ████       ████   ████    ████
+  30 ┤   ████  ████ ████   ████    ████
+  20 ┤   ████  ████ ████   ████    ████
+  10 ┤   ████  ████ ████   ████    ████
+   0 └───────────────────────────────────
+       Enero  Feb  Marzo  Abril  Mayo
+  
+  Valores: Ene=60  Feb=30  Mar=70  Abr=60  May=80</pre>
+      </div>
+    </div>
+    <div class="enunciado">
+      Según el gráfico, ¿entre qué dos meses consecutivos se produjo el mayor aumento en las ventas de libros?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Entre enero y febrero.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Entre febrero y marzo.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Entre marzo y abril.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Entre abril y mayo.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B — Entre febrero y marzo (+40).</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Calculando las variaciones: Ene→Feb: 30−60 = −30 (bajó) | Feb→Mar: 70−30 = <strong>+40</strong> (subió) | Mar→Abr: 60−70 = −10 (bajó) | Abr→May: 80−60 = +20 (subió). El mayor aumento fue entre febrero y marzo: +40 miles de ejemplares.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">Entre enero y febrero las ventas BAJARON de 60 a 30. Distractor para quien no calcula la dirección del cambio.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">Entre marzo y abril las ventas también bajaron. Distractor por no calcular las diferencias.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">Entre abril y mayo subió +20, que es positivo pero menor que el +40 de feb→mar. Distractor para quien solo mira el mes de mayor venta (mayo) sin calcular el incremento.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">📈</div><strong>Análisis de variación:</strong> en preguntas de gráficos que piden "mayor aumento", siempre calcula la diferencia entre pares de valores consecutivos y compáralos todos. El mes con la barra más alta NO es necesariamente donde ocurrió el mayor aumento.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 3 -->
+
+<div class="tip-icfes">
+  <div class="tip-icono">💡</div>
+  <div class="tip-texto"><strong>Tip ICFES #3</strong> — Cuando el contexto es una tabla o gráfico, lee primero los títulos y etiquetas (¿qué mide? ¿en qué unidades?). Muchos estudiantes responden sin entender qué representan los datos, y escogen la opción con el número más grande, lo cual casi siempre es incorrecto.</div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 4: ANÁLISIS DE DISTRACTORES    ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 4 · Análisis de distractores</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">4</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Análisis de distractores (2 preguntas)</div>
+      <div class="seccion-subtitulo">Identifica por qué una opción incorrecta parece razonable</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 9 -->
+  <div class="pregunta-card tipo-distractor">
+    <div class="pregunta-top">
+      <div class="pregunta-num">09</div>
+      <span class="pregunta-tipo-badge badge-distractor">Análisis de distractor</span>
+      <span class="pregunta-area-badge">🔢 Matemáticas</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Situación matemática</span>
+      Un estudiante resuelve la siguiente pregunta: "En un salón de clase, el 60 % de los estudiantes son niños y hay 10 niños más que niñas. ¿Cuántos estudiantes hay en total?"
+      La respuesta correcta es <strong>50 estudiantes</strong>. Sin embargo, el estudiante escogió la opción A (60 estudiantes).
+    </div>
+    <div class="enunciado">
+      ¿Por qué la opción A (60 estudiantes) es un DISTRACTOR eficaz en esta pregunta?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Porque 60 aparece en el enunciado como porcentaje (60 %), y el estudiante lo confundió con el total.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Porque 60 es el número de niños en el salón, no el total.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Porque 60 es la suma de niños y niñas sin contar los que están ausentes.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Porque 60 es el resultado de dividir 10 entre el 60 %.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: A.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Un distractor eficaz usa un número que ya aparece en el enunciado. Aquí, 60 % es el porcentaje de niños, no el total de estudiantes. Los distractores más poderosos son los que aprovechan los datos del enunciado y los "reciclan" como respuesta, explotando la lectura apresurada. La solución correcta: si 60 % son niños y 40 % son niñas, la diferencia es 20 % = 10 niños → total = 10 ÷ 0.20 = 50 estudiantes.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">El número de niños sería 60 % × 50 = 30, no 60. Esta opción es incorrecta porque 60 NO es el número de niños.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">El enunciado no menciona estudiantes ausentes. Esta opción inventa información.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">10 ÷ 0.60 = 16.6, no 60. Esta opción propone una operación que no lleva a 60.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">⚠️</div><strong>Alerta de reciclaje de datos:</strong> cuando veas en las opciones un número que ya aparece en el enunciado (porcentaje, cantidad dada), sospecha que es un distractor trampa. Los diseñadores de pruebas los usan deliberadamente para capturar lectores apresurados.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 10 -->
+  <div class="pregunta-card tipo-distractor">
+    <div class="pregunta-top">
+      <div class="pregunta-num">10</div>
+      <span class="pregunta-tipo-badge badge-distractor">Análisis de distractor</span>
+      <span class="pregunta-area-badge">📚 Comprensión lectora</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Texto breve</span>
+      "Aunque todos los científicos del panel apoyaron la nueva teoría, el director del instituto se negó a publicarla. Señaló que los resultados, aunque prometedores, necesitaban más verificación antes de hacerse públicos."
+    </div>
+    <div class="enunciado">
+      ¿Cuál de las siguientes opciones es un DISTRACTOR basado en una generalización falsa del texto?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> El director bloqueó la publicación porque la teoría era incorrecta.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> El director pidió más verificación antes de publicar la teoría.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Los científicos del panel apoyaron la nueva teoría.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> La teoría era prometedora según el director.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: A — Distractor por generalización falsa.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">La opción A afirma que la teoría "era incorrecta", pero el texto dice exactamente lo contrario: el director la considera "prometedora" y solo pide más verificación. Esta opción generaliza de forma falsa al atribuir al director una razón que el texto no menciona. Es un distractor que cambia el <em>por qué</em> de la negativa.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de opciones</div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">Esta opción es CORRECTA según el texto (no es un distractor). Refleja fielmente la razón dada por el director.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">También verdadera según el texto: "todos los científicos del panel apoyaron la nueva teoría".</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">También verdadera: el director la llamó "prometedora" explícitamente.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">🔎</div><strong>Verificación de causas:</strong> los distractores más engañosos cambian el <em>motivo</em> o la <em>causa</em> de algo (el "por qué"), no el hecho en sí. Cuando veas una opción que explica una razón, comprueba si esa razón aparece literalmente en el texto.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 4 -->
+
+<div class="tip-icfes">
+  <div class="tip-icono">💡</div>
+  <div class="tip-texto"><strong>Tip ICFES #4</strong> — Hay 4 tipos de distractores frecuentes: (1) datos reciclados del enunciado, (2) generalizaciones excesivas, (3) información externa no mencionada, y (4) inversión de la información. Reconocerlos te permite descartarlos en segundos sin necesidad de calcular.</div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 5: ESTRATEGIAS DE ELIMINACIÓN  ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 5 · Estrategias de eliminación</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">5</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Estrategias de eliminación (2 preguntas)</div>
+      <div class="seccion-subtitulo">Descarta opciones paso a paso antes de elegir</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 11 -->
+  <div class="pregunta-card tipo-eliminacion">
+    <div class="pregunta-top">
+      <div class="pregunta-num">11</div>
+      <span class="pregunta-tipo-badge badge-eliminacion">Eliminación de opciones</span>
+      <span class="pregunta-area-badge">🧠 Razonamiento lógico</span>
+    </div>
+    <div class="enunciado">
+      Todos los mamíferos tienen sangre caliente. Los delfines son mamíferos. Por lo tanto, ¿cuál de las siguientes conclusiones es lógicamente válida?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Todos los animales de sangre caliente son mamíferos.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Los delfines tienen sangre caliente.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Los delfines son los únicos mamíferos que viven en el agua.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Solo los delfines son mamíferos con sangre caliente.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B — Los delfines tienen sangre caliente.</span></div>
+        <div class="sol-seccion-titulo">🧩 Eliminación paso a paso</div>
+        <div class="sol-explicacion"><strong>Paso 1 — Elimina A:</strong> el enunciado dice "todos los mamíferos tienen sangre caliente", pero NO dice que "todos los animales de sangre caliente son mamíferos" (las aves también la tienen). Lógicamente inválida. ❌<br><br><strong>Paso 2 — Elimina C:</strong> el enunciado no dice nada sobre hábitats acuáticos. Es información externa no soportada. ❌<br><br><strong>Paso 3 — Elimina D:</strong> "solo los delfines" es una restricción que no aparece en las premisas. Generalización falsa. ❌<br><br><strong>Conclusión:</strong> solo queda B. Y es válida: mamífero → sangre caliente; delfín → mamífero; por lo tanto delfín → sangre caliente. ✅</div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">✂️</div><strong>Eliminación sistemática:</strong> en razonamiento lógico, descarta primero las opciones que contienen palabras absolutas no soportadas por las premisas: "solo", "únicos", "todos los demás". Estas casi siempre son distractores. Lo que queda es la respuesta.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 12 -->
+  <div class="pregunta-card tipo-eliminacion">
+    <div class="pregunta-top">
+      <div class="pregunta-num">12</div>
+      <span class="pregunta-tipo-badge badge-eliminacion">Eliminación de opciones</span>
+      <span class="pregunta-area-badge">🌍 Ciencias sociales</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Situación</span>
+      Una ciudad quiere reducir la contaminación del aire. El alcalde propone cuatro medidas. Un experto ambiental señala que solo una de ellas tiene evidencia científica sólida para reducir directamente las emisiones de gases contaminantes en el corto plazo.
+    </div>
+    <div class="enunciado">
+      ¿Cuál de las siguientes medidas tiene mayor impacto directo e inmediato sobre las emisiones de gases contaminantes en una ciudad?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Sembrar árboles en los parques de la ciudad.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Restringir la circulación de vehículos con motores a gasolina en horas pico.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Pintar los edificios de colores claros para reflejar el calor solar.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Aumentar las multas por arrojar basura en las calles.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B — Restringir vehículos con motores a gasolina.</span></div>
+        <div class="sol-seccion-titulo">🧩 Eliminación paso a paso</div>
+        <div class="sol-explicacion"><strong>Paso 1 — Elimina C:</strong> pintar edificios reduce el efecto de isla de calor, no las emisiones de gases. No es directamente relacionado con contaminación del aire. ❌<br><br><strong>Paso 2 — Elimina D:</strong> las multas por basura reducen la contaminación sólida, no los gases del aire. Área de impacto diferente. ❌<br><br><strong>Paso 3 — Compara A y B:</strong> sembrar árboles absorbe CO₂ a largo plazo, pero no reduce emisiones en el corto plazo. Restringir vehículos SÍ reduce directamente las emisiones en horas específicas. ✅<br><br>La clave del enunciado era <strong>"directo e inmediato"</strong>: los árboles actúan a mediano/largo plazo.</div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">🗝️</div><strong>Palabras clave del enunciado:</strong> subraya los modificadores como "directo", "inmediato", "mayor". Estos ajustan cuál opción es la mejor entre varias que podrían parecer correctas. Aquí, A sería buena respuesta sin "inmediato", pero con ese calificador, B la supera.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 5 -->
+
+<div class="tip-icfes">
+  <div class="tip-icono">💡</div>
+  <div class="tip-texto"><strong>Tip ICFES #5</strong> — La técnica de eliminación te permite llegar a la respuesta correcta incluso cuando no estás 100 % seguro. Si eliminas 2 opciones claramente incorrectas, tus probabilidades pasan del 25 % al 50 %. Con 3 eliminadas, la última siempre es la correcta.</div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 6: IDENTIFICACIÓN DE RESPUESTA ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 6 · Identificación de la respuesta correcta</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">6</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Identificación de la respuesta correcta (1 pregunta)</div>
+      <div class="seccion-subtitulo">Justifica tu elección con evidencia del contexto</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 13 -->
+  <div class="pregunta-card tipo-correcta">
+    <div class="pregunta-top">
+      <div class="pregunta-num">13</div>
+      <span class="pregunta-tipo-badge badge-correcta">Justificación</span>
+      <span class="pregunta-area-badge">📚 Comprensión lectora</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Texto argumentativo</span>
+      "El acceso a la educación de calidad es uno de los derechos fundamentales del ser humano. Sin embargo, en muchos países, las brechas económicas determinan quién puede acceder a una buena educación y quién no. Invertir en educación pública no es un gasto: es la mejor inversión que puede hacer una sociedad para garantizar su propio desarrollo."
+    </div>
+    <div class="enunciado">
+      Según el texto, ¿cuál es la posición del autor frente a la inversión en educación pública?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Considera que es un gasto innecesario que los gobiernos deben evitar.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Afirma que la educación pública beneficia únicamente a quienes no pueden pagar educación privada.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> Defiende que invertir en educación pública es la mejor decisión que puede tomar una sociedad.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Señala que la educación de calidad solo es posible en países desarrollados.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: C — El autor defiende la inversión en educación pública.</span></div>
+        <div class="sol-seccion-titulo">🧩 Justificación con evidencia textual</div>
+        <div class="sol-explicacion">La evidencia directa está en la última oración: "Invertir en educación pública <strong>no es un gasto: es la mejor inversión</strong> que puede hacer una sociedad". Esta construcción contrastiva (no es X, es Y) revela inequívocamente la posición del autor. La clave para identificar la respuesta correcta es localizarla en el texto y no interpretarla más allá de lo dicho.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">Contradice directamente al texto, que dice lo opuesto. Distractor por inversión total del argumento.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">El texto habla de "toda la sociedad", no solo de quienes no tienen acceso a educación privada. Distractor por restricción falsa del beneficio.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">El texto no hace distinción entre países desarrollados y en desarrollo. Distractor por información externa no presente.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">📌</div><strong>Anclaje en la evidencia:</strong> para justificar una respuesta, siempre identifica la frase del texto que la sostiene. Si no puedes señalar esa frase, la opción probablemente sea un distractor. "¿Dónde dice eso exactamente?" es la pregunta correctora más poderosa.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 6 -->
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 7: PRESIÓN DE TIEMPO           ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 7 · Toma de decisiones bajo presión</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">7</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Toma de decisiones bajo presión (1 pregunta)</div>
+      <div class="seccion-subtitulo">Practica responder cuando el tiempo se acaba</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 14 -->
+  <div class="pregunta-card tipo-presion">
+    <div class="pregunta-top">
+      <div class="pregunta-num">14</div>
+      <span class="pregunta-tipo-badge badge-presion">⏰ Bajo presión</span>
+      <span class="pregunta-area-badge">🔢 Matemáticas</span>
+    </div>
+    <div class="presion-banner">
+      ⏱️ <strong>SITUACIÓN DE PRESIÓN:</strong> Te quedan 30 segundos para terminar el examen. Esta es la última pregunta que no has respondido. Debes decidir ya.
+    </div>
+    <div class="enunciado">
+      En una bolsa hay 13 pelotas: algunas verdes y otras amarillas. El número de pelotas verdes es uno más que el de las amarillas. ¿Cuál es la probabilidad de sacar al azar una pelota amarilla?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> 1/13</div>
+      <div class="opcion"><div class="opcion-letra">B</div> 6/13</div>
+      <div class="opcion"><div class="opcion-letra">C</div> 7/13</div>
+      <div class="opcion"><div class="opcion-letra">D</div> 1/2</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: B — 6/13.</span></div>
+        <div class="sol-seccion-titulo">🧩 Solución rápida (menos de 30 seg)</div>
+        <div class="sol-explicacion"><strong>Paso 1:</strong> Total = 13 pelotas. Verdes = Amarillas + 1. <strong>Paso 2:</strong> V + A = 13 y V = A + 1 → (A+1) + A = 13 → 2A = 12 → A = 6. <strong>Paso 3:</strong> Probabilidad amarilla = 6/13. Respuesta: B. Este problema solo requiere plantear un sistema simple de dos ecuaciones.</div>
+        <div class="sol-seccion-titulo">🧠 Protocolo bajo presión</div>
+        <div class="sol-explicacion">Cuando queda poco tiempo: (1) lee solo el enunciado, (2) descarta A (1/13 sería si solo hubiera 1 pelota amarilla) y D (1/2 sería si las cantidades fueran iguales), (3) elige entre B y C: como las amarillas son <em>menos</em> que las verdes, su probabilidad debe ser <em>menor</em> que 1/2, es decir, menor que 6.5/13. Solo B (6/13) cumple esto.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">A</div><div class="distractor-texto">1/13 implica que solo hay 1 pelota amarilla de 13, lo cual contradiría el enunciado (habría 12 verdes y 1 amarilla, diferencia de 11, no de 1).</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">7/13 correspondería a la probabilidad de sacar una pelota <em>verde</em>, no amarilla. Distractor por confundir qué cantidad corresponde a cada color.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">1/2 implicaría igual número de pelotas de cada color, pero el enunciado dice que hay una diferencia de 1.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia bajo presión</div>
+        <div class="estrategia"><div class="estrategia-icono">🚨</div><strong>Protocolo de emergencia:</strong> con poco tiempo, prioriza descarte rápido. Elimina primero los extremos absurdos (A y D aquí). Luego usa la lógica del enunciado (las amarillas son MENOS → probabilidad menor a 1/2). Esto reduce a 1 opción en 15 segundos.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 7 -->
+
+<div class="tip-icfes">
+  <div class="tip-icono">💡</div>
+  <div class="tip-texto"><strong>Tip ICFES #6 — Gestión del tiempo:</strong> si una pregunta te toma más de 2 minutos, márcala con una señal discreta en tu hoja y continúa. Al final del examen, vuelve a las marcadas con el tiempo sobrante. Es mejor responder 38 preguntas bien que 30 perfectas y 10 sin responder.</div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  SECCIÓN 8: ERRORES COMUNES             ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="sep-seccion"><div class="sep-linea"></div><div class="sep-texto">Sección 8 · Errores comunes en selección múltiple</div><div class="sep-linea"></div></div>
+
+<div class="seccion">
+  <div class="seccion-header">
+    <div class="seccion-num">8</div>
+    <div class="seccion-info">
+      <div class="seccion-titulo">Errores comunes (1 pregunta)</div>
+      <div class="seccion-subtitulo">Identifica qué error cometió el estudiante y por qué</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 15 -->
+  <div class="pregunta-card tipo-errores">
+    <div class="pregunta-top">
+      <div class="pregunta-num">15</div>
+      <span class="pregunta-tipo-badge badge-errores">Error común</span>
+      <span class="pregunta-area-badge">🧠 Metacognición</span>
+    </div>
+    <div class="contexto">
+      <span class="contexto-label">Situación de aprendizaje</span>
+      Laura resuelve un examen tipo ICFES. Al llegar a la pregunta 18, lee rápidamente el enunciado sin leer el contexto (un texto de tres párrafos) y escoge la opción A. Cuando revisa al final, nota que la respuesta correcta era C. Al releer el contexto, descubre que la opción A era un distractor basado en su conocimiento previo del tema, pero contradecía lo que decía específicamente el texto de la prueba.
+    </div>
+    <div class="enunciado">
+      ¿Cuál fue el error principal que cometió Laura al responder la pregunta?
+    </div>
+    <div class="opciones">
+      <div class="opcion"><div class="opcion-letra">A</div> Respondió con base en su conocimiento previo en lugar de leer y apoyarse en el contexto dado.</div>
+      <div class="opcion"><div class="opcion-letra">B</div> Eligió la opción A sin saber que siempre es una opción incorrecta en pruebas ICFES.</div>
+      <div class="opcion"><div class="opcion-letra">C</div> No tenía suficiente conocimiento del tema para responder la pregunta correctamente.</div>
+      <div class="opcion"><div class="opcion-letra">D</div> Gastó demasiado tiempo en preguntas anteriores y no pudo concentrarse bien.</div>
+    </div>
+    <div class="solucion">
+      <button class="solucion-toggle" onclick="toggleSol(this)">
+        📖 Ver solución guiada
+        <span class="solucion-toggle-icon">▼</span>
+      </button>
+      <div class="solucion-body">
+        <div class="sol-correcta">✅ <span class="sol-correcta-texto">Respuesta correcta: A — Respondió desde su conocimiento previo, ignorando el contexto.</span></div>
+        <div class="sol-seccion-titulo">🧩 Explicación</div>
+        <div class="sol-explicacion">Este es el error más frecuente en pruebas de comprensión: el estudiante <em>sabe</em> del tema y cree que no necesita leer el contexto. Pero las preguntas tipo ICFES se responden con la información del texto dado, que puede diferir de lo que el estudiante conoce de memoria. Incluso si lo que sabe es correcto en general, el texto específico de la prueba puede presentar una posición diferente.</div>
+        <div class="sol-seccion-titulo">⚠️ Análisis de distractores</div>
+        <div class="distractor-item"><div class="distractor-letra">B</div><div class="distractor-texto">La opción A no es siempre incorrecta. Las respuestas correctas se distribuyen aleatoriamente entre A, B, C y D en el ICFES. Esta creencia es un mito.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">C</div><div class="distractor-texto">El problema no era falta de conocimiento, sino no usar el contexto. De hecho, saber demasiado puede ser un obstáculo si no se lee el texto.</div></div>
+        <div class="distractor-item"><div class="distractor-letra">D</div><div class="distractor-texto">El enunciado no dice que Laura tuvo problemas de tiempo. Distractor que introduce una causa no mencionada.</div></div>
+        <div class="sol-seccion-titulo">💡 Estrategia utilizada</div>
+        <div class="estrategia"><div class="estrategia-icono">📖</div><strong>Regla de oro de comprensión:</strong> en el ICFES, la respuesta correcta siempre está sostenida por el texto dado, no por lo que el estudiante sabe de memoria. Si tu respuesta "suena bien" pero no encuentras dónde lo dice el texto, es probable que sea un distractor diseñado para ti.</div>
+        <div class="sol-seccion-titulo">🎯 Los 5 errores más comunes en selección múltiple</div>
+        <div class="sol-explicacion">
+          1. <strong>Responder desde el conocimiento previo</strong> sin leer el contexto (el error de Laura).<br>
+          2. <strong>Elegir la primera opción</strong> que parece correcta sin comparar las demás.<br>
+          3. <strong>Caer en distractores numéricos</strong> que reciclan datos del enunciado.<br>
+          4. <strong>Ignorar palabras clave</strong> como "solo", "únicamente", "siempre", "nunca".<br>
+          5. <strong>Cambiar una respuesta</strong> sin razón sólida en la revisión final (la primera intuición suele ser correcta).
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /seccion 8 -->
+
+<a id="btn-volver"
+   href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=291"
+   style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+  🏫 Regresar al Aula Virtual
+</a>
+
+<script>
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=291';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=291';
+
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (esMóvil) {
+    btn.href = appUrl;
+  }
+</script>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<div class="footer">
+  <p style="margin-bottom:8px"><strong>🎓 Instituto Innova · Validación del Bachillerato</strong></p>
+  <p style="margin-bottom:6px">Curso de preparación para el examen ICFES Saber 11 · Nivel 0 — Inducción</p>
+  <p>Ejercicio diseñado con fines pedagógicos. Las preguntas de referencia fueron adaptadas del examen de admisión de la Universidad de Antioquia (dominio público). © Instituto Innova.</p>
+</div>
+
+<!-- ============================================================
+     SCRIPT — TOGGLE DE SOLUCIONES
+============================================================ -->
+<script>
+function toggleSol(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = body.classList.contains('visible');
+  body.classList.toggle('visible', !isOpen);
+  btn.classList.toggle('abierto', !isOpen);
+  btn.querySelector('.solucion-toggle-icon').textContent = isOpen ? '▼' : '▲';
+}
+</script>
+</body>
+</html>

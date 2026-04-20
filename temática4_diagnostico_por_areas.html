@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Diagnóstica | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* =============================================
+     VARIABLES Y RESET
+  ============================================= */
+  :root {
+    --azul: #1a2e4a;
+    --azul-medio: #243d63;
+    --azul-claro: #2f5080;
+    --dorado: #c9a84c;
+    --dorado-claro: #e2c06d;
+    --dorado-suave: rgba(201,168,76,0.12);
+    --blanco: #ffffff;
+    --gris-claro: #f4f6f9;
+    --gris-medio: #e0e4ea;
+    --gris-texto: #6b7a8d;
+    --verde: #27ae60;
+    --rojo: #e74c3c;
+    --sombra: 0 8px 32px rgba(26,46,74,0.13);
+    --sombra-hover: 0 16px 48px rgba(26,46,74,0.22);
+    --radio: 16px;
+    --radio-grande: 24px;
+    --transicion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gris-claro);
+    color: var(--azul);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 0%, rgba(201,168,76,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 100%, rgba(26,46,74,0.06) 0%, transparent 50%);
+  }
+
+  /* =============================================
+     PANTALLA DE INICIO
+  ============================================= */
+  #pantalla-inicio {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .logo-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .logo-escudo {
+    width: 80px;
+    height: 80px;
+    background: var(--azul);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 20px rgba(26,46,74,0.25);
+    border: 3px solid var(--dorado);
+  }
+
+  .logo-escudo span { font-size: 2.2rem; }
+
+  .logo-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    color: var(--azul);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-header p {
+    color: var(--dorado);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .card-inicio {
+    background: var(--blanco);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra);
+    padding: 2.5rem 2rem;
+    max-width: 680px;
+    width: 100%;
+    border-top: 5px solid var(--dorado);
+  }
+
+  .card-inicio h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    color: var(--azul);
+    margin-bottom: 0.8rem;
+    line-height: 1.25;
+  }
+
+  .card-inicio h2 span { color: var(--dorado); }
+
+  .card-inicio .subtitulo {
+    color: var(--gris-texto);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .areas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .area-chip {
+    background: var(--dorado-suave);
+    border: 1.5px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 0.7rem 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--azul);
+  }
+
+  .area-chip .emoji { font-size: 1.1rem; }
+
+  .info-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .info-badge {
+    background: var(--gris-claro);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    color: var(--azul-medio);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .info-badge strong { color: var(--azul); }
+
+  .btn-primario {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, var(--azul), var(--azul-medio));
+    color: var(--blanco);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transicion);
+    box-shadow: 0 4px 20px rgba(26,46,74,0.35);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primario::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn-primario:hover::after { opacity: 1; }
+  .btn-primario:hover { color: var(--azul); box-shadow: var(--sombra-hover); transform: translateY(-2px); }
+  .btn-primario span { position: relative; z-index: 1; }
+
+  /* =============================================
+     PANTALLA DE PREGUNTA
+  ============================================= */
+  #pantalla-pregunta {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem 3rem;
+    display: none;
+  }
+
+  .header-quiz {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .header-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--azul);
+  }
+
+  .area-badge {
+    background: var(--dorado-suave);
+    border: 1.5px solid var(--dorado);
+    border-radius: 20px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--azul);
+    letter-spacing: 0.5px;
+  }
+
+  .progreso-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .progreso-texto {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gris-texto);
+  }
+
+  .progreso-num {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--azul);
+  }
+
+  .barra-progreso {
+    width: 100%;
+    height: 8px;
+    background: var(--gris-medio);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .barra-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dorado), var(--dorado-claro));
+    border-radius: 50px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Tarjeta de pregunta */
+  .card-pregunta {
+    background: var(--blanco);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra);
+    padding: 2rem 1.75rem;
+    max-width: 720px;
+    width: 100%;
+    animation: slideUp 0.4s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .num-pregunta {
+    display: inline-block;
+    background: var(--azul);
+    color: var(--dorado);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .texto-pregunta {
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    font-weight: 500;
+    line-height: 1.7;
+    color: var(--azul);
+    margin-bottom: 1.75rem;
+  }
+
+  /* Opciones */
+  .opciones-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .opcion-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 2px solid var(--gris-medio);
+    border-radius: var(--radio);
+    cursor: pointer;
+    transition: var(--transicion);
+    user-select: none;
+    background: var(--blanco);
+  }
+
+  .opcion-item:hover {
+    border-color: var(--dorado);
+    background: var(--dorado-suave);
+  }
+
+  .opcion-item.seleccionada {
+    border-color: var(--azul);
+    background: rgba(26,46,74,0.05);
+  }
+
+  .opcion-letra {
+    min-width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--gris-claro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--azul);
+    transition: var(--transicion);
+    flex-shrink: 0;
+  }
+
+  .opcion-item.seleccionada .opcion-letra {
+    background: var(--azul);
+    color: var(--dorado);
+  }
+
+  .opcion-texto {
+    font-size: 0.95rem;
+    color: var(--azul);
+    line-height: 1.5;
+  }
+
+  .alerta-responde {
+    background: #fff3cd;
+    border: 1.5px solid #ffc107;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    color: #856404;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .btn-siguiente {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    background: linear-gradient(135deg, var(--azul), var(--azul-claro));
+    color: var(--blanco);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transicion);
+    box-shadow: 0 4px 15px rgba(26,46,74,0.3);
+  }
+
+  .btn-siguiente:hover {
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+    color: var(--azul);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-hover);
+  }
+
+  /* =============================================
+     PANTALLA DE RESULTADOS
+  ============================================= */
+  #pantalla-resultado {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 3rem;
+    display: none;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .resultado-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .trofeo-icono {
+    font-size: 4rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    animation: bounce 0.6s ease 0.3s both;
+  }
+
+  @keyframes bounce {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .resultado-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: var(--azul);
+    margin-bottom: 0.5rem;
+  }
+
+  .mensaje-motivacional {
+    font-size: 1rem;
+    color: var(--gris-texto);
+    line-height: 1.6;
+    font-style: italic;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .card-resultado {
+    background: var(--blanco);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra);
+    padding: 2rem;
+    max-width: 720px;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-top: 5px solid var(--dorado);
+  }
+
+  .puntaje-grande {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1.5px solid var(--gris-medio);
+  }
+
+  .puntaje-grande .numero {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 800;
+    color: var(--azul);
+    line-height: 1;
+  }
+
+  .puntaje-grande .de-total {
+    font-size: 1.1rem;
+    color: var(--gris-texto);
+    font-weight: 500;
+  }
+
+  .puntaje-grande .etiqueta {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dorado);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-box {
+    border-radius: var(--radio);
+    padding: 1.1rem;
+    text-align: center;
+  }
+
+  .stat-box.aciertos {
+    background: rgba(39,174,96,0.09);
+    border: 1.5px solid rgba(39,174,96,0.25);
+  }
+
+  .stat-box.errores {
+    background: rgba(231,76,60,0.09);
+    border: 1.5px solid rgba(231,76,60,0.25);
+  }
+
+  .stat-box .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-box.aciertos .stat-num { color: var(--verde); }
+  .stat-box.errores .stat-num { color: var(--rojo); }
+
+  .stat-box .stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gris-texto);
+  }
+
+  /* Resultados por área */
+  .areas-resultado {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .area-resultado-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .area-label {
+    min-width: 160px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--azul);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .area-barra-wrap {
+    flex: 1;
+    height: 10px;
+    background: var(--gris-medio);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .area-barra-fill {
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--azul), var(--dorado));
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .area-puntaje {
+    min-width: 45px;
+    text-align: right;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--azul);
+  }
+
+  /* Botones finales */
+  .botones-finales {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .btn-reiniciar {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 2px solid var(--azul);
+    color: var(--azul);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.9rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transicion);
+    text-align: center;
+  }
+
+  .btn-reiniciar:hover {
+    background: var(--azul);
+    color: var(--blanco);
+    box-shadow: var(--sombra);
+  }
+
+  #btn-volver {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, #FFE066, #F59E0B);
+    color: #2D1B0E;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1em;
+    padding: 14px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.45);
+    transition: var(--transicion);
+  }
+
+  #btn-volver:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(245,158,11,0.55);
+  }
+
+  /* =============================================
+     RESPONSIVE
+  ============================================= */
+  @media (max-width: 480px) {
+    .areas-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .area-label { min-width: 120px; font-size: 0.75rem; }
+    .card-inicio, .card-pregunta, .card-resultado { padding: 1.5rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =============================================
+     PANTALLA 1: INICIO
+============================================= -->
+<div id="pantalla-inicio">
+  <div class="logo-header">
+    <div class="logo-escudo"><span>🎓</span></div>
+    <h1>Instituto Innova</h1>
+    <p>Validación del Bachillerato</p>
+  </div>
+
+  <div class="card-inicio">
+    <h2>Simulacro <span>Diagnóstico</span><br>Saber 11°</h2>
+    <p class="subtitulo">
+      Evaluación inicial para identificar tu nivel de conocimientos antes de comenzar el programa.
+      Responde con tranquilidad — este es tu punto de partida.
+    </p>
+
+    <div class="areas-grid">
+      <div class="area-chip"><span class="emoji">📘</span> Lectura crítica</div>
+      <div class="area-chip"><span class="emoji">🔢</span> Matemáticas</div>
+      <div class="area-chip"><span class="emoji">🔬</span> Ciencias naturales</div>
+      <div class="area-chip"><span class="emoji">🌍</span> Sociales</div>
+      <div class="area-chip"><span class="emoji">🇬🇧</span> Inglés</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-badge">📝 <strong>30</strong>&nbsp;preguntas</div>
+      <div class="info-badge">🎯 Selección múltiple</div>
+      <div class="info-badge">⏱️ Sin límite de tiempo</div>
+    </div>
+
+    <button class="btn-primario" onclick="iniciarEvaluacion()">
+      <span>🚀 Comenzar evaluación</span>
+    </button>
+  </div>
+</div>
+
+<!-- =============================================
+     PANTALLA 2: PREGUNTA
+============================================= -->
+<div id="pantalla-pregunta">
+  <div class="header-quiz">
+    <div class="header-top">
+      <div class="header-logo">Instituto Innova</div>
+      <div class="area-badge" id="etiqueta-area">Área</div>
+    </div>
+    <div class="progreso-info">
+      <span class="progreso-texto">Progreso</span>
+      <span class="progreso-num" id="contador-texto">Pregunta 1 de 30</span>
+    </div>
+    <div class="barra-progreso">
+      <div class="barra-fill" id="barra-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="card-pregunta" id="card-pregunta">
+    <span class="num-pregunta" id="num-pregunta">Pregunta 1</span>
+    <p class="texto-pregunta" id="texto-pregunta"></p>
+    <ul class="opciones-list" id="opciones-list"></ul>
+    <div class="alerta-responde" id="alerta-responde">⚠️ Por favor selecciona una opción antes de continuar.</div>
+    <button class="btn-siguiente" onclick="siguientePregunta()">
+      <span id="btn-texto-siguiente">Siguiente →</span>
+    </button>
+  </div>
+</div>
+
+<!-- =============================================
+     PANTALLA 3: RESULTADO
+============================================= -->
+<div id="pantalla-resultado">
+  <div class="resultado-header">
+    <span class="trofeo-icono" id="trofeo-icono">🏆</span>
+    <h2>¡Evaluación completada!</h2>
+    <p class="mensaje-motivacional" id="mensaje-motivacional"></p>
+  </div>
+
+  <div class="card-resultado">
+    <div class="puntaje-grande">
+      <div class="etiqueta">Puntaje total</div>
+      <div class="numero" id="puntaje-numero">0</div>
+      <div class="de-total">de 30 preguntas</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box aciertos">
+        <span class="stat-num" id="num-aciertos">0</span>
+        <span class="stat-label">✅ Aciertos</span>
+      </div>
+      <div class="stat-box errores">
+        <span class="stat-num" id="num-errores">0</span>
+        <span class="stat-label">❌ Errores</span>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem">
+      <p style="font-size:0.85rem;font-weight:700;color:var(--gris-texto);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.9rem">
+        Resultados por área
+      </p>
+      <div class="areas-resultado" id="areas-resultado"></div>
+    </div>
+  </div>
+
+  <div class="botones-finales">
+    <button class="btn-reiniciar" onclick="reiniciarEvaluacion()">🔄 Reiniciar evaluación</button>
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=96">
+      🏫 Regresar al Aula Virtual
+    </a>
+  </div>
+</div>
+
+<!-- =============================================
+     JAVASCRIPT
+============================================= -->
+<script>
+/* =============================================
+   BANCO DE PREGUNTAS POR ÁREA
+   Fuente: Estructura ICFES Saber 11 / Manual de Supervivencia
+============================================= */
+
+const AREAS = {
+  lecturasCritica: {
+    nombre: "Lectura crítica",
+    emoji: "📘",
+    preguntas: [
+      {
+        texto: "En el texto de Eduardo Galeano «Un planeta descartable», el autor usa expresiones como «enloquecimiento del clima», «derramar lágrimas» y «la naturaleza sufre». Este recurso discursivo se define como:",
+        opciones: ["Personificación.", "Analogía.", "Prosopografía.", "Hipérbole."],
+        correcta: 0
+      },
+      {
+        texto: "En el mismo texto de Galeano, la conclusión principal que busca el autor es:",
+        opciones: [
+          "Explicar las causas del deterioro del planeta.",
+          "Plantear una posición crítica sobre la situación del planeta.",
+          "Plantear una posición neutral frente a la situación del planeta.",
+          "Advertir las consecuencias del deterioro del planeta."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Según el texto de Galeano, cuando afirma que el 25% de la humanidad comete el 75% de los crímenes contra la naturaleza, el autor se refiere principalmente a:",
+        opciones: [
+          "Los países del sur del mundo.",
+          "Los países del norte con mayor consumo per cápita.",
+          "Los países productores de petróleo.",
+          "Los gobiernos que financian guerras."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "En el texto «La ventanilla del bus», la narración predominante combina:",
+        opciones: [
+          "La primera persona del singular y la segunda persona del plural.",
+          "La tercera persona del plural y la tercera persona del singular.",
+          "La primera persona del singular y la primera persona del plural.",
+          "La segunda persona del plural y la tercera persona del singular."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "En «La ventanilla del bus», el enunciado «un simulacro es la suplantación de lo real por los signos de lo real» se introduce con la intención de:",
+        opciones: [
+          "Argumentar la idea de que leer la ciudad es leernos a nosotros mismos.",
+          "Definir el significado de simulacro partiendo de un viaje en bus por la ciudad.",
+          "Proponer un método para leer la ciudad a partir de los planteamientos de Baudrillard.",
+          "Discutir la concepción de Baudrillard en torno a la posibilidad de hallar la ciudad."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "Laura Esquivel, en su texto sobre la gastronomía y la cultura, utiliza como recurso expositivo principal:",
+        opciones: [
+          "La pregunta de carácter retórico.",
+          "La comparación de fenómenos culturales.",
+          "La ejemplificación con detalles de la vida cotidiana.",
+          "La enumeración de eventos históricos."
+        ],
+        correcta: 0
+      }
+    ]
+  },
+  matematicas: {
+    nombre: "Matemáticas",
+    emoji: "🔢",
+    preguntas: [
+      {
+        texto: "A partir de un conjunto S con promedio 9 y desviación estándar 3, se construye T sumándole 4 a cada elemento de S. Los valores del promedio y la desviación estándar de T son, respectivamente:",
+        opciones: ["9 y 3", "13 y 3", "9 y 7", "13 y 7"],
+        correcta: 1
+      },
+      {
+        texto: "Una prueba atlética tiene un récord mundial de 10.49 segundos y un récord olímpico de 10.50 segundos. ¿Es posible que un atleta rompa el récord olímpico sin romper el mundial?",
+        opciones: [
+          "Sí, porque puede registrar 10.497 s, que está entre los dos tiempos récord.",
+          "Sí, porque puede registrar un tiempo menor que 10.4 s.",
+          "No, porque no existe un registro posible entre los dos tiempos récord.",
+          "No, porque cualquier registro menor al récord olímpico es menor al mundial."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "Daniel construye una caja rectangular cuya longitud es 1 metro más larga que el doble de la anchura y su perímetro es de 29 metros. La fórmula correcta para encontrar las dimensiones es:",
+        opciones: [
+          "2A + 2A = 29",
+          "2A + 1 = 29",
+          "2A + 2(A + 2) = 29",
+          "2A + 2(2A + 1) = 29"
+        ],
+        correcta: 3
+      },
+      {
+        texto: "Un concesionario paga a sus vendedores un salario base de $1.000.000 más 10% extra por cada año de antigüedad, más 1% de comisión sobre ventas. La fórmula del salario S según antigüedad A y ventas V es:",
+        opciones: [
+          "S = 1.000.000 + 10V",
+          "S = 1.000.000A + 0.1V",
+          "S = 1.000.000 + 100.000A + 0.01V",
+          "S = 1.000.000A + 100.000A + 0.01V"
+        ],
+        correcta: 2
+      },
+      {
+        texto: "Una página de periódico tiene un área de impresión de 70 in². El largo es el doble del ancho y el margen es uniforme de 2 in. La ecuación que representa esta situación es:",
+        opciones: [
+          "(2X + 2)(X + 2) = 70",
+          "(4X + 4)(2X + 4) = 70",
+          "(2X + 4)(X + 4) = 70",
+          "(2X − 4)(X − 4) = 70"
+        ],
+        correcta: 3
+      },
+      {
+        texto: "La siguiente sucesión: 1, 1+8, 1+8+27, 1+8+27+64… se puede expresar también como:",
+        opciones: [
+          "1, 8, 36, 100, …",
+          "1³, 1³+2³, 1³+2³+3³, 1³+2³+3³+4³",
+          "1, (1+3)², (1+2+3)², (1+2+3+4)²",
+          "1³, 2³, 3³, 4³"
+        ],
+        correcta: 2
+      }
+    ]
+  },
+  ciencias: {
+    nombre: "Ciencias naturales",
+    emoji: "🔬",
+    preguntas: [
+      {
+        texto: "El corazón es un órgano muscular hueco que actúa como bomba para impulsar la sangre. Este proceso se denomina:",
+        opciones: [
+          "Respiración celular.",
+          "Circulación sanguínea.",
+          "Homeostasis.",
+          "Fotosíntesis."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Las plantas aprovechan la luz solar para producir glucosa mediante un proceso que se denomina:",
+        opciones: [
+          "Respiración aeróbica.",
+          "Fermentación láctica.",
+          "Fotosíntesis.",
+          "Ósmosis."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "Las hormonas son mensajeros químicos que coordinan respuestas en el organismo. ¿Qué sistema del cuerpo humano las produce principalmente?",
+        opciones: [
+          "Sistema nervioso periférico.",
+          "Sistema endocrino.",
+          "Sistema linfático.",
+          "Sistema digestivo."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Cuando se mezclan una sustancia ácida (como el vinagre) y una básica (como el bicarbonato de sodio), se produce una reacción química denominada:",
+        opciones: [
+          "Combustión.",
+          "Reducción.",
+          "Neutralización.",
+          "Oxidación."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "La digestión es el proceso mediante el cual el cuerpo transforma los alimentos en nutrientes. El órgano principal donde se absorben la mayoría de los nutrientes es:",
+        opciones: [
+          "El estómago.",
+          "El intestino delgado.",
+          "El intestino grueso.",
+          "El esófago."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Según la Ley de Newton, cuando ejerces una fuerza sobre un objeto, el objeto ejerce sobre ti una fuerza igual en magnitud pero en sentido contrario. Esta es la:",
+        opciones: [
+          "Primera Ley de Newton (inercia).",
+          "Segunda Ley de Newton (F = ma).",
+          "Tercera Ley de Newton (acción y reacción).",
+          "Ley de la gravitación universal."
+        ],
+        correcta: 2
+      }
+    ]
+  },
+  sociales: {
+    nombre: "Sociales y ciudadanas",
+    emoji: "🌍",
+    preguntas: [
+      {
+        texto: "La Constitución Política de Colombia de 1991 define al país como un Estado Social de Derecho. Esto implica principalmente que:",
+        opciones: [
+          "El Estado prioriza las leyes por encima de los derechos ciudadanos.",
+          "El Estado garantiza los derechos fundamentales y el bienestar de todos los ciudadanos.",
+          "El Estado solo obedece normas internacionales.",
+          "Los derechos se adquieren únicamente por compra o herencia."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "La amnistía se entiende como:",
+        opciones: [
+          "La sanción que impone el Estado a quienes violan la Constitución.",
+          "El perdón o el olvido oficial de ciertos delitos, especialmente de carácter político.",
+          "El mecanismo que permite extraditar criminales a otros países.",
+          "La suspensión temporal de los derechos civiles en estado de emergencia."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Desastres como el de Armero (1985) en Colombia evidencian la importancia de:",
+        opciones: [
+          "Construir más represas para controlar ríos.",
+          "Fortalecer los sistemas de prevención y gestión del riesgo de desastres.",
+          "Prohibir el asentamiento humano en todas las zonas rurales.",
+          "Exportar todos los recursos naturales para financiar reconstrucciones."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "El desplazamiento forzado en Colombia ha sido causado principalmente por:",
+        opciones: [
+          "Migraciones voluntarias en busca de mejores condiciones económicas.",
+          "El conflicto armado interno y la violencia de grupos al margen de la ley.",
+          "Políticas estatales de urbanización masiva.",
+          "Catástrofes naturales en todo el territorio."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Las zonas históricas de las ciudades patrimonio cultural deben protegerse porque:",
+        opciones: [
+          "Generan mayores ingresos fiscales que otras zonas.",
+          "Conservan la memoria colectiva e identidad cultural de una sociedad.",
+          "Reducen la contaminación en el centro de las ciudades.",
+          "Facilitan la instalación de nuevas industrias."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "En una democracia participativa como la colombiana, los mecanismos de participación ciudadana incluyen:",
+        opciones: [
+          "Solo las elecciones presidenciales cada cuatro años.",
+          "El voto, el plebiscito, el referendo, la consulta popular y la acción de tutela.",
+          "Únicamente los cabildos abiertos en municipios menores.",
+          "El derecho a voto exclusivo para los mayores de 25 años."
+        ],
+        correcta: 1
+      }
+    ]
+  },
+  ingles: {
+    nombre: "Inglés",
+    emoji: "🇬🇧",
+    preguntas: [
+      {
+        texto: "Read the following conversation:\nCarol: «Have you ever traveled abroad?»\nFrancis: «Yes, I went to France last summer. It was amazing!»\n\nWhat is the main topic of their conversation?",
+        opciones: [
+          "Future travel plans.",
+          "A past travel experience.",
+          "Tips for learning French.",
+          "The cost of traveling to Europe."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Alfred had a job interview at IBM. His friend asks: «How did it go?» The most natural response from Alfred would be:",
+        opciones: [
+          "«I will go there tomorrow.»",
+          "«I think it went well. They said they would call me.»",
+          "«I don't like working at IBM.»",
+          "«I am going to apply next week.»"
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Choose the correct word to complete the sentence:\n«She _____ to school every day by bus.»",
+        opciones: ["go", "goes", "going", "went"],
+        correcta: 1
+      },
+      {
+        texto: "Read the text:\n«One Hundred Years of Solitude is a novel written by Colombian author Gabriel García Márquez. It was first published in 1967 and is considered a masterpiece of magical realism.»\n\nAccording to the text, One Hundred Years of Solitude is:",
+        opciones: [
+          "A short story by a Mexican author.",
+          "A famous novel by a Colombian writer.",
+          "A poem published in the 20th century.",
+          "A non-fiction book about Colombian history."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Taylor says: «I hope he's all right.» Adam replies: «Don't worry.» In this exchange, Taylor is expressing:",
+        opciones: [
+          "Happiness about someone's situation.",
+          "Concern or worry about someone.",
+          "Anger about an event.",
+          "Surprise about the news."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Choose the correct option to complete the dialogue:\nBill: «What do you do in your free time?»\nDavid: «I _____ soccer with my friends on weekends.»",
+        opciones: ["am play", "plays", "play", "playing"],
+        correcta: 2
+      }
+    ]
+  }
+};
+
+/* =============================================
+   VARIABLES DE ESTADO
+============================================= */
+let preguntasOrdenadas = [];  // Array plano de todas las preguntas en orden aleatorio por área
+let indicePreguntaActual = 0;
+let respuestasUsuario = [];   // índice de opción elegida por pregunta
+let aciertos = 0;
+let errores = 0;
+let estadisticasArea = {};    // { area: { correctas, total } }
+
+/* =============================================
+   INICIAR EVALUACIÓN
+============================================= */
+function iniciarEvaluacion() {
+  // Mezclar el orden de las áreas aleatoriamente
+  const claves = Object.keys(AREAS);
+  const clavesAleatorias = claves.sort(() => Math.random() - 0.5);
+
+  preguntasOrdenadas = [];
+  clavesAleatorias.forEach(clave => {
+    const area = AREAS[clave];
+    area.preguntas.forEach(p => {
+      preguntasOrdenadas.push({
+        ...p,
+        areaKey: clave,
+        areaNombre: area.nombre,
+        areaEmoji: area.emoji
+      });
+    });
+  });
+
+  // Reiniciar estado
+  indicePreguntaActual = 0;
+  respuestasUsuario = new Array(preguntasOrdenadas.length).fill(null);
+  aciertos = 0;
+  errores = 0;
+  estadisticasArea = {};
+  Object.keys(AREAS).forEach(k => {
+    estadisticasArea[k] = { correctas: 0, total: AREAS[k].preguntas.length };
+  });
+
+  // Mostrar pantalla de preguntas
+  document.getElementById('pantalla-inicio').style.display = 'none';
+  document.getElementById('pantalla-resultado').style.display = 'none';
+  document.getElementById('pantalla-pregunta').style.display = 'flex';
+
+  mostrarPregunta(0);
+}
+
+/* =============================================
+   MOSTRAR PREGUNTA
+============================================= */
+function mostrarPregunta(indice) {
+  const total = preguntasOrdenadas.length;
+  const pregunta = preguntasOrdenadas[indice];
+
+  // Actualizar progreso
+  const porcentaje = Math.round((indice / total) * 100);
+  document.getElementById('barra-fill').style.width = porcentaje + '%';
+  document.getElementById('contador-texto').textContent = `Pregunta ${indice + 1} de ${total}`;
+  document.getElementById('etiqueta-area').textContent = pregunta.areaEmoji + ' ' + pregunta.areaNombre;
+  document.getElementById('num-pregunta').textContent = `Pregunta ${indice + 1}`;
+  document.getElementById('texto-pregunta').textContent = pregunta.texto;
+
+  // Cambiar texto botón si es la última
+  const btnTexto = document.getElementById('btn-texto-siguiente');
+  if (indice === total - 1) {
+    btnTexto.textContent = 'Ver resultados →';
+  } else {
+    btnTexto.textContent = 'Siguiente →';
+  }
+
+  // Ocultar alerta
+  document.getElementById('alerta-responde').style.display = 'none';
+
+  // Renderizar opciones
+  const lista = document.getElementById('opciones-list');
+  lista.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+
+  pregunta.opciones.forEach((opcion, i) => {
+    const li = document.createElement('li');
+    li.className = 'opcion-item';
+    if (respuestasUsuario[indice] === i) li.classList.add('seleccionada');
+
+    li.innerHTML = `
+      <span class="opcion-letra">${letras[i]}</span>
+      <span class="opcion-texto">${opcion}</span>
+    `;
+    li.addEventListener('click', () => seleccionarOpcion(i));
+    lista.appendChild(li);
+  });
+
+  // Animación de entrada
+  const card = document.getElementById('card-pregunta');
+  card.style.animation = 'none';
+  void card.offsetWidth; // reflow
+  card.style.animation = 'slideUp 0.4s ease';
+}
+
+/* =============================================
+   SELECCIONAR OPCIÓN
+============================================= */
+function seleccionarOpcion(indiceOpcion) {
+  respuestasUsuario[indicePreguntaActual] = indiceOpcion;
+  document.getElementById('alerta-responde').style.display = 'none';
+
+  // Actualizar estilos
+  const items = document.querySelectorAll('.opcion-item');
+  items.forEach((el, i) => {
+    el.classList.toggle('seleccionada', i === indiceOpcion);
+  });
+}
+
+/* =============================================
+   SIGUIENTE PREGUNTA
+============================================= */
+function siguientePregunta() {
+  if (respuestasUsuario[indicePreguntaActual] === null) {
+    document.getElementById('alerta-responde').style.display = 'block';
+    return;
+  }
+
+  const pregunta = preguntasOrdenadas[indicePreguntaActual];
+  const respuesta = respuestasUsuario[indicePreguntaActual];
+  const esCorrecta = respuesta === pregunta.correcta;
+
+  if (esCorrecta) {
+    aciertos++;
+    estadisticasArea[pregunta.areaKey].correctas++;
+  } else {
+    errores++;
+  }
+
+  indicePreguntaActual++;
+
+  if (indicePreguntaActual >= preguntasOrdenadas.length) {
+    mostrarResultados();
+  } else {
+    mostrarPregunta(indicePreguntaActual);
+  }
+}
+
+/* =============================================
+   MOSTRAR RESULTADOS
+============================================= */
+function mostrarResultados() {
+  document.getElementById('pantalla-pregunta').style.display = 'none';
+  const pantallaResultado = document.getElementById('pantalla-resultado');
+  pantallaResultado.style.display = 'flex';
+
+  const total = preguntasOrdenadas.length;
+  const porcentaje = Math.round((aciertos / total) * 100);
+
+  // Puntaje y stats
+  document.getElementById('puntaje-numero').textContent = aciertos;
+  document.getElementById('num-aciertos').textContent = aciertos;
+  document.getElementById('num-errores').textContent = errores;
+
+  // Mensaje motivacional dinámico
+  let icono, mensaje;
+  if (porcentaje < 40) {
+    icono = '🌱';
+    mensaje = '"Este es tu punto de partida. Lo importante es que ya comenzaste. Cada acierto es un paso hacia adelante."';
+  } else if (porcentaje < 70) {
+    icono = '💡';
+    mensaje = '"Vas por buen camino. Sigue fortaleciendo tus habilidades y verás grandes avances en poco tiempo."';
+  } else {
+    icono = '🏆';
+    mensaje = '"¡Excelente inicio! Tienes una buena base para avanzar. Aprovecha este impulso para llegar aún más lejos."';
+  }
+
+  document.getElementById('trofeo-icono').textContent = icono;
+  document.getElementById('mensaje-motivacional').textContent = mensaje;
+
+  // Barras por área
+  const contenedor = document.getElementById('areas-resultado');
+  contenedor.innerHTML = '';
+
+  Object.keys(AREAS).forEach(clave => {
+    const area = AREAS[clave];
+    const stats = estadisticasArea[clave];
+    const pct = stats.total > 0 ? Math.round((stats.correctas / stats.total) * 100) : 0;
+
+    const fila = document.createElement('div');
+    fila.className = 'area-resultado-row';
+    fila.innerHTML = `
+      <div class="area-label">${area.emoji} ${area.nombre}</div>
+      <div class="area-barra-wrap">
+        <div class="area-barra-fill" style="width: 0%" data-pct="${pct}"></div>
+      </div>
+      <div class="area-puntaje">${stats.correctas}/${stats.total}</div>
+    `;
+    contenedor.appendChild(fila);
+  });
+
+  // Animar barras con retraso
+  setTimeout(() => {
+    document.querySelectorAll('.area-barra-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 300);
+
+  // Barra de progreso al 100%
+  document.getElementById('barra-fill').style.width = '100%';
+}
+
+/* =============================================
+   REINICIAR EVALUACIÓN
+============================================= */
+function reiniciarEvaluacion() {
+  document.getElementById('pantalla-resultado').style.display = 'none';
+  document.getElementById('pantalla-inicio').style.display = 'flex';
+}
+
+/* =============================================
+   MOODLE MOBILE DEEP LINK
+============================================= */
+const btnVolver = document.getElementById('btn-volver');
+const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=512';
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=512';
+const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+if (esMóvil) { btnVolver.href = appUrl; }
+</script>
+</body>
+</html>

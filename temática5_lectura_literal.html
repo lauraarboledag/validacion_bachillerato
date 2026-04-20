@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lectura Literal | Nivel 1 | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================
+   VARIABLES GLOBALES
+================================================ */
+:root {
+  --azul:        #1a2e4a;
+  --azul-medio:  #243d63;
+  --azul-claro:  #2f5080;
+  --azul-suave:  rgba(26,46,74,0.06);
+  --dorado:      #c9a84c;
+  --dorado-claro:#e2c06d;
+  --dorado-bg:   rgba(201,168,76,0.10);
+  --blanco:      #ffffff;
+  --gris-fondo:  #f0f3f8;
+  --gris-borde:  #dde2ea;
+  --gris-texto:  #64748b;
+  --verde:       #16a34a;
+  --verde-bg:    rgba(22,163,74,0.08);
+  --rojo:        #dc2626;
+  --rojo-bg:     rgba(220,38,38,0.08);
+  --amarillo:    #d97706;
+  --radio:       14px;
+  --radio-lg:    22px;
+  --sombra-sm:   0 2px 12px rgba(26,46,74,0.10);
+  --sombra-md:   0 8px 30px rgba(26,46,74,0.14);
+  --sombra-lg:   0 16px 48px rgba(26,46,74,0.20);
+  --tr:          all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ================================================
+   RESET & BASE
+================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--gris-fondo);
+  color: var(--azul);
+  min-height: 100vh;
+  line-height: 1.6;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 5% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 95% 100%, rgba(26,46,74,0.05) 0%, transparent 60%);
+}
+
+/* ================================================
+   LAYOUT WRAPPER
+================================================ */
+.page-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem 4rem;
+}
+
+/* ================================================
+   CABECERA INSTITUCIONAL
+================================================ */
+.inst-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 2.2rem;
+  animation: fadeDown 0.5s ease both;
+}
+.inst-logo {
+  width: 52px; height: 52px;
+  background: var(--azul);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  border: 2.5px solid var(--dorado);
+  flex-shrink: 0;
+}
+.inst-info { line-height: 1.25; }
+.inst-info strong {
+  font-size: 1rem; font-weight: 700;
+  display: block; color: var(--azul);
+}
+.inst-info span {
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--dorado);
+  text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+/* ================================================
+   PANTALLA: PORTADA
+================================================ */
+#pantalla-portada {
+  width: 100%; max-width: 760px;
+  animation: fadeUp 0.55s ease both;
+}
+
+.portada-hero {
+  background: var(--blanco);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+}
+
+.portada-banner {
+  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 60%, #1e3a5f 100%);
+  padding: 2.2rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.portada-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent, transparent 18px,
+    rgba(201,168,76,0.04) 18px, rgba(201,168,76,0.04) 19px
+  );
+}
+.portada-banner::after {
+  content: '';
+  position: absolute; right: -30px; bottom: -30px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.portada-tag {
+  display: inline-block;
+  background: var(--dorado-bg);
+  border: 1.5px solid rgba(201,168,76,0.45);
+  color: var(--dorado-claro);
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 0.28rem 0.8rem; border-radius: 20px;
+  margin-bottom: 0.9rem;
+  position: relative; z-index: 1;
+}
+.portada-titulo {
+  font-family: 'Lora', serif;
+  font-size: clamp(1.55rem, 4vw, 2.1rem);
+  font-weight: 700; color: var(--blanco);
+  line-height: 1.2; margin-bottom: 0.5rem;
+  position: relative; z-index: 1;
+}
+.portada-titulo em { color: var(--dorado-claro); font-style: normal; }
+.portada-sub {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.9rem; line-height: 1.55;
+  position: relative; z-index: 1;
+}
+
+.portada-body { padding: 1.8rem 2rem; }
+
+.portada-objetivo {
+  background: var(--azul-suave);
+  border-left: 3.5px solid var(--dorado);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.6rem;
+  font-size: 0.9rem; color: var(--azul);
+  line-height: 1.65;
+}
+.portada-objetivo strong { color: var(--azul); font-weight: 700; display: block; margin-bottom: 0.3rem; }
+
+.fichas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.7rem; margin-bottom: 1.8rem;
+}
+.ficha {
+  background: var(--gris-fondo);
+  border: 1.5px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 0.8rem 0.9rem;
+  text-align: center;
+}
+.ficha .ficha-ico { font-size: 1.4rem; margin-bottom: 0.3rem; }
+.ficha .ficha-val { font-size: 1rem; font-weight: 700; color: var(--azul); }
+.ficha .ficha-lbl { font-size: 0.72rem; color: var(--gris-texto); font-weight: 500; }
+
+.habilidades-lista {
+  list-style: none; display: flex; flex-direction: column; gap: 0.45rem;
+  margin-bottom: 1.8rem;
+}
+.habilidades-lista li {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  font-size: 0.88rem; color: var(--azul);
+}
+.habilidades-lista li::before {
+  content: '✦';
+  color: var(--dorado); font-size: 0.7rem;
+  margin-top: 0.25rem; flex-shrink: 0;
+}
+
+.btn-comenzar {
+  display: block; width: 100%;
+  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+  color: var(--blanco);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem; font-weight: 700;
+  padding: 1rem 2rem;
+  border: none; border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(26,46,74,0.35);
+  transition: var(--tr);
+  position: relative; overflow: hidden;
+  letter-spacing: 0.4px;
+}
+.btn-comenzar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--dorado) 0%, var(--dorado-claro) 100%);
+  opacity: 0; transition: opacity 0.28s;
+}
+.btn-comenzar:hover { transform: translateY(-2px); box-shadow: var(--sombra-lg); }
+.btn-comenzar:hover::after { opacity: 1; }
+.btn-comenzar:hover { color: var(--azul); }
+.btn-comenzar span { position: relative; z-index: 1; }
+
+/* ================================================
+   PANTALLA: CUESTIONARIO
+================================================ */
+#pantalla-quiz {
+  width: 100%; max-width: 760px;
+  display: none; flex-direction: column; gap: 1.2rem;
+  animation: fadeUp 0.45s ease both;
+}
+
+/* Barra superior */
+.quiz-topbar {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 1rem;
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 0.85rem 1.2rem;
+  box-shadow: var(--sombra-sm);
+}
+.quiz-topbar .area-pill {
+  background: var(--dorado-bg);
+  border: 1.5px solid rgba(201,168,76,0.35);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--azul); letter-spacing: 0.5px;
+}
+.quiz-topbar .q-counter {
+  font-size: 0.85rem; font-weight: 700; color: var(--gris-texto);
+}
+.quiz-topbar .q-counter span { color: var(--azul); }
+
+/* Barra de progreso */
+.progreso-wrap { }
+.progreso-bar {
+  height: 7px; background: var(--gris-borde);
+  border-radius: 50px; overflow: hidden;
+}
+.progreso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--dorado) 0%, var(--dorado-claro) 100%);
+  border-radius: 50px;
+  transition: width 0.55s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Tarjeta con el texto de referencia */
+.texto-ref-card {
+  background: var(--blanco);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+  overflow: hidden;
+}
+.texto-ref-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 1.3rem;
+  cursor: pointer;
+  border: none; background: transparent; width: 100%;
+  text-align: left;
+  border-bottom: 1.5px solid transparent;
+  transition: var(--tr);
+}
+.texto-ref-toggle.abierto { border-bottom-color: var(--gris-borde); }
+.texto-ref-toggle-label {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.85rem; font-weight: 700; color: var(--azul);
+}
+.texto-ref-toggle-label .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--dorado); flex-shrink: 0;
+}
+.toggle-arrow {
+  font-size: 0.75rem; color: var(--gris-texto);
+  transition: transform 0.25s ease;
+}
+.toggle-arrow.rot { transform: rotate(180deg); }
+
+.texto-ref-body {
+  display: none; padding: 1.2rem 1.4rem;
+  max-height: 280px; overflow-y: auto;
+}
+.texto-ref-body.visible { display: block; }
+.texto-ref-body::-webkit-scrollbar { width: 5px; }
+.texto-ref-body::-webkit-scrollbar-thumb { background: var(--gris-borde); border-radius: 3px; }
+
+.texto-bloque {
+  margin-bottom: 1.2rem;
+}
+.texto-bloque:last-child { margin-bottom: 0; }
+.texto-bloque h4 {
+  font-family: 'Lora', serif;
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--dorado); text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--gris-borde);
+}
+.texto-bloque p {
+  font-family: 'Lora', serif;
+  font-size: 0.88rem; line-height: 1.8;
+  color: var(--azul);
+}
+.texto-bloque p + p { margin-top: 0.7rem; }
+
+/* Tarjeta de pregunta */
+.pregunta-card {
+  background: var(--blanco);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  padding: 1.8rem 1.7rem;
+  animation: slideCard 0.38s ease both;
+}
+@keyframes slideCard {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.preg-meta {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.preg-num {
+  background: var(--azul);
+  color: var(--dorado);
+  font-size: 0.72rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 0.25rem 0.75rem; border-radius: 20px;
+}
+.preg-tipo {
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--gris-texto);
+  background: var(--gris-fondo);
+  padding: 0.25rem 0.7rem; border-radius: 20px;
+  border: 1px solid var(--gris-borde);
+}
+
+.preg-enunciado {
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  font-weight: 500; color: var(--azul);
+  line-height: 1.7; margin-bottom: 1.5rem;
+}
+
+/* Opciones */
+.opciones { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.4rem; }
+
+.opcion-btn {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  padding: 0.85rem 1.05rem;
+  border: 2px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  cursor: pointer;
+  transition: var(--tr);
+  text-align: left; width: 100%;
+  font-family: 'DM Sans', sans-serif;
+}
+.opcion-btn:hover {
+  border-color: var(--dorado);
+  background: var(--dorado-bg);
+  transform: translateX(3px);
+}
+.opcion-btn.sel {
+  border-color: var(--azul);
+  background: var(--azul-suave);
+}
+.opcion-btn.sel .letra-badge {
+  background: var(--azul); color: var(--dorado);
+}
+
+.letra-badge {
+  min-width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--gris-fondo);
+  border: 1.5px solid var(--gris-borde);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 800; color: var(--azul);
+  flex-shrink: 0; transition: var(--tr);
+}
+.opcion-texto {
+  font-size: 0.92rem; color: var(--azul);
+  line-height: 1.55; padding-top: 0.05rem;
+}
+
+/* Alerta */
+.alerta {
+  background: #fffbeb;
+  border: 1.5px solid #fbbf24;
+  border-radius: 10px;
+  padding: 0.55rem 1rem;
+  font-size: 0.82rem; font-weight: 600; color: #92400e;
+  margin-bottom: 0.9rem;
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Btn siguiente */
+.btn-sig {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%;
+  background: linear-gradient(135deg, var(--azul), var(--azul-claro));
+  color: var(--blanco);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  padding: 0.9rem 2rem;
+  border: none; border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(26,46,74,0.3);
+  transition: var(--tr);
+  letter-spacing: 0.3px;
+}
+.btn-sig:hover {
+  background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+  color: var(--azul); transform: translateY(-2px);
+  box-shadow: var(--sombra-lg);
+}
+
+/* ================================================
+   PANTALLA: RESULTADOS
+================================================ */
+#pantalla-resultado {
+  width: 100%; max-width: 760px;
+  display: none; flex-direction: column; gap: 1.2rem;
+  animation: fadeUp 0.55s ease both;
+}
+
+.resultado-hero {
+  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+  border-radius: var(--radio-lg);
+  padding: 2.2rem 2rem;
+  text-align: center;
+  box-shadow: var(--sombra-lg);
+  position: relative; overflow: hidden;
+}
+.resultado-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -45deg, transparent, transparent 20px,
+    rgba(201,168,76,0.04) 20px, rgba(201,168,76,0.04) 21px
+  );
+}
+.resultado-hero > * { position: relative; z-index: 1; }
+
+.res-icono {
+  font-size: 3.6rem;
+  display: block; margin-bottom: 0.6rem;
+  animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) 0.15s both;
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.res-titulo {
+  font-family: 'Lora', serif;
+  font-size: clamp(1.4rem,4vw,2rem);
+  font-weight: 700; color: var(--blanco);
+  margin-bottom: 0.5rem;
+}
+.res-mensaje {
+  font-size: 0.95rem; color: rgba(255,255,255,0.78);
+  line-height: 1.6; font-style: italic;
+  max-width: 500px; margin: 0 auto;
+}
+
+/* Métricas */
+.metricas-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 0.9rem;
+}
+.metrica-box {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 1.1rem;
+  text-align: center;
+  box-shadow: var(--sombra-sm);
+  border-top: 3px solid var(--gris-borde);
+}
+.metrica-box.verde { border-top-color: var(--verde); }
+.metrica-box.rojo  { border-top-color: var(--rojo); }
+.metrica-box.dorado{ border-top-color: var(--dorado); }
+
+.metrica-num {
+  font-family: 'Lora', serif;
+  font-size: 2.3rem; font-weight: 700;
+  line-height: 1; display: block; margin-bottom: 0.3rem;
+}
+.verde .metrica-num { color: var(--verde); }
+.rojo  .metrica-num { color: var(--rojo); }
+.dorado .metrica-num { color: var(--dorado); }
+
+.metrica-lbl {
+  font-size: 0.73rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--gris-texto);
+}
+
+/* Desglose por pregunta */
+.desglose-card {
+  background: var(--blanco);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+  padding: 1.5rem 1.4rem;
+}
+.desglose-card h3 {
+  font-size: 0.82rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--gris-texto); margin-bottom: 1rem;
+}
+.desglose-lista { display: flex; flex-direction: column; gap: 0.55rem; }
+
+.desglose-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.83rem;
+  transition: var(--tr);
+}
+.desglose-row.ok  { background: var(--verde-bg); }
+.desglose-row.err { background: var(--rojo-bg); }
+
+.desglose-q-num {
+  min-width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 800;
+  flex-shrink: 0;
+}
+.ok  .desglose-q-num { background: rgba(22,163,74,0.15); color: var(--verde); }
+.err .desglose-q-num { background: rgba(220,38,38,0.15); color: var(--rojo); }
+
+.desglose-q-texto { flex: 1; color: var(--azul); line-height: 1.4; }
+.desglose-icono { font-size: 0.9rem; flex-shrink: 0; }
+
+/* Botones finales */
+.botones-finales {
+  display: flex; flex-direction: column; gap: 0.85rem;
+}
+.btn-reiniciar {
+  display: block; width: 100%;
+  background: transparent;
+  border: 2px solid var(--azul);
+  color: var(--azul);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  padding: 0.9rem; border-radius: 50px;
+  cursor: pointer; transition: var(--tr);
+  letter-spacing: 0.3px;
+}
+.btn-reiniciar:hover {
+  background: var(--azul); color: var(--blanco);
+  box-shadow: var(--sombra-md);
+}
+
+#btn-volver {
+  display: block; width: 100%; text-align: center;
+  background: linear-gradient(135deg,#FFE066,#F59E0B);
+  color: #2D1B0E;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700; font-size: 1em;
+  padding: 14px 36px;
+  border-radius: 50px;
+  text-decoration: none;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 20px rgba(245,158,11,0.45);
+  transition: var(--tr);
+}
+#btn-volver:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,158,11,0.55); }
+
+/* ================================================
+   ANIMACIONES
+================================================ */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ================================================
+   RESPONSIVE
+================================================ */
+@media (max-width: 520px) {
+  .portada-body { padding: 1.4rem 1.2rem; }
+  .portada-banner { padding: 1.8rem 1.3rem; }
+  .metricas-grid { grid-template-columns: repeat(3,1fr); gap: 0.6rem; }
+  .metrica-num { font-size: 1.9rem; }
+  .pregunta-card { padding: 1.4rem 1.15rem; }
+  .fichas-grid { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- CABECERA -->
+  <div class="inst-header">
+    <div class="inst-logo">📖</div>
+    <div class="inst-info">
+      <strong>Instituto Innova</strong>
+      <span>Validación del Bachillerato</span>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PANTALLA 1 · PORTADA
+  ============================================= -->
+  <div id="pantalla-portada">
+    <div class="portada-hero">
+      <div class="portada-banner">
+        <div class="portada-tag">Nivel 1 · Fundamentos básicos</div>
+        <h1 class="portada-titulo">Lectura <em>literal</em><br>de textos</h1>
+        <p class="portada-sub">
+          Actividad interactiva basada en textos reales del examen ICFES Saber 11°.<br>
+          Lee con atención y responde lo que <em>dice</em> el texto.
+        </p>
+      </div>
+      <div class="portada-body">
+        <div class="portada-objetivo">
+          <strong>🎯 ¿Qué vas a practicar?</strong>
+          Identificar información explícita en el texto, reconocer ideas principales y secundarias,
+          comprender el significado de palabras en su contexto y diferenciar los tipos de texto.
+        </div>
+
+        <div class="fichas-grid">
+          <div class="ficha">
+            <div class="ficha-ico">📝</div>
+            <div class="ficha-val">10</div>
+            <div class="ficha-lbl">Preguntas</div>
+          </div>
+          <div class="ficha">
+            <div class="ficha-ico">🔤</div>
+            <div class="ficha-val">A–D</div>
+            <div class="ficha-lbl">Sel. múltiple</div>
+          </div>
+          <div class="ficha">
+            <div class="ficha-ico">📚</div>
+            <div class="ficha-val">3</div>
+            <div class="ficha-lbl">Textos base</div>
+          </div>
+          <div class="ficha">
+            <div class="ficha-ico">⏱️</div>
+            <div class="ficha-val">Libre</div>
+            <div class="ficha-lbl">Sin límite</div>
+          </div>
+        </div>
+
+        <ul class="habilidades-lista">
+          <li>Identificación de información explícita en el texto</li>
+          <li>Reconocimiento de la idea principal y las ideas secundarias</li>
+          <li>Comprensión de vocabulario en contexto</li>
+          <li>Identificación del tipo de texto</li>
+          <li>Aplicación de estrategias de búsqueda de información</li>
+          <li>Relación entre la pregunta y el texto</li>
+          <li>Errores comunes en lectura literal</li>
+        </ul>
+
+        <button class="btn-comenzar" onclick="iniciar()">
+          <span>📖 Comenzar actividad</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PANTALLA 2 · CUESTIONARIO
+  ============================================= -->
+  <div id="pantalla-quiz">
+
+    <!-- Barra superior -->
+    <div class="quiz-topbar">
+      <div class="area-pill">📘 Lectura literal</div>
+      <div class="q-counter">Pregunta <span id="q-actual">1</span> de <span id="q-total">10</span></div>
+    </div>
+
+    <!-- Barra progreso -->
+    <div class="progreso-wrap">
+      <div class="progreso-bar">
+        <div class="progreso-fill" id="progreso-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Texto de referencia (colapsable) -->
+    <div class="texto-ref-card">
+      <button class="texto-ref-toggle" id="toggle-texto" onclick="toggleTexto()">
+        <span class="texto-ref-toggle-label">
+          <span class="dot"></span>
+          📄 Ver textos de referencia (Ciudad y literatura · La ventanilla del bus · Transformaciones urbanas)
+        </span>
+        <span class="toggle-arrow" id="toggle-arrow">▼</span>
+      </button>
+      <div class="texto-ref-body" id="texto-ref-body">
+
+        <div class="texto-bloque">
+          <h4>Texto 1 — Ciudad y Literatura</h4>
+          <p>La ciudad puede ser perfectamente un tema literario, escogido por el interés o la necesidad de un autor determinado. Ahora pululan escritores que se autodenominan o son señalados por alguna crítica como escritores urbanos. No obstante, considero que muchos de ellos tan sólo se acercan de manera superficial a ese calificativo y lo hacen equívocamente al pretender referirse a la ciudad a través de una mera nominación de calles, de bares en esas calles, de personajes en esos bares de esas calles, como si la descripción más o menos pormenorizada de esas pequeñas geografías nos develara una ciudad en toda su complejidad.</p>
+          <p>La ciudad es, en sí misma, un tema literario. Además, es el escenario donde transcurren y han transcurrido miles y miles de historias de hombres y mujeres. La ciudad es la materia prima de los sueños y las pesadillas del hombre moderno, el paisaje en el cual se han formado sentimental e intelectualmente muchas generaciones de narradores en todo el mundo.</p>
+          <p>Esa condición de escenario ambulante y permanente hace que la ciudad sea casi un imperativo temático o, mejor, el espacio natural de la imaginación narrativa contemporánea.</p>
+          <p>Frente a la pregunta de qué es lo urbano en literatura, habría que contestar que urbano no es necesariamente lo que sucede o acontece dentro de la urbe. Una narración puede ubicarse legítimamente en la ciudad, pero estar refiriéndose a una forma de pensar, actuar y expresarse rural o ajena al universo comprendido por lo urbano. En consecuencia se podría afirmar que la narrativa urbana es aquella que trata sobre los temas y los comportamientos que ha generado el desarrollo de lo urbano, y siempre a través de unos lenguajes peculiares.</p>
+          <p><em>(Tomado de: TAMAYO S., Guido L. Prólogo al texto Cuentos urbanos. Panamericana, 1999.)</em></p>
+        </div>
+
+        <div class="texto-bloque">
+          <h4>Texto 2 — La ventanilla del bus</h4>
+          <p>Comienza a oscurecer, ya están encendidas las vitrinas de la Carrera Trece, en los andenes se agolpa la multitud; voy en un bus que lucha por abrirse paso en la congestión vehicular. Entre la ciudad y yo está el vidrio de la ventanilla que devuelve mi imagen, perdida en la masa de pasajeros que se mueven al ritmo espasmódico del tránsito.</p>
+          <p>El bus acelera su marcha y la ciudad desaparece. Baudrillard dice que un simulacro es la suplantación de lo real por los signos de lo real. No hay lo real, tan sólo la ventanilla que nos refleja. Nosotros, los pasajeros, suplantamos la realidad, somos el paisaje.</p>
+          <p>Un semáforo nos detiene en una esquina. Otro bus se acerca lentamente hasta quedar paralelo al nuestro; ante mí pasan otras ventanillas con otros pasajeros de otra comunidad igualmente apática. Creo verme sentado en la cuarta ventanilla del bus que espera la señal verde junto a nosotros. Es mi reflejo, intuyo; pero no es reflejo: soy yo mismo sentado en el otro bus. Con temor y asombro, él y yo cruzamos una mirada cómplice, creo que nos sonreímos más allá del cansancio del día de trabajo.</p>
+          <p><em>(Texto tomado de: PÉRGOLIS, Juan Carlos; ORDUZ, Luis Fernando; MORENO, Danilo. Reflejos, fantasmas, desarraigos. Bogotá recorrida. 1999.)</em></p>
+        </div>
+
+        <div class="texto-bloque">
+          <h4>Texto 3 — Transformaciones urbanas en la ciudad de hoy</h4>
+          <p>Las ciudades y sociedades de todo el mundo están experimentando en este fin del siglo XX una profunda transformación histórica estructural. En el centro de dicha transformación se halla una revolución tecnológica, organizada en torno a las tecnologías de la información. Basándose en la nueva infraestructura tecnológica, el proceso de globalización de la economía y la comunicación ha cambiado nuestras formas de producir, consumir, gestionar, informar y pensar.</p>
+          <p>El planeta es asimétricamente interdependiente y esa interdependencia se articula cotidianamente en tiempo real, a través de las nuevas tecnologías de información y comunicación, en un fenómeno históricamente nuevo que abre una nueva era de la historia de la humanidad: la era de la información.</p>
+          <p>La era de las telecomunicaciones no diluye los centros urbanos, sino que, al contrario, al permitir la gestión y la comunicación entre sí de sistemas urbanos y rurales distantes, tiende a concentrar a la población en aglomeraciones territoriales. En cierto modo, el destino de la humanidad se juega en las áreas urbanas y, sobre todo, en las grandes metrópolis.</p>
+          <p><em>(Tomado de: BORJA, J. y CASTELLS, M. Local y global: la gestión de las ciudades en la era de la información. Madrid: Taurus, 1998.)</em></p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tarjeta de pregunta -->
+    <div class="pregunta-card" id="pregunta-card">
+      <div class="preg-meta">
+        <span class="preg-num" id="preg-num">Pregunta 1</span>
+        <span class="preg-tipo" id="preg-tipo">Información explícita</span>
+      </div>
+      <p class="preg-enunciado" id="preg-enunciado"></p>
+      <div class="opciones" id="opciones"></div>
+      <div class="alerta" id="alerta">⚠️ Debes seleccionar una opción antes de continuar.</div>
+      <button class="btn-sig" onclick="siguiente()">
+        <span id="btn-sig-txt">Siguiente →</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- =============================================
+       PANTALLA 3 · RESULTADOS
+  ============================================= -->
+  <div id="pantalla-resultado">
+
+    <div class="resultado-hero">
+      <span class="res-icono" id="res-icono">🏆</span>
+      <h2 class="res-titulo">Actividad completada</h2>
+      <p class="res-mensaje" id="res-mensaje"></p>
+    </div>
+
+    <div class="metricas-grid">
+      <div class="metrica-box verde">
+        <span class="metrica-num" id="m-aciertos">0</span>
+        <span class="metrica-lbl">✅ Aciertos</span>
+      </div>
+      <div class="metrica-box rojo">
+        <span class="metrica-num" id="m-errores">0</span>
+        <span class="metrica-lbl">❌ Errores</span>
+      </div>
+      <div class="metrica-box dorado">
+        <span class="metrica-num" id="m-puntaje">0</span>
+        <span class="metrica-lbl">📊 Puntaje</span>
+      </div>
+    </div>
+
+    <div class="desglose-card">
+      <h3>Detalle por pregunta</h3>
+      <div class="desglose-lista" id="desglose-lista"></div>
+    </div>
+
+    <div class="botones-finales">
+      <button class="btn-reiniciar" onclick="reiniciar()">🔄 Reiniciar actividad</button>
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=527"
+         style="display:block;width:100%;text-align:center;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- =============================================
+     JAVASCRIPT
+============================================= -->
+<script>
+/* =============================================
+   BANCO DE PREGUNTAS
+   Basadas EXCLUSIVAMENTE en los tres textos del
+   simulacro real ICFES (Profundización en Lenguaje)
+   Pregs. 106–125 del documento adjunto.
+============================================= */
+const PREGUNTAS = [
+
+  /* 1 — Identificación de información explícita */
+  {
+    tipo: "Información explícita",
+    enunciado: "Según el Texto 1 (Ciudad y literatura), ¿cuál de las siguientes afirmaciones aparece de manera explícita en el texto?",
+    opciones: [
+      "La ciudad es el único tema posible para la literatura contemporánea.",
+      "La ciudad es la materia prima de los sueños y las pesadillas del hombre moderno.",
+      "Los escritores rurales son superiores a los escritores urbanos.",
+      "La descripción de calles y bares define perfectamente la literatura urbana."
+    ],
+    correcta: 1
+  },
+
+  /* 2 — Identificación de información explícita */
+  {
+    tipo: "Información explícita",
+    enunciado: "En el Texto 3 (Transformaciones urbanas), el texto afirma explícitamente que la globalización y la comunicación han cambiado nuestras formas de:",
+    opciones: [
+      "Viajar, trabajar, estudiar, descansar y divertirse.",
+      "Producir, consumir, gestionar, informar y pensar.",
+      "Escribir, leer, escuchar, hablar y actuar.",
+      "Urbanizar, industrializar, comunicar, migrar y construir."
+    ],
+    correcta: 1
+  },
+
+  /* 3 — Identificación de información explícita */
+  {
+    tipo: "Información explícita",
+    enunciado: "En el Texto 2 (La ventanilla del bus), ¿quién afirma que «un simulacro es la suplantación de lo real por los signos de lo real»?",
+    opciones: [
+      "El narrador del texto.",
+      "Baudrillard.",
+      "Borja y Castells.",
+      "Tamayo S."
+    ],
+    correcta: 1
+  },
+
+  /* 4 — Idea principal */
+  {
+    tipo: "Idea principal",
+    enunciado: "¿Cuál es la idea principal del Texto 1 (Ciudad y literatura)?",
+    opciones: [
+      "Los escritores urbanos son los más importantes de la literatura contemporánea.",
+      "La ciudad, como tema literario, posee lenguajes y problemáticas propias que van más allá de la mera descripción de calles y lugares.",
+      "La literatura rural es más auténtica que la literatura urbana.",
+      "La ciudad solo puede entenderse a través de las narraciones históricas."
+    ],
+    correcta: 1
+  },
+
+  /* 5 — Idea principal */
+  {
+    tipo: "Idea principal",
+    enunciado: "¿Cuál es la idea central del Texto 3 (Transformaciones urbanas en la ciudad de hoy)?",
+    opciones: [
+      "Las ciudades son cada vez más pequeñas debido a la tecnología.",
+      "Las ciudades y sociedades mundiales viven una profunda transformación impulsada por las tecnologías de la información.",
+      "La era de la información ha reducido la importancia de las ciudades.",
+      "Solo los países desarrollados se ven afectados por la globalización."
+    ],
+    correcta: 1
+  },
+
+  /* 6 — Ideas secundarias */
+  {
+    tipo: "Ideas secundarias",
+    enunciado: "Según el Texto 3, ¿cuál de las siguientes es una idea secundaria que apoya la transformación de las ciudades?",
+    opciones: [
+      "La era de las telecomunicaciones diluye los centros urbanos.",
+      "Las tecnologías de la información tienden a concentrar la población en grandes aglomeraciones territoriales.",
+      "Los países desarrollados migran su población hacia zonas rurales.",
+      "Las ciudades del futuro serán principalmente rurales."
+    ],
+    correcta: 1
+  },
+
+  /* 7 — Ideas secundarias */
+  {
+    tipo: "Ideas secundarias",
+    enunciado: "En el Texto 2, ¿cuál es una idea secundaria que aparece mientras el narrador viaja en bus?",
+    opciones: [
+      "El narrador piensa en sus amigos y familia.",
+      "El narrador observa a dos señoras en el primer puesto del bus paralelo, que no hablan entre ellas.",
+      "El narrador se baja del bus en la Carrera Trece.",
+      "El narrador lamenta la contaminación causada por los autobuses."
+    ],
+    correcta: 1
+  },
+
+  /* 8 — Vocabulario en contexto */
+  {
+    tipo: "Vocabulario en contexto",
+    enunciado: "En el Texto 1, el autor afirma que muchos escritores abordan la ciudad a través de «una mera nominación de calles». En este contexto, la palabra «nominación» significa:",
+    opciones: [
+      "Creación artística y elaborada de personajes.",
+      "Mención o enumeración superficial de nombres y lugares.",
+      "Análisis profundo del entorno urbano.",
+      "Propuesta política para renovar la ciudad."
+    ],
+    correcta: 1
+  },
+
+  /* 9 — Vocabulario en contexto */
+  {
+    tipo: "Vocabulario en contexto",
+    enunciado: "En el Texto 3 se afirma que «el planeta es asimétricamente interdependiente». Según el contexto, ¿qué significa «asimétricamente» en esta oración?",
+    opciones: [
+      "De manera equilibrada e igualitaria entre todos los países.",
+      "De forma desigual o desproporcionada entre las diferentes partes.",
+      "De modo completamente independiente y autónomo.",
+      "De manera exclusivamente tecnológica y digital."
+    ],
+    correcta: 1
+  },
+
+  /* 10 — Tipo de texto */
+  {
+    tipo: "Tipo de texto",
+    enunciado: "Teniendo en cuenta el contenido y la forma de los tres textos, ¿cuál es la clasificación más precisa del Texto 2 (La ventanilla del bus)?",
+    opciones: [
+      "Texto informativo, porque presenta datos estadísticos sobre el transporte urbano.",
+      "Texto narrativo-reflexivo, porque el autor narra una experiencia vivida y reflexiona filosóficamente sobre la realidad.",
+      "Texto normativo, porque establece reglas para los usuarios del transporte público.",
+      "Texto publicitario, porque promueve el uso del transporte público en la ciudad."
+    ],
+    correcta: 1
+  }
+
+];
+
+/* =============================================
+   ESTADO DE LA APLICACIÓN
+============================================= */
+let indice = 0;
+let respuestas = []; // null o índice seleccionado
+let aciertos = 0;
+let errores = 0;
+
+/* =============================================
+   INICIO
+============================================= */
+function iniciar() {
+  indice = 0;
+  aciertos = 0;
+  errores = 0;
+  respuestas = new Array(PREGUNTAS.length).fill(null);
+
+  mostrar('pantalla-portada', false);
+  mostrar('pantalla-quiz', true);
+  mostrar('pantalla-resultado', false);
+
+  document.getElementById('q-total').textContent = PREGUNTAS.length;
+  renderPregunta(0);
+}
+
+/* =============================================
+   RENDER PREGUNTA
+============================================= */
+function renderPregunta(i) {
+  const p = PREGUNTAS[i];
+  const total = PREGUNTAS.length;
+
+  // Progreso
+  document.getElementById('progreso-fill').style.width = Math.round((i / total) * 100) + '%';
+  document.getElementById('q-actual').textContent = i + 1;
+  document.getElementById('preg-num').textContent = 'Pregunta ' + (i + 1);
+  document.getElementById('preg-tipo').textContent = p.tipo;
+  document.getElementById('preg-enunciado').textContent = p.enunciado;
+  document.getElementById('alerta').style.display = 'none';
+
+  // Último botón
+  document.getElementById('btn-sig-txt').textContent =
+    (i === total - 1) ? 'Ver resultados →' : 'Siguiente →';
+
+  // Opciones
+  const letras = ['A','B','C','D'];
+  const cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  p.opciones.forEach((txt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opcion-btn' + (respuestas[i] === idx ? ' sel' : '');
+    btn.innerHTML = `
+      <span class="letra-badge">${letras[idx]}</span>
+      <span class="opcion-texto">${txt}</span>
+    `;
+    btn.addEventListener('click', () => seleccionar(idx));
+    cont.appendChild(btn);
+  });
+
+  // Animación
+  const card = document.getElementById('pregunta-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'slideCard 0.38s ease both';
+}
+
+/* =============================================
+   SELECCIONAR OPCIÓN
+============================================= */
+function seleccionar(idx) {
+  respuestas[indice] = idx;
+  document.getElementById('alerta').style.display = 'none';
+  document.querySelectorAll('.opcion-btn').forEach((btn, i) => {
+    btn.classList.toggle('sel', i === idx);
+    btn.querySelector('.letra-badge').style.background = (i === idx) ? 'var(--azul)' : '';
+    btn.querySelector('.letra-badge').style.color = (i === idx) ? 'var(--dorado)' : '';
+    btn.querySelector('.letra-badge').style.border = (i === idx) ? 'none' : '';
+  });
+}
+
+/* =============================================
+   SIGUIENTE
+============================================= */
+function siguiente() {
+  if (respuestas[indice] === null) {
+    document.getElementById('alerta').style.display = 'block';
+    return;
+  }
+
+  // Evaluar respuesta
+  const correcto = respuestas[indice] === PREGUNTAS[indice].correcta;
+  if (correcto) aciertos++; else errores++;
+
+  indice++;
+  if (indice >= PREGUNTAS.length) {
+    mostrarResultados();
+  } else {
+    renderPregunta(indice);
+  }
+}
+
+/* =============================================
+   MOSTRAR RESULTADOS
+============================================= */
+function mostrarResultados() {
+  mostrar('pantalla-quiz', false);
+  mostrar('pantalla-resultado', true);
+
+  const total = PREGUNTAS.length;
+  const pct = Math.round((aciertos / total) * 100);
+
+  document.getElementById('m-aciertos').textContent = aciertos;
+  document.getElementById('m-errores').textContent = errores;
+  document.getElementById('m-puntaje').textContent = pct + '%';
+
+  // Mensaje motivacional
+  let icono, msg;
+  if (pct < 50) {
+    icono = '🌱';
+    msg = 'Estás comenzando. Sigue practicando la lectura atenta: vuelve al texto antes de responder.';
+  } else if (pct < 80) {
+    icono = '💡';
+    msg = 'Vas por buen camino. Mejora tu precisión prestando atención a las palabras clave de cada pregunta.';
+  } else {
+    icono = '🏆';
+    msg = '¡Excelente! Dominas la lectura literal. Estás listo para avanzar al siguiente nivel.';
+  }
+  document.getElementById('res-icono').textContent = icono;
+  document.getElementById('res-mensaje').textContent = msg;
+
+  // Desglose por pregunta
+  const lista = document.getElementById('desglose-lista');
+  lista.innerHTML = '';
+  PREGUNTAS.forEach((p, i) => {
+    const ok = respuestas[i] === p.correcta;
+    const row = document.createElement('div');
+    row.className = 'desglose-row ' + (ok ? 'ok' : 'err');
+    const letras = ['A','B','C','D'];
+    row.innerHTML = `
+      <div class="desglose-q-num">${i+1}</div>
+      <div class="desglose-q-texto">
+        <strong>${p.tipo}</strong><br>
+        Tu respuesta: <strong>${letras[respuestas[i]]}</strong> ·
+        Correcta: <strong>${letras[p.correcta]}</strong>
+      </div>
+      <div class="desglose-icono">${ok ? '✅' : '❌'}</div>
+    `;
+    lista.appendChild(row);
+  });
+}
+
+/* =============================================
+   REINICIAR
+============================================= */
+function reiniciar() {
+  mostrar('pantalla-resultado', false);
+  mostrar('pantalla-portada', true);
+}
+
+/* =============================================
+   TOGGLE TEXTO
+============================================= */
+function toggleTexto() {
+  const body  = document.getElementById('texto-ref-body');
+  const btn   = document.getElementById('toggle-texto');
+  const arrow = document.getElementById('toggle-arrow');
+  const open  = body.classList.toggle('visible');
+  btn.classList.toggle('abierto', open);
+  arrow.classList.toggle('rot', open);
+}
+
+/* =============================================
+   UTILIDAD: mostrar/ocultar pantallas
+============================================= */
+function mostrar(id, visible) {
+  const el = document.getElementById(id);
+  el.style.display = visible ? 'flex' : 'none';
+}
+
+/* =============================================
+   DEEP LINK MOODLE MOBILE
+============================================= */
+const btnV = document.getElementById('btn-volver');
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=527';
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) { btnV.href = appUrl; }
+</script>
+</body>
+</html>

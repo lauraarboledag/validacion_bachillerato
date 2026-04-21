@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idea Principal y Vocabulario | Nivel 1 | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================
+   VARIABLES
+================================================ */
+:root {
+  --azul:       #1a2e4a;
+  --azul-m:     #243d63;
+  --azul-l:     #2f5080;
+  --azul-xs:    rgba(26,46,74,0.07);
+  --dorado:     #c9a84c;
+  --dorado-l:   #e2c06d;
+  --dorado-bg:  rgba(201,168,76,0.11);
+  --blanco:     #ffffff;
+  --fondo:      #eef1f7;
+  --borde:      #d8dde8;
+  --texto-s:    #5e6f87;
+  --verde:      #15803d;
+  --verde-bg:   rgba(21,128,61,0.09);
+  --rojo:       #b91c1c;
+  --rojo-bg:    rgba(185,28,28,0.09);
+  --radio:      14px;
+  --radio-xl:   24px;
+  --s1: 0 2px 10px rgba(26,46,74,0.09);
+  --s2: 0 8px 28px rgba(26,46,74,0.14);
+  --s3: 0 18px 52px rgba(26,46,74,0.20);
+  --ease: all 0.28s cubic-bezier(.4,0,.2,1);
+}
+
+/* ================================================
+   RESET & BASE
+================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--fondo);
+  color:var(--azul);
+  min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 0% 0%, rgba(201,168,76,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 100% 100%, rgba(26,46,74,0.06) 0%, transparent 55%);
+}
+
+/* ================================================
+   WRAPPER
+================================================ */
+.app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.8rem 1rem 4rem;
+}
+
+/* ================================================
+   LOGO HEADER
+================================================ */
+.logo-bar{
+  display:flex;align-items:center;gap:.8rem;
+  margin-bottom:2rem;
+  animation:fadeDown .45s ease both;
+}
+.logo-ico{
+  width:50px;height:50px;border-radius:50%;
+  background:var(--azul);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;
+  border:2.5px solid var(--dorado);
+  flex-shrink:0;
+}
+.logo-txt strong{display:block;font-size:.95rem;font-weight:700;color:var(--azul)}
+.logo-txt span{font-size:.72rem;font-weight:600;color:var(--dorado);text-transform:uppercase;letter-spacing:1.5px}
+
+/* ================================================
+   PANTALLAS (toggle visibility)
+================================================ */
+.screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:780px}
+.screen.active{display:flex;animation:fadeUp .45s ease both}
+
+/* ================================================
+   PANTALLA 1: BIENVENIDA
+================================================ */
+.bienvenida-card{
+  background:var(--blanco);
+  border-radius:var(--radio-xl);
+  box-shadow:var(--s2);
+  overflow:hidden;
+  width:100%;
+}
+.bienvenida-banner{
+  background:linear-gradient(135deg,var(--azul) 0%,var(--azul-m) 55%,#1d3758 100%);
+  padding:2.4rem 2rem;
+  position:relative;overflow:hidden;
+}
+.bienvenida-banner::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 22px,rgba(201,168,76,0.04) 22px,rgba(201,168,76,0.04) 23px);
+}
+.bienvenida-banner::after{
+  content:'';position:absolute;right:-40px;bottom:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,0.13) 0%,transparent 70%);
+}
+.bienvenida-banner>*{position:relative;z-index:1}
+.nivel-tag{
+  display:inline-block;
+  background:rgba(201,168,76,0.15);
+  border:1.5px solid rgba(201,168,76,0.4);
+  color:var(--dorado-l);
+  font-size:.71rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:.26rem .75rem;border-radius:20px;margin-bottom:.85rem;
+}
+.bienvenida-banner h1{
+  font-family:'Fraunces',serif;
+  font-size:clamp(1.5rem,4vw,2.1rem);
+  font-weight:700;color:var(--blanco);
+  line-height:1.2;margin-bottom:.5rem;
+}
+.bienvenida-banner h1 em{color:var(--dorado-l);font-style:normal}
+.bienvenida-banner p{color:rgba(255,255,255,.72);font-size:.9rem;line-height:1.6}
+
+.bienvenida-body{padding:1.8rem 2rem}
+.instruccion-box{
+  background:var(--azul-xs);
+  border-left:3.5px solid var(--dorado);
+  border-radius:0 var(--radio) var(--radio) 0;
+  padding:.9rem 1.15rem;
+  margin-bottom:1.6rem;
+  font-size:.9rem;line-height:1.65;color:var(--azul);
+}
+.instruccion-box strong{display:block;margin-bottom:.25rem;font-weight:700}
+
+.chips-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.8rem}
+.chip{
+  background:var(--fondo);border:1.5px solid var(--borde);
+  border-radius:10px;padding:.5rem .85rem;
+  font-size:.8rem;font-weight:600;color:var(--azul);
+  display:flex;align-items:center;gap:.4rem;
+}
+
+.habilidades{list-style:none;display:flex;flex-direction:column;gap:.42rem;margin-bottom:1.8rem}
+.habilidades li{display:flex;align-items:flex-start;gap:.55rem;font-size:.87rem}
+.habilidades li::before{content:'✦';color:var(--dorado);font-size:.68rem;margin-top:.28rem;flex-shrink:0}
+
+/* ================================================
+   BOTONES PRINCIPALES
+================================================ */
+.btn-main{
+  display:block;width:100%;
+  background:linear-gradient(135deg,var(--azul),var(--azul-m));
+  color:var(--blanco);
+  font-family:'DM Sans',sans-serif;
+  font-size:1.03rem;font-weight:700;
+  padding:.95rem 2rem;
+  border:none;border-radius:50px;
+  cursor:pointer;
+  box-shadow:0 4px 18px rgba(26,46,74,.32);
+  transition:var(--ease);
+  position:relative;overflow:hidden;letter-spacing:.3px;
+}
+.btn-main::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-l));
+  opacity:0;transition:opacity .28s;
+}
+.btn-main:hover{transform:translateY(-2px);box-shadow:var(--s3)}
+.btn-main:hover::after{opacity:1}
+.btn-main:hover{color:var(--azul)}
+.btn-main span{position:relative;z-index:1}
+
+/* ================================================
+   PANTALLA 2: LECTURA
+================================================ */
+.lectura-card{
+  background:var(--blanco);
+  border-radius:var(--radio-xl);
+  box-shadow:var(--s2);
+  width:100%;overflow:hidden;
+}
+.lectura-header{
+  background:var(--azul);
+  padding:1.1rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:.6rem;
+}
+.lectura-header .titulo-texto{
+  font-family:'Fraunces',serif;
+  font-size:1.1rem;font-weight:700;color:var(--blanco);
+}
+.lectura-header .fuente{font-size:.72rem;color:rgba(255,255,255,.6)}
+.lectura-cuerpo{
+  padding:1.8rem 2rem;
+  max-height:420px;overflow-y:auto;
+}
+.lectura-cuerpo::-webkit-scrollbar{width:5px}
+.lectura-cuerpo::-webkit-scrollbar-thumb{background:var(--borde);border-radius:3px}
+.lectura-cuerpo p{
+  font-family:'Fraunces',serif;
+  font-size:clamp(.88rem,2.2vw,.98rem);
+  line-height:1.9;color:var(--azul);
+  margin-bottom:1rem;
+}
+.lectura-cuerpo p:last-child{margin-bottom:0}
+
+.lectura-footer{
+  padding:1.2rem 2rem;
+  border-top:1.5px solid var(--borde);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:.8rem;
+  background:var(--fondo);
+}
+.lectura-footer .hint{font-size:.8rem;color:var(--texto-s)}
+.lectura-footer .hint strong{color:var(--azul)}
+
+/* ================================================
+   PANTALLA 3: QUIZ
+================================================ */
+/* Barra superior */
+.quiz-bar{
+  width:100%;
+  background:var(--blanco);
+  border-radius:var(--radio);
+  padding:.8rem 1.2rem;
+  box-shadow:var(--s1);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:.6rem;
+  margin-bottom:1rem;
+}
+.area-pill{
+  background:var(--dorado-bg);
+  border:1.5px solid rgba(201,168,76,.35);
+  border-radius:20px;
+  padding:.22rem .72rem;
+  font-size:.73rem;font-weight:700;color:var(--azul);letter-spacing:.5px;
+}
+.timer-box{
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.85rem;font-weight:700;color:var(--azul);
+}
+.timer-box .timer-ico{font-size:1rem}
+.timer-urgente{color:var(--rojo)!important;animation:pulso .8s ease infinite}
+@keyframes pulso{0%,100%{opacity:1}50%{opacity:.6}}
+
+.q-counter{font-size:.83rem;font-weight:700;color:var(--texto-s)}
+.q-counter span{color:var(--azul)}
+
+/* Barra progreso */
+.prog-wrap{width:100%;margin-bottom:1rem}
+.prog-bar{height:7px;background:var(--borde);border-radius:50px;overflow:hidden}
+.prog-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--dorado),var(--dorado-l));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* Desplegable texto */
+.ver-texto-wrap{width:100%;margin-bottom:1rem}
+.ver-texto-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;
+  background:var(--blanco);
+  border:1.5px solid var(--borde);
+  border-radius:var(--radio);
+  padding:.72rem 1.1rem;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:.83rem;font-weight:700;color:var(--azul);
+  transition:var(--ease);box-shadow:var(--s1);
+}
+.ver-texto-toggle:hover{border-color:var(--dorado);background:var(--dorado-bg)}
+.ver-texto-toggle.open{border-color:var(--azul);border-radius:var(--radio) var(--radio) 0 0}
+.vtarrow{font-size:.75rem;color:var(--texto-s);transition:transform .25s}
+.vtarrow.rot{transform:rotate(180deg)}
+.ver-texto-body{
+  display:none;
+  background:var(--blanco);
+  border:1.5px solid var(--azul);
+  border-top:none;
+  border-radius:0 0 var(--radio) var(--radio);
+  padding:1.2rem 1.4rem;
+  max-height:220px;overflow-y:auto;
+}
+.ver-texto-body.open{display:block}
+.ver-texto-body::-webkit-scrollbar{width:4px}
+.ver-texto-body::-webkit-scrollbar-thumb{background:var(--borde);border-radius:3px}
+.ver-texto-body p{
+  font-family:'Fraunces',serif;
+  font-size:.84rem;line-height:1.8;color:var(--azul);
+  margin-bottom:.8rem;
+}
+.ver-texto-body p:last-child{margin-bottom:0}
+
+/* Tarjeta pregunta */
+.preg-card{
+  background:var(--blanco);
+  border-radius:var(--radio-xl);
+  box-shadow:var(--s2);
+  padding:1.8rem 1.7rem;
+  width:100%;
+  animation:slideCard .36s ease both;
+}
+@keyframes slideCard{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.preg-meta{display:flex;align-items:center;gap:.5rem;margin-bottom:.9rem}
+.p-num{
+  background:var(--azul);color:var(--dorado);
+  font-size:.71rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  padding:.23rem .72rem;border-radius:20px;
+}
+.p-tipo{
+  font-size:.71rem;font-weight:600;color:var(--texto-s);
+  background:var(--fondo);padding:.23rem .68rem;border-radius:20px;
+  border:1px solid var(--borde);
+}
+.preg-txt{
+  font-size:clamp(.93rem,2.3vw,1.04rem);
+  font-weight:500;color:var(--azul);line-height:1.72;
+  margin-bottom:1.4rem;
+}
+.opciones{display:flex;flex-direction:column;gap:.58rem;margin-bottom:1.3rem}
+.opc{
+  display:flex;align-items:flex-start;gap:.82rem;
+  padding:.82rem 1rem;
+  border:2px solid var(--borde);
+  border-radius:var(--radio);
+  background:var(--blanco);
+  cursor:pointer;
+  transition:var(--ease);width:100%;font-family:'DM Sans',sans-serif;
+}
+.opc:hover{border-color:var(--dorado);background:var(--dorado-bg);transform:translateX(3px)}
+.opc.sel{border-color:var(--azul);background:var(--azul-xs)}
+.opc.sel .letra{background:var(--azul);color:var(--dorado);border-color:var(--azul)}
+.letra{
+  min-width:30px;height:30px;border-radius:50%;
+  background:var(--fondo);border:1.5px solid var(--borde);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:800;color:var(--azul);
+  flex-shrink:0;transition:var(--ease);
+}
+.opc-txt{font-size:.9rem;color:var(--azul);line-height:1.55;padding-top:.05rem}
+
+.alerta{
+  display:none;
+  background:#fffbeb;border:1.5px solid #fbbf24;
+  border-radius:10px;padding:.5rem .9rem;
+  font-size:.8rem;font-weight:600;color:#92400e;
+  margin-bottom:.85rem;animation:fadeIn .22s ease;
+}
+.btn-sig{
+  display:flex;align-items:center;justify-content:center;gap:.45rem;
+  width:100%;background:linear-gradient(135deg,var(--azul),var(--azul-l));
+  color:var(--blanco);font-family:'DM Sans',sans-serif;
+  font-size:.98rem;font-weight:700;padding:.88rem 2rem;
+  border:none;border-radius:50px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(26,46,74,.28);transition:var(--ease);
+  letter-spacing:.3px;
+}
+.btn-sig:hover{
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-l));
+  color:var(--azul);transform:translateY(-2px);box-shadow:var(--s3);
+}
+
+/* ================================================
+   PANTALLA 4: RESULTADOS
+================================================ */
+.res-hero{
+  width:100%;
+  background:linear-gradient(135deg,var(--azul) 0%,var(--azul-m) 100%);
+  border-radius:var(--radio-xl);
+  padding:2.2rem 2rem;text-align:center;
+  box-shadow:var(--s3);position:relative;overflow:hidden;
+  margin-bottom:1.1rem;
+}
+.res-hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(201,168,76,.04) 20px,rgba(201,168,76,.04) 21px);
+}
+.res-hero>*{position:relative;z-index:1}
+.res-ico{
+  font-size:3.5rem;display:block;margin-bottom:.6rem;
+  animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) .15s both;
+}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.res-titulo{
+  font-family:'Fraunces',serif;
+  font-size:clamp(1.4rem,4vw,2rem);font-weight:700;color:var(--blanco);
+  margin-bottom:.5rem;
+}
+.res-msg{font-size:.93rem;color:rgba(255,255,255,.76);line-height:1.6;font-style:italic;max-width:460px;margin:0 auto}
+
+/* Métricas */
+.metricas{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:.85rem;width:100%;margin-bottom:1.1rem;
+}
+.met{
+  background:var(--blanco);border-radius:var(--radio);
+  padding:1rem;text-align:center;box-shadow:var(--s1);
+  border-top:3.5px solid var(--borde);
+}
+.met.g{border-top-color:var(--verde)}
+.met.r{border-top-color:var(--rojo)}
+.met.d{border-top-color:var(--dorado)}
+.met-num{
+  font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;
+  line-height:1;display:block;margin-bottom:.25rem;
+}
+.g .met-num{color:var(--verde)}
+.r .met-num{color:var(--rojo)}
+.d .met-num{color:var(--dorado)}
+.met-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--texto-s)}
+
+/* Barra dominio */
+.dominio-card{
+  width:100%;background:var(--blanco);
+  border-radius:var(--radio-xl);box-shadow:var(--s1);
+  padding:1.4rem 1.5rem;margin-bottom:1.1rem;
+}
+.dominio-card h3{
+  font-size:.8rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:1.2px;color:var(--texto-s);margin-bottom:.8rem;
+}
+.dom-bar-wrap{height:14px;background:var(--borde);border-radius:50px;overflow:hidden;margin-bottom:.5rem}
+.dom-bar-fill{
+  height:100%;border-radius:50px;
+  background:linear-gradient(90deg,var(--azul),var(--dorado));
+  transition:width 1.2s cubic-bezier(.4,0,.2,1);
+}
+.dom-label{font-size:.82rem;font-weight:600;color:var(--azul)}
+
+/* Desglose */
+.desglose-card{
+  width:100%;background:var(--blanco);
+  border-radius:var(--radio-xl);box-shadow:var(--s1);
+  padding:1.4rem 1.5rem;margin-bottom:1.1rem;
+}
+.desglose-card h3{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--texto-s);margin-bottom:.85rem}
+.desg-lista{display:flex;flex-direction:column;gap:.5rem}
+.desg-row{
+  display:flex;align-items:center;gap:.7rem;
+  padding:.5rem .75rem;border-radius:10px;font-size:.82rem;
+}
+.desg-row.ok{background:var(--verde-bg)}
+.desg-row.err{background:var(--rojo-bg)}
+.desg-qn{
+  min-width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.73rem;font-weight:800;flex-shrink:0;
+}
+.ok .desg-qn{background:rgba(21,128,61,.15);color:var(--verde)}
+.err .desg-qn{background:rgba(185,28,28,.15);color:var(--rojo)}
+.desg-info{flex:1;color:var(--azul);line-height:1.4}
+.desg-ico{font-size:.88rem;flex-shrink:0}
+
+/* Botones finales */
+.btns-final{display:flex;flex-direction:column;gap:.8rem;width:100%}
+.btn-reintentar{
+  display:block;width:100%;background:transparent;
+  border:2px solid var(--azul);color:var(--azul);
+  font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;
+  padding:.88rem;border-radius:50px;cursor:pointer;transition:var(--ease);
+}
+.btn-reintentar:hover{background:var(--azul);color:var(--blanco);box-shadow:var(--s2)}
+
+#btn-volver{
+  display:block;width:100%;text-align:center;
+  background:linear-gradient(135deg,#FFE066,#F59E0B);
+  color:#2D1B0E;font-family:'DM Sans',sans-serif;
+  font-weight:700;font-size:1em;
+  padding:14px 36px;border-radius:50px;
+  text-decoration:none;letter-spacing:1px;
+  box-shadow:0 4px 20px rgba(245,158,11,.45);
+  transition:var(--ease);
+}
+#btn-volver:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,158,11,.55)}
+
+/* ================================================
+   ANIMACIONES
+================================================ */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ================================================
+   RESPONSIVE
+================================================ */
+@media(max-width:520px){
+  .bienvenida-body,.lectura-cuerpo{padding:1.3rem 1.1rem}
+  .bienvenida-banner{padding:1.8rem 1.2rem}
+  .metricas{gap:.55rem}
+  .met-num{font-size:1.8rem}
+  .preg-card{padding:1.4rem 1.1rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LOGO -->
+  <div class="logo-bar">
+    <div class="logo-ico">📖</div>
+    <div class="logo-txt">
+      <strong>Instituto Innova</strong>
+      <span>Validación del Bachillerato</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANTALLA 1 · BIENVENIDA
+  ============================================================ -->
+  <div id="s-bienvenida" class="screen active">
+    <div class="bienvenida-card">
+      <div class="bienvenida-banner">
+        <div class="nivel-tag">Nivel 1 · Fundamentos básicos</div>
+        <h1>Lectura: <em>Idea principal</em><br>y vocabulario</h1>
+        <p>Actividad interactiva basada en un texto real del examen ICFES Saber 11°</p>
+      </div>
+      <div class="bienvenida-body">
+        <div class="instruccion-box">
+          <strong>📌 Instrucción general</strong>
+          Primero leerás el texto completo con atención. Luego comenzará el cuestionario con un temporizador de 10 minutos. Puedes consultar el texto en cualquier momento durante las preguntas.
+        </div>
+        <div class="chips-row">
+          <div class="chip">📝 10 preguntas</div>
+          <div class="chip">⏱️ 10 minutos</div>
+          <div class="chip">🔤 Sel. múltiple</div>
+          <div class="chip">📄 1 texto base</div>
+        </div>
+        <ul class="habilidades">
+          <li>Identificar la idea principal del texto</li>
+          <li>Diferenciar ideas principales de ideas secundarias</li>
+          <li>Sintetizar la información leída</li>
+          <li>Reconocer el tipo de texto</li>
+          <li>Comprender vocabulario en contexto</li>
+          <li>Inferir el significado de palabras desconocidas</li>
+          <li>Relacionar vocabulario con la idea principal</li>
+          <li>Evitar errores comunes de comprensión lectora</li>
+        </ul>
+        <button class="btn-main" onclick="irLectura()"><span>📄 Ver texto y comenzar</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANTALLA 2 · LECTURA
+  ============================================================ -->
+  <div id="s-lectura" class="screen">
+    <div class="lectura-card">
+      <div class="lectura-header">
+        <div>
+          <div class="titulo-texto">LOS MARGINADOS DIGITALES</div>
+          <div class="fuente">Stornelli, Nicola — Asesor Vicerrectoría de Investigación, Universidad Popular del Cesar</div>
+        </div>
+      </div>
+      <div class="lectura-cuerpo">
+        <p>Existe una enorme diferencia entre el mundo desarrollado y el nuestro en cuanto a las posibilidades de acceso a las tecnologías de Información y las comunicaciones (TIC). Ese fenómeno se conoce como la brecha digital. Todo arranca por el porcentaje de población que dispone de teléfono fijo y móvil, o el número de estudiantes que realizan posgrados en línea.</p>
+        <p>Pero la brecha digital ha creado, según la Unesco, una nueva ruptura en el mundo y es la llamada brecha cognitiva, que es la diferencia en la capacidad de adquirir conocimientos entre un hombre y otro, entre una sociedad y otra. De ahí que cuando se escucha que la tasa de analfabetismo en Colombia es del 7 por ciento y que en el Cesar llega a la friolera de 14 por ciento, no se puede menos que sentirse confundido ante los artículos en donde se afirma que estamos entrando en la sociedad del conocimiento.</p>
+        <p>Cuando tratamos de asimilar el concepto de la Unesco sobre los analfabetos funcionales —quienes saben leer y escribir y manejan las funciones básicas de matemáticas— no podemos menos que aterrarnos al constatar que muchas de las personas que conocemos tienen ese perfil. Y cuando nos dicen que profesional que no habla inglés y que no maneja funciones básicas de ofimática es 'medio profesional', se puede caer en la más profunda crisis depresiva al percatarse de que muchos de los profesionales que conocemos, incluido quien escribe, caen en esa categoría.</p>
+        <p>Todo lo anterior lo traigo a colación porque la premisa fundamental para que se dé una sociedad del conocimiento es que la población esté alfabetizada y que, obviamente, exista además una masa crítica de profesionales con alto nivel tecnológico y una alta penetración y uso de las TIC.</p>
+        <p>Pero ¿cómo definiríamos la sociedad del conocimiento? Apelemos, una vez más a la Unesco: "Una sociedad del conocimiento debe garantizar el aprovechamiento compartido del saber, integrar a cada uno de sus miembros y promover nuevas formas de solidaridad con las generaciones presentes y venideras. No deberían existir marginados en las sociedades del conocimiento".</p>
+        <p>Es claro que nuestra sociedad está hoy mejor informada que hace veinte años. La cobertura de telefonía fija, la aparición de los celulares, los canales privados de TV (con sus defectos y virtudes) y los esfuerzos por incrementar la cobertura de Internet, sumado a la lucha por erradicar el analfabetismo y por mejorar los niveles de escolaridad, han hecho que muchos de nuestros compatriotas estén más y mejor informados.</p>
+        <p>Pese a ello, disparidades entre regiones nos permiten afirmar que se está creando una odiosa brecha digital entre algunas ciudades privilegiadas y el resto del país. En Colombia necesitamos que los dirigentes entiendan que el uso y la apropiación de las TIC son hoy factor de desarrollo o de nuevas desigualdades, que están comenzando a crear una nueva clase de marginados, los marginados digitales. ¿Cuántos de esos conoce usted ya?</p>
+      </div>
+      <div class="lectura-footer">
+        <span class="hint">📌 Lee con atención. <strong>Tendrás 10 minutos</strong> para responder las preguntas.</span>
+        <button class="btn-main" style="width:auto;padding:.75rem 1.8rem" onclick="iniciarQuiz()">
+          <span>⏱️ Iniciar cuestionario</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANTALLA 3 · QUIZ
+  ============================================================ -->
+  <div id="s-quiz" class="screen">
+
+    <!-- Barra superior -->
+    <div class="quiz-bar">
+      <div class="area-pill">📘 Idea principal · Vocabulario</div>
+      <div class="timer-box">
+        <span class="timer-ico">⏱️</span>
+        <span id="timer-display">10:00</span>
+      </div>
+      <div class="q-counter">Pregunta <span id="q-actual">1</span> de <span id="q-total">10</span></div>
+    </div>
+
+    <!-- Progreso -->
+    <div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Ver texto -->
+    <div class="ver-texto-wrap">
+      <button class="ver-texto-toggle" id="vt-toggle" onclick="toggleTexto()">
+        <span>📄 Ver texto: Los marginados digitales</span>
+        <span class="vtarrow" id="vt-arrow">▼</span>
+      </button>
+      <div class="ver-texto-body" id="vt-body">
+        <p>Existe una enorme diferencia entre el mundo desarrollado y el nuestro en cuanto a las posibilidades de acceso a las tecnologías de Información y las comunicaciones (TIC). Ese fenómeno se conoce como la brecha digital.</p>
+        <p>Pero la brecha digital ha creado, según la Unesco, una nueva ruptura en el mundo y es la llamada brecha cognitiva, que es la diferencia en la capacidad de adquirir conocimientos entre un hombre y otro, entre una sociedad y otra.</p>
+        <p>Cuando tratamos de asimilar el concepto de la Unesco sobre los analfabetos funcionales —quienes saben leer y escribir y manejan las funciones básicas de matemáticas— no podemos menos que aterrarnos al constatar que muchas de las personas que conocemos tienen ese perfil.</p>
+        <p>Todo lo anterior lo traigo a colación porque la premisa fundamental para que se dé una sociedad del conocimiento es que la población esté alfabetizada y que exista una masa crítica de profesionales con alto nivel tecnológico y una alta penetración y uso de las TIC.</p>
+        <p>Pero ¿cómo definiríamos la sociedad del conocimiento? "Una sociedad del conocimiento debe garantizar el aprovechamiento compartido del saber, integrar a cada uno de sus miembros y promover nuevas formas de solidaridad con las generaciones presentes y venideras. No deberían existir marginados en las sociedades del conocimiento".</p>
+        <p>Pese a ello, disparidades entre regiones nos permiten afirmar que se está creando una odiosa brecha digital entre algunas ciudades privilegiadas y el resto del país. En Colombia necesitamos que los dirigentes entiendan que el uso y la apropiación de las TIC son hoy factor de desarrollo o de nuevas desigualdades.</p>
+      </div>
+    </div>
+
+    <!-- Tarjeta pregunta -->
+    <div class="preg-card" id="preg-card">
+      <div class="preg-meta">
+        <span class="p-num" id="p-num">Pregunta 1</span>
+        <span class="p-tipo" id="p-tipo">Idea principal</span>
+      </div>
+      <p class="preg-txt" id="preg-txt"></p>
+      <div class="opciones" id="opciones"></div>
+      <div class="alerta" id="alerta">⚠️ Selecciona una opción antes de continuar.</div>
+      <button class="btn-sig" onclick="siguiente()">
+        <span id="btn-sig-lbl">Siguiente →</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       PANTALLA 4 · RESULTADOS
+  ============================================================ -->
+  <div id="s-resultado" class="screen">
+
+    <div class="res-hero">
+      <span class="res-ico" id="res-ico">🏆</span>
+      <h2 class="res-titulo">Actividad completada</h2>
+      <p class="res-msg" id="res-msg"></p>
+    </div>
+
+    <div class="metricas">
+      <div class="met g"><span class="met-num" id="m-ac">0</span><span class="met-lbl">✅ Aciertos</span></div>
+      <div class="met r"><span class="met-num" id="m-er">0</span><span class="met-lbl">❌ Errores</span></div>
+      <div class="met d"><span class="met-num" id="m-pt">0%</span><span class="met-lbl">📊 Puntaje</span></div>
+    </div>
+
+    <div class="dominio-card">
+      <h3>Nivel de dominio</h3>
+      <div class="dom-bar-wrap">
+        <div class="dom-bar-fill" id="dom-fill" style="width:0%"></div>
+      </div>
+      <div class="dom-label" id="dom-label">Calculando...</div>
+    </div>
+
+    <div class="desglose-card">
+      <h3>Detalle por pregunta</h3>
+      <div class="desg-lista" id="desg-lista"></div>
+    </div>
+
+    <div class="btns-final">
+      <button class="btn-reintentar" onclick="reintentar()">🔄 Reintentar actividad</button>
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=537"
+         style="display:block;width:100%;text-align:center;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+
+  </div>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ============================================================
+   BANCO DE PREGUNTAS
+   Basadas 100% en el texto "Los marginados digitales"
+   (Stornelli — ICFES Saber 11, Primera Sesión, pág. 20-21)
+============================================================ */
+const PREGUNTAS = [
+
+  /* 1 — Idea principal */
+  {
+    tipo: "Idea principal",
+    txt: "¿Cuál es la idea principal del texto «Los marginados digitales»?",
+    ops: [
+      "La televisión y la telefonía móvil han mejorado la calidad de vida en Colombia.",
+      "La brecha digital y cognitiva generan una nueva clase de marginados que impide construir una verdadera sociedad del conocimiento.",
+      "La Unesco es el organismo internacional más importante en materia de educación.",
+      "Colombia ha superado el analfabetismo gracias al acceso masivo a Internet."
+    ],
+    correcta: 1
+  },
+
+  /* 2 — Idea principal */
+  {
+    tipo: "Idea principal",
+    txt: "El autor, Stornelli, escribe este texto principalmente para:",
+    ops: [
+      "Informar sobre los avances tecnológicos de los países desarrollados frente a Colombia.",
+      "Advertir a los dirigentes colombianos que las TIC son factor de desarrollo o de nuevas desigualdades.",
+      "Persuadir a los lectores de que estudien inglés y ofimática para ser profesionales completos.",
+      "Describir los logros obtenidos por Colombia en materia de cobertura educativa."
+    ],
+    correcta: 1
+  },
+
+  /* 3 — Ideas secundarias */
+  {
+    tipo: "Ideas secundarias",
+    txt: "¿Cuál de las siguientes es una idea secundaria que apoya la tesis del texto?",
+    ops: [
+      "La tasa de analfabetismo en el Cesar alcanza el 14%, lo que contradice la idea de que Colombia ingresa a la sociedad del conocimiento.",
+      "La sociedad del conocimiento es el objetivo más importante de la humanidad.",
+      "Los posgrados en línea son más eficientes que los posgrados presenciales.",
+      "La telefonía fija es más importante que la telefonía móvil para el desarrollo del país."
+    ],
+    correcta: 0
+  },
+
+  /* 4 — Ideas secundarias */
+  {
+    tipo: "Ideas secundarias",
+    txt: "Según el texto, la «brecha cognitiva» es una idea secundaria que surge como consecuencia de:",
+    ops: [
+      "El acceso limitado a la televisión privada en zonas rurales.",
+      "La brecha digital, es decir, la desigualdad en el acceso a las TIC.",
+      "La falta de voluntad política para erradicar el analfabetismo.",
+      "El crecimiento descontrolado de las redes sociales en el país."
+    ],
+    correcta: 1
+  },
+
+  /* 5 — Síntesis del texto */
+  {
+    tipo: "Síntesis del texto",
+    txt: "¿Cuál de las siguientes opciones sintetiza mejor el contenido del texto?",
+    ops: [
+      "Colombia avanza rápidamente hacia la sociedad del conocimiento gracias a la expansión de Internet y la telefonía móvil.",
+      "La desigualdad en el acceso y uso de las TIC profundiza las brechas sociales y crea una nueva forma de exclusión: los marginados digitales.",
+      "Los profesionales colombianos necesitan hablar inglés y manejar ofimática para competir en el mercado global.",
+      "La Unesco ha propuesto un plan para eliminar el analfabetismo en América Latina antes del año 2030."
+    ],
+    correcta: 1
+  },
+
+  /* 6 — Tipo de texto */
+  {
+    tipo: "Tipo de texto",
+    txt: "¿Qué tipo de texto es «Los marginados digitales»?",
+    ops: [
+      "Texto narrativo, porque cuenta la historia del acceso a Internet en Colombia.",
+      "Texto argumentativo-expositivo, porque presenta datos y argumentos para defender una posición crítica sobre la brecha digital.",
+      "Texto descriptivo, porque describe las características de los diferentes tipos de tecnología.",
+      "Texto instructivo, porque da pasos para superar el analfabetismo funcional."
+    ],
+    correcta: 1
+  },
+
+  /* 7 — Vocabulario en contexto */
+  {
+    tipo: "Vocabulario en contexto",
+    txt: "En el texto, el autor menciona «la friolera de 14 por ciento» al hablar de la tasa de analfabetismo en el Cesar. En este contexto, la palabra «friolera» significa:",
+    ops: [
+      "Una cantidad insignificante o despreciable.",
+      "Una cantidad sorprendentemente grande o excesiva que genera preocupación.",
+      "Un valor exacto y científicamente comprobado.",
+      "Una cifra que representa un avance positivo en educación."
+    ],
+    correcta: 1
+  },
+
+  /* 8 — Vocabulario en contexto */
+  {
+    tipo: "Vocabulario en contexto",
+    txt: "El autor usa la expresión «analfabetos funcionales» para referirse a:",
+    ops: [
+      "Personas que no saben leer ni escribir en ningún idioma.",
+      "Personas que saben leer y escribir pero carecen de competencias avanzadas para desenvolverse plenamente en la sociedad actual.",
+      "Ciudadanos que no tienen acceso a Internet ni a dispositivos tecnológicos.",
+      "Estudiantes que reprobaron las pruebas ICFES en el área de lenguaje."
+    ],
+    correcta: 1
+  },
+
+  /* 9 — Inferencia de palabras */
+  {
+    tipo: "Inferencia de palabras",
+    txt: "El autor afirma que «lo traigo a colación». A partir del contexto del párrafo, ¿qué significa esta expresión?",
+    ops: [
+      "Presenta un tema sin relación con lo anterior para cambiar el tema de conversación.",
+      "Menciona o cita un asunto porque es pertinente y está relacionado con el argumento que desarrolla.",
+      "Contradice lo dicho anteriormente con un nuevo argumento.",
+      "Pone fin a la discusión presentando una conclusión definitiva."
+    ],
+    correcta: 1
+  },
+
+  /* 10 — Error común de comprensión */
+  {
+    tipo: "Error común de comprensión",
+    txt: "Un lector afirma: «El texto dice que Colombia ya es una sociedad del conocimiento porque la gente tiene más acceso a la información que antes». ¿Esta interpretación es correcta?",
+    ops: [
+      "Sí, porque el texto afirma claramente que la cobertura de telefonía e Internet ha mejorado.",
+      "No, porque el texto reconoce que hay avances en acceso a información, pero advierte que las desigualdades regionales y la falta de apropiación de las TIC impiden hablar de una verdadera sociedad del conocimiento.",
+      "Sí, porque la Unesco ya certificó a Colombia como sociedad del conocimiento.",
+      "No, porque el texto afirma que la situación de Colombia es peor que hace veinte años."
+    ],
+    correcta: 1
+  }
+
+];
+
+/* ============================================================
+   ESTADO
+============================================================ */
+let indice    = 0;
+let respuestas= [];
+let aciertos  = 0;
+let errores   = 0;
+let timerID   = null;
+let segundos  = 600; // 10 minutos
+
+/* ============================================================
+   NAVEGACIÓN DE PANTALLAS
+============================================================ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+    s.style.display='none';
+  });
+  const el=document.getElementById(id);
+  el.style.display='flex';
+  void el.offsetWidth;
+  el.classList.add('active');
+}
+
+function irLectura(){ show('s-lectura'); }
+
+/* ============================================================
+   INICIAR QUIZ
+============================================================ */
+function iniciarQuiz(){
+  indice=0; aciertos=0; errores=0;
+  respuestas=new Array(PREGUNTAS.length).fill(null);
+  document.getElementById('q-total').textContent=PREGUNTAS.length;
+  iniciarTimer();
+  show('s-quiz');
+  renderPregunta(0);
+}
+
+/* ============================================================
+   TIMER
+============================================================ */
+function iniciarTimer(){
+  segundos=600;
+  clearInterval(timerID);
+  actualizarTimer();
+  timerID=setInterval(()=>{
+    segundos--;
+    actualizarTimer();
+    if(segundos<=0){ clearInterval(timerID); finalizarPorTiempo(); }
+  },1000);
+}
+
+function actualizarTimer(){
+  const m=Math.floor(segundos/60);
+  const s=segundos%60;
+  const str=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el=document.getElementById('timer-display');
+  el.textContent=str;
+  if(segundos<=60) el.closest('.timer-box').classList.add('timer-urgente');
+  else el.closest('.timer-box').classList.remove('timer-urgente');
+}
+
+function finalizarPorTiempo(){
+  // Evalúa las respondidas y finaliza
+  for(let i=indice;i<PREGUNTAS.length;i++){
+    if(respuestas[i]===null) errores++;
+    else if(respuestas[i]===PREGUNTAS[i].correcta) aciertos++;
+    else errores++;
+  }
+  mostrarResultados();
+}
+
+/* ============================================================
+   RENDER PREGUNTA
+============================================================ */
+function renderPregunta(i){
+  const p=PREGUNTAS[i];
+  const total=PREGUNTAS.length;
+
+  document.getElementById('prog-fill').style.width=Math.round((i/total)*100)+'%';
+  document.getElementById('q-actual').textContent=i+1;
+  document.getElementById('p-num').textContent='Pregunta '+(i+1);
+  document.getElementById('p-tipo').textContent=p.tipo;
+  document.getElementById('preg-txt').textContent=p.txt;
+  document.getElementById('alerta').style.display='none';
+  document.getElementById('btn-sig-lbl').textContent=
+    (i===total-1)?'Ver resultados →':'Siguiente →';
+
+  const letras=['A','B','C','D'];
+  const cont=document.getElementById('opciones');
+  cont.innerHTML='';
+  p.ops.forEach((txt,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='opc'+(respuestas[i]===idx?' sel':'');
+    btn.innerHTML=`<span class="letra">${letras[idx]}</span><span class="opc-txt">${txt}</span>`;
+    btn.addEventListener('click',()=>seleccionar(idx));
+    cont.appendChild(btn);
+  });
+
+  // Animación
+  const card=document.getElementById('preg-card');
+  card.style.animation='none';
+  void card.offsetWidth;
+  card.style.animation='slideCard .36s ease both';
+}
+
+/* ============================================================
+   SELECCIONAR
+============================================================ */
+function seleccionar(idx){
+  respuestas[indice]=idx;
+  document.getElementById('alerta').style.display='none';
+  document.querySelectorAll('.opc').forEach((btn,i)=>{
+    btn.classList.toggle('sel',i===idx);
+  });
+}
+
+/* ============================================================
+   SIGUIENTE
+============================================================ */
+function siguiente(){
+  if(respuestas[indice]===null){
+    document.getElementById('alerta').style.display='block';
+    return;
+  }
+  const ok=respuestas[indice]===PREGUNTAS[indice].correcta;
+  if(ok) aciertos++; else errores++;
+  indice++;
+  if(indice>=PREGUNTAS.length) mostrarResultados();
+  else renderPregunta(indice);
+}
+
+/* ============================================================
+   RESULTADOS
+============================================================ */
+function mostrarResultados(){
+  clearInterval(timerID);
+  const total=PREGUNTAS.length;
+  const pct=Math.round((aciertos/total)*100);
+
+  document.getElementById('m-ac').textContent=aciertos;
+  document.getElementById('m-er').textContent=errores;
+  document.getElementById('m-pt').textContent=pct+'%';
+
+  // Barra dominio
+  setTimeout(()=>{
+    document.getElementById('dom-fill').style.width=pct+'%';
+  },350);
+
+  let nivel,ico,msg;
+  if(pct<50){
+    nivel='Nivel inicial'; ico='🌱';
+    msg='Estás comenzando. Enfócate en identificar ideas principales leyendo el primer y último párrafo de cada texto.';
+  } else if(pct<80){
+    nivel='Nivel en desarrollo'; ico='💡';
+    msg='Vas bien. Mejora tu precisión prestando atención al vocabulario en contexto y a las ideas secundarias.';
+  } else {
+    nivel='Nivel avanzado'; ico='🏆';
+    msg='¡Excelente! Tienes buena comprensión lectora. Estás listo para avanzar al siguiente nivel.';
+  }
+  document.getElementById('res-ico').textContent=ico;
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('dom-label').textContent=nivel+' — '+pct+'% de dominio';
+
+  // Desglose
+  const lista=document.getElementById('desg-lista');
+  lista.innerHTML='';
+  const letras=['A','B','C','D'];
+  PREGUNTAS.forEach((p,i)=>{
+    const ok=respuestas[i]===p.correcta;
+    const row=document.createElement('div');
+    row.className='desg-row '+(ok?'ok':'err');
+    const miResp=respuestas[i]!==null?letras[respuestas[i]]:'—';
+    row.innerHTML=`
+      <div class="desg-qn">${i+1}</div>
+      <div class="desg-info">
+        <strong>${p.tipo}</strong><br>
+        Tu respuesta: <strong>${miResp}</strong> · Correcta: <strong>${letras[p.correcta]}</strong>
+      </div>
+      <div class="desg-ico">${ok?'✅':'❌'}</div>`;
+    lista.appendChild(row);
+  });
+
+  show('s-resultado');
+  document.getElementById('prog-fill').style.width='100%';
+}
+
+/* ============================================================
+   REINTENTAR
+============================================================ */
+function reintentar(){ show('s-bienvenida'); }
+
+/* ============================================================
+   TOGGLE TEXTO EN QUIZ
+============================================================ */
+function toggleTexto(){
+  const body=document.getElementById('vt-body');
+  const toggle=document.getElementById('vt-toggle');
+  const arrow=document.getElementById('vt-arrow');
+  const open=body.classList.toggle('open');
+  toggle.classList.toggle('open',open);
+  arrow.classList.toggle('rot',open);
+}
+
+/* ============================================================
+   DEEP LINK MOODLE MOBILE
+============================================================ */
+const btnV=document.getElementById('btn-volver');
+const appUrl='moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=537';
+if(/Android|iPhone|iPad/i.test(navigator.userAgent)){ btnV.href=appUrl; }
+</script>
+</body>
+</html>

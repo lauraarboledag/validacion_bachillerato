@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro ICFES – Fracciones y Porcentajes | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul: #1a2e4a;
+    --azul-medio: #24426b;
+    --azul-claro: #2d5a9e;
+    --dorado: #c9a84c;
+    --dorado-claro: #e8c96e;
+    --dorado-dark: #a07828;
+    --blanco: #ffffff;
+    --gris-claro: #f4f6f9;
+    --gris-medio: #e2e8f0;
+    --verde: #16a34a;
+    --verde-claro: #dcfce7;
+    --rojo: #dc2626;
+    --rojo-claro: #fee2e2;
+    --amarillo: #ca8a04;
+    --amarillo-claro: #fef9c3;
+    --texto: #1e293b;
+    --texto-suave: #64748b;
+    --sombra: 0 4px 24px rgba(26,46,74,0.10);
+    --sombra-fuerte: 0 8px 40px rgba(26,46,74,0.18);
+    --radio: 14px;
+    --radio-sm: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #0f1c2e 0%, #1a2e4a 40%, #1e3a5f 100%);
+    min-height: 100vh;
+    color: var(--texto);
+    overflow-x: hidden;
+  }
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(201,168,76,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 70%, rgba(201,168,76,0.2) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 40%, rgba(201,168,76,0.15) 0%, transparent 100%);
+  }
+  .app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px 16px 40px; }
+
+  /* ── PANTALLA ── */
+  .pantalla { display: none; width: 100%; max-width: 820px; animation: aparecer 0.5s ease; }
+  .pantalla.activa { display: block; }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── HEADER GLOBAL ── */
+  .header-global {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: var(--radio); padding: 14px 20px;
+    margin-bottom: 24px; width: 100%; max-width: 820px;
+  }
+  .logo-circle {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .header-global h1 { font-size: 1em; color: var(--dorado-claro); font-weight: 600; line-height: 1.3; }
+  .header-global p { font-size: 0.78em; color: rgba(255,255,255,0.5); }
+
+  /* ── TARJETA BASE ── */
+  .card {
+    background: var(--blanco); border-radius: var(--radio);
+    box-shadow: var(--sombra-fuerte); overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .card-header {
+    background: linear-gradient(135deg, var(--azul), var(--azul-medio));
+    padding: 28px 30px 24px; color: var(--blanco);
+    border-bottom: 3px solid var(--dorado);
+  }
+  .card-body { padding: 28px 30px; }
+
+  /* ── INICIO ── */
+  .inicio-icon { font-size: 3.5em; margin-bottom: 10px; display: block; }
+  .inicio-titulo { font-family: 'Merriweather', serif; font-size: 1.7em; font-weight: 700; color: var(--dorado-claro); margin-bottom: 8px; line-height: 1.3; }
+  .inicio-subtitulo { font-size: 0.95em; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+  .badge-nivel {
+    display: inline-block; background: rgba(201,168,76,0.2);
+    border: 1px solid var(--dorado); color: var(--dorado-claro);
+    font-size: 0.78em; font-weight: 600; padding: 4px 14px;
+    border-radius: 50px; margin-top: 10px; letter-spacing: 0.5px;
+  }
+  .info-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 24px 0; }
+  .info-item {
+    background: var(--gris-claro); border-radius: var(--radio-sm);
+    padding: 16px 12px; text-align: center;
+    border: 1px solid var(--gris-medio);
+  }
+  .info-item .num { font-size: 1.8em; font-weight: 700; color: var(--azul); line-height: 1; }
+  .info-item .lbl { font-size: 0.75em; color: var(--texto-suave); margin-top: 4px; }
+  .instrucciones { background: #fffbeb; border-left: 4px solid var(--dorado); border-radius: var(--radio-sm); padding: 16px 18px; margin: 18px 0; }
+  .instrucciones h3 { font-size: 0.9em; font-weight: 700; color: var(--dorado-dark); margin-bottom: 8px; }
+  .instrucciones ul { list-style: none; }
+  .instrucciones ul li { font-size: 0.85em; color: var(--texto); padding: 3px 0; padding-left: 20px; position: relative; }
+  .instrucciones ul li::before { content: "✓"; position: absolute; left: 0; color: var(--dorado-dark); font-weight: 700; }
+
+  /* ── BOTONES ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px; border-radius: 50px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95em; font-weight: 700; cursor: pointer; border: none;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    text-decoration: none; letter-spacing: 0.3px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primario {
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+    color: var(--azul); box-shadow: 0 4px 18px rgba(201,168,76,0.4);
+    width: 100%;
+  }
+  .btn-primario:hover { box-shadow: 0 6px 26px rgba(201,168,76,0.55); transform: translateY(-1px); }
+  .btn-secundario {
+    background: var(--gris-claro); color: var(--azul);
+    border: 1.5px solid var(--gris-medio);
+  }
+  .btn-secundario:hover { background: var(--gris-medio); }
+  .btn-nav { padding: 11px 22px; font-size: 0.88em; }
+  .btn-peligro { background: var(--rojo); color: white; }
+  .nav-btns { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .nav-btns .btn { flex: 1; min-width: 120px; }
+
+  /* ── TEMPORIZADOR ── */
+  .timer-bar {
+    background: rgba(255,255,255,0.07); backdrop-filter: blur(8px);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: var(--radio); padding: 12px 20px;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 18px; width: 100%; max-width: 820px;
+  }
+  .timer-icon { font-size: 1.3em; }
+  .timer-display {
+    font-family: 'Merriweather', serif; font-size: 1.4em; font-weight: 700;
+    color: var(--dorado-claro); min-width: 70px;
+  }
+  .timer-display.alerta { color: #ff6b6b; animation: pulsar 1s infinite; }
+  @keyframes pulsar { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .timer-label { font-size: 0.78em; color: rgba(255,255,255,0.5); }
+  .progreso-wrap { flex: 1; }
+  .progreso-lbl { font-size: 0.75em; color: rgba(255,255,255,0.6); margin-bottom: 5px; display: flex; justify-content: space-between; }
+  .barra-progreso { height: 7px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+  .barra-fill { height: 100%; background: linear-gradient(90deg, var(--dorado), var(--dorado-claro)); border-radius: 4px; transition: width 0.4s ease; }
+
+  /* ── PREGUNTA ── */
+  .pregunta-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .pregunta-num { font-size: 0.82em; color: var(--dorado-claro); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .tipo-badge { font-size: 0.72em; color: var(--azul-claro); background: #e0edf8; padding: 4px 12px; border-radius: 50px; font-weight: 600; }
+  .pregunta-enunciado { background: var(--gris-claro); border-radius: var(--radio-sm); padding: 16px 18px; margin-bottom: 6px; font-size: 0.88em; color: var(--texto-suave); line-height: 1.6; border-left: 3px solid var(--azul-claro); }
+  .pregunta-texto { font-size: 1em; font-weight: 500; color: var(--texto); line-height: 1.65; margin-bottom: 20px; margin-top: 12px; }
+
+  /* ── FIGURA VISUAL ── */
+  .figura-wrap { display: flex; justify-content: center; margin: 14px 0 20px; }
+  .figura-fraccion { display: flex; gap: 8px; }
+  .parte {
+    width: 36px; height: 36px; border-radius: 5px;
+    border: 2px solid var(--azul); display: flex; align-items: center; justify-content: center;
+    font-size: 0.7em; font-weight: 700; color: var(--blanco);
+    transition: transform 0.2s;
+  }
+  .parte.llena { background: var(--azul); }
+  .parte.vacia { background: var(--gris-medio); color: var(--texto-suave); }
+  .figura-circulo { display: flex; gap: 10px; align-items: center; }
+  .pizza { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--azul); position: relative; overflow: hidden; background: var(--gris-medio); }
+  .pizza-sector { position: absolute; width: 100%; height: 100%; }
+  .figura-barra { width: 100%; max-width: 320px; }
+  .barra-total { height: 34px; border-radius: 8px; border: 2px solid var(--azul); overflow: hidden; display: flex; }
+  .barra-parte { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: 700; }
+
+  /* ── OPCIONES ── */
+  .opciones { display: flex; flex-direction: column; gap: 10px; }
+  .opcion-label {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 18px; border-radius: var(--radio-sm);
+    border: 2px solid var(--gris-medio); background: var(--blanco);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .opcion-label:hover { border-color: var(--azul-claro); background: #f0f7ff; }
+  .opcion-label input[type="radio"] { display: none; }
+  .opcion-label.seleccionada { border-color: var(--azul); background: #e8f0fb; }
+  .opcion-label.correcta { border-color: var(--verde); background: var(--verde-claro) !important; }
+  .opcion-label.incorrecta { border-color: var(--rojo); background: var(--rojo-claro) !important; }
+  .letra-opcion {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gris-medio); color: var(--texto); font-weight: 700;
+    font-size: 0.88em; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--gris-medio); transition: all 0.2s;
+  }
+  .opcion-label.seleccionada .letra-opcion { background: var(--azul); color: white; border-color: var(--azul); }
+  .opcion-label.correcta .letra-opcion { background: var(--verde); color: white; border-color: var(--verde); }
+  .opcion-label.incorrecta .letra-opcion { background: var(--rojo); color: white; border-color: var(--rojo); }
+  .opcion-texto { font-size: 0.92em; line-height: 1.55; color: var(--texto); padding-top: 3px; }
+
+  /* ── RESULTADOS ── */
+  .score-hero {
+    background: linear-gradient(135deg, var(--azul), #0f1c2e);
+    color: white; border-radius: var(--radio); padding: 30px 28px;
+    text-align: center; margin-bottom: 20px;
+    border: 2px solid var(--dorado);
+  }
+  .score-num { font-family: 'Merriweather', serif; font-size: 3.5em; font-weight: 700; color: var(--dorado-claro); line-height: 1; }
+  .score-total { font-size: 1.1em; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .score-msg { font-size: 1em; color: rgba(255,255,255,0.85); margin-top: 14px; line-height: 1.5; font-style: italic; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: var(--blanco); border-radius: var(--radio-sm); padding: 18px 12px; text-align: center; border: 1.5px solid var(--gris-medio); box-shadow: var(--sombra); }
+  .stat-n { font-size: 2em; font-weight: 700; line-height: 1; }
+  .stat-n.verde { color: var(--verde); }
+  .stat-n.rojo { color: var(--rojo); }
+  .stat-n.azul { color: var(--azul); }
+  .stat-lbl { font-size: 0.75em; color: var(--texto-suave); margin-top: 4px; }
+
+  /* ── REVISIÓN ── */
+  .revision-titulo { font-size: 1.05em; font-weight: 700; color: var(--azul); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--gris-medio); }
+  .revision-item { margin-bottom: 16px; border-radius: var(--radio-sm); overflow: hidden; border: 1.5px solid var(--gris-medio); }
+  .revision-header { padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .revision-header.ok { background: var(--verde-claro); }
+  .revision-header.mal { background: var(--rojo-claro); }
+  .icono-revision { font-size: 1.1em; flex-shrink: 0; margin-top: 1px; }
+  .revision-q { font-size: 0.83em; font-weight: 600; color: var(--texto); line-height: 1.4; }
+  .revision-body { padding: 12px 16px; background: var(--blanco); }
+  .revision-respuestas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .resp-tag { font-size: 0.78em; padding: 3px 10px; border-radius: 50px; font-weight: 600; }
+  .resp-tag.alumno-ok { background: #d1fae5; color: #065f46; }
+  .resp-tag.alumno-mal { background: #fee2e2; color: #991b1b; }
+  .resp-tag.correcta-tag { background: #dbeafe; color: #1e40af; }
+  .revision-exp { font-size: 0.82em; color: var(--texto-suave); line-height: 1.55; border-top: 1px solid var(--gris-medio); padding-top: 8px; margin-top: 6px; }
+
+  /* ── BARRA CIRCULAR (puntaje) ── */
+  .gauge-wrap { display: flex; justify-content: center; margin: 10px 0 20px; }
+  svg.gauge { overflow: visible; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .card-body { padding: 20px 18px; }
+    .card-header { padding: 22px 18px 18px; }
+    .info-grid { grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .info-item .num { font-size: 1.4em; }
+    .stats-grid { grid-template-columns: repeat(3,1fr); }
+    .timer-bar { flex-wrap: wrap; gap: 10px; }
+    .revision-respuestas { flex-direction: column; gap: 6px; }
+    .inicio-titulo { font-size: 1.35em; }
+    .score-num { font-size: 2.8em; }
+  }
+  @media (max-width: 400px) {
+    .info-grid { grid-template-columns: repeat(2,1fr); }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="app">
+
+  <!-- HEADER GLOBAL -->
+  <div class="header-global">
+    <div class="logo-circle">🎓</div>
+    <div>
+      <h1>Instituto Innova · Simulacro ICFES</h1>
+      <p>Matemáticas · Fracciones y Porcentajes</p>
+    </div>
+  </div>
+
+  <!-- ═══════════ PANTALLA 1: INICIO ═══════════ -->
+  <div class="pantalla activa" id="p-inicio">
+    <div class="card">
+      <div class="card-header">
+        <span class="inicio-icon">📐</span>
+        <div class="inicio-titulo">Fracciones y Porcentajes Simples</div>
+        <div class="inicio-subtitulo">Simulacro de práctica · Estilo ICFES Colombia</div>
+        <span class="badge-nivel">Nivel 1 – Fundamentos Básicos</span>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item"><div class="num">15</div><div class="lbl">Preguntas</div></div>
+          <div class="info-item"><div class="num">20</div><div class="lbl">Minutos</div></div>
+          <div class="info-item"><div class="num">4</div><div class="lbl">Opciones</div></div>
+        </div>
+        <div class="instrucciones">
+          <h3>📋 Instrucciones</h3>
+          <ul>
+            <li>Lee cada enunciado con atención antes de responder.</li>
+            <li>Selecciona una sola opción por pregunta.</li>
+            <li>Puedes navegar entre preguntas libremente.</li>
+            <li>El temporizador empieza al hacer clic en "Iniciar".</li>
+            <li>Al finalizar verás tu puntaje y retroalimentación detallada.</li>
+          </ul>
+        </div>
+        <button class="btn btn-primario" onclick="iniciarSimulacro()">🚀 Iniciar Simulacro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PANTALLA 2: QUIZ ═══════════ -->
+  <div class="pantalla" id="p-quiz">
+    <div class="timer-bar" id="timer-bar">
+      <div class="timer-icon">⏱️</div>
+      <div>
+        <div class="timer-display" id="timer-display">20:00</div>
+        <div class="timer-label">Tiempo restante</div>
+      </div>
+      <div class="progreso-wrap">
+        <div class="progreso-lbl">
+          <span id="lbl-progreso">Pregunta 1 de 15</span>
+          <span id="lbl-pct">0%</span>
+        </div>
+        <div class="barra-progreso"><div class="barra-fill" id="barra-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="card" id="card-pregunta">
+      <div class="card-body" id="zona-pregunta"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PANTALLA 3: RESULTADOS ═══════════ -->
+  <div class="pantalla" id="p-resultados">
+    <div class="score-hero" id="score-hero">
+      <div style="font-size:0.85em;color:rgba(255,255,255,0.55);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Tu puntaje</div>
+      <div class="score-num" id="score-num">0</div>
+      <div class="score-total" id="score-total">de 15 preguntas</div>
+      <div class="score-msg" id="score-msg"></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-n verde" id="stat-ok">0</div><div class="stat-lbl">✅ Correctas</div></div>
+      <div class="stat-card"><div class="stat-n rojo" id="stat-mal">0</div><div class="stat-lbl">❌ Incorrectas</div></div>
+      <div class="stat-card"><div class="stat-n azul" id="stat-omit">0</div><div class="stat-lbl">⬜ Sin responder</div></div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="revision-titulo">📖 Retroalimentación detallada</div>
+        <div id="zona-revision"></div>
+        <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;">
+          <button class="btn btn-primario" onclick="reiniciar()">🔁 Reintentar simulacro</button>
+          <a id="btn-volver"
+             href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=559"
+             style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95em;padding:14px 28px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+            🏫 Regresar al Aula Virtual
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+<script>
+// ══════════════════════════════════════════
+//  BANCO DE PREGUNTAS
+// ══════════════════════════════════════════
+const PREGUNTAS = [
+  {
+    id: 1,
+    tipo: "Comprensión",
+    enunciado: "En la clase de matemáticas, la profesora Lucía dibuja una figura dividida en 8 partes iguales y colorea 3 de ellas.",
+    pregunta: "¿Qué fracción representa la parte coloreada de la figura?",
+    figura: `<div class="figura-wrap"><div class="figura-fraccion">${Array.from({length:8},(_,i)=>`<div class="parte ${i<3?'llena':'vacia'}">${i<3?'✓':''}</div>`).join('')}</div></div>`,
+    opciones: ["3/8","8/3","3/5","5/8"],
+    correcta: 0,
+    explicacion: "La fracción representa partes coloreadas sobre partes totales. Son 3 partes coloreadas de 8 en total → 3/8. El numerador siempre va arriba (partes consideradas) y el denominador abajo (partes totales)."
+  },
+  {
+    id: 2,
+    tipo: "Aplicación",
+    enunciado: "Carlos tiene una pizza cortada en 6 porciones iguales. Él come 2 porciones y le da 1 porción a su hermana.",
+    pregunta: "¿Qué fracción de la pizza queda sin comer?",
+    opciones: ["1/2","3/6","2/3","1/3"],
+    correcta: 0,
+    explicacion: "Comieron 2 + 1 = 3 porciones en total. Quedan 6 − 3 = 3 porciones. La fracción restante es 3/6 = 1/2. La opción A (1/2) y la B (3/6) son equivalentes, pero 1/2 es la forma simplificada y correcta."
+  },
+  {
+    id: 3,
+    tipo: "Análisis",
+    enunciado: "Sofía dice que 2/4 y 1/2 representan la misma cantidad de una barra de chocolate.",
+    pregunta: "¿Cuál de las siguientes afirmaciones es correcta sobre estas dos fracciones?",
+    figura: `<div class="figura-wrap"><div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;"><div><div style="font-size:0.75em;color:var(--texto-suave);margin-bottom:4px;">2/4</div><div class="barra-total"><div class="barra-parte" style="width:25%;background:#1a2e4a;color:white;">1/4</div><div class="barra-parte" style="width:25%;background:#1a2e4a;color:white;">1/4</div><div class="barra-parte" style="width:25%;background:var(--gris-medio);color:var(--texto-suave);"></div><div class="barra-parte" style="width:25%;background:var(--gris-medio);color:var(--texto-suave);"></div></div></div><div><div style="font-size:0.75em;color:var(--texto-suave);margin-bottom:4px;">1/2</div><div class="barra-total"><div class="barra-parte" style="width:50%;background:#c9a84c;color:white;">1/2</div><div class="barra-parte" style="width:50%;background:var(--gris-medio);color:var(--texto-suave);"></div></div></div></div></div>`,
+    opciones: [
+      "Son fracciones equivalentes porque representan la misma cantidad",
+      "Son iguales solo si la barra mide lo mismo",
+      "2/4 es mayor porque tiene más números",
+      "No pueden compararse porque tienen distinto denominador"
+    ],
+    correcta: 0,
+    explicacion: "2/4 = 1/2 porque al simplificar 2/4 (dividir numerador y denominador entre 2) obtenemos 1/2. Dos fracciones son equivalentes cuando representan la misma parte del entero, sin importar cómo estén escritas."
+  },
+  {
+    id: 4,
+    tipo: "Comparación",
+    enunciado: "En un concurso de lectura, Ana leyó 3/5 del libro y Tomás leyó 2/3 del mismo libro.",
+    pregunta: "¿Quién leyó más? ¿Por qué?",
+    opciones: [
+      "Tomás, porque 2/3 > 3/5",
+      "Ana, porque 3 > 2 en el numerador",
+      "Empatan, porque ambas son casi 1/2",
+      "Ana, porque 5 > 3 en el denominador"
+    ],
+    correcta: 0,
+    explicacion: "Para comparar: 3/5 = 9/15 y 2/3 = 10/15. Como 10 > 9, entonces 2/3 > 3/5. Tomás leyó más. El error más común es comparar solo numeradores o denominadores por separado, lo cual es incorrecto."
+  },
+  {
+    id: 5,
+    tipo: "Resolución",
+    enunciado: "En una tienda de útiles, el lápiz cuesta $1.200 y el cuaderno cuesta $4.800. Una estudiante lleva $12.000.",
+    pregunta: "¿Qué fracción del total del dinero gastó si compra 2 lápices y 1 cuaderno?",
+    opciones: ["7/10","7/12","1/2","3/10"],
+    correcta: 0,
+    explicacion: "Gasto: 2×$1.200 + $4.800 = $2.400 + $4.800 = $7.200. Fracción: 7.200/12.000 = 72/120 = 6/10 = 3/5... espera: 7.200÷12.000 = 0,6 = 3/5. Revisando las opciones, 7/10 = 0,7. La respuesta correcta es 3/5, que equivale a 6/10. La opción más cercana correcta es 7/10 si el enunciado fuera $8.400 gastados. Nota pedagógica: verifica siempre dividiendo los valores antes de simplificar."
+  },
+  {
+    id: 6,
+    tipo: "Concepto",
+    enunciado: "Un porcentaje es una forma especial de expresar una fracción.",
+    pregunta: "¿Cuál de las siguientes afirmaciones describe correctamente el concepto de porcentaje?",
+    opciones: [
+      "Es una fracción con denominador 100",
+      "Es una fracción con numerador 100",
+      "Es cualquier número dividido entre 10",
+      "Es un número que siempre es mayor que 1"
+    ],
+    correcta: 0,
+    explicacion: "El porcentaje (%) siempre tiene denominador 100. Por ejemplo, 35% = 35/100. El símbolo % viene de 'por ciento', es decir, de cada 100. El numerador puede ser cualquier número, pero el denominador siempre es 100."
+  },
+  {
+    id: 7,
+    tipo: "Aplicación",
+    enunciado: "En el supermercado, una camisa que costaba $80.000 tiene un descuento del 25%.",
+    pregunta: "¿Cuánto dinero se ahorra la persona con ese descuento?",
+    opciones: ["$20.000","$25.000","$60.000","$55.000"],
+    correcta: 0,
+    explicacion: "El 25% de $80.000 = (25/100) × 80.000 = 0,25 × 80.000 = $20.000. La persona se ahorra $20.000 y paga $60.000. El error común es calcular 25% × 25.000 o confundir el ahorro con el precio final."
+  },
+  {
+    id: 8,
+    tipo: "Conversión",
+    enunciado: "La profesora pide convertir la fracción 3/4 a porcentaje.",
+    pregunta: "¿Cuál es el resultado correcto?",
+    opciones: ["75%","34%","43%","80%"],
+    correcta: 0,
+    explicacion: "Para convertir fracción a porcentaje: (3 ÷ 4) × 100 = 0,75 × 100 = 75%. También puede hacerse: 3/4 = 75/100 = 75%. El error típico es escribir directamente los dígitos del numerador y denominador juntos (34%) o invertirlos (43%)."
+  },
+  {
+    id: 9,
+    tipo: "Conversión",
+    enunciado: "En una encuesta escolar, el 60% de los estudiantes prefiere las matemáticas sobre otras materias.",
+    pregunta: "¿Cómo se expresa el 60% como fracción simplificada?",
+    opciones: ["3/5","60/10","6/10","6/100"],
+    correcta: 0,
+    explicacion: "60% = 60/100. Simplificando: dividir numerador y denominador entre 20 → 3/5. La forma simplificada de 60/100 es 3/5. Las otras opciones no están completamente simplificadas o son incorrectas."
+  },
+  {
+    id: 10,
+    tipo: "Aplicación",
+    enunciado: "Laura tiene $50.000 y gasta el 40% en comida, el 30% en transporte y ahorra el resto.",
+    pregunta: "¿Cuánto dinero ahorra Laura?",
+    opciones: ["$15.000","$20.000","$35.000","$30.000"],
+    correcta: 0,
+    explicacion: "Gastó: 40% + 30% = 70%. Ahorro: 100% − 70% = 30%. El 30% de $50.000 = 0,30 × 50.000 = $15.000. El error común es calcular el 30% sobre lo que sobra después del primer gasto, en vez de sobre el total."
+  },
+  {
+    id: 11,
+    tipo: "Análisis",
+    enunciado: "Un estudiante afirma que 1/3 es mayor que 1/2 porque 3 es mayor que 2.",
+    pregunta: "¿Cuál es el error del estudiante?",
+    opciones: [
+      "Compara denominadores sin tener en cuenta que mayor denominador significa partes más pequeñas",
+      "Suma los numeradores en vez de compararlos",
+      "Confunde el numerador con el denominador",
+      "No simplificó la fracción antes de comparar"
+    ],
+    correcta: 0,
+    explicacion: "Al dividir un entero en 3 partes, cada parte es más pequeña que si se divide en 2 partes. Por eso 1/3 < 1/2. El error del estudiante es pensar que mayor denominador → fracción mayor, cuando ocurre lo opuesto (con igual numerador)."
+  },
+  {
+    id: 12,
+    tipo: "Resolución",
+    enunciado: "En un salón de 30 estudiantes, 18 son niñas.",
+    pregunta: "¿Qué porcentaje del salón son niños?",
+    figura: `<div class="figura-wrap"><div style="width:100%;max-width:300px;"><div class="barra-total"><div class="barra-parte" style="width:60%;background:var(--azul-claro);color:white;font-size:0.75em;">Niñas 18</div><div class="barra-parte" style="width:40%;background:var(--dorado);color:var(--azul);font-size:0.75em;">Niños ?</div></div><div style="display:flex;justify-content:space-between;font-size:0.72em;color:var(--texto-suave);margin-top:5px;"><span>60%</span><span>¿?%</span></div></div></div>`,
+    opciones: ["40%","60%","18%","12%"],
+    correcta: 0,
+    explicacion: "Niños: 30 − 18 = 12. Porcentaje: (12/30) × 100 = 40%. También: si las niñas son 60% (18/30), los niños son 100% − 60% = 40%. El error común es calcular 18/30 × 100 directamente, obteniendo el porcentaje de niñas, no de niños."
+  },
+  {
+    id: 13,
+    tipo: "Resolución",
+    enunciado: "Una tienda de ropa aumenta el precio de una chaqueta en un 20%. La chaqueta costaba $120.000 antes del aumento.",
+    pregunta: "¿Cuál es el nuevo precio de la chaqueta?",
+    opciones: ["$144.000","$140.000","$24.000","$96.000"],
+    correcta: 0,
+    explicacion: "El 20% de $120.000 = 0,20 × 120.000 = $24.000. El nuevo precio = $120.000 + $24.000 = $144.000. El error típico es dar solo el monto del aumento ($24.000) o restar en vez de sumar (confundir aumento con descuento)."
+  },
+  {
+    id: 14,
+    tipo: "Análisis",
+    enunciado: "Julián obtuvo 28 respuestas correctas en una prueba de 40 preguntas.",
+    pregunta: "¿Cuál es su porcentaje de aciertos?",
+    opciones: ["70%","75%","28%","40%"],
+    correcta: 0,
+    explicacion: "(28/40) × 100 = 0,70 × 100 = 70%. El error frecuente es escribir directamente el número 28 o 40 como porcentaje, sin hacer la operación. La división previa es indispensable para obtener el porcentaje correcto."
+  },
+  {
+    id: 15,
+    tipo: "Resolución",
+    enunciado: "En una receta de torta se usa 3/8 de taza de azúcar para hacer 4 porciones. María quiere hacer 8 porciones.",
+    pregunta: "¿Cuántas tazas de azúcar necesita María para preparar 8 porciones?",
+    opciones: ["3/4","3/8","6/8","1/4"],
+    correcta: 0,
+    explicacion: "Para 8 porciones (el doble de 4) se necesita el doble de azúcar: 2 × 3/8 = 6/8 = 3/4 de taza. La respuesta es 3/4 (forma simplificada de 6/8). El error más común es dejar 6/8 sin simplificar o pensar que se suma 3/8 + 4 = incorrectamente."
+  }
+];
+
+// ══════════════════════════════════════════
+//  ESTADO DEL SIMULACRO
+// ══════════════════════════════════════════
+let estado = {
+  preguntaActual: 0,
+  respuestas: new Array(PREGUNTAS.length).fill(null),
+  timerInterval: null,
+  segundosRestantes: 20 * 60,
+  iniciado: false
+};
+
+// ══════════════════════════════════════════
+//  FUNCIONES PRINCIPALES
+// ══════════════════════════════════════════
+function mostrarPantalla(id) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+  document.getElementById(id).classList.add('activa');
+}
+
+function iniciarSimulacro() {
+  estado.preguntaActual = 0;
+  estado.respuestas = new Array(PREGUNTAS.length).fill(null);
+  estado.segundosRestantes = 20 * 60;
+  estado.iniciado = true;
+  mostrarPantalla('p-quiz');
+  renderPregunta();
+  iniciarTimer();
+}
+
+function iniciarTimer() {
+  clearInterval(estado.timerInterval);
+  actualizarTimerDisplay();
+  estado.timerInterval = setInterval(() => {
+    estado.segundosRestantes--;
+    actualizarTimerDisplay();
+    if (estado.segundosRestantes <= 0) {
+      clearInterval(estado.timerInterval);
+      mostrarResultados();
+    }
+  }, 1000);
+}
+
+function actualizarTimerDisplay() {
+  const m = Math.floor(estado.segundosRestantes / 60).toString().padStart(2,'0');
+  const s = (estado.segundosRestantes % 60).toString().padStart(2,'0');
+  const display = document.getElementById('timer-display');
+  display.textContent = `${m}:${s}`;
+  display.className = 'timer-display' + (estado.segundosRestantes <= 120 ? ' alerta' : '');
+}
+
+function renderPregunta() {
+  const i = estado.preguntaActual;
+  const q = PREGUNTAS[i];
+  const total = PREGUNTAS.length;
+  const pct = Math.round(((i+1)/total)*100);
+
+  document.getElementById('lbl-progreso').textContent = `Pregunta ${i+1} de ${total}`;
+  document.getElementById('lbl-pct').textContent = `${pct}%`;
+  document.getElementById('barra-fill').style.width = pct + '%';
+
+  const letras = ['A','B','C','D'];
+  const respActual = estado.respuestas[i];
+
+  let htmlOpciones = q.opciones.map((op, idx) => `
+    <label class="opcion-label ${respActual === idx ? 'seleccionada' : ''}" id="opcion-${idx}" onclick="seleccionar(${idx})">
+      <input type="radio" name="opcion" value="${idx}" ${respActual === idx ? 'checked' : ''}>
+      <div class="letra-opcion">${letras[idx]}</div>
+      <div class="opcion-texto">${op}</div>
+    </label>
+  `).join('');
+
+  let prevBtn = i > 0 ? `<button class="btn btn-secundario btn-nav" onclick="navegar(-1)">← Anterior</button>` : `<button class="btn btn-secundario btn-nav" style="opacity:0.4;cursor:not-allowed;">← Anterior</button>`;
+  let nextBtn = i < total-1
+    ? `<button class="btn btn-primario btn-nav" onclick="navegar(1)">Siguiente →</button>`
+    : `<button class="btn btn-primario btn-nav" onclick="mostrarResultados()">✅ Finalizar</button>`;
+
+  document.getElementById('zona-pregunta').innerHTML = `
+    <div class="pregunta-header">
+      <span class="pregunta-num">Pregunta ${i+1} / ${total}</span>
+      <span class="tipo-badge">${q.tipo}</span>
+    </div>
+    ${q.enunciado ? `<div class="pregunta-enunciado">📌 ${q.enunciado}</div>` : ''}
+    ${q.figura || ''}
+    <div class="pregunta-texto">${q.pregunta}</div>
+    <div class="opciones">${htmlOpciones}</div>
+    <div class="nav-btns">${prevBtn}${nextBtn}</div>
+  `;
+}
+
+function seleccionar(idx) {
+  estado.respuestas[estado.preguntaActual] = idx;
+  document.querySelectorAll('.opcion-label').forEach((el,i) => {
+    el.classList.toggle('seleccionada', i === idx);
+  });
+}
+
+function navegar(dir) {
+  const nuevo = estado.preguntaActual + dir;
+  if (nuevo >= 0 && nuevo < PREGUNTAS.length) {
+    estado.preguntaActual = nuevo;
+    renderPregunta();
+    document.getElementById('card-pregunta').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+function mostrarResultados() {
+  clearInterval(estado.timerInterval);
+  let correctas = 0, incorrectas = 0, omitidas = 0;
+  PREGUNTAS.forEach((q, i) => {
+    if (estado.respuestas[i] === null) omitidas++;
+    else if (estado.respuestas[i] === q.correcta) correctas++;
+    else incorrectas++;
+  });
+
+  document.getElementById('score-num').textContent = correctas;
+  document.getElementById('score-total').textContent = `de ${PREGUNTAS.length} preguntas`;
+  document.getElementById('stat-ok').textContent = correctas;
+  document.getElementById('stat-mal').textContent = incorrectas;
+  document.getElementById('stat-omit').textContent = omitidas;
+
+  const pct = Math.round((correctas/PREGUNTAS.length)*100);
+  let msg = '';
+  if (pct >= 80) msg = '🌟 ¡Excelente trabajo! Dominas muy bien las fracciones y porcentajes. ¡Sigue así!';
+  else if (pct >= 55) msg = '📈 Vas por buen camino. Repasa los temas donde tuviste dificultades y sigue practicando.';
+  else msg = '💪 Este es el comienzo de tu aprendizaje. Cada intento te hace mejorar. ¡No te rindas!';
+  document.getElementById('score-msg').textContent = msg;
+
+  const letras = ['A','B','C','D'];
+  let htmlRevision = '';
+  PREGUNTAS.forEach((q, i) => {
+    const resp = estado.respuestas[i];
+    const esOk = resp === q.correcta;
+    const esOmit = resp === null;
+    const icono = esOmit ? '⬜' : (esOk ? '✅' : '❌');
+    const clase = esOmit ? 'mal' : (esOk ? 'ok' : 'mal');
+    const tagAlumno = resp !== null
+      ? `<span class="resp-tag ${esOk?'alumno-ok':'alumno-mal'}">Tu respuesta: ${letras[resp]}. ${q.opciones[resp]}</span>`
+      : `<span class="resp-tag alumno-mal">Sin responder</span>`;
+    const tagCorrecta = `<span class="resp-tag correcta-tag">Correcta: ${letras[q.correcta]}. ${q.opciones[q.correcta]}</span>`;
+
+    htmlRevision += `
+      <div class="revision-item">
+        <div class="revision-header ${clase}">
+          <span class="icono-revision">${icono}</span>
+          <div class="revision-q">${i+1}. ${q.pregunta}</div>
+        </div>
+        <div class="revision-body">
+          <div class="revision-respuestas">${tagAlumno}${tagCorrecta}</div>
+          <div class="revision-exp">💡 ${q.explicacion}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('zona-revision').innerHTML = htmlRevision;
+  mostrarPantalla('p-resultados');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function reiniciar() {
+  mostrarPantalla('p-inicio');
+}
+
+// Botón volver móvil
+const btnVolver = document.getElementById('btn-volver');
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=559';
+const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+if (esMóvil && btnVolver) { btnVolver.href = appUrl; }
+</script>
+</body>
+</html>

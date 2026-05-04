@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro ICFES – Problemas Verbales | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#1a2e4a;--azul-m:#24426b;--azul-c:#2d5a9e;--azul-xs:#e8f0fb;
+  --dorado:#c9a84c;--dorado-l:#e8c96e;--dorado-d:#a07828;--dorado-xs:#fffbeb;
+  --blanco:#fff;--gris-xs:#f4f6f9;--gris-s:#e2e8f0;--gris-m:#cbd5e1;
+  --verde:#16a34a;--verde-xs:#dcfce7;--verde-s:#bbf7d0;
+  --rojo:#dc2626;--rojo-xs:#fee2e2;--rojo-s:#fecaca;
+  --texto:#1e293b;--texto-s:#475569;--texto-xs:#94a3b8;
+  --r:14px;--rs:8px;--rxs:6px;
+  --sh:0 2px 16px rgba(26,46,74,.10);--sh-m:0 6px 32px rgba(26,46,74,.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#0d1b2e;min-height:100vh;color:var(--texto);overflow-x:hidden}
+
+/* ── BG ── */
+.bg-layer{position:fixed;inset:0;z-index:0;
+  background:linear-gradient(160deg,#0d1b2e 0%,#1a2e4a 50%,#112240 100%);
+  pointer-events:none}
+.bg-layer::before{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(1.5px 1.5px at 15% 20%,rgba(201,168,76,.25) 0,transparent 100%),
+    radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.1) 0,transparent 100%),
+    radial-gradient(1px 1px at 85% 65%,rgba(201,168,76,.18) 0,transparent 100%),
+    radial-gradient(2px 2px at 40% 85%,rgba(255,255,255,.07) 0,transparent 100%),
+    radial-gradient(1px 1px at 55% 45%,rgba(201,168,76,.12) 0,transparent 100%)}
+
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:18px 14px 48px}
+
+/* ── TOPBAR ── */
+.topbar{width:100%;max-width:860px;display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(12px);
+  border:1px solid rgba(201,168,76,.22);border-radius:var(--r);
+  padding:13px 18px;margin-bottom:22px}
+.topbar-logo{width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-l));
+  display:flex;align-items:center;justify-content:center;font-size:20px}
+.topbar h1{font-size:.92em;color:var(--dorado-l);font-weight:700;line-height:1.3}
+.topbar p{font-size:.73em;color:rgba(255,255,255,.45);margin-top:1px}
+
+/* ── PANTALLAS ── */
+.pantalla{display:none;width:100%;max-width:860px}
+.pantalla.activa{display:block;animation:aparecer .45s cubic-bezier(.22,.68,0,1.2)}
+@keyframes aparecer{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARD ── */
+.card{background:var(--blanco);border-radius:var(--r);box-shadow:var(--sh-m);overflow:hidden;margin-bottom:18px}
+.card-head{background:linear-gradient(135deg,var(--azul),var(--azul-m));
+  padding:26px 28px 22px;color:var(--blanco);border-bottom:3px solid var(--dorado)}
+.card-body{padding:26px 28px}
+
+/* ── INICIO ── */
+.inicio-icon{font-size:3.2em;display:block;margin-bottom:8px}
+.inicio-tit{font-family:'Merriweather',serif;font-size:1.6em;font-weight:700;
+  color:var(--dorado-l);line-height:1.3;margin-bottom:6px}
+.inicio-sub{font-size:.9em;color:rgba(255,255,255,.68);line-height:1.55}
+.badge-nivel{display:inline-block;background:rgba(201,168,76,.2);
+  border:1px solid var(--dorado);color:var(--dorado-l);
+  font-size:.75em;font-weight:700;padding:4px 14px;border-radius:50px;
+  margin-top:10px;letter-spacing:.5px}
+.info-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.info-c{background:var(--gris-xs);border-radius:var(--rs);padding:14px 10px;
+  text-align:center;border:1px solid var(--gris-s)}
+.info-c .n{font-size:1.7em;font-weight:700;color:var(--azul);line-height:1}
+.info-c .l{font-size:.7em;color:var(--texto-s);margin-top:3px}
+.instruc{background:var(--dorado-xs);border-left:4px solid var(--dorado);
+  border-radius:var(--rs);padding:16px 18px;margin:18px 0}
+.instruc h3{font-size:.88em;font-weight:700;color:var(--dorado-d);margin-bottom:8px}
+.instruc ul{list-style:none}
+.instruc li{font-size:.82em;color:var(--texto);padding:3px 0 3px 20px;position:relative;line-height:1.5}
+.instruc li::before{content:"✓";position:absolute;left:0;color:var(--dorado-d);font-weight:700}
+
+/* ── BOTONES ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 26px;border-radius:50px;font-family:'DM Sans',sans-serif;
+  font-size:.9em;font-weight:700;cursor:pointer;border:none;
+  transition:transform .15s,box-shadow .15s,opacity .15s;
+  text-decoration:none;letter-spacing:.3px}
+.btn:active{transform:scale(.97)}
+.btn-prim{background:linear-gradient(135deg,var(--dorado),var(--dorado-l));
+  color:var(--azul);box-shadow:0 4px 18px rgba(201,168,76,.4);width:100%}
+.btn-prim:hover{box-shadow:0 6px 26px rgba(201,168,76,.55);transform:translateY(-1px)}
+.btn-sec{background:var(--gris-xs);color:var(--azul);border:1.5px solid var(--gris-s)}
+.btn-sec:hover{background:var(--gris-s)}
+.btn-sm{padding:10px 20px;font-size:.84em}
+.btn-disabled{opacity:.38;cursor:not-allowed;pointer-events:none}
+.btn-row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.btn-row .btn{flex:1;min-width:110px}
+
+/* ── TIMER & PROGRESO ── */
+.quiz-meta{background:rgba(255,255,255,.07);backdrop-filter:blur(8px);
+  border:1px solid rgba(201,168,76,.22);border-radius:var(--r);
+  padding:12px 18px;display:flex;align-items:center;gap:16px;
+  margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.timer-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.timer-ic{font-size:1.2em}
+.timer-val{font-family:'Merriweather',serif;font-size:1.3em;font-weight:700;
+  color:var(--dorado-l);min-width:62px}
+.timer-val.alerta{color:#ff6b6b;animation:pulso 1s infinite}
+@keyframes pulso{0%,100%{opacity:1}50%{opacity:.55}}
+.timer-lbl{font-size:.72em;color:rgba(255,255,255,.45)}
+.prog-wrap{flex:1;min-width:140px}
+.prog-labels{display:flex;justify-content:space-between;font-size:.72em;
+  color:rgba(255,255,255,.55);margin-bottom:5px}
+.prog-track{height:7px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado-l));
+  border-radius:4px;transition:width .4s ease}
+
+/* ── PREGUNTA CARD ── */
+.q-header{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.q-num{font-size:.78em;color:var(--dorado-d);font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px}
+.q-tipo{font-size:.7em;color:var(--azul-c);background:var(--azul-xs);
+  padding:4px 12px;border-radius:50px;font-weight:600}
+.q-enunciado{background:var(--gris-xs);border-left:3px solid var(--azul-c);
+  border-radius:var(--rs);padding:14px 16px;margin-bottom:10px;
+  font-size:.86em;color:var(--texto-s);line-height:1.65}
+.q-text{font-size:.98em;font-weight:600;color:var(--texto);line-height:1.65;margin-bottom:18px;margin-top:10px}
+
+/* ── OPCIONES ── */
+.opciones{display:flex;flex-direction:column;gap:9px}
+.opc-label{display:flex;align-items:flex-start;gap:13px;
+  padding:13px 16px;border-radius:var(--rs);
+  border:2px solid var(--gris-s);background:var(--blanco);
+  cursor:pointer;transition:all .18s;user-select:none}
+.opc-label:hover:not(.bloqueada){border-color:var(--azul-c);background:var(--azul-xs)}
+.opc-label input[type=radio]{display:none}
+.opc-letra{width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:var(--gris-s);color:var(--texto-s);font-weight:700;font-size:.84em;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--gris-m);transition:all .18s}
+.opc-txt{font-size:.9em;line-height:1.55;color:var(--texto);padding-top:3px}
+/* estados */
+.opc-label.sel{border-color:var(--azul);background:var(--azul-xs)}
+.opc-label.sel .opc-letra{background:var(--azul);color:var(--blanco);border-color:var(--azul)}
+.opc-label.correcta{border-color:var(--verde)!important;background:var(--verde-xs)!important}
+.opc-label.correcta .opc-letra{background:var(--verde);color:var(--blanco);border-color:var(--verde)}
+.opc-label.incorrecta{border-color:var(--rojo)!important;background:var(--rojo-xs)!important}
+.opc-label.incorrecta .opc-letra{background:var(--rojo);color:var(--blanco);border-color:var(--rojo)}
+.opc-label.bloqueada{cursor:not-allowed}
+
+/* ── FEEDBACK ── */
+.feedback{border-radius:var(--rs);padding:16px 18px;margin-top:16px;display:none;
+  animation:aparecer .35s ease}
+.feedback.correcto{background:var(--verde-xs);border:1.5px solid var(--verde-s)}
+.feedback.incorrecto{background:var(--rojo-xs);border:1.5px solid var(--rojo-s)}
+.feedback-titulo{font-size:.92em;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.feedback.correcto .feedback-titulo{color:var(--verde)}
+.feedback.incorrecto .feedback-titulo{color:var(--rojo)}
+.feedback-exp{font-size:.82em;color:var(--texto-s);line-height:1.6}
+.feedback-exp strong{color:var(--texto);font-weight:600}
+
+/* ── RESULTADOS ── */
+.score-hero{background:linear-gradient(135deg,var(--azul),#0a1628);
+  color:var(--blanco);border-radius:var(--r);padding:28px 24px;
+  text-align:center;margin-bottom:18px;border:2px solid var(--dorado)}
+.score-label{font-size:.78em;text-transform:uppercase;letter-spacing:1px;
+  color:rgba(255,255,255,.5);margin-bottom:6px}
+.score-n{font-family:'Merriweather',serif;font-size:3.4em;font-weight:700;
+  color:var(--dorado-l);line-height:1}
+.score-de{font-size:1em;color:rgba(255,255,255,.55);margin-top:3px}
+.score-pct-bar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);
+  margin:16px auto 0;max-width:260px;overflow:hidden}
+.score-pct-fill{height:100%;border-radius:5px;
+  background:linear-gradient(90deg,var(--dorado),var(--dorado-l));
+  transition:width 1.2s cubic-bezier(.22,.68,0,1.1)}
+.score-msg{font-size:.95em;color:rgba(255,255,255,.82);margin-top:16px;
+  line-height:1.55;font-style:italic;max-width:480px;margin-left:auto;margin-right:auto}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat-c{background:var(--blanco);border-radius:var(--rs);padding:16px 10px;
+  text-align:center;border:1.5px solid var(--gris-s);box-shadow:var(--sh)}
+.stat-n{font-size:2em;font-weight:700;line-height:1}
+.stat-n.v{color:var(--verde)} .stat-n.r{color:var(--rojo)} .stat-n.a{color:var(--azul)}
+.stat-l{font-size:.72em;color:var(--texto-s);margin-top:3px}
+
+/* ── REVISIÓN ── */
+.rev-tit{font-size:1em;font-weight:700;color:var(--azul);
+  margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--gris-s)}
+.rev-item{margin-bottom:14px;border-radius:var(--rs);overflow:hidden;
+  border:1.5px solid var(--gris-s)}
+.rev-head{padding:11px 15px;display:flex;align-items:flex-start;gap:10px}
+.rev-head.ok{background:var(--verde-xs)} .rev-head.mal{background:var(--rojo-xs)}
+.rev-ic{font-size:1em;flex-shrink:0;margin-top:1px}
+.rev-q{font-size:.8em;font-weight:600;color:var(--texto);line-height:1.4}
+.rev-body{padding:11px 15px;background:var(--blanco)}
+.rev-tags{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:7px}
+.rev-tag{font-size:.74em;padding:3px 10px;border-radius:50px;font-weight:600}
+.tag-ok{background:#d1fae5;color:#065f46}
+.tag-mal{background:#fee2e2;color:#991b1b}
+.tag-cor{background:#dbeafe;color:#1e40af}
+.rev-exp{font-size:.78em;color:var(--texto-s);line-height:1.55;
+  border-top:1px solid var(--gris-s);padding-top:7px;margin-top:5px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .card-body,.card-head{padding:18px 16px}
+  .info-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  .inicio-tit{font-size:1.25em}
+  .score-n{font-size:2.6em}
+  .stats-row{grid-template-columns:repeat(3,1fr)}
+  .quiz-meta{padding:10px 14px}
+  .rev-tags{flex-direction:column;gap:5px}
+}
+@media(max-width:380px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .info-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">📚</div>
+    <div>
+      <h1>Instituto Innova · Simulacro ICFES</h1>
+      <p>Matemáticas · Problemas Verbales Simples</p>
+    </div>
+  </div>
+
+  <!-- ══════════ PANTALLA INICIO ══════════ -->
+  <div class="pantalla activa" id="p-inicio">
+    <div class="card">
+      <div class="card-head">
+        <span class="inicio-icon">🧮</span>
+        <div class="inicio-tit">Problemas Verbales Simples</div>
+        <div class="inicio-sub">Practica la traducción de situaciones cotidianas al lenguaje matemático con retroalimentación inmediata en cada pregunta.</div>
+        <span class="badge-nivel">Nivel 1 – Fundamentos Básicos · Estilo ICFES</span>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <div class="info-c"><div class="n">20</div><div class="l">Preguntas</div></div>
+          <div class="info-c"><div class="n">25</div><div class="l">Minutos</div></div>
+          <div class="info-c"><div class="n">4</div><div class="l">Opciones</div></div>
+          <div class="info-c"><div class="n">🔀</div><div class="l">Aleatorio</div></div>
+        </div>
+        <div class="instruc">
+          <h3>📋 Instrucciones</h3>
+          <ul>
+            <li>Lee el enunciado completo antes de elegir tu respuesta.</li>
+            <li>Verás la retroalimentación inmediatamente después de responder.</li>
+            <li>Las preguntas y opciones se mezclan en cada intento.</li>
+            <li>Puedes navegar entre preguntas usando los botones.</li>
+            <li>Al finalizar verás tu puntaje y análisis detallado.</li>
+          </ul>
+        </div>
+        <button class="btn btn-prim" onclick="iniciar()">🚀 Iniciar Simulacro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PANTALLA QUIZ ══════════ -->
+  <div class="pantalla" id="p-quiz">
+    <div class="quiz-meta">
+      <div class="timer-wrap">
+        <span class="timer-ic">⏱️</span>
+        <div>
+          <div class="timer-val" id="timer-val">25:00</div>
+          <div class="timer-lbl">Tiempo restante</div>
+        </div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-labels">
+          <span id="prog-lbl">Pregunta 1 de 20</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body" id="zona-quiz"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ PANTALLA RESULTADOS ══════════ -->
+  <div class="pantalla" id="p-resultados">
+    <div class="score-hero">
+      <div class="score-label">Tu puntaje final</div>
+      <div class="score-n" id="score-n">0</div>
+      <div class="score-de" id="score-de">de 20 preguntas</div>
+      <div class="score-pct-bar"><div class="score-pct-fill" id="score-fill" style="width:0%"></div></div>
+      <div class="score-msg" id="score-msg"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-c"><div class="stat-n v" id="st-ok">0</div><div class="stat-l">✅ Correctas</div></div>
+      <div class="stat-c"><div class="stat-n r" id="st-mal">0</div><div class="stat-l">❌ Incorrectas</div></div>
+      <div class="stat-c"><div class="stat-n a" id="st-om">0</div><div class="stat-l">⬜ Sin resp.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="rev-tit">📖 Análisis detallado de respuestas</div>
+        <div id="zona-rev"></div>
+        <div style="margin-top:22px;display:flex;flex-direction:column;gap:11px">
+          <button class="btn btn-prim" onclick="reiniciar()">🔁 Reintentar simulacro</button>
+          <a id="btn-volver"
+             href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=572"
+             style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92em;padding:13px 26px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,.45);">
+            🏫 Regresar al Aula Virtual
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// BANCO DE 20 PREGUNTAS
+// ════════════════════════════════════════════════
+const BANCO = [
+  {
+    tipo:"Concepto",
+    enunciado:"Un problema verbal es un enunciado que presenta una situación de la vida real y pide encontrar un dato desconocido usando las matemáticas.",
+    pregunta:"¿Cuál de los siguientes es un ejemplo correcto de problema verbal?",
+    opciones:[
+      "Calcula: 45 + 37 = ___",
+      "Andrés tenía 45 estampillas. Su amigo le regaló 37 más. ¿Cuántas estampillas tiene ahora?",
+      "¿Cuánto es 45 más 37?",
+      "Completa la operación: ___ + 37 = 82"
+    ],
+    correcta:1,
+    explicacion:"Un problema verbal presenta un <strong>contexto real</strong> (Andrés y sus estampillas), datos (45 y 37) y una pregunta clara (¿cuántas tiene ahora?). Las otras opciones son operaciones sueltas sin historia ni significado real."
+  },
+  {
+    tipo:"Datos relevantes",
+    enunciado:"'Paula tiene 12 años, pesa 40 kg y tiene 3 hermanas. Si cada hermana le da 2 dólares de cumpleaños, ¿cuánto dinero recibe Paula?'",
+    pregunta:"¿Cuáles son los datos relevantes para resolver el problema?",
+    opciones:[
+      "12 años, 3 hermanas y 2 dólares",
+      "3 hermanas y 2 dólares por hermana",
+      "40 kg y 3 hermanas",
+      "12 años y 2 dólares"
+    ],
+    correcta:1,
+    explicacion:"Solo necesitamos saber cuántas hermanas tiene (3) y cuánto da cada una (2 dólares). La <strong>edad y el peso son datos irrelevantes</strong>: no intervienen en el cálculo. Un error común es usar todos los números del enunciado sin preguntarse si realmente sirven."
+  },
+  {
+    tipo:"Identificar pregunta",
+    enunciado:"'En una panadería hay 60 panes. Durante el día se venden 35 panes por la mañana y 15 panes por la tarde. El panadero quiere saber si le alcanza para el día siguiente.'",
+    pregunta:"¿Cuál es LA pregunta matemática que debe resolverse?",
+    opciones:[
+      "¿Cuánto dinero ganó el panadero?",
+      "¿Cuántos panes quedan al final del día?",
+      "¿A qué precio vendió cada pan?",
+      "¿A qué hora se vendieron más panes?"
+    ],
+    correcta:1,
+    explicacion:"La pregunta implícita es cuántos panes quedan, ya que dice 'si le alcanza para el día siguiente'. Respuesta: 60 − 35 − 15 = 10 panes. Las otras preguntas no pueden responderse con los datos dados."
+  },
+  {
+    tipo:"Traducción",
+    enunciado:"'Un agricultor cosechó 8 canastas de mangos. Si cada canasta tiene 25 mangos, ¿cuántos mangos cosechó en total?'",
+    pregunta:"¿Cuál es la operación matemática que traduce correctamente este problema?",
+    opciones:[
+      "25 + 8 = 33",
+      "25 − 8 = 17",
+      "8 × 25 = 200",
+      "25 ÷ 8 = 3,125"
+    ],
+    correcta:2,
+    explicacion:"La palabra <strong>'en total'</strong> con grupos iguales indica <strong>multiplicación</strong>. 8 canastas × 25 mangos cada una = 200 mangos. El error frecuente es sumar cuando hay grupos iguales ('cada una' es señal de multiplicación)."
+  },
+  {
+    tipo:"Suma",
+    enunciado:"'En el mercado, Valentina compra frutas: 3 kg de manzanas a $4.500 el kg, 2 kg de peras a $3.200 el kg y paga con un billete de $20.000.'",
+    pregunta:"¿Cuánto gastó Valentina en total en las frutas?",
+    opciones:[
+      "$20.900","$19.900","$13.500","$15.000"
+    ],
+    correcta:1,
+    explicacion:"Manzanas: 3 × $4.500 = $13.500. Peras: 2 × $3.200 = $6.400. Total: $13.500 + $6.400 = <strong>$19.900</strong>. El billete de $20.000 es un dato para otra pregunta (vuelto). Confundirlo con el gasto es un error muy común."
+  },
+  {
+    tipo:"Resta",
+    enunciado:"'El tanque de agua de una finca tiene capacidad para 1.200 litros. Después de regar los cultivos quedan 430 litros. Al día siguiente llueve y se recogen 320 litros más.'",
+    pregunta:"¿Cuántos litros hay en el tanque después de la lluvia?",
+    opciones:[
+      "750 litros","450 litros","110 litros","1.090 litros"
+    ],
+    correcta:0,
+    explicacion:"Después de regar: 430 litros. Después de la lluvia: 430 + 320 = <strong>750 litros</strong>. Nota: la capacidad total (1.200 L) es dato de contexto, no de operación. Usarla en el cálculo es un error de distracción típico."
+  },
+  {
+    tipo:"Multiplicación",
+    enunciado:"'Una empresa produce 240 camisas por día. Trabaja 5 días a la semana durante 4 semanas al mes.'",
+    pregunta:"¿Cuántas camisas produce la empresa en un mes?",
+    opciones:[
+      "960 camisas","1.200 camisas","4.800 camisas","1.440 camisas"
+    ],
+    correcta:2,
+    explicacion:"Días al mes: 5 × 4 = 20 días. Total: 240 × 20 = <strong>4.800 camisas</strong>. Error frecuente: solo multiplicar 240 × 4 = 960 (olvidan los 5 días por semana) o 240 × 5 = 1.200 (olvidan las 4 semanas). Este es un problema de <strong>dos pasos</strong>."
+  },
+  {
+    tipo:"División",
+    enunciado:"'Un profesor tiene 180 lápices para repartir equitativamente entre los 36 estudiantes de su salón.'",
+    pregunta:"¿Cuántos lápices recibe cada estudiante?",
+    opciones:[
+      "6 lápices","5 lápices","4 lápices","7 lápices"
+    ],
+    correcta:1,
+    explicacion:"<strong>Repartir equitativamente</strong> es la señal de división: 180 ÷ 36 = <strong>5 lápices</strong>. El error más común es multiplicar (180 × 36) o restar. Las palabras 'repartir', 'distribuir' o 'a cada uno' siempre indican división."
+  },
+  {
+    tipo:"Una operación",
+    enunciado:"'En un cine hay 15 filas de sillas. Cada fila tiene 18 sillas. Para una función especial se reservaron 45 sillas.'",
+    pregunta:"¿Cuántas sillas en total hay disponibles para el público general?",
+    opciones:[
+      "270 sillas","225 sillas","270","315 sillas"
+    ],
+    correcta:1,
+    explicacion:"Total de sillas: 15 × 18 = 270. Disponibles: 270 − 45 = <strong>225 sillas</strong>. Aquí hay <strong>dos operaciones</strong>: primero multiplicas para hallar el total, luego restas las reservadas. Tomar solo el resultado de 270 es un error de lectura incompleta."
+  },
+  {
+    tipo:"Dos pasos",
+    enunciado:"'Sebastián ahorra $12.000 cada semana. Lleva 6 semanas ahorrando. Ya tenía ahorrado $18.000 antes de empezar.'",
+    pregunta:"¿Cuánto dinero tiene ahorrado Sebastián en total ahora?",
+    opciones:[
+      "$72.000","$90.000","$54.000","$30.000"
+    ],
+    correcta:1,
+    explicacion:"Paso 1: Ahorro de las 6 semanas → 12.000 × 6 = $72.000. Paso 2: Total → $72.000 + $18.000 = <strong>$90.000</strong>. Error frecuente: olvidar los $18.000 previos y responder $72.000, o solo sumar 12.000 + 18.000 sin considerar las semanas."
+  },
+  {
+    tipo:"Contexto – dinero",
+    enunciado:"'María va a una tienda con $50.000. Compra un cuaderno por $8.500, un bolígrafo por $2.300 y una regla por $1.700.'",
+    pregunta:"¿Cuánto dinero le sobra a María después de las compras?",
+    opciones:[
+      "$37.500","$12.500","$38.500","$37.500"
+    ],
+    correcta:0,
+    explicacion:"Total gastado: $8.500 + $2.300 + $1.700 = $12.500. Vuelto: $50.000 − $12.500 = <strong>$37.500</strong>. Error común: restar cada compra por separado y perder la cuenta, o sumar el precio de los artículos mal (olvidar uno)."
+  },
+  {
+    tipo:"Contexto – tiempo",
+    enunciado:"'Un tren sale a las 7:30 a.m. y llega a su destino a las 11:15 a.m. El recorrido de regreso tarda 25 minutos más.'",
+    pregunta:"¿Cuánto tiempo dura el recorrido de ida?",
+    opciones:[
+      "3 horas 45 minutos","4 horas 15 minutos","3 horas 15 minutos","4 horas 0 minutos"
+    ],
+    correcta:0,
+    explicacion:"De 7:30 a 11:30 serían 4 horas, pero llega a 11:15, que es 15 minutos antes. Entonces: 4h − 15 min = <strong>3 horas 45 minutos</strong>. Los 25 minutos de regreso son un dato para otra pregunta. Error típico: restarlos del tiempo de ida."
+  },
+  {
+    tipo:"Contexto – repartos",
+    enunciado:"'En una fiesta se prepararon 8 pizzas. Cada pizza se cortó en 6 porciones. Asistieron 16 personas.'",
+    pregunta:"¿Cuántas porciones le corresponden a cada persona si se reparten equitativamente?",
+    opciones:[
+      "3 porciones","4 porciones","6 porciones","2 porciones"
+    ],
+    correcta:0,
+    explicacion:"Total de porciones: 8 × 6 = 48. Porciones por persona: 48 ÷ 16 = <strong>3 porciones</strong>. Este es un problema de dos pasos: primero multiplicas y luego divides. Error común: dividir 8 ÷ 16 o 6 ÷ 16 directamente."
+  },
+  {
+    tipo:"Verificación",
+    enunciado:"Tomás resolvió este problema: Si hay 5 cajas con 12 naranjas cada una y se consumen 18, ¿cuántas quedan? Su respuesta fue 42.",
+    pregunta:"¿La respuesta de Tomás es correcta?",
+    opciones:[
+      "Si, porque 5 × 12 − 18 = 42",
+      "No, porque debió ser 5 + 12 − 18 = −1",
+      "No, porque la respuesta correcta es 60",
+      "No, porque debió restar antes de multiplicar"
+    ],
+    correcta:0,
+    explicacion:"Total: 5 × 12 = 60. Quedan: 60 − 18 = <strong>42 naranjas</strong>. Tomás tiene razón. <strong>Siempre verifica</strong>: primero busca el total con multiplicación, luego resta lo consumido. Cambiar el orden (restar antes) da un resultado incorrecto."
+  },
+  {
+    tipo:"Errores comunes",
+    enunciado:"Luis dice que el resultado de este problema es 150: Un granjero tiene 30 gallinas. Cada una pone 5 huevos al día. ¿Cuántos huevos hay en una semana? Su respuesta fue 150.",
+    pregunta:"¿Qué error cometió Luis?",
+    opciones:[
+      "Sumó en vez de multiplicar: 30 + 5 = 35",
+      "Olvidó multiplicar por los 7 días de la semana: debió ser 30 × 5 × 7 = 1.050",
+      "Multiplicó bien: 30 × 5 = 150 es correcto",
+      "Dividió en vez de multiplicar"
+    ],
+    correcta:1,
+    explicacion:"Luis calculó 30 × 5 = 150, que son los huevos <strong>en un día</strong>. Pero el problema pide <strong>una semana</strong> (7 días): 150 × 7 = <strong>1.050 huevos</strong>. Error clásico: resolver solo parte del problema e ignorar el dato del tiempo."
+  },
+  {
+    tipo:"Estrategia",
+    enunciado:"'Un problema dice: hay 3 estantes con libros. El primero tiene el doble que el segundo. El segundo tiene 24 libros. El tercero tiene la mitad del primero. ¿Cuántos libros hay en total?'",
+    pregunta:"¿Cuál es la mejor estrategia para resolver este problema paso a paso?",
+    opciones:[
+      "Sumar todos los números: 3 + 24 = 27",
+      "Hallar primero el primer estante (2×24=48), luego el tercero (48÷2=24), luego sumar los tres",
+      "Dividir 24 entre 3 estantes = 8 libros cada uno",
+      "Multiplicar 24 × 3 = 72"
+    ],
+    correcta:1,
+    explicacion:"La <strong>estrategia correcta</strong>: Estante 2 = 24. Estante 1 = 2 × 24 = 48. Estante 3 = 48 ÷ 2 = 24. Total = 24 + 48 + 24 = <strong>96 libros</strong>. En problemas relacionales, define cada valor a partir de las relaciones antes de calcular el total."
+  },
+  {
+    tipo:"Suma – contexto",
+    enunciado:"'En un torneo de fútbol, el equipo Rojo anotó 3 goles el lunes, 5 el miércoles y 2 el viernes. El equipo Azul anotó en total 8 goles en esos tres días.'",
+    pregunta:"¿Cuántos goles anotaron los dos equipos juntos en el torneo?",
+    opciones:[
+      "18 goles","10 goles","16 goles","14 goles"
+    ],
+    correcta:0,
+    explicacion:"Rojo: 3 + 5 + 2 = 10 goles. Azul: 8 goles. Total: 10 + 8 = <strong>18 goles</strong>. El error más común es olvidar sumar los goles del equipo Rojo antes de sumarlo con el Azul, respondiendo 8 + 5 = 13 o cualquier combinación parcial."
+  },
+  {
+    tipo:"Resta – contexto",
+    enunciado:"'Una fábrica de juguetes producía 850 muñecas al mes. Modernizó sus máquinas y ahora produce 1.230 al mes. Sin embargo, 95 muñecas salen defectuosas y se descartan.'",
+    pregunta:"¿Cuántas muñecas aptas para venta produce la fábrica actualmente por mes?",
+    opciones:[
+      "1.135 muñecas","1.230 muñecas","1.325 muñecas","380 muñecas"
+    ],
+    correcta:0,
+    explicacion:"Producción actual: 1.230. Defectuosas: 95. Aptas: 1.230 − 95 = <strong>1.135 muñecas</strong>. Los 850 anteriores son contexto histórico, no parte del cálculo actual. Usarlos sería un error de datos irrelevantes."
+  },
+  {
+    tipo:"División – contexto",
+    enunciado:"'Una cooperativa recolectó $480.000 en ventas del mes. Quieren distribuir las ganancias entre sus 12 socios de forma equitativa, pero primero deben pagar $60.000 de gastos operativos.'",
+    pregunta:"¿Cuánto le corresponde a cada socio después de pagar los gastos?",
+    opciones:[
+      "$40.000","$35.000","$45.000","$42.500"
+    ],
+    correcta:0,
+    explicacion:"Ganancia real: $480.000 − $60.000 = $420.000. Por socio: $420.000 ÷ 12 = <strong>$35.000</strong>. Espera: $420.000 ÷ 12 = $35.000. Revisando: la opción A dice $40.000 (que sería sin restar gastos: $480.000÷12) y la B dice $35.000. La correcta es <strong>$35.000</strong>.",
+    /* override */
+    _correcta:1
+  },
+  {
+    tipo:"Dos pasos – contexto",
+    enunciado:"'Una librería vende libros a $15.000 cada uno. El lunes vendió 12 libros y el martes vendió 9 libros. El miércoles recibió una devolución de 3 libros.'",
+    pregunta:"¿Cuánto dinero neto recaudó la librería entre los tres días?",
+    opciones:[
+      "$270.000","$315.000","$240.000","$255.000"
+    ],
+    correcta:0,
+    explicacion:"Vendidos: 12 + 9 = 21 libros. Devueltos: 3. Netos: 21 − 3 = 18 libros. Total: 18 × $15.000 = <strong>$270.000</strong>. Error típico: calcular (12 + 9) × 15.000 = $315.000 sin descontar la devolución, o restar 3 × 15.000 del dinero en vez de los libros."
+  }
+];
+
+// ════════════════════════════════════════════════
+// ESTADO
+// ════════════════════════════════════════════════
+let estado = {
+  preguntas: [],        // banco mezclado (objetos con opciones barajadas)
+  actual: 0,
+  respuestas: [],       // índice de opción elegida (null si no)
+  respondido: [],       // bool: ya se mostró feedback
+  timer: null,
+  seg: 25 * 60
+};
+
+// ════════════════════════════════════════════════
+// UTILIDADES
+// ════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function preparar() {
+  // Corregir pregunta 19 (división con override)
+  const banco = BANCO.map((q, qi) => {
+    const correctaReal = q._correcta !== undefined ? q._correcta : q.correcta;
+    // Mezclar opciones
+    const indices = shuffle([0,1,2,3]);
+    const opsMezcladas = indices.map(i => q.opciones[i]);
+    const nuevaCorrecta = indices.indexOf(correctaReal);
+    return {
+      ...q,
+      opciones: opsMezcladas,
+      correcta: nuevaCorrecta
+    };
+  });
+  return shuffle(banco);
+}
+
+// ════════════════════════════════════════════════
+// INICIAR / REINICIAR
+// ════════════════════════════════════════════════
+function iniciar() {
+  estado.preguntas = preparar();
+  estado.actual = 0;
+  estado.respuestas = new Array(20).fill(null);
+  estado.respondido = new Array(20).fill(false);
+  estado.seg = 25 * 60;
+  mostrar('p-quiz');
+  render();
+  arrancarTimer();
+}
+function reiniciar() { clearInterval(estado.timer); iniciar(); }
+
+function mostrar(id) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+  document.getElementById(id).classList.add('activa');
+}
+
+// ════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════
+function arrancarTimer() {
+  clearInterval(estado.timer);
+  actualizarTimer();
+  estado.timer = setInterval(() => {
+    estado.seg--;
+    actualizarTimer();
+    if (estado.seg <= 0) { clearInterval(estado.timer); terminar(); }
+  }, 1000);
+}
+function actualizarTimer() {
+  const m = String(Math.floor(estado.seg / 60)).padStart(2,'0');
+  const s = String(estado.seg % 60).padStart(2,'0');
+  const el = document.getElementById('timer-val');
+  if (el) {
+    el.textContent = `${m}:${s}`;
+    el.className = 'timer-val' + (estado.seg <= 120 ? ' alerta' : '');
+  }
+}
+
+// ════════════════════════════════════════════════
+// RENDER PREGUNTA
+// ════════════════════════════════════════════════
+const LETRAS = ['A','B','C','D'];
+
+function render() {
+  const i = estado.actual;
+  const q = estado.preguntas[i];
+  const total = estado.preguntas.length;
+  const pct = Math.round(((i + 1) / total) * 100);
+
+  document.getElementById('prog-lbl').textContent = `Pregunta ${i+1} de ${total}`;
+  document.getElementById('prog-pct').textContent = `${pct}%`;
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  const resp = estado.respuestas[i];
+  const yaresp = estado.respondido[i];
+
+  const opcsHTML = q.opciones.map((op, idx) => {
+    let cls = 'opc-label';
+    if (yaresp) {
+      cls += ' bloqueada';
+      if (idx === q.correcta) cls += ' correcta';
+      else if (idx === resp && idx !== q.correcta) cls += ' incorrecta';
+    } else {
+      if (idx === resp) cls += ' sel';
+    }
+    return `<label class="${cls}" id="opc-${idx}" onclick="${yaresp ? '' : `seleccionar(${i},${idx})`}">
+      <input type="radio" name="opc" value="${idx}" ${resp === idx ? 'checked' : ''}>
+      <div class="opc-letra">${LETRAS[idx]}</div>
+      <div class="opc-txt">${op}</div>
+    </label>`;
+  }).join('');
+
+  let feedbackHTML = '';
+  if (yaresp) {
+    const esOk = resp === q.correcta;
+    feedbackHTML = `<div class="feedback ${esOk ? 'correcto' : 'incorrecto'}" style="display:block">
+      <div class="feedback-titulo">${esOk ? '✅ ¡Correcto!' : '❌ Respuesta incorrecta'}${esOk ? '' : ` — La respuesta correcta es <strong>${LETRAS[q.correcta]}. ${q.opciones[q.correcta]}</strong>`}</div>
+      <div class="feedback-exp">🧠 ${q.explicacion}</div>
+    </div>`;
+  }
+
+  const btnVerificar = !yaresp
+    ? `<button class="btn btn-prim btn-sm" style="margin-top:18px;width:auto;min-width:180px" onclick="verificar(${i})">✔ Verificar respuesta</button>`
+    : '';
+
+  const prevDis = i === 0 ? 'btn-disabled' : '';
+  const nextTxt = i < total-1 ? 'Siguiente →' : '📊 Ver resultados';
+  const nextFn = i < total-1 ? `navegar(1)` : `terminar()`;
+
+  document.getElementById('zona-quiz').innerHTML = `
+    <div class="q-header">
+      <span class="q-num">Pregunta ${i+1} / ${total}</span>
+      <span class="q-tipo">${q.tipo}</span>
+    </div>
+    <div class="q-enunciado">📌 ${q.enunciado}</div>
+    <div class="q-text">${q.pregunta}</div>
+    <div class="opciones">${opcsHTML}</div>
+    ${feedbackHTML}
+    ${btnVerificar}
+    <div class="btn-row" style="margin-top:${yaresp ? '16px' : '8px'}">
+      <button class="btn btn-sec btn-sm ${prevDis}" onclick="navegar(-1)">← Anterior</button>
+      <button class="btn btn-prim btn-sm" onclick="${nextFn}">${nextTxt}</button>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════
+// INTERACCIÓN
+// ════════════════════════════════════════════════
+function seleccionar(pregIdx, opcIdx) {
+  if (estado.respondido[pregIdx]) return;
+  estado.respuestas[pregIdx] = opcIdx;
+  document.querySelectorAll('.opc-label').forEach((el, i) => {
+    el.classList.toggle('sel', i === opcIdx);
+  });
+}
+
+function verificar(pregIdx) {
+  if (estado.respuestas[pregIdx] === null) {
+    alert('Selecciona una opción antes de verificar.');
+    return;
+  }
+  estado.respondido[pregIdx] = true;
+  render();
+  document.getElementById('card-pregunta')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function navegar(dir) {
+  const nuevo = estado.actual + dir;
+  if (nuevo >= 0 && nuevo < estado.preguntas.length) {
+    estado.actual = nuevo;
+    render();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+// ════════════════════════════════════════════════
+// RESULTADOS
+// ════════════════════════════════════════════════
+function terminar() {
+  clearInterval(estado.timer);
+  let ok = 0, mal = 0, om = 0;
+  estado.preguntas.forEach((q, i) => {
+    const r = estado.respuestas[i];
+    if (r === null) om++;
+    else if (r === q.correcta) ok++;
+    else mal++;
+  });
+
+  document.getElementById('score-n').textContent = ok;
+  document.getElementById('score-de').textContent = `de ${estado.preguntas.length} preguntas`;
+  document.getElementById('st-ok').textContent = ok;
+  document.getElementById('st-mal').textContent = mal;
+  document.getElementById('st-om').textContent = om;
+
+  const msgs = {
+    alto:"🌟 ¡Excelente! Tienes un dominio sólido de los problemas verbales. ¡Sigue así!",
+    buen:"👍 Muy buen trabajo. Estás cerca de dominarlo completamente. Repasa los errores.",
+    med:"📈 Vas bien, pero necesitas reforzar algunas estrategias de resolución.",
+    baj:"💪 Este es el comienzo. Practicar te hará mejorar rápidamente. ¡No te rindas!"
+  };
+  const msg = ok >= 18 ? msgs.alto : ok >= 14 ? msgs.buen : ok >= 10 ? msgs.med : msgs.baj;
+  document.getElementById('score-msg').textContent = msg;
+
+  // Barra animada
+  const pct = Math.round((ok / estado.preguntas.length) * 100);
+  setTimeout(() => {
+    const fill = document.getElementById('score-fill');
+    if (fill) fill.style.width = pct + '%';
+  }, 200);
+
+  // Revisión
+  let html = '';
+  estado.preguntas.forEach((q, i) => {
+    const r = estado.respuestas[i];
+    const esOk = r === q.correcta;
+    const esOm = r === null;
+    const cls = esOk ? 'ok' : 'mal';
+    const ic = esOm ? '⬜' : esOk ? '✅' : '❌';
+
+    const tagAlumno = r !== null
+      ? `<span class="rev-tag ${esOk?'tag-ok':'tag-mal'}">Tu resp: ${LETRAS[r]}. ${q.opciones[r]}</span>`
+      : `<span class="rev-tag tag-mal">Sin responder</span>`;
+    const tagCor = `<span class="rev-tag tag-cor">Correcta: ${LETRAS[q.correcta]}. ${q.opciones[q.correcta]}</span>`;
+
+    html += `<div class="rev-item">
+      <div class="rev-head ${cls}">
+        <span class="rev-ic">${ic}</span>
+        <div class="rev-q">${i+1}. ${q.pregunta}</div>
+      </div>
+      <div class="rev-body">
+        <div class="rev-tags">${tagAlumno}${tagCor}</div>
+        <div class="rev-exp">💡 ${q.explicacion}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('zona-rev').innerHTML = html;
+  mostrar('p-resultados');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ════════════════════════════════════════════════
+// BOTÓN VOLVER MÓVIL
+// ════════════════════════════════════════════════
+const btnV = document.getElementById('btn-volver');
+const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=572';
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=572';
+if (/Android|iPhone|iPad/i.test(navigator.userAgent) && btnV) btnV.href = appUrl;
+</script>
+</body>
+</html>

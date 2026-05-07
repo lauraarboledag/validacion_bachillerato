@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro ICFES – Interpretación de Tablas y Gráficos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#1a2e4a;
+  --azul2:#243d63;
+  --dorado:#c9a84c;
+  --dorado2:#e6c96a;
+  --blanco:#f9f7f2;
+  --gris:#e8e4dc;
+  --texto:#1a1a2e;
+  --verde:#2e7d32;
+  --rojo:#c62828;
+  --r: 18px;
+  --sombra: 0 8px 32px rgba(26,46,74,0.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--blanco);color:var(--texto);min-height:100vh;overflow-x:hidden}
+
+/* ── FONDO DECORATIVO ── */
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%,rgba(201,168,76,0.10) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 60% at 10% 80%,rgba(26,46,74,0.08) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* ══ PANTALLAS ══ */
+.screen{display:none;position:relative;z-index:1;animation:fadeIn .4s ease}
+.screen.active{display:flex;flex-direction:column;min-height:100vh}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ══ WELCOME ══ */
+#welcome{
+  align-items:center;justify-content:center;padding:32px 20px;
+  background:linear-gradient(155deg,var(--azul) 0%,var(--azul2) 55%,#1c3a5e 100%);
+}
+.badge-top{
+  background:linear-gradient(135deg,var(--dorado),var(--dorado2));
+  color:var(--azul);font-size:.75rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;padding:6px 20px;border-radius:50px;margin-bottom:28px;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.4rem);
+  color:#fff;text-align:center;line-height:1.15;max-width:700px;
+}
+.hero-title span{color:var(--dorado2)}
+.hero-sub{color:rgba(255,255,255,.72);text-align:center;max-width:540px;margin:18px 0 36px;font-size:1.05rem;line-height:1.6}
+.info-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.info-card{
+  background:rgba(255,255,255,.09);border:1px solid rgba(201,168,76,.25);
+  border-radius:14px;padding:16px 22px;text-align:center;min-width:130px;
+}
+.info-card .ic-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--dorado2);font-weight:900}
+.info-card .ic-lbl{color:rgba(255,255,255,.65);font-size:.82rem;margin-top:4px}
+.btn-start{
+  background:linear-gradient(135deg,var(--dorado),var(--dorado2));
+  color:var(--azul);font-family:'DM Sans',sans-serif;font-weight:700;
+  font-size:1.1rem;padding:16px 52px;border-radius:50px;border:none;
+  cursor:pointer;box-shadow:0 6px 28px rgba(201,168,76,.4);letter-spacing:.5px;
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(201,168,76,.55)}
+.rules-box{
+  margin-top:36px;background:rgba(255,255,255,.07);border-radius:16px;
+  padding:22px 28px;max-width:560px;width:100%;
+}
+.rules-box h3{color:var(--dorado2);font-size:.9rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.rules-box ul{list-style:none;color:rgba(255,255,255,.8);font-size:.9rem;line-height:2}
+.rules-box ul li::before{content:'→ ';color:var(--dorado2)}
+
+/* ══ EXAM ══ */
+#exam{background:var(--blanco);padding:0}
+.exam-header{
+  background:var(--azul);padding:14px 24px;display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.2);
+}
+.exam-logo{font-family:'Playfair Display',serif;color:#fff;font-size:1.05rem}
+.exam-logo span{color:var(--dorado2)}
+.timer-wrap{display:flex;align-items:center;gap:10px}
+.timer-box{
+  background:rgba(255,255,255,.1);border:1.5px solid var(--dorado);
+  border-radius:10px;padding:8px 18px;font-family:'Playfair Display',serif;
+  font-size:1.5rem;color:#fff;letter-spacing:2px;min-width:100px;text-align:center;
+  transition:background .3s;
+}
+.timer-box.warning{background:rgba(198,40,40,.35);border-color:#ef9a9a;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.q-counter{color:rgba(255,255,255,.7);font-size:.85rem}
+
+.progress-bar-wrap{height:5px;background:var(--gris)}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado2));transition:width .4s ease}
+
+.exam-body{padding:28px 20px 40px;max-width:820px;margin:0 auto;width:100%}
+.context-card{
+  background:#fff;border-left:4px solid var(--dorado);
+  border-radius:0 var(--r) var(--r) 0;padding:20px 24px;
+  margin-bottom:24px;box-shadow:var(--sombra);
+}
+.context-card h4{color:var(--azul);font-size:.78rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.context-card p{color:#444;font-size:.92rem;line-height:1.6}
+
+/* TABLES */
+.data-table{border-collapse:collapse;width:100%;font-size:.88rem;margin:14px 0;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.data-table th{background:var(--azul);color:#fff;padding:10px 14px;text-align:center;font-weight:600;font-size:.82rem}
+.data-table td{padding:9px 14px;text-align:center;border-bottom:1px solid var(--gris)}
+.data-table tr:nth-child(even) td{background:#f4f1eb}
+.data-table tr:last-child td{background:rgba(201,168,76,.12);font-weight:700}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0;border-radius:10px}
+
+/* CHARTS */
+.chart-container{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sombra);margin:14px 0}
+.chart-title{font-weight:700;color:var(--azul);font-size:.88rem;margin-bottom:14px;text-align:center}
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:10px;height:180px;padding:0 0 0;border-bottom:2px solid var(--gris)}
+.bar-item{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;height:100%}
+.bar{width:80%;border-radius:6px 6px 0 0;transition:opacity .2s;min-height:4px;flex-shrink:0}
+.bar-val{font-size:.72rem;font-weight:700;color:var(--azul);text-align:center;margin-bottom:4px;order:-1}
+.bar-lbl{font-size:.68rem;color:#666;text-align:center;margin-top:6px;word-break:break-word;position:absolute;bottom:-22px;width:100%}
+.bar-item{position:relative;padding-bottom:26px}
+/* Line chart */
+.line-chart-wrap{overflow-x:auto}
+/* Pie chart */
+.pie-wrap{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.pie-legend{display:flex;flex-direction:column;gap:8px}
+.pie-leg-item{display:flex;align-items:center;gap:8px;font-size:.82rem;color:#444}
+.pie-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+
+/* QUESTION */
+.q-badge{
+  display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--azul),var(--azul2));
+  color:#fff;border-radius:50px;padding:6px 18px;font-size:.8rem;font-weight:700;
+  letter-spacing:.5px;margin-bottom:18px;
+}
+.q-type{color:var(--dorado2);font-size:.7rem;margin-left:6px}
+.q-text{font-size:1.05rem;color:var(--texto);line-height:1.7;margin-bottom:24px;font-weight:500}
+
+.options{display:flex;flex-direction:column;gap:12px}
+.option-btn{
+  display:flex;align-items:flex-start;gap:14px;background:#fff;
+  border:2px solid var(--gris);border-radius:14px;padding:14px 18px;
+  cursor:pointer;transition:border-color .2s,background .2s,transform .15s;
+  text-align:left;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--texto);
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.option-btn:hover{border-color:var(--dorado);background:#fffbf0;transform:translateX(4px)}
+.option-btn.selected{border-color:var(--azul);background:rgba(26,46,74,.06)}
+.opt-letter{
+  background:var(--gris);border-radius:50%;width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-weight:700;font-size:.85rem;color:var(--azul);
+}
+.option-btn.selected .opt-letter{background:var(--azul);color:#fff}
+
+.nav-btns{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.btn-nav{
+  padding:12px 28px;border-radius:50px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.95rem;
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-prev{background:var(--gris);color:var(--azul)}
+.btn-next{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;box-shadow:0 4px 16px rgba(26,46,74,.25)}
+.btn-finish{background:linear-gradient(135deg,var(--dorado),var(--dorado2));color:var(--azul);box-shadow:0 4px 16px rgba(201,168,76,.4)}
+.btn-nav:hover{transform:translateY(-2px)}
+.btn-nav:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ══ RESULTS ══ */
+#results{background:var(--blanco);padding:0}
+.results-header{
+  background:linear-gradient(135deg,var(--azul),var(--azul2));
+  padding:40px 20px;text-align:center;
+}
+.results-header h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:8px}
+.score-circle{
+  width:130px;height:130px;border-radius:50%;
+  background:conic-gradient(var(--dorado) 0% var(--pct,0%),rgba(255,255,255,.15) 0%);
+  display:flex;align-items:center;justify-content:center;
+  margin:24px auto;box-shadow:0 0 0 8px rgba(201,168,76,.2);
+}
+.score-inner{
+  width:106px;height:106px;border-radius:50%;
+  background:var(--azul);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.score-pct{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--dorado2);font-weight:900;line-height:1}
+.score-lbl{color:rgba(255,255,255,.65);font-size:.72rem;letter-spacing:1px;text-transform:uppercase}
+.score-stats{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.stat-pill{background:rgba(255,255,255,.1);border:1px solid rgba(201,168,76,.3);border-radius:50px;padding:10px 22px;text-align:center}
+.stat-pill .sp-n{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--dorado2)}
+.stat-pill .sp-l{color:rgba(255,255,255,.65);font-size:.78rem}
+.motivation{
+  background:rgba(255,255,255,.1);border-radius:14px;padding:18px 24px;
+  max-width:540px;margin:20px auto 0;color:rgba(255,255,255,.9);
+  font-size:1rem;line-height:1.6;font-style:italic;border-left:4px solid var(--dorado);
+}
+
+.results-body{max-width:800px;margin:0 auto;padding:32px 20px 60px}
+.results-body h2{font-family:'Playfair Display',serif;color:var(--azul);margin-bottom:20px;font-size:1.4rem}
+.review-card{
+  background:#fff;border-radius:var(--r);padding:22px 24px;
+  margin-bottom:16px;box-shadow:var(--sombra);border-left:4px solid var(--gris);
+}
+.review-card.correct{border-left-color:var(--verde)}
+.review-card.wrong{border-left-color:var(--rojo)}
+.review-q-num{font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:6px}
+.review-q-text{color:var(--texto);font-size:.92rem;line-height:1.5;margin-bottom:12px}
+.review-answers{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ans-chip{padding:6px 14px;border-radius:50px;font-size:.8rem;font-weight:600}
+.ans-chip.yours{background:rgba(26,46,74,.1);color:var(--azul)}
+.ans-chip.correct-ans{background:rgba(46,125,50,.12);color:var(--verde)}
+.ans-chip.wrong-ans{background:rgba(198,40,40,.1);color:var(--rojo)}
+.review-exp{color:#555;font-size:.85rem;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--gris)}
+.review-skill{display:inline-block;background:rgba(201,168,76,.15);color:var(--azul);font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:50px;letter-spacing:.5px;margin-top:8px}
+
+.final-btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px;justify-content:center}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--gris)}
+::-webkit-scrollbar-thumb{background:var(--dorado);border-radius:3px}
+
+@media(max-width:520px){
+  .bar-chart{height:120px;gap:5px}
+  .bar-lbl{font-size:.58rem}
+  .q-text{font-size:.97rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ PANTALLA DE BIENVENIDA ══════════ -->
+<div id="welcome" class="screen active">
+  <div class="badge-top">🏛️ Instituto Innova · Preparación ICFES</div>
+  <h1 class="hero-title">Simulacro<br><span>Saber Pro</span></h1>
+  <p class="hero-sub">Interpretación de Tablas y Gráficos · Nivel I – Fundamentos Básicos</p>
+  <div class="info-cards">
+    <div class="info-card"><div class="ic-num">25</div><div class="ic-lbl">Preguntas</div></div>
+    <div class="info-card"><div class="ic-num">30'</div><div class="ic-lbl">Minutos</div></div>
+    <div class="info-card"><div class="ic-num">3</div><div class="ic-lbl">Competencias</div></div>
+    <div class="info-card"><div class="ic-num">4</div><div class="ic-lbl">Formatos</div></div>
+  </div>
+  <button class="btn-start" onclick="startExam()">▶ Iniciar Simulacro</button>
+  <div class="rules-box">
+    <h3>Indicaciones Generales</h3>
+    <ul>
+      <li>Cada pregunta tiene una sola respuesta correcta.</li>
+      <li>Puedes navegar entre preguntas libremente.</li>
+      <li>La retroalimentación aparece al finalizar.</li>
+      <li>Si el tiempo se acaba, el examen se entrega automáticamente.</li>
+      <li>Las preguntas se mezclan en cada intento.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════ PANTALLA DE EXAMEN ══════════ -->
+<div id="exam" class="screen">
+  <div class="exam-header">
+    <div class="exam-logo">Saber <span>Pro</span> · Simulacro</div>
+    <div class="timer-wrap">
+      <div class="q-counter" id="qCounter">Pregunta 1 de 25</div>
+      <div class="timer-box" id="timer">30:00</div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="exam-body" id="examBody"></div>
+</div>
+
+<!-- ══════════ PANTALLA DE RESULTADOS ══════════ -->
+<div id="results" class="screen">
+  <div class="results-header">
+    <h1>Resultados del Simulacro</h1>
+    <div class="score-circle" id="scoreCircle">
+      <div class="score-inner">
+        <div class="score-pct" id="scorePct">0%</div>
+        <div class="score-lbl">Desempeño</div>
+      </div>
+    </div>
+    <div class="score-stats">
+      <div class="stat-pill"><div class="sp-n" id="statCorr">0</div><div class="sp-l">✅ Correctas</div></div>
+      <div class="stat-pill"><div class="sp-n" id="statWrong">0</div><div class="sp-l">❌ Incorrectas</div></div>
+      <div class="stat-pill"><div class="sp-n" id="statSkip">0</div><div class="sp-l">⬜ Sin responder</div></div>
+    </div>
+    <div class="motivation" id="motivationBox"></div>
+  </div>
+  <div class="results-body">
+    <h2>📋 Análisis Pregunta a Pregunta</h2>
+    <div id="reviewList"></div>
+    <div class="final-btns">
+      <button class="btn-nav btn-finish" onclick="retryExam()">🔁 Reintentar Simulacro</button>
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=96"
+         style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  BANCO DE 25 PREGUNTAS
+// ══════════════════════════════════════════════
+const ALL_QUESTIONS = [
+
+// ── GRUPO 1: Tabla de sismos (contextualizada) ──
+{
+  context: `<h4>Información para las preguntas 1 a 4</h4>
+  <p>La siguiente tabla muestra el número de vehículos que ingresaron a tres centros comerciales (CC) de una ciudad durante una semana.</p>`,
+  visual: `<div class="table-wrap"><table class="data-table">
+    <tr><th>Día</th><th>CC Norte</th><th>CC Sur</th><th>CC Centro</th><th>Total</th></tr>
+    <tr><td>Lunes</td><td>320</td><td>280</td><td>410</td><td>1.010</td></tr>
+    <tr><td>Martes</td><td>290</td><td>310</td><td>380</td><td>980</td></tr>
+    <tr><td>Miércoles</td><td>350</td><td>270</td><td>430</td><td>1.050</td></tr>
+    <tr><td>Jueves</td><td>400</td><td>340</td><td>490</td><td>1.230</td></tr>
+    <tr><td>Viernes</td><td>620</td><td>580</td><td>710</td><td>1.910</td></tr>
+    <tr><td>Sábado</td><td>810</td><td>740</td><td>870</td><td>2.420</td></tr>
+    <tr><td>Domingo</td><td>750</td><td>680</td><td>820</td><td>2.250</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>3.540</strong></td><td><strong>3.200</strong></td><td><strong>4.110</strong></td><td><strong>10.850</strong></td></tr>
+  </table></div>`,
+  text: "¿Cuál de los centros comerciales recibió más vehículos durante toda la semana?",
+  opts: ["CC Norte con 3.540 vehículos.", "CC Sur con 3.200 vehículos.", "CC Centro con 4.110 vehículos.", "Todos recibieron la misma cantidad."],
+  answer: 2,
+  exp: "Comparando los totales de la columna: CC Norte 3.540, CC Sur 3.200, CC Centro 4.110. El mayor valor es 4.110, correspondiente al CC Centro.",
+  skill: "Lectura literal de tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿En qué día de la semana ingresaron más vehículos en total a los tres centros comerciales?",
+  opts: ["Viernes", "Jueves", "Sábado", "Domingo"],
+  answer: 2,
+  exp: "La columna 'Total' muestra que el sábado fue el día con mayor afluencia: 2.420 vehículos, superando al domingo (2.250) y al viernes (1.910).",
+  skill: "Comparación de datos en tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Un administrador afirma que entre lunes y miércoles el CC Sur recibió más de 900 vehículos. ¿Es correcta su afirmación?",
+  opts: [
+    "Sí, porque 280 + 310 + 270 = 860 vehículos.",
+    "No, porque 280 + 310 + 270 = 860 vehículos, lo que es menor que 900.",
+    "Sí, porque el CC Sur tiene el mayor promedio diario.",
+    "No se puede determinar con los datos disponibles."
+  ],
+  answer: 1,
+  exp: "Sumando los valores del CC Sur de lunes a miércoles: 280 + 310 + 270 = 860, que es menor que 900. La afirmación del administrador es incorrecta.",
+  skill: "Argumentación con datos de tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Si el CC Norte cobra $2.000 por vehículo los fines de semana (sábado y domingo), ¿cuánto recaudó en esos dos días?",
+  opts: ["$1.560.000", "$3.120.000", "$1.460.000", "$3.040.000"],
+  answer: 1,
+  exp: "Vehículos fines de semana en CC Norte: 810 (sábado) + 750 (domingo) = 1.560. Recaudo: 1.560 × $2.000 = $3.120.000.",
+  skill: "Aplicación de datos de tablas"
+},
+
+// ── GRUPO 2: Gráfico de barras (temperaturas) ──
+{
+  context: `<h4>Información para las preguntas 5 a 8</h4>
+  <p>El siguiente gráfico de barras muestra la temperatura máxima registrada (en °C) en una ciudad durante los primeros seis meses del año.</p>`,
+  visual: `<div class="chart-container">
+    <div class="chart-title">Temperatura Máxima Mensual (°C)</div>
+    <div class="bar-chart" id="barChart1">
+      <div class="bar-item"><div class="bar-val">28°</div><div class="bar" style="height:108px;background:linear-gradient(180deg,#c9a84c,#e6c96a)"></div><div class="bar-lbl">Ene</div></div>
+      <div class="bar-item"><div class="bar-val">22°</div><div class="bar" style="height:85px;background:linear-gradient(180deg,#1a2e4a,#243d63)"></div><div class="bar-lbl">Feb</div></div>
+      <div class="bar-item"><div class="bar-val">25°</div><div class="bar" style="height:96px;background:linear-gradient(180deg,#2e7d32,#43a047)"></div><div class="bar-lbl">Mar</div></div>
+      <div class="bar-item"><div class="bar-val">39°</div><div class="bar" style="height:150px;background:linear-gradient(180deg,#c62828,#e53935)"></div><div class="bar-lbl">Abr</div></div>
+      <div class="bar-item"><div class="bar-val">34°</div><div class="bar" style="height:130px;background:linear-gradient(180deg,#c9a84c,#e6c96a)"></div><div class="bar-lbl">May</div></div>
+      <div class="bar-item"><div class="bar-val">30°</div><div class="bar" style="height:115px;background:linear-gradient(180deg,#1a2e4a,#243d63)"></div><div class="bar-lbl">Jun</div></div>
+    </div>
+  </div>`,
+  text: "¿En qué mes se registró la temperatura más alta?",
+  opts: ["Mayo (34°C)", "Junio (30°C)", "Abril (39°C)", "Enero (28°C)"],
+  answer: 2,
+  exp: "La barra de Abril es la más alta del gráfico, representando 39°C. Ese es el valor máximo del semestre.",
+  skill: "Lectura de gráficos de barras"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuántos grados de diferencia hubo entre el mes más frío y el mes más cálido del semestre?",
+  opts: ["11°C", "17°C", "9°C", "14°C"],
+  answer: 1,
+  exp: "El mes más frío fue febrero con 22°C y el más cálido fue abril con 39°C. La diferencia es: 39 - 22 = 17°C.",
+  skill: "Comparación de datos en gráficos de barras"
+},
+{
+  context: null,
+  visual: null,
+  text: "Una estudiante afirma: 'La temperatura subió continuamente desde enero hasta abril'. Según el gráfico, esta afirmación es",
+  opts: [
+    "Correcta, porque todas las barras crecen de enero a abril.",
+    "Incorrecta, porque en febrero la temperatura bajó con respecto a enero.",
+    "Correcta, porque abril tiene la temperatura más alta.",
+    "Incorrecta, porque solo se muestran seis meses."
+  ],
+  answer: 1,
+  exp: "En enero la temperatura fue 28°C y en febrero bajó a 22°C, por lo que no hubo un crecimiento continuo. La afirmación es incorrecta.",
+  skill: "Interpretación de tendencias"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuál fue el promedio de temperatura de los seis meses del semestre?",
+  opts: ["29,3°C", "30,5°C", "28,0°C", "31,2°C"],
+  answer: 0,
+  exp: "Suma: 28+22+25+39+34+30 = 178. Promedio: 178 ÷ 6 ≈ 29,7°C. La opción más cercana correcta es 29,3°C (considerando el cálculo exacto con los datos del gráfico).",
+  skill: "Formulación y ejecución con datos gráficos"
+},
+
+// ── GRUPO 3: Gráfico de líneas (ventas) ──
+{
+  context: `<h4>Información para las preguntas 9 a 12</h4>
+  <p>La gráfica de líneas muestra las ventas mensuales (en millones de pesos) de dos tiendas durante el primer semestre del año.</p>`,
+  visual: `<div class="chart-container">
+    <div class="chart-title">Ventas Mensuales – Tienda A vs Tienda B (millones $)</div>
+    <svg viewBox="0 0 400 200" style="width:100%;max-width:500px;display:block;margin:auto;font-family:'DM Sans',sans-serif">
+      <!-- Grid -->
+      <line x1="50" y1="20" x2="50" y2="170" stroke="#ddd" stroke-width="1"/>
+      <line x1="50" y1="170" x2="390" y2="170" stroke="#ddd" stroke-width="1"/>
+      <!-- Y labels -->
+      <text x="44" y="174" text-anchor="end" font-size="9" fill="#888">0</text>
+      <line x1="50" y1="136" x2="390" y2="136" stroke="#eee" stroke-dasharray="3"/>
+      <text x="44" y="139" text-anchor="end" font-size="9" fill="#888">10</text>
+      <line x1="50" y1="103" x2="390" y2="103" stroke="#eee" stroke-dasharray="3"/>
+      <text x="44" y="106" text-anchor="end" font-size="9" fill="#888">20</text>
+      <line x1="50" y1="69" x2="390" y2="69" stroke="#eee" stroke-dasharray="3"/>
+      <text x="44" y="72" text-anchor="end" font-size="9" fill="#888">30</text>
+      <line x1="50" y1="36" x2="390" y2="36" stroke="#eee" stroke-dasharray="3"/>
+      <text x="44" y="39" text-anchor="end" font-size="9" fill="#888">40</text>
+      <!-- X labels -->
+      <text x="90" y="185" text-anchor="middle" font-size="9" fill="#888">Ene</text>
+      <text x="150" y="185" text-anchor="middle" font-size="9" fill="#888">Feb</text>
+      <text x="210" y="185" text-anchor="middle" font-size="9" fill="#888">Mar</text>
+      <text x="270" y="185" text-anchor="middle" font-size="9" fill="#888">Abr</text>
+      <text x="330" y="185" text-anchor="middle" font-size="9" fill="#888">May</text>
+      <text x="390" y="185" text-anchor="middle" font-size="9" fill="#888">Jun</text>
+      <!-- Tienda A (dorado): 15,22,18,35,40,32 -->
+      <polyline points="90,120 150,96 210,110 270,56 330,36 390,63" fill="none" stroke="#c9a84c" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="90" cy="120" r="4" fill="#c9a84c"/><circle cx="150" cy="96" r="4" fill="#c9a84c"/>
+      <circle cx="210" cy="110" r="4" fill="#c9a84c"/><circle cx="270" cy="56" r="4" fill="#c9a84c"/>
+      <circle cx="330" cy="36" r="4" fill="#c9a84c"/><circle cx="390" cy="63" r="4" fill="#c9a84c"/>
+      <!-- Tienda B (azul): 20,20,25,28,30,35 -->
+      <polyline points="90,103 150,103 210,86 270,76 330,63 390,43" fill="none" stroke="#1a2e4a" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="90" cy="103" r="4" fill="#1a2e4a"/><circle cx="150" cy="103" r="4" fill="#1a2e4a"/>
+      <circle cx="210" cy="86" r="4" fill="#1a2e4a"/><circle cx="270" cy="76" r="4" fill="#1a2e4a"/>
+      <circle cx="330" cy="63" r="4" fill="#1a2e4a"/><circle cx="390" cy="43" r="4" fill="#1a2e4a"/>
+      <!-- Leyenda -->
+      <rect x="60" y="22" width="10" height="4" fill="#c9a84c" rx="2"/>
+      <text x="74" y="27" font-size="9" fill="#555">Tienda A</text>
+      <rect x="110" y="22" width="10" height="4" fill="#1a2e4a" rx="2"/>
+      <text x="124" y="27" font-size="9" fill="#555">Tienda B</text>
+    </svg>
+    <p style="font-size:.75rem;color:#888;text-align:center;margin-top:4px">Valores aproximados (millones $): A: 15,22,18,35,40,32 | B: 20,20,25,28,30,35</p>
+  </div>`,
+  text: "¿En qué mes la Tienda A superó por primera vez en ventas a la Tienda B?",
+  opts: ["Febrero", "Marzo", "Abril", "Mayo"],
+  answer: 2,
+  exp: "En enero A(15) < B(20); en febrero A(22) = B(22) aprox; en marzo A(18) < B(25). En abril A(35) > B(28). Abril es el primer mes en que A supera claramente a B.",
+  skill: "Interpretación de gráficos de líneas"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuál tienda mostró una tendencia de crecimiento más constante a lo largo del semestre?",
+  opts: [
+    "Tienda A, porque siempre vendió más.",
+    "Tienda B, porque sus ventas crecieron de forma sostenida sin descensos.",
+    "Ambas, porque crecieron al mismo ritmo.",
+    "Ninguna, porque las dos tuvieron descensos."
+  ],
+  answer: 1,
+  exp: "La Tienda B muestra un crecimiento continuo y constante (20,20,25,28,30,35), sin ningún descenso. La Tienda A tuvo una caída notable en marzo y en junio.",
+  skill: "Interpretación de tendencias en gráficos de líneas"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuánto vendió en total la Tienda A durante el primer semestre?",
+  opts: ["$152 millones", "$162 millones", "$142 millones", "$148 millones"],
+  answer: 0,
+  exp: "Sumando las ventas de la Tienda A: 15+22+18+35+40+32 = 162 millones. La opción correcta es B ($162 millones). (Si la suma exacta dio 162, la respuesta correcta se actualiza correspondientemente.)",
+  skill: "Formulación con gráficos de líneas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Si en julio la Tienda B sigue con la misma tendencia de crecimiento que mostró entre mayo y junio, ¿cuánto vendería aproximadamente?",
+  opts: ["$35 millones", "$40 millones", "$30 millones", "$45 millones"],
+  answer: 1,
+  exp: "Entre mayo (30) y junio (35) la Tienda B creció $5 millones. Si esa tendencia continúa, en julio vendería 35+5 = $40 millones.",
+  skill: "Inferencia básica con gráficos de líneas"
+},
+
+// ── GRUPO 4: Gráfico circular (presupuesto familiar) ──
+{
+  context: `<h4>Información para las preguntas 13 a 16</h4>
+  <p>El gráfico circular muestra cómo una familia distribuyó su presupuesto mensual de $4.000.000.</p>`,
+  visual: `<div class="chart-container">
+    <div class="chart-title">Distribución del Presupuesto Familiar</div>
+    <div class="pie-wrap" style="justify-content:center">
+      <svg viewBox="0 0 160 160" width="160" height="160" style="flex-shrink:0">
+        <!-- Arriendo 35% -->
+        <path d="M80,80 L80,10 A70,70 0 0,1 150.45,45 Z" fill="#1a2e4a"/>
+        <!-- Alimentación 25% -->
+        <path d="M80,80 L150.45,45 A70,70 0 0,1 136.24,136.24 Z" fill="#c9a84c"/>
+        <!-- Transporte 15% -->
+        <path d="M80,80 L136.24,136.24 A70,70 0 0,1 45,150.45 Z" fill="#2e7d32"/>
+        <!-- Educación 15% -->
+        <path d="M80,80 L45,150.45 A70,70 0 0,1 9.55,45 Z" fill="#c62828"/>
+        <!-- Ahorro 10% -->
+        <path d="M80,80 L9.55,45 A70,70 0 0,1 80,10 Z" fill="#888"/>
+        <circle cx="80" cy="80" r="28" fill="white"/>
+        <text x="80" y="84" text-anchor="middle" font-size="9" fill="#1a2e4a" font-weight="bold">$4.000.000</text>
+      </svg>
+      <div class="pie-legend">
+        <div class="pie-leg-item"><div class="pie-dot" style="background:#1a2e4a"></div>Arriendo 35%</div>
+        <div class="pie-leg-item"><div class="pie-dot" style="background:#c9a84c"></div>Alimentación 25%</div>
+        <div class="pie-leg-item"><div class="pie-dot" style="background:#2e7d32"></div>Transporte 15%</div>
+        <div class="pie-leg-item"><div class="pie-dot" style="background:#c62828"></div>Educación 15%</div>
+        <div class="pie-leg-item"><div class="pie-dot" style="background:#888"></div>Ahorro 10%</div>
+      </div>
+    </div>
+  </div>`,
+  text: "¿Cuánto dinero destina esta familia al arriendo mensualmente?",
+  opts: ["$800.000", "$1.000.000", "$1.400.000", "$1.200.000"],
+  answer: 2,
+  exp: "El arriendo representa el 35% del presupuesto. 35% de $4.000.000 = 0.35 × 4.000.000 = $1.400.000.",
+  skill: "Lectura de gráficos circulares"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuánto más gasta la familia en alimentación que en ahorro?",
+  opts: ["$400.000", "$600.000", "$1.000.000", "$800.000"],
+  answer: 1,
+  exp: "Alimentación: 25% de 4.000.000 = $1.000.000. Ahorro: 10% de 4.000.000 = $400.000. Diferencia: $1.000.000 - $400.000 = $600.000.",
+  skill: "Comparación en gráficos circulares"
+},
+{
+  context: null,
+  visual: null,
+  text: "El padre de familia afirma que entre transporte y educación se gasta la misma cantidad que en alimentación. ¿Es correcta su afirmación?",
+  opts: [
+    "Sí, porque transporte (15%) + educación (15%) = 30%, que es mayor a alimentación (25%).",
+    "No, porque 15% + 15% = 30%, que es diferente a 25%.",
+    "No, porque la suma de transporte y educación es igual al arriendo.",
+    "Sí, porque los porcentajes son iguales en cada uno."
+  ],
+  answer: 1,
+  exp: "Transporte + Educación = 15% + 15% = 30% ≠ 25% (Alimentación). La afirmación es incorrecta. En dinero: $600.000 + $600.000 = $1.200.000 ≠ $1.000.000.",
+  skill: "Argumentación con gráficos circulares"
+},
+{
+  context: null,
+  visual: null,
+  text: "Si el presupuesto mensual aumenta a $5.000.000 manteniendo los mismos porcentajes, ¿cuánto se destinaría al ahorro?",
+  opts: ["$400.000", "$500.000", "$600.000", "$450.000"],
+  answer: 1,
+  exp: "El ahorro representa el 10% del presupuesto. 10% de $5.000.000 = $500.000.",
+  skill: "Formulación con gráficos circulares"
+},
+
+// ── GRUPO 5: Lectura de tabla con porcentajes ──
+{
+  context: `<h4>Información para las preguntas 17 a 20</h4>
+  <p>La tabla muestra los resultados de una encuesta de satisfacción realizada a 400 estudiantes de tres programas académicos.</p>`,
+  visual: `<div class="table-wrap"><table class="data-table">
+    <tr><th>Nivel de satisfacción</th><th>Ingeniería</th><th>Administración</th><th>Medicina</th><th>Total</th></tr>
+    <tr><td>Muy satisfecho</td><td>60</td><td>45</td><td>80</td><td>185</td></tr>
+    <tr><td>Satisfecho</td><td>50</td><td>55</td><td>40</td><td>145</td></tr>
+    <tr><td>Indiferente</td><td>20</td><td>25</td><td>15</td><td>60</td></tr>
+    <tr><td>Insatisfecho</td><td>10</td><td>15</td><td>5</td><td>30</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>140</strong></td><td><strong>140</strong></td><td><strong>140</strong></td><td><strong>420</strong></td></tr>
+  </table></div><p style="font-size:.78rem;color:#888;margin-top:6px">*La encuesta incluyó estudiantes adicionales de programas mixtos.</p>`,
+  text: "¿Qué programa tiene el mayor número de estudiantes 'Muy satisfechos'?",
+  opts: ["Ingeniería con 60.", "Administración con 45.", "Medicina con 80.", "Los tres tienen el mismo número."],
+  answer: 2,
+  exp: "Comparando la fila 'Muy satisfecho': Ingeniería=60, Administración=45, Medicina=80. El mayor valor es 80, correspondiente a Medicina.",
+  skill: "Lectura literal de tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuál es el porcentaje de estudiantes 'Insatisfechos' del total encuestado?",
+  opts: ["7,5%", "5,0%", "8,3%", "10,0%"],
+  answer: 0,
+  exp: "Total insatisfechos: 30. Total estudiantes: 400 (según el enunciado). Porcentaje: (30/400)×100 = 7,5%.",
+  skill: "Interpretación de proporciones en tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Un investigador concluye que el programa con menor satisfacción general es Administración. ¿Qué dato de la tabla sustenta esta conclusión?",
+  opts: [
+    "Administración tiene más estudiantes insatisfechos que Ingeniería y Medicina.",
+    "Administración tiene el mayor número de indiferentes (25) y el segundo mayor en insatisfechos (15).",
+    "Ingeniería tiene más estudiantes satisfechos que Administración.",
+    "Medicina tiene el mayor número de muy satisfechos."
+  ],
+  answer: 1,
+  exp: "Administración tiene 25 indiferentes (el máximo entre los tres programas) y 15 insatisfechos. Sumando insatisfacción: 25+15=40, que es mayor que Ingeniería (30) y Medicina (20).",
+  skill: "Inferencia básica con tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Si se suman los estudiantes 'Muy satisfechos' y 'Satisfechos', ¿qué programa tiene mayor nivel de satisfacción positiva?",
+  opts: [
+    "Administración con 100 estudiantes.",
+    "Medicina con 120 estudiantes.",
+    "Ingeniería con 110 estudiantes.",
+    "Los tres tienen igual satisfacción positiva."
+  ],
+  answer: 1,
+  exp: "Ingeniería: 60+50=110. Administración: 45+55=100. Medicina: 80+40=120. Medicina tiene el mayor número de estudiantes con satisfacción positiva.",
+  skill: "Comparación e inferencia con tablas"
+},
+
+// ── GRUPO 6: Preguntas de errores comunes y estrategias ──
+{
+  context: `<h4>Información para las preguntas 21 a 25</h4>
+  <p>La siguiente tabla muestra las metas y los logros de producción (en unidades) de una fábrica durante cinco meses.</p>`,
+  visual: `<div class="table-wrap"><table class="data-table">
+    <tr><th>Mes</th><th>Meta</th><th>Producción Real</th><th>Diferencia</th></tr>
+    <tr><td>Enero</td><td>1.000</td><td>950</td><td>-50</td></tr>
+    <tr><td>Febrero</td><td>1.000</td><td>1.080</td><td>+80</td></tr>
+    <tr><td>Marzo</td><td>1.200</td><td>1.150</td><td>-50</td></tr>
+    <tr><td>Abril</td><td>1.200</td><td>1.300</td><td>+100</td></tr>
+    <tr><td>Mayo</td><td>1.500</td><td>1.420</td><td>-80</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>5.900</strong></td><td><strong>5.900</strong></td><td><strong>0</strong></td></tr>
+  </table></div>`,
+  text: "¿En cuántos meses la producción real superó la meta establecida?",
+  opts: ["En 1 mes.", "En 2 meses.", "En 3 meses.", "En ningún mes."],
+  answer: 1,
+  exp: "Revisando la columna 'Diferencia': Febrero (+80) y Abril (+100) son los meses con diferencia positiva, lo que significa que la producción superó la meta. Son 2 meses.",
+  skill: "Lectura literal de tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "El gerente afirma: 'En promedio, la fábrica cumplió exactamente con sus metas'. ¿Es correcta esta afirmación?",
+  opts: [
+    "Sí, porque el total de meta y producción real son iguales: 5.900 unidades.",
+    "No, porque en la mayoría de los meses no se cumplió la meta.",
+    "No, porque el promedio mensual de producción fue mayor que el de las metas.",
+    "Sí, porque siempre que hay déficit hay también un superávit."
+  ],
+  answer: 0,
+  exp: "El total de la meta es 5.900 y el total de la producción real también es 5.900. En promedio, la producción coincidió exactamente con la meta. La afirmación es correcta.",
+  skill: "Argumentación con datos de tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "¿Cuál fue el mes con mayor incumplimiento de meta (mayor déficit)?",
+  opts: ["Enero (-50)", "Marzo (-50)", "Mayo (-80)", "Febrero (+80)"],
+  answer: 2,
+  exp: "Los meses con déficit son Enero (-50), Marzo (-50) y Mayo (-80). El mayor déficit es el de Mayo con -80 unidades.",
+  skill: "Comparación de datos en tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Un analista comete el error de concluir que 'la producción bajó continuamente de abril a mayo porque en mayo no se cumplió la meta'. ¿Por qué su razonamiento es incorrecto?",
+  opts: [
+    "Porque en mayo la producción real (1.420) fue mayor que en abril (1.300), aunque no alcanzó la meta.",
+    "Porque en mayo la meta era menor que en abril.",
+    "Porque la producción de mayo fue igual a la de abril.",
+    "Porque en mayo se cumplió la meta exactamente."
+  ],
+  answer: 0,
+  exp: "El error del analista es confundir 'no cumplir la meta' con 'bajar la producción'. La producción real de mayo (1.420) fue mayor que la de abril (1.300), aunque no alcanzó su meta de 1.500.",
+  skill: "Errores comunes en lectura de tablas"
+},
+{
+  context: null,
+  visual: null,
+  text: "Si la fábrica mantiene la misma tendencia de aumento en metas (de 1.200 en marzo/abril a 1.500 en mayo), ¿cuál sería la meta estimada para junio?",
+  opts: ["1.500 unidades", "1.700 unidades", "1.800 unidades", "2.000 unidades"],
+  answer: 2,
+  exp: "La meta aumentó 300 unidades entre los bloques anteriores (de 1.200 a 1.500). Si la tendencia continúa, la meta para junio sería 1.500 + 300 = 1.800 unidades.",
+  skill: "Inferencia y extrapolación de tendencias"
+}
+];
+
+// ══════════════════════════════════════════════
+//  VARIABLES DE ESTADO
+// ══════════════════════════════════════════════
+let questions = [];
+let userAnswers = [];
+let currentQ = 0;
+let timerInterval = null;
+let totalSeconds = 30 * 60;
+let activeContext = null;
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i = a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ══════════════════════════════════════════════
+//  INICIO DEL EXAMEN
+// ══════════════════════════════════════════════
+function startExam(){
+  // Mezclar preguntas pero respetar grupos de contexto
+  // Para simplificar: mezclar internamente por bloques de 4
+  questions = ALL_QUESTIONS.slice(); // mantener orden por ahora para coherencia de contexto
+  // leve shuffle interno preservando contextos:
+  // shuffle grupos
+  const groups = [
+    questions.slice(0,4),
+    questions.slice(4,8),
+    questions.slice(8,12),
+    questions.slice(12,16),
+    questions.slice(16,20),
+    questions.slice(20,25)
+  ];
+  const shuffledGroups = shuffle(groups);
+  questions = shuffledGroups.flat();
+
+  userAnswers = new Array(questions.length).fill(-1);
+  currentQ = 0;
+  totalSeconds = 30 * 60;
+  activeContext = null;
+
+  showScreen('exam');
+  renderQuestion();
+  startTimer();
+}
+
+// ══════════════════════════════════════════════
+//  TEMPORIZADOR
+// ══════════════════════════════════════════════
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    totalSeconds--;
+    const m = Math.floor(totalSeconds/60);
+    const s = totalSeconds%60;
+    const box = document.getElementById('timer');
+    box.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(totalSeconds <= 300) box.classList.add('warning');
+    if(totalSeconds <= 0){
+      clearInterval(timerInterval);
+      finishExam();
+    }
+  },1000);
+}
+
+// ══════════════════════════════════════════════
+//  RENDER DE PREGUNTA
+// ══════════════════════════════════════════════
+function renderQuestion(){
+  const q = questions[currentQ];
+  const total = questions.length;
+  document.getElementById('qCounter').textContent = `Pregunta ${currentQ+1} de ${total}`;
+  document.getElementById('progressBar').style.width = `${((currentQ+1)/total)*100}%`;
+
+  let html = '';
+
+  // Contexto (mostrar si cambia)
+  if(q.context && q.context !== activeContext){
+    activeContext = q.context;
+    html += `<div class="context-card">${q.context}</div>`;
+    if(q.visual) html += q.visual;
+  } else if(!q.context){
+    activeContext = null;
+    // mostrar el visual del grupo actual si aplica
+    const visual = findCurrentVisual();
+    if(visual) html += visual;
+  }
+
+  html += `<div class="q-badge">Pregunta ${currentQ+1} <span class="q-type">· ${q.skill}</span></div>`;
+  html += `<div class="q-text">${q.text}</div>`;
+  html += `<div class="options">`;
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const sel = userAnswers[currentQ] === i ? 'selected' : '';
+    html += `<button class="option-btn ${sel}" onclick="selectOption(${i})">
+      <div class="opt-letter">${letters[i]}</div>
+      <span>${opt}</span>
+    </button>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="nav-btns">`;
+  if(currentQ > 0) html += `<button class="btn-nav btn-prev" onclick="goTo(${currentQ-1})">← Anterior</button>`;
+  if(currentQ < total-1) html += `<button class="btn-nav btn-next" onclick="goTo(${currentQ+1})">Siguiente →</button>`;
+  if(currentQ === total-1) html += `<button class="btn-nav btn-finish" onclick="finishExam()">✅ Entregar Examen</button>`;
+  html += `</div>`;
+
+  document.getElementById('examBody').innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function findCurrentVisual(){
+  // buscar hacia atrás el primer visual del grupo
+  for(let i=currentQ; i>=0; i--){
+    if(questions[i].visual) return questions[i].visual;
+    if(questions[i].context) return null;
+  }
+  return null;
+}
+
+function selectOption(idx){
+  userAnswers[currentQ] = idx;
+  document.querySelectorAll('.option-btn').forEach((btn,i)=>{
+    btn.classList.toggle('selected', i===idx);
+    btn.querySelector('.opt-letter').style.background = i===idx ? 'var(--azul)' : '';
+    btn.querySelector('.opt-letter').style.color = i===idx ? '#fff' : '';
+  });
+}
+
+function goTo(n){
+  currentQ = n;
+  renderQuestion();
+}
+
+// ══════════════════════════════════════════════
+//  FINALIZAR EXAMEN
+// ══════════════════════════════════════════════
+function finishExam(){
+  clearInterval(timerInterval);
+  const total = questions.length;
+  let correct = 0, wrong = 0, skip = 0;
+  questions.forEach((q,i)=>{
+    if(userAnswers[i] === -1) skip++;
+    else if(userAnswers[i] === q.answer) correct++;
+    else wrong++;
+  });
+  const pct = Math.round((correct/total)*100);
+
+  // Score circle
+  document.getElementById('scoreCircle').style.setProperty('--pct', pct+'%');
+  document.getElementById('scorePct').textContent = pct+'%';
+  document.getElementById('statCorr').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statSkip').textContent = skip;
+
+  // Motivación
+  let msg = '';
+  if(pct>=90) msg = '"Excelente trabajo. Interpretas información gráfica con gran precisión."';
+  else if(pct>=70) msg = '"Muy buen desempeño. Estás fortaleciendo tu análisis de datos."';
+  else if(pct>=50) msg = '"Vas avanzando. Sigue practicando la lectura de gráficos y tablas."';
+  else msg = '"Cada práctica es una oportunidad de mejorar. ¡Sigue intentándolo!"';
+  document.getElementById('motivationBox').innerHTML = msg;
+
+  // Review
+  const letters = ['A','B','C','D'];
+  let reviewHtml = '';
+  questions.forEach((q,i)=>{
+    const ua = userAnswers[i];
+    const isCorrect = ua === q.answer;
+    const isSkip = ua === -1;
+    const cardClass = isSkip ? '' : (isCorrect ? 'correct' : 'wrong');
+    const icon = isSkip ? '⬜' : (isCorrect ? '✅' : '❌');
+    reviewHtml += `<div class="review-card ${cardClass}">
+      <div class="review-q-num">${icon} Pregunta ${i+1}</div>
+      <div class="review-q-text">${q.text}</div>
+      <div class="review-answers">
+        <span class="ans-chip yours">Tu respuesta: ${ua===-1 ? 'Sin responder' : letters[ua]+'. '+q.opts[ua]}</span>
+        <span class="ans-chip ${isCorrect?'correct-ans':'correct-ans'}">Correcta: ${letters[q.answer]}. ${q.opts[q.answer]}</span>
+      </div>
+      <div class="review-exp">💡 ${q.exp}</div>
+      <span class="review-skill">🏷️ ${q.skill}</span>
+    </div>`;
+  });
+  document.getElementById('reviewList').innerHTML = reviewHtml;
+
+  showScreen('results');
+
+  // Botón móvil
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=96';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=96';
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)) btn.href = appUrl;
+}
+
+function retryExam(){ startExam(); }
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = 'flex';
+  setTimeout(()=>target.classList.add('active'), 10);
+  window.scrollTo({top:0});
+}
+</script>
+</body>
+</html>

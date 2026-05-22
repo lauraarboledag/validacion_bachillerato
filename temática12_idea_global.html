@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lectura Crítica – Nivel 2 | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS VARIABLES & RESET
+   ============================================================ */
+:root {
+  --navy:       #1a2e4a;
+  --navy-dark:  #0f1e30;
+  --navy-mid:   #243a56;
+  --navy-light: #2e4d6e;
+  --gold:       #c9a84c;
+  --gold-light: #e8c96a;
+  --gold-pale:  #f5e8c0;
+  --white:      #ffffff;
+  --off-white:  #f8f6f0;
+  --text-dark:  #1a1a2e;
+  --text-mid:   #4a5568;
+  --text-light: #8896aa;
+  --success:    #2d7a4f;
+  --error:      #a83232;
+  --success-bg: #e8f5ee;
+  --error-bg:   #faeaea;
+  --border:     rgba(201,168,76,0.25);
+  --shadow-sm:  0 2px 12px rgba(26,46,74,0.10);
+  --shadow-md:  0 6px 30px rgba(26,46,74,0.14);
+  --shadow-lg:  0 16px 60px rgba(26,46,74,0.20);
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  22px;
+  --radius-xl:  32px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off-white);
+  color: var(--text-dark);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   SCREEN MANAGEMENT
+   ============================================================ */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy-dark);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.40);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(201,168,76,0.55);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+}
+.btn-secondary:hover {
+  background: var(--gold);
+  color: var(--navy-dark);
+  transform: translateY(-2px);
+}
+.btn-navy {
+  background: var(--navy);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+.btn-navy:hover {
+  background: var(--navy-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================
+   SCREEN 1 – WELCOME
+   ============================================================ */
+#screen-welcome {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 50%, var(--navy-light) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.welcome-bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(201,168,76,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(255,255,255,0.01) 60px, rgba(255,255,255,0.01) 61px);
+  pointer-events: none;
+}
+.welcome-deco {
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  border: 2px solid rgba(201,168,76,0.10);
+  pointer-events: none;
+}
+.welcome-deco::before {
+  content: '';
+  position: absolute;
+  inset: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.08);
+}
+.welcome-inner {
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.30);
+  color: var(--gold-light);
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.welcome-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.welcome-title span {
+  color: var(--gold);
+  display: block;
+}
+.welcome-subtitle {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.65);
+  font-style: italic;
+  margin-bottom: 36px;
+  font-weight: 300;
+}
+.welcome-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin-bottom: 36px;
+  border-radius: 3px;
+}
+.welcome-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.welcome-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+.welcome-card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+.welcome-card-title {
+  font-weight: 700;
+  color: var(--gold-light);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+.welcome-card-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--white);
+  font-weight: 700;
+}
+.welcome-card-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+}
+.welcome-instructions {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.12);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 40px;
+}
+.welcome-instructions h3 {
+  color: var(--gold-light);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.welcome-instructions ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.welcome-instructions li {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.9rem;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.welcome-instructions li::before {
+  content: '›';
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+.welcome-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   SCREEN 2 – TEXTS (Reading Panel)
+   ============================================================ */
+#screen-texts {
+  min-height: 100vh;
+  background: var(--off-white);
+}
+.texts-header {
+  background: var(--navy);
+  padding: 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+}
+.texts-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.texts-header-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 1.1rem;
+}
+.texts-header-title span {
+  color: var(--gold);
+}
+.texts-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.texts-intro {
+  background: white;
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+}
+.texts-intro p {
+  color: var(--text-mid);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+.text-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(26,46,74,0.08);
+  transition: var(--transition);
+}
+.text-card:hover { box-shadow: var(--shadow-md); }
+.text-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  gap: 16px;
+}
+.text-card-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.text-num {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.text-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--navy);
+  font-weight: 700;
+}
+.text-info p {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+.text-toggle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--gold-pale);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.text-card-header:hover .text-toggle {
+  background: var(--gold);
+}
+.text-toggle.open { transform: rotate(180deg); }
+.text-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.text-body.open { max-height: 2000px; }
+.text-body-inner {
+  padding: 0 24px 28px;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  padding-top: 20px;
+}
+.text-body-inner p {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--text-dark);
+  margin-bottom: 14px;
+}
+.text-source {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(201,168,76,0.3);
+}
+
+/* ============================================================
+   SCREEN 3 – QUIZ
+   ============================================================ */
+#screen-quiz {
+  min-height: 100vh;
+  background: var(--off-white);
+}
+.quiz-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+/* sidebar */
+.quiz-sidebar {
+  background: var(--navy);
+  padding: 24px 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  order: 2;
+}
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.sidebar-logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 0.95rem;
+}
+
+/* Timer */
+.timer-block {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,168,76,0.20);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.timer-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+}
+.timer-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 3px;
+  line-height: 1;
+}
+.timer-display.warning { color: #f59e0b; }
+.timer-display.critical { color: #ef4444; animation: pulse-timer 1s infinite; }
+@keyframes pulse-timer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Progress */
+.progress-block {
+  margin-bottom: 20px;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 8px;
+}
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.10);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* Texts panel in sidebar */
+.sidebar-texts-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+}
+.sidebar-text-item {
+  margin-bottom: 8px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.12);
+}
+.sidebar-text-toggle {
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  color: var(--gold-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+}
+.sidebar-text-toggle:hover { background: rgba(255,255,255,0.08); }
+.sidebar-text-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.sidebar-text-body.open { max-height: 600px; overflow-y: auto; }
+.sidebar-text-body-inner {
+  padding: 12px 14px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.65);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Main quiz area */
+.quiz-main {
+  padding: 40px 32px;
+  order: 1;
+}
+.quiz-header {
+  margin-bottom: 32px;
+}
+.quiz-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold-pale);
+  color: var(--navy);
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.quiz-counter {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.quiz-counter span { color: var(--gold); }
+.quiz-competency {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.question-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 36px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(201,168,76,0.12);
+  animation: slide-in 0.35s ease;
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.question-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text-dark);
+  margin-bottom: 28px;
+  font-weight: 400;
+}
+.question-text strong { color: var(--navy); font-weight: 600; }
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.option-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(26,46,74,0.10);
+  background: var(--off-white);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+.option-btn:hover {
+  border-color: var(--gold);
+  background: var(--gold-pale);
+  transform: translateX(4px);
+}
+.option-btn.selected {
+  border-color: var(--navy);
+  background: linear-gradient(135deg, rgba(26,46,74,0.06), rgba(26,46,74,0.02));
+  color: var(--navy);
+  font-weight: 500;
+}
+.option-letter {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(26,46,74,0.08);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.option-btn.selected .option-letter {
+  background: var(--navy);
+  color: var(--gold);
+}
+.option-btn:hover .option-letter {
+  background: var(--gold);
+  color: var(--navy-dark);
+}
+
+.quiz-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Warning toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--navy-dark);
+  color: var(--gold-light);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1px solid var(--gold);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Mobile sidebar toggle */
+.mobile-sidebar-btn {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  z-index: 200;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy-dark);
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  box-shadow: var(--shadow-lg);
+  align-items: center;
+  justify-content: center;
+}
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+}
+.mobile-overlay.active { display: block; }
+
+/* ============================================================
+   SCREEN 4 – RESULTS
+   ============================================================ */
+#screen-results {
+  min-height: 100vh;
+  background: var(--off-white);
+}
+.results-header {
+  background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+  padding: 48px 24px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.results-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 40px;
+  background: var(--off-white);
+  border-radius: 40px 40px 0 0;
+}
+.results-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.4);
+  color: var(--gold-light);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.results-score-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.5rem, 10vw, 6rem);
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.results-score-label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+.results-message {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  font-style: italic;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.results-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.stat-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 22px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(201,168,76,0.10);
+}
+.stat-icon { font-size: 1.6rem; margin-bottom: 6px; }
+.stat-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-val.green { color: var(--success); }
+.stat-val.red   { color: var(--error); }
+.stat-val.blue  { color: var(--navy); }
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+
+/* Donut chart */
+.perf-block {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  border: 1px solid rgba(201,168,76,0.10);
+}
+.perf-chart {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+.perf-text h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.perf-text p {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+/* Feedback list */
+.feedback-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--navy);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.feedback-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.feedback-item {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 22px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid transparent;
+  transition: var(--transition);
+}
+.feedback-item.correct  { border-left-color: var(--success); }
+.feedback-item.incorrect{ border-left-color: var(--error); }
+.feedback-item:hover { box-shadow: var(--shadow-md); }
+.feedback-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.feedback-q-num {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+.feedback-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.feedback-verdict.correct  { background: var(--success-bg); color: var(--success); }
+.feedback-verdict.incorrect{ background: var(--error-bg);   color: var(--error); }
+.feedback-q-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+.feedback-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.feedback-ans {
+  font-size: 0.85rem;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+}
+.feedback-ans.your-wrong {
+  background: var(--error-bg);
+  color: var(--error);
+  text-decoration: line-through;
+}
+.feedback-ans.correct-ans {
+  background: var(--success-bg);
+  color: var(--success);
+  font-weight: 600;
+}
+.feedback-ans.your-correct {
+  background: var(--success-bg);
+  color: var(--success);
+  font-weight: 600;
+}
+.feedback-explanation {
+  font-size: 0.85rem;
+  color: var(--text-mid);
+  background: rgba(201,168,76,0.06);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-top: 10px;
+  border-left: 2px solid var(--gold);
+  line-height: 1.6;
+  font-style: italic;
+}
+.feedback-explanation strong {
+  color: var(--navy);
+  font-style: normal;
+}
+
+.results-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .quiz-layout {
+    grid-template-columns: 1fr;
+  }
+  .quiz-sidebar {
+    display: none;
+    position: fixed;
+    top: 0; right: 0;
+    width: min(360px, 90vw);
+    height: 100vh;
+    z-index: 200;
+    order: 1;
+  }
+  .quiz-sidebar.mobile-open { display: block; }
+  .mobile-sidebar-btn { display: flex; }
+  .quiz-main { padding: 24px 16px; }
+  .question-card { padding: 24px 20px; }
+}
+@media (max-width: 640px) {
+  .welcome-inner { padding: 40px 20px; }
+  .welcome-actions { flex-direction: column; }
+  .stats-grid { grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .stat-val { font-size: 1.5rem; }
+  .perf-block { flex-direction: column; text-align: center; }
+  .texts-body { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SCREEN 1 – WELCOME
+     ============================================================ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-bg-pattern"></div>
+  <div class="welcome-deco"></div>
+  <div class="welcome-inner">
+    <div>
+      <div class="welcome-badge">📘 Instituto Innova · Validación del Bachillerato</div>
+      <h1 class="welcome-title">
+        Lectura Crítica
+        <span>Nivel 2 · Tema 2</span>
+      </h1>
+      <p class="welcome-subtitle">Idea global, tesis y estructura textual</p>
+      <div class="welcome-divider"></div>
+    </div>
+
+    <div class="welcome-grid">
+      <div class="welcome-card">
+        <div class="welcome-card-icon">📝</div>
+        <div class="welcome-card-title">Preguntas</div>
+        <div class="welcome-card-val">25</div>
+        <div class="welcome-card-desc">Selección múltiple</div>
+      </div>
+      <div class="welcome-card">
+        <div class="welcome-card-icon">⏱️</div>
+        <div class="welcome-card-title">Tiempo</div>
+        <div class="welcome-card-val">40<span style="font-size:1.2rem"> min</span></div>
+        <div class="welcome-card-desc">Cuenta regresiva</div>
+      </div>
+      <div class="welcome-card">
+        <div class="welcome-card-icon">📚</div>
+        <div class="welcome-card-title">Textos</div>
+        <div class="welcome-card-val">3</div>
+        <div class="welcome-card-desc">Siempre accesibles</div>
+      </div>
+    </div>
+
+    <div class="welcome-instructions">
+      <h3>📋 Indicaciones generales</h3>
+      <ul>
+        <li>Lee con atención cada uno de los tres textos antes de comenzar el cuestionario.</li>
+        <li>Puedes consultar los textos en cualquier momento durante el examen desde el panel lateral.</li>
+        <li>Cada pregunta tiene una sola respuesta correcta. Debes seleccionarla antes de avanzar.</li>
+        <li>El cronómetro iniciará automáticamente cuando comiences el cuestionario.</li>
+        <li>Al finalizar, verás tu puntaje y retroalimentación detallada por pregunta.</li>
+        <li>Las preguntas se presentan en orden aleatorio en cada intento.</li>
+      </ul>
+    </div>
+
+    <div class="welcome-actions">
+      <button class="btn btn-primary" onclick="showTexts()">
+        📖 Leer los textos primero
+      </button>
+      <button class="btn btn-secondary" onclick="startQuiz()">
+        ⚡ Ir directamente al cuestionario
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN 2 – TEXTS
+     ============================================================ -->
+<div id="screen-texts" class="screen">
+  <div class="texts-header">
+    <div class="texts-header-inner">
+      <div class="texts-header-title">
+        📚 Textos base — <span>Lectura Crítica Nivel 2</span>
+      </div>
+      <button class="btn btn-primary" style="font-size:0.85rem;padding:10px 22px;" onclick="startQuiz()">
+        Iniciar cuestionario →
+      </button>
+    </div>
+  </div>
+  <div class="texts-body">
+    <div class="texts-intro">
+      <p>Los siguientes textos son la base del simulacro. Léelos con atención: deberás responder preguntas sobre idea global, tesis, argumentos y estructura de cada uno. Puedes expandir o contraer cada texto.</p>
+    </div>
+
+    <!-- TEXT 1 -->
+    <div class="text-card" id="tc1">
+      <div class="text-card-header" onclick="toggleText('tc1')">
+        <div class="text-card-label">
+          <div class="text-num">1</div>
+          <div class="text-info">
+            <h3>Medicina popular y medicina oficial en Colombia</h3>
+            <p>Texto argumentativo-informativo — Prieto Gaona, Oriana (2011)</p>
+          </div>
+        </div>
+        <div class="text-toggle" id="tt1">▼</div>
+      </div>
+      <div class="text-body" id="tb1">
+        <div class="text-body-inner">
+          <p>La medicina popular colombiana conserva una amplia serie de conocimientos empíricos sobre gran diversidad de recursos botánicos, que han sido esenciales para el cuidado de la salud. Pero, con la oficialización de la medicina a finales del siglo XIX, la creación de las primeras escuelas de medicina y de farmacia y la creación de una legislación que buscaba regular estas disciplinas, muchos de estos conocimientos fueron rechazados al igual que sus prácticas médicas.</p>
+          <p>Paradójicamente, mientras la medicina oficial negaba los conocimientos populares, se servía de ellos para desarrollar muchos de los avances farmacéuticos de los que se vale la medicina oficial para sus tratamientos. Por otro lado, según la Organización Mundial de la Salud, la atención primaria en salud por parte de la medicina oficial cubre apenas a un 20 % de la población en los países en vías de desarrollo, mientras que el 80 % tiene que recurrir a otras prácticas médicas populares y lo hace en gran parte por la poca garantía de acceso y de aseguramiento de la población pobre.</p>
+          <p>Lo anterior sigue generando inconformidad en quienes practican la medicina oficial pues consideran que la medicina popular no representa un conocimiento válido porque no se fundamenta en pruebas científicas y no está regulada. Sin embargo, ambas medicinas pueden llegar a ser complementarias si se estudian de manera juiciosa y se determinan cuáles de las prácticas y de los recursos botánicos usados por la medicina popular son perjudiciales y cuáles brindan alternativas de salud a las poblaciones necesitadas. De esta manera, también se promueve la inclusión, el reconocimiento y el respeto por la diversidad cultural y por los conocimientos populares.</p>
+          <div class="text-source">Tomado y adaptado de: Prieto Gaona, Oriana. (2011). Proyecto de investigación sobre medicina popular.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXT 2 -->
+    <div class="text-card" id="tc2">
+      <div class="text-card-header" onclick="toggleText('tc2')">
+        <div class="text-card-label">
+          <div class="text-num">2</div>
+          <div class="text-info">
+            <h3>Defensa de la fiesta brava</h3>
+            <p>Texto argumentativo — Jorge Nacif</p>
+          </div>
+        </div>
+        <div class="text-toggle" id="tt2">▼</div>
+      </div>
+      <div class="text-body" id="tb2">
+        <div class="text-body-inner">
+          <p>La fiesta de los toros es uno de los espectáculos más antiguos de la humanidad, sus primeros antecedentes datan de la antigua Grecia. Desde entonces, este juego tuvo muchos detractores. Los que están en contra de la fiesta, argumentan que se "tortura" al toro con las banderillas, y claro, que la res es muerta en el ruedo.</p>
+          <p>Sin embargo, creo que los opositores no entienden en lo más mínimo lo que es el toreo. La tauromaquia es, ante todo, un arte pues posee dos características fundamentales: la estética y la técnica, aunque el arte es un concepto subjetivo, casi siempre cumple con estos dos elementos. Pero el arte del toreo tiene algo más: el peligro. Decía David Silveti que el don más generoso de un artista es poner en juego la vida misma.</p>
+          <p>Para los que no sepan, los puyazos que dan los picadores tienen un objetivo claro. La carne del toro se come y como esta se contamina por la adrenalina, el puyazo sirve para descongestionar al toro, mientras sangra, se va purificando. Por otra parte, la muerte del toro debe ser entendida como algo natural, toda vida termina en la muerte, la única certeza que tenemos siempre.</p>
+          <p>Finalmente se habla de los derechos de los animales, bueno, esto se oye bien pero es una falacia, el término de derecho es un concepto meramente humano. Lo importante en una sociedad es garantizar los derechos de los hombres.</p>
+          <p>Olé...</p>
+          <div class="text-source">Adaptado de: Nacif, Jorge. "Defensa de la fiesta brava". Disponible en: http://de10.com.mx/detalle416.html</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXT 3 -->
+    <div class="text-card" id="tc3">
+      <div class="text-card-header" onclick="toggleText('tc3')">
+        <div class="text-card-label">
+          <div class="text-num">3</div>
+          <div class="text-info">
+            <h3>La doctrina Truman</h3>
+            <p>Texto informativo-argumentativo — Arturo Escobar</p>
+          </div>
+        </div>
+        <div class="text-toggle" id="tt3">▼</div>
+      </div>
+      <div class="text-body" id="tb3">
+        <div class="text-body-inner">
+          <p>En su discurso de posesión como presidente de Estados Unidos el 20 de enero de 1949, Harry Truman anunció al mundo entero su concepto de "trato justo". Un componente esencial del concepto era su llamado a Estados Unidos y al mundo para resolver los problemas de las "áreas subdesarrolladas" del globo:</p>
+          <p><em>"Más de la mitad de la población del mundo vive en condiciones cercanas a la miseria. Su alimentación es inadecuada, es víctima de la enfermedad. Su vida económica es primitiva y está estancada. Su pobreza constituye un obstáculo y una amenaza tanto para ellos como para las áreas más prósperas. Por primera vez en la historia, la humanidad posee el conocimiento y la capacidad para aliviar el sufrimiento de estas gentes… Creo que deberíamos poner a disposición de los amantes de la paz los beneficios de nuestro acervo de conocimiento técnico para ayudarlos a lograr sus aspiraciones de una vida mejor… Lo que tenemos en mente es un programa de desarrollo basado en los conceptos del trato justo y democrático… Producir más es la clave para la paz y la prosperidad. Y la clave para producir más es una aplicación mayor y más vigorosa del conocimiento técnico y científico moderno." (Truman, 1964)</em></p>
+          <p>La doctrina Truman inició una nueva era en la comprensión y el manejo de los asuntos mundiales, en particular de aquellos que se referían a los países económicamente menos avanzados. El propósito era bastante ambicioso: crear las condiciones necesarias para reproducir en todo el mundo los rasgos característicos de las sociedades avanzadas de la época: altos niveles de industrialización y urbanización, tecnificación de la agricultura, rápido crecimiento de la producción material y los niveles de vida, y adopción generalizada de la educación y los valores culturales modernos. En concepto de Truman, el capital, la ciencia y la tecnología eran los principales componentes que harían posible tal revolución masiva. Solo así el sueño americano de paz y abundancia podría extenderse a todos los pueblos del planeta.</p>
+          <div class="text-source">La invención del Tercer Mundo. Construcción y deconstrucción del desarrollo (Introducción). Arturo Escobar.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:16px 0 40px;">
+      <button class="btn btn-primary" onclick="startQuiz()">✅ He leído los textos — Iniciar cuestionario</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN 3 – QUIZ
+     ============================================================ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-layout">
+
+    <!-- MAIN QUESTION AREA -->
+    <div class="quiz-main">
+      <div class="quiz-header">
+        <div class="quiz-tag" id="quiz-competency-tag">📖 Competencia</div>
+        <div class="quiz-counter">Pregunta <span id="q-current">1</span> de <span id="q-total">25</span></div>
+        <div class="quiz-competency" id="quiz-competency-label">Identificación de idea global</div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-text" id="q-text"></div>
+        <div class="options-list" id="q-options"></div>
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn btn-navy" onclick="nextQuestion()">
+          <span id="next-btn-label">Siguiente →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="quiz-sidebar" id="quiz-sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-dot"></div>
+        <div class="sidebar-logo-text">Instituto Innova</div>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-block">
+        <div class="timer-label">⏱ Tiempo restante</div>
+        <div class="timer-display" id="timer-display">40:00</div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-block">
+        <div class="progress-meta">
+          <span style="color:rgba(255,255,255,0.55);font-size:.78rem">Progreso</span>
+          <span id="progress-text" style="color:var(--gold-light);font-size:.78rem">0 / 25</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Texts in sidebar -->
+      <div class="sidebar-texts-title">📚 Textos de referencia</div>
+      <div class="sidebar-text-item">
+        <button class="sidebar-text-toggle" onclick="toggleSidebarText('st1')">
+          <span>Texto 1 · Medicina popular</span><span id="sta1">▼</span>
+        </button>
+        <div class="sidebar-text-body" id="st1">
+          <div class="sidebar-text-body-inner">
+            La medicina popular colombiana conserva una amplia serie de conocimientos empíricos sobre gran diversidad de recursos botánicos, esenciales para el cuidado de la salud. Con la oficialización de la medicina a finales del siglo XIX, muchos de estos conocimientos fueron rechazados. Paradójicamente, mientras la medicina oficial negaba los conocimientos populares, se servía de ellos para desarrollar avances farmacéuticos. Según la OMS, la atención primaria oficial cubre apenas al 20 % de la población en países en vías de desarrollo; el 80 % recurre a prácticas populares. Sin embargo, ambas medicinas pueden ser complementarias si se estudian de manera juiciosa.
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-text-item">
+        <button class="sidebar-text-toggle" onclick="toggleSidebarText('st2')">
+          <span>Texto 2 · Fiesta brava</span><span id="sta2">▼</span>
+        </button>
+        <div class="sidebar-text-body" id="st2">
+          <div class="sidebar-text-body-inner">
+            La tauromaquia es uno de los espectáculos más antiguos de la humanidad. El autor defiende que el toreo es un arte con estética, técnica y peligro. Los puyazos tienen un objetivo "purificador" según el autor; la muerte del toro es presentada como algo natural. Los derechos de los animales son descartados como falacia. La tesis central es que la tauromaquia debe preservarse y no puede ser juzgada por quienes no comprenden su arte.
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-text-item">
+        <button class="sidebar-text-toggle" onclick="toggleSidebarText('st3')">
+          <span>Texto 3 · Doctrina Truman</span><span id="sta3">▼</span>
+        </button>
+        <div class="sidebar-text-body" id="st3">
+          <div class="sidebar-text-body-inner">
+            En 1949, Truman presentó su concepto de "trato justo" para resolver problemas de las áreas subdesarrolladas. Según Arturo Escobar, la doctrina Truman buscó reproducir en todo el mundo los rasgos de las sociedades avanzadas: industrialización, urbanización, tecnificación, educación y valores modernos. El capital, la ciencia y la tecnología eran los principales componentes de esta "revolución masiva". El texto analiza críticamente esta doctrina desde una perspectiva académica.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Mobile toggle -->
+  <button class="mobile-sidebar-btn" onclick="toggleMobileSidebar()" title="Ver textos y progreso">📋</button>
+  <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
+</div>
+
+<!-- ============================================================
+     SCREEN 4 – RESULTS
+     ============================================================ -->
+<div id="screen-results" class="screen">
+  <div class="results-header">
+    <div class="results-badge">🎓 Resultados del simulacro</div>
+    <div class="results-score-big" id="results-pct">—%</div>
+    <div class="results-score-label">de desempeño</div>
+    <div class="results-message" id="results-msg"></div>
+  </div>
+  <div class="results-body">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-val green" id="r-correct">—</div>
+        <div class="stat-label">Aciertos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">❌</div>
+        <div class="stat-val red" id="r-wrong">—</div>
+        <div class="stat-label">Errores</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱</div>
+        <div class="stat-val blue" id="r-time">—</div>
+        <div class="stat-label">Tiempo usado</div>
+      </div>
+    </div>
+
+    <div class="perf-block">
+      <svg class="perf-chart" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="46" fill="none" stroke="#e8edf4" stroke-width="12"/>
+        <circle cx="55" cy="55" r="46" fill="none" stroke="url(#pg)" stroke-width="12"
+          stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289"
+          transform="rotate(-90 55 55)" id="perf-circle" style="transition:stroke-dashoffset 1.5s ease;"/>
+        <defs>
+          <linearGradient id="pg" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c9a84c"/>
+            <stop offset="100%" stop-color="#e8c96a"/>
+          </linearGradient>
+        </defs>
+        <text x="55" y="60" text-anchor="middle" font-family="Playfair Display,serif"
+          font-size="18" font-weight="700" fill="#1a2e4a" id="perf-circle-text">—%</text>
+      </svg>
+      <div class="perf-text">
+        <h3 id="perf-title">Nivel de desempeño</h3>
+        <p id="perf-desc">—</p>
+      </div>
+    </div>
+
+    <div class="feedback-section-title">📝 Retroalimentación por pregunta</div>
+    <div id="feedback-list"></div>
+
+    <div class="results-actions">
+      <button class="btn btn-primary" onclick="restartQuiz()">🔄 Intentar de nuevo</button>
+      <button class="btn btn-navy" onclick="goHome()">🏠 Volver al inicio</button>
+      <a id="btn-volver"
+        href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=615"
+        style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95em;padding:14px 28px;border-radius:50px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Por favor selecciona una respuesta antes de continuar.</div>
+
+<script>
+/* ============================================================
+   MOBILE LINK
+   ============================================================ */
+const btnVolver = document.getElementById('btn-volver');
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=615';
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) btnVolver.href = appUrl;
+
+/* ============================================================
+   QUESTIONS DATABASE – 25 QUESTIONS ACROSS 3 TEXTS
+   ============================================================ */
+const ALL_QUESTIONS = [
+  // ─── TEXTO 1: MEDICINA POPULAR ────────────────────────────────
+  {
+    text: 1,
+    competency: "Idea global e idea principal",
+    tag: "📖 Idea global",
+    question: "¿Cuál de las siguientes opciones expresa mejor la idea global del texto sobre medicina popular y medicina oficial en Colombia?",
+    options: [
+      "La medicina popular colombiana ha tenido una larga historia de persecución por parte del Estado y de las entidades de salud oficiales.",
+      "Las diferencias entre la medicina popular y la medicina oficial en Colombia muestran la necesidad de integrarlas de manera complementaria para mejorar la cobertura en salud.",
+      "La Organización Mundial de la Salud ha demostrado que la medicina oficial es insuficiente para atender a la mayoría de los ciudadanos del mundo.",
+      "La medicina oficial se ha beneficiado históricamente de los saberes populares sin reconocerlos ni valorarlos."
+    ],
+    correct: 1,
+    explanation: "La idea global articula todas las partes del texto: la tensión entre ambas medicinas, sus limitaciones de cobertura y la propuesta final de complementariedad. Las demás opciones recogen ideas parciales o secundarias del texto."
+  },
+  {
+    text: 1,
+    competency: "Identificación de tesis",
+    tag: "💡 Tesis",
+    question: "En el texto sobre medicina popular, ¿cuál de las siguientes opciones representa con mayor precisión la tesis que defiende el autor?",
+    options: [
+      "La medicina oficial debe ser reemplazada por la medicina popular en los países en vías de desarrollo.",
+      "La medicina popular no es válida porque no está respaldada por pruebas científicas ni regulación estatal.",
+      "La medicina popular y la medicina oficial pueden ser complementarias si se evalúan con rigor científico sus prácticas y recursos botánicos.",
+      "El Estado colombiano debe financiar exclusivamente la medicina oficial para garantizar la cobertura universal en salud."
+    ],
+    correct: 2,
+    explanation: "La tesis se encuentra explícita en la parte final del texto: ambas medicinas pueden ser complementarias si se estudian juiciosamente para determinar qué prácticas son útiles. Las otras opciones contradicen el texto o presentan posiciones extremas no defendidas."
+  },
+  {
+    text: 1,
+    competency: "Argumento y tipo de argumentación",
+    tag: "🔍 Argumentación",
+    question: "Cuando el texto afirma que \u201cseg\u00fan la Organizaci\u00f3n Mundial de la Salud, la atenci\u00f3n primaria en salud por parte de la medicina oficial cubre apenas a un 20% de la poblaci\u00f3n en pa\u00edses en v\u00edas de desarrollo\u201d, el autor utiliza principalmente un argumento de tipo:",
+    options: [
+      "Apelación a la autoridad, ya que cita a un organismo reconocido como respaldo.",
+      "Argumento por analogía, pues compara la medicina popular con la medicina oficial.",
+      "Argumento de causa-efecto, porque muestra cómo la pobreza produce enfermedades.",
+      "Argumento ad hominem, pues cuestiona la credibilidad de quienes practican la medicina oficial."
+    ],
+    correct: 0,
+    explanation: "El autor cita a la OMS como fuente de autoridad para dar validez al dato estadístico. Este es un recurso argumentativo de apelación a la autoridad. No hay analogía, ni causa-efecto, ni ataque personal."
+  },
+  {
+    text: 1,
+    competency: "Postura del autor e intención comunicativa",
+    tag: "✍️ Postura del autor",
+    question: "¿Cuál es la intención comunicativa principal del texto sobre medicina popular en Colombia?",
+    options: [
+      "Informar objetivamente sobre las estadísticas de cobertura de la medicina oficial en el mundo.",
+      "Argumentar a favor de la integración complementaria de la medicina popular y la oficial, valorando el conocimiento popular.",
+      "Criticar duramente a la medicina oficial por haberse apropiado de los saberes populares sin reconocerlos.",
+      "Describir la historia de la oficialización de la medicina en Colombia desde el siglo XIX."
+    ],
+    correct: 1,
+    explanation: "La intención no es puramente informativa ni únicamente crítica. El texto busca argumentar a favor de la complementariedad entre ambas medicinas. Aunque hay elementos históricos e informativos, estos sirven de apoyo al propósito argumentativo central."
+  },
+  {
+    text: 1,
+    competency: "Uso de conectores y cohesión textual",
+    tag: "🔗 Conectores",
+    question: "En el fragmento \u201cParad\u00f3jicamente, mientras la medicina oficial negaba los conocimientos populares, se serv\u00eda de ellos para desarrollar muchos de los avances farmac\u00e9uticos\u2026\u201d, la palabra <strong>parad\u00f3jicamente</strong> cumple la funci\u00f3n de:",
+    options: [
+      "Introducir una conclusión que confirma lo dicho anteriormente.",
+      "Señalar una contradicción o situación opuesta a lo que sería esperado.",
+      "Presentar una aclaración sobre los usos de la medicina popular en el siglo XIX.",
+      "Indicar una consecuencia lógica de la oficialización de la medicina."
+    ],
+    correct: 1,
+    explanation: "'Paradójicamente' es un conector que señala una contradicción: lo que cabría esperar (que si niegan el conocimiento popular, no lo usen) no ocurre. Por eso marca una situación contradictoria, no una conclusión ni una consecuencia."
+  },
+  {
+    text: 1,
+    competency: "Distinción entre hechos, opiniones y valoraciones",
+    tag: "🧐 Hecho vs. opinión",
+    question: "¿Cuál de los siguientes enunciados del texto sobre medicina popular expresa una <em>valoración u opinión</em> del autor, y no un hecho verificable?",
+    options: [
+      "La medicina oficial cubre apenas a un 20% de la población en países en vías de desarrollo.",
+      "Las primeras escuelas de medicina y farmacia fueron creadas a finales del siglo XIX.",
+      "La medicina popular y la oficial pueden llegar a ser complementarias si se estudian de manera juiciosa.",
+      "Los médicos oficiales consideran que la medicina popular no se fundamenta en pruebas científicas."
+    ],
+    correct: 2,
+    explanation: "La afirmación sobre la complementariedad posible es una interpretación valorativa del autor, no un hecho verificable. Las opciones A, B y D presentan hechos comprobables o reportan lo que otras personas dicen."
+  },
+  {
+    text: 1,
+    competency: "Síntesis y resumen",
+    tag: "📋 Síntesis",
+    question: "¿Cuál de los siguientes enunciados sintetiza mejor el contenido del texto sobre medicina popular, sin distorsionar su sentido?",
+    options: [
+      "El texto muestra que la medicina popular es superior a la oficial en Colombia y que debe reemplazarla en los sistemas de salud.",
+      "El texto describe cómo la medicina oficial surgió en Colombia, marginó el saber popular y cómo ambas podrían articularse para mejorar la salud de la población.",
+      "El texto critica a la OMS por promover solo la medicina oficial e ignorar las prácticas ancestrales de los pueblos latinoamericanos.",
+      "El texto argumenta que la medicina popular carece de validez científica y por eso debe regularse con urgencia."
+    ],
+    correct: 1,
+    explanation: "La síntesis correcta incluye los tres momentos del texto: el surgimiento de la medicina oficial y marginación del saber popular, la paradoja de su uso, y la propuesta de complementariedad. Las demás opciones distorsionan el mensaje."
+  },
+  {
+    text: 1,
+    competency: "Estructura textual",
+    tag: "🏗️ Estructura",
+    question: "¿Cómo se organiza estructuralmente el texto sobre medicina popular en Colombia?",
+    options: [
+      "Presenta primero la tesis, luego datos de contexto y finalmente una conclusión que la contradice.",
+      "Introduce un problema histórico, muestra una paradoja, presenta la postura de los opositores y propone una solución.",
+      "Narra cronológicamente los hitos de la historia de la medicina en Colombia desde la época precolombina.",
+      "Compara en columnas paralelas las ventajas y desventajas de la medicina popular y la oficial."
+    ],
+    correct: 1,
+    explanation: "El texto sigue una estructura argumentativa clásica: plantea el problema (marginación del saber popular), añade una paradoja (apropiación sin reconocimiento), expone la postura contraria y termina con una propuesta de solución. No es narrativo ni comparativo en columnas."
+  },
+
+  // ─── TEXTO 2: DEFENSA DE LA FIESTA BRAVA ──────────────────────
+  {
+    text: 2,
+    competency: "Identificación de tesis",
+    tag: "💡 Tesis",
+    question: "¿Cuál es la tesis principal que defiende Jorge Nacif en 'Defensa de la fiesta brava'?",
+    options: [
+      "La tauromaquia es un ritual de origen griego que debe ser preservado como patrimonio cultural de la humanidad.",
+      "Los animales no tienen derechos y por eso la tauromaquia no puede ser cuestionada éticamente.",
+      "La tauromaquia es una forma de arte legítima que los opositores no comprenden, y cuya práctica debe continuar.",
+      "El toreo es peligroso para el torero y por eso merece ser reconocido como arte de alto riesgo."
+    ],
+    correct: 2,
+    explanation: "La tesis central del autor es que la tauromaquia es arte y que sus opositores no la entienden. Aunque menciona los derechos de los animales como falacia y el peligro como parte del arte, la tesis principal es la defensa de la práctica como legítima."
+  },
+  {
+    text: 2,
+    competency: "Argumento y tipo de argumentación",
+    tag: "🔍 Falacias",
+    question: "Nacif afirma que hablar de derechos de los animales \u201ces una falacia, el t\u00e9rmino de derecho es un concepto meramente humano\u201d. Este argumento es en s\u00ed mismo falaz porque:",
+    options: [
+      "Cita una fuente poco confiable para respaldar su posición sobre los derechos animales.",
+      "Redefine arbitrariamente el concepto de 'derecho' para excluir a los animales, sin demostrar que esa definición sea la única válida.",
+      "Establece una comparación inadecuada entre el sufrimiento humano y el sufrimiento animal.",
+      "Generaliza a partir de un caso particular para llegar a una conclusión universal sobre los toros."
+    ],
+    correct: 1,
+    explanation: "El argumento de Nacif es circular: define 'derecho' como concepto exclusivamente humano para concluir que los animales no tienen derechos. Pero esa definición no está justificada; simplemente la asume. Es una petición de principio o redefinición arbitraria."
+  },
+  {
+    text: 2,
+    competency: "Postura del autor e intención comunicativa",
+    tag: "✍️ Intención",
+    question: "La intención comunicativa de 'Defensa de la fiesta brava' es principalmente:",
+    options: [
+      "Informar sobre los orígenes históricos de la tauromaquia desde la antigua Grecia.",
+      "Persuadir al lector de que la tauromaquia es un arte válido y que sus críticos carecen de comprensión.",
+      "Comparar de manera neutral las posiciones a favor y en contra de las corridas de toros.",
+      "Advertir sobre los peligros físicos que enfrentan los toreros durante las corridas."
+    ],
+    correct: 1,
+    explanation: "El texto es persuasivo desde el título: 'Defensa'. El autor no busca informar ni comparar posiciones de manera neutral; quiere convencer al lector de su punto de vista favorable a la tauromaquia y desacreditar a sus opositores."
+  },
+  {
+    text: 2,
+    competency: "Distinción entre hechos, opiniones y valoraciones",
+    tag: "🧐 Hecho vs. opinión",
+    question: "En el texto de Nacif, ¿cuál de los siguientes enunciados puede considerarse un <em>hecho</em> y no una opinión o valoración?",
+    options: [
+      "La tauromaquia es, ante todo, un arte.",
+      "Los opositores no entienden en lo más mínimo lo que es el toreo.",
+      "Los primeros antecedentes de la fiesta de los toros datan de la antigua Grecia.",
+      "El don más generoso de un artista es poner en juego la vida misma."
+    ],
+    correct: 2,
+    explanation: "La afirmación sobre el origen histórico en la antigua Grecia es un dato histórico verificable. Las otras opciones son valoraciones subjetivas: calificar la tauromaquia de arte, acusar a los opositores de no entender, o citar una frase valorativa sobre el arte."
+  },
+  {
+    text: 2,
+    competency: "Estructura textual",
+    tag: "🏗️ Estructura",
+    question: "¿Cuál es la estructura argumentativa del texto 'Defensa de la fiesta brava'?",
+    options: [
+      "Narra una experiencia personal del autor en una corrida de toros y extrae conclusiones generales.",
+      "Presenta la posición contraria, la refuta argumento a argumento y concluye reafirmando su tesis.",
+      "Describe objetivamente los elementos de una corrida de toros para que el lector saque sus propias conclusiones.",
+      "Compara las corridas de toros con otros espectáculos culturales para demostrar que son similares."
+    ],
+    correct: 1,
+    explanation: "La estructura del texto es clásicamente refutativa: presenta lo que dicen los opositores ('tortura', derechos animales) y los refuta uno a uno mediante contra-argumentos. Es una estrategia argumentativa de refutación seguida de reafirmación."
+  },
+  {
+    text: 2,
+    competency: "Idea global e idea principal",
+    tag: "📖 Idea global",
+    question: "¿Cuál de estas opciones expresa la idea global del texto 'Defensa de la fiesta brava'?",
+    options: [
+      "La muerte del toro en el ruedo es un acto natural que no debería generar controversia moral.",
+      "Nacif defiende la tauromaquia como arte legítimo, refuta los argumentos de sus opositores y concluye que los derechos animales no existen.",
+      "El toreo es un espectáculo peligroso para todos los participantes, lo que lo hace merecedor de respeto.",
+      "La sociedad debe garantizar solo los derechos humanos y no preocuparse por el bienestar animal."
+    ],
+    correct: 1,
+    explanation: "La idea global recoge los tres ejes del texto: defensa de la tauromaquia como arte, refutación de los argumentos contrarios y negación de los derechos animales. La opción B es la única que articula estos tres elementos."
+  },
+  {
+    text: 2,
+    competency: "Uso de conectores y cohesión",
+    tag: "🔗 Conectores",
+    question: "En el fragmento \u201cSin embargo, creo que los opositores no entienden en lo m\u00e1s m\u00ednimo lo que es el toreo\u201d, el conector <strong>sin embargo</strong> tiene la funci\u00f3n de:",
+    options: [
+      "Añadir información complementaria sobre los argumentos de quienes se oponen a la tauromaquia.",
+      "Introducir una conclusión que se deriva lógicamente de los argumentos previos.",
+      "Contrastar la posición de los opositores con la opinión del autor, marcando una oposición.",
+      "Aclarar el significado de la palabra 'toreo' para los lectores que no conocen la práctica."
+    ],
+    correct: 2,
+    explanation: "'Sin embargo' es un conector adversativo que marca contraste u oposición. El autor lo usa para introducir su posición opuesta a los argumentos mencionados en el párrafo anterior. No suma información ni concluye ni aclara."
+  },
+  {
+    text: 2,
+    competency: "Errores comunes y estrategias de lectura crítica",
+    tag: "⚠️ Lectura crítica",
+    question: "Un lector que concluye que Nacif 'está completamente en lo correcto porque cita a David Silveti, un experto reconocido', comete el error de:",
+    options: [
+      "Identificar incorrectamente la estructura del texto argumentativo.",
+      "Aceptar sin cuestionar un argumento de autoridad sin considerar que Silveti, como torero, tiene un interés directo en el tema.",
+      "Confundir la tesis del texto con las ideas secundarias del párrafo.",
+      "No identificar los conectores que indican la relación entre las ideas del texto."
+    ],
+    correct: 1,
+    explanation: "Aceptar un argumento de autoridad sin evaluar la imparcialidad de la fuente es una trampa frecuente en la lectura acrítica. Silveti es un torero reconocido, lo que implica que tiene interés personal en defender la práctica. La lectura crítica exige evaluar quién habla y por qué."
+  },
+
+  // ─── TEXTO 3: DOCTRINA TRUMAN ─────────────────────────────────
+  {
+    text: 3,
+    competency: "Idea global e idea principal",
+    tag: "📖 Idea global",
+    question: "¿Cuál es la idea global del texto sobre la Doctrina Truman?",
+    options: [
+      "El texto explica las razones por las cuales Estados Unidos lideró la reconstrucción económica mundial después de la Segunda Guerra Mundial.",
+      "El texto presenta la Doctrina Truman como un proyecto que buscó globalizar el modelo de desarrollo occidental, analizando sus propósitos e implicaciones.",
+      "El texto critica la pobreza extrema de los países subdesarrollados y propone soluciones basadas en la tecnología moderna.",
+      "El texto describe el discurso de posesión de Harry Truman de 1949 y su impacto en la política exterior norteamericana."
+    ],
+    correct: 1,
+    explanation: "La idea global articula tanto el discurso de Truman como el análisis de Escobar: la Doctrina fue un proyecto para extender el modelo occidental de desarrollo. La opción D describe solo una parte del texto; la A introduce información externa; la C distorsiona el propósito."
+  },
+  {
+    text: 3,
+    competency: "Identificación de tesis",
+    tag: "💡 Tesis",
+    question: "Según el análisis de Arturo Escobar, ¿cuál es la tesis implícita que sustenta la Doctrina Truman?",
+    options: [
+      "Los países pobres deben ser intervenidos militarmente para lograr el desarrollo económico.",
+      "El capital, la ciencia y la tecnología son los únicos medios válidos para alcanzar el progreso y extender el modelo occidental a todo el mundo.",
+      "Los países en vías de desarrollo deben financiar su propio progreso sin depender de la ayuda exterior.",
+      "El sufrimiento de la población mundial es consecuencia directa de la falta de democracia en los países subdesarrollados."
+    ],
+    correct: 1,
+    explanation: "Escobar señala explícitamente que 'en concepto de Truman, el capital, la ciencia y la tecnología eran los principales componentes que harían posible tal revolución masiva'. Esta es la tesis subyacente que justifica el proyecto desarrollista."
+  },
+  {
+    text: 3,
+    competency: "Relación título, ideas secundarias y propósito",
+    tag: "📎 Título y propósito",
+    question: "El título 'La Doctrina Truman' sugiere que el texto tiene principalmente un propósito:",
+    options: [
+      "Literario, ya que busca narrar la historia de vida de Harry Truman como presidente.",
+      "Académico-analítico, pues introduce y examina una doctrina política con implicaciones globales.",
+      "Publicitario, ya que promueve el modelo de desarrollo estadounidense ante países subdesarrollados.",
+      "Jurídico, pues analiza las leyes internacionales que regulan la ayuda al desarrollo."
+    ],
+    correct: 1,
+    explanation: "El propósito del texto es académico y analítico: presenta la doctrina a través de citas directas y luego la interpreta desde la perspectiva crítica de Escobar. No es narrativo biográfico, ni publicitario, ni jurídico."
+  },
+  {
+    text: 3,
+    competency: "Argumento y tipo de argumentación",
+    tag: "🔍 Argumentación",
+    question: "Cuando Truman afirma que 'Producir más es la clave para la paz y la prosperidad', el tipo de argumento que utiliza es principalmente:",
+    options: [
+      "Argumento de autoridad, pues Truman apela a su propio cargo presidencial para legitimar la afirmación.",
+      "Argumento causal, pues establece que mayor producción es causa directa de paz y prosperidad.",
+      "Argumento por analogía, ya que compara la producción con la paz como si fueran equivalentes.",
+      "Argumento ad populum, pues apela a lo que la mayoría de los ciudadanos desea."
+    ],
+    correct: 1,
+    explanation: "El argumento es causal: establece una relación de causa-efecto entre producir más y alcanzar la paz y la prosperidad. No se apela a la autoridad personal ni se compara como analogía; tampoco es un llamado a la mayoría."
+  },
+  {
+    text: 3,
+    competency: "Postura del autor e intención comunicativa",
+    tag: "✍️ Postura",
+    question: "¿Cómo es la postura de Arturo Escobar frente a la Doctrina Truman en el fragmento analizado?",
+    options: [
+      "Completamente favorable, pues describe el proyecto de Truman como una solución efectiva para la pobreza mundial.",
+      "Neutral e imparcial, pues solo presenta los hechos sin emitir ningún juicio de valor.",
+      "Crítica y analítica, pues aunque no la rechaza explícitamente, la examina señalando su carácter ambicioso y sus implicaciones.",
+      "Totalmente contraria, pues denuncia la Doctrina Truman como una forma de imperialismo cultural."
+    ],
+    correct: 2,
+    explanation: "Escobar describe el propósito de Truman como 'bastante ambicioso' y analiza sus componentes con distancia académica. No la defiende ni la ataca explícitamente en este fragmento; su postura es analítica y ligeramente crítica al señalar las implicaciones del modelo."
+  },
+  {
+    text: 3,
+    competency: "Distinción entre hechos, opiniones y valoraciones",
+    tag: "🧐 Hecho vs. opinión",
+    question: "¿Cuál de los siguientes enunciados del texto sobre la Doctrina Truman es claramente una <em>valoración</em> y no un hecho?",
+    options: [
+      "Harry Truman anunció su concepto de 'trato justo' el 20 de enero de 1949.",
+      "El propósito de la Doctrina Truman era bastante ambicioso.",
+      "Más de la mitad de la población del mundo vive en condiciones cercanas a la miseria.",
+      "Truman mencionó el capital, la ciencia y la tecnología como componentes del desarrollo."
+    ],
+    correct: 1,
+    explanation: "'Bastante ambicioso' es una valoración del autor Escobar, no un hecho verificable. Los datos sobre la fecha del discurso, las condiciones de pobreza y los componentes mencionados por Truman son enunciados verificables o reportados directamente del discurso."
+  },
+  {
+    text: 3,
+    competency: "Uso de conectores y cohesión textual",
+    tag: "🔗 Conectores",
+    question: "En el texto sobre la Doctrina Truman, la expresi\u00f3n <strong>\u201cSolo as\u00ed\u201d</strong> en la frase \u2018Solo as\u00ed el sue\u00f1o americano de paz y abundancia podr\u00eda extenderse a todos los pueblos del planeta\u2019 tiene la funci\u00f3n de:",
+    options: [
+      "Introducir una condición necesaria: solo si se cumplen las condiciones previas (capital, ciencia, tecnología), el sueño americano puede extenderse.",
+      "Contrastar la visión de Truman con la de Escobar sobre el desarrollo mundial.",
+      "Aclarar que el sueño americano es exclusivo de los ciudadanos estadounidenses.",
+      "Añadir información adicional sobre los beneficiarios del plan de desarrollo propuesto por Truman."
+    ],
+    correct: 0,
+    explanation: "'Solo así' introduce una condición restrictiva: el sueño americano solo puede extenderse si antes se aplican el capital, la ciencia y la tecnología. Es un conector condicional que limita la posibilidad a ese único camino."
+  },
+  {
+    text: 3,
+    competency: "Síntesis y resumen",
+    tag: "📋 Síntesis",
+    question: "¿Cuál de las siguientes opciones sintetiza de forma más precisa y completa el contenido del texto sobre la Doctrina Truman?",
+    options: [
+      "El texto describe el discurso de posesión de Truman de 1949 en el que prometió ayuda militar a países en guerra.",
+      "El texto presenta el discurso de Truman sobre el desarrollo de las 'áreas subdesarrolladas' y analiza, según Escobar, su propósito de extender el modelo occidental al mundo entero mediante el capital, la ciencia y la tecnología.",
+      "El texto demuestra que la Doctrina Truman fue la principal causa del subdesarrollo en América Latina y África.",
+      "El texto compara la visión del desarrollo de Truman con la de los países del Tercer Mundo para encontrar puntos de acuerdo."
+    ],
+    correct: 1,
+    explanation: "La síntesis correcta incluye los dos planos del texto: el discurso de Truman y el análisis de Escobar sobre sus propósitos. Las otras opciones introducen información no presente en el texto (ayuda militar, causas del subdesarrollo, comparación con países del Tercer Mundo)."
+  },
+  {
+    text: 3,
+    competency: "Estrategias de lectura crítica",
+    tag: "⚠️ Lectura crítica",
+    question: "Un lector crítico que lee el discurso de Truman dentro del texto de Escobar debe tener en cuenta que:",
+    options: [
+      "El discurso es completamente objetivo y puede tomarse como una fuente histórica neutral.",
+      "El discurso es presentado por Escobar como parte de su análisis, por lo que la selección de fragmentos puede responder a un propósito interpretativo específico.",
+      "Los discursos presidenciales son siempre más confiables que los análisis académicos.",
+      "El texto de Escobar simplemente transcribe el discurso sin añadir ninguna interpretación propia."
+    ],
+    correct: 1,
+    explanation: "La lectura crítica implica reconocer que el texto de Escobar enmarca el discurso de Truman dentro de un análisis propio. La selección de qué fragmentos incluir y cómo comentarlos no es neutral: responde a la perspectiva interpretativa del autor académico."
+  }
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let questions = [];
+let current = 0;
+let answers = [];
+let timerInterval = null;
+let timeLeft = 40 * 60; // 40 minutes in seconds
+let startTime = null;
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showTexts() { showScreen('screen-texts'); }
+function goHome()    { showScreen('screen-welcome'); }
+
+/* ============================================================
+   TEXTS TOGGLE
+   ============================================================ */
+function toggleText(cardId) {
+  const card = document.getElementById(cardId);
+  const num  = cardId.replace('tc','');
+  const body = document.getElementById('tb'+num);
+  const tog  = document.getElementById('tt'+num);
+  body.classList.toggle('open');
+  tog.classList.toggle('open');
+}
+function toggleSidebarText(id) {
+  const body = document.getElementById(id);
+  const num  = id.replace('st','');
+  const arr  = document.getElementById('sta'+num);
+  body.classList.toggle('open');
+  arr.textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+/* ============================================================
+   QUIZ INIT
+   ============================================================ */
+function startQuiz() {
+  // Shuffle all 25 questions
+  questions = [...ALL_QUESTIONS].sort(() => Math.random() - 0.5);
+  // Shuffle options within each question (track correct label)
+  questions = questions.map(q => {
+    const opts = q.options.map((o,i) => ({text:o, isCorrect: i === q.correct}));
+    opts.sort(() => Math.random() - 0.5);
+    const newCorrect = opts.findIndex(o => o.isCorrect);
+    return {...q, options: opts.map(o=>o.text), correct: newCorrect};
+  });
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  timeLeft = 40 * 60;
+  startTime = Date.now();
+
+  showScreen('screen-quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+
+  // Update sidebar & progress
+  const pct = Math.round((current / questions.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = current + ' / ' + questions.length;
+  document.getElementById('q-current').textContent = current + 1;
+  document.getElementById('q-total').textContent   = questions.length;
+  document.getElementById('quiz-competency-tag').textContent   = q.tag;
+  document.getElementById('quiz-competency-label').textContent = q.competency;
+  document.getElementById('next-btn-label').textContent =
+    current === questions.length - 1 ? 'Finalizar ✓' : 'Siguiente →';
+
+  // Question text
+  document.getElementById('q-text').innerHTML = q.question;
+
+  // Options
+  const letters = ['A','B','C','D'];
+  const optsEl = document.getElementById('q-options');
+  optsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    if (answers[current] === i) btn.classList.add('selected');
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectOption(i);
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectOption(idx) {
+  answers[current] = idx;
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === idx);
+  });
+}
+
+function nextQuestion() {
+  if (answers[current] === null) {
+    showToast('⚠️ Por favor selecciona una respuesta antes de continuar.');
+    return;
+  }
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+    document.querySelector('.quiz-main').scrollTo(0,0);
+    window.scrollTo(0,0);
+  } else {
+    finishQuiz();
+  }
+}
+
+/* ============================================================
+   TIMER
+   ============================================================ */
+function startTimer() {
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      showToast('⏰ Tiempo agotado. Mostrando resultados...');
+      setTimeout(finishQuiz, 2000);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+  const s = (timeLeft % 60).toString().padStart(2,'0');
+  const el = document.getElementById('timer-display');
+  el.textContent = m + ':' + s;
+  el.className = 'timer-display';
+  if (timeLeft <= 300) el.classList.add('critical');
+  else if (timeLeft <= 600) el.classList.add('warning');
+}
+
+/* ============================================================
+   FINISH
+   ============================================================ */
+function finishQuiz() {
+  clearInterval(timerInterval);
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const em = Math.floor(elapsed / 60).toString().padStart(2,'0');
+  const es = (elapsed % 60).toString().padStart(2,'0');
+
+  const correct = answers.filter((a,i) => a === questions[i].correct).length;
+  const wrong   = questions.length - correct;
+  const pct     = Math.round((correct / questions.length) * 100);
+
+  // Scores
+  document.getElementById('r-correct').textContent = correct;
+  document.getElementById('r-wrong').textContent   = wrong;
+  document.getElementById('r-time').textContent    = em+':'+es;
+  document.getElementById('results-pct').textContent = pct + '%';
+
+  // Message
+  let msg, perfTitle, perfDesc;
+  if (pct >= 80) {
+    msg = '¡Excelente desempeño! Demostraste un dominio sólido de la lectura crítica, la identificación de tesis y la estructura textual. ¡Sigue así!';
+    perfTitle = '🏆 Desempeño alto';
+    perfDesc = 'Tienes una comprensión clara de los textos argumentativos. Estás listo para el Saber Pro.';
+  } else if (pct >= 55) {
+    msg = '¡Buen avance! Mostraste comprensión general de los textos. Repasa los temas donde cometiste errores para fortalecer tus habilidades.';
+    perfTitle = '📈 Desempeño medio';
+    perfDesc = 'Puedes mejorar con práctica enfocada en tesis, argumentos y conectores.';
+  } else {
+    msg = '¡Ánimo! Cada intento te acerca más al objetivo. Revisa los textos y la retroalimentación para identificar tus áreas de mejora.';
+    perfTitle = '💪 En proceso de mejora';
+    perfDesc = 'Practica la identificación de ideas globales y la distinción entre hechos y opiniones.';
+  }
+  document.getElementById('results-msg').textContent = msg;
+  document.getElementById('perf-title').textContent  = perfTitle;
+  document.getElementById('perf-desc').textContent   = perfDesc;
+
+  // Donut
+  const circumference = 289;
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => {
+    document.getElementById('perf-circle').style.strokeDashoffset = offset;
+    document.getElementById('perf-circle-text').textContent = pct + '%';
+  }, 300);
+
+  // Feedback
+  const letters = ['A','B','C','D'];
+  const feedbackEl = document.getElementById('feedback-list');
+  feedbackEl.innerHTML = '';
+  questions.forEach((q, i) => {
+    const userAns = answers[i];
+    const isRight = userAns === q.correct;
+    const div = document.createElement('div');
+    div.className = 'feedback-item ' + (isRight ? 'correct' : 'incorrect');
+    div.innerHTML = `
+      <div class="feedback-item-header">
+        <span class="feedback-q-num">Pregunta ${i+1} · Texto ${q.text} · ${q.competency}</span>
+        <span class="feedback-verdict ${isRight ? 'correct' : 'incorrect'}">
+          ${isRight ? '✅ Correcto' : '❌ Incorrecto'}
+        </span>
+      </div>
+      <div class="feedback-q-text">${q.question}</div>
+      <div class="feedback-answers">
+        ${userAns !== null && !isRight ? `<div class="feedback-ans your-wrong">Tu respuesta (${letters[userAns]}): ${q.options[userAns]}</div>` : ''}
+        <div class="feedback-ans ${isRight ? 'your-correct' : 'correct-ans'}">
+          ✓ Respuesta correcta (${letters[q.correct]}): ${q.options[q.correct]}
+        </div>
+      </div>
+      <div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+    `;
+    feedbackEl.appendChild(div);
+  });
+
+  showScreen('screen-results');
+}
+
+/* ============================================================
+   RESTART
+   ============================================================ */
+function restartQuiz() {
+  startQuiz();
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ============================================================
+   MOBILE SIDEBAR
+   ============================================================ */
+function toggleMobileSidebar() {
+  document.getElementById('quiz-sidebar').classList.toggle('mobile-open');
+  document.getElementById('mobile-overlay').classList.toggle('active');
+}
+function closeMobileSidebar() {
+  document.getElementById('quiz-sidebar').classList.remove('mobile-open');
+  document.getElementById('mobile-overlay').classList.remove('active');
+}
+</script>
+</body>
+</html>

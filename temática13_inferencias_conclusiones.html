@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Simulacro ICFES – Temática 3: Inferencias y Conclusiones</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ─── CSS Variables ─── */
+:root{
+  --navy:#1a2e4a;
+  --navy-deep:#0f1e30;
+  --navy-mid:#243f60;
+  --gold:#c9a84c;
+  --gold-light:#e6c97a;
+  --gold-pale:#f5e8c0;
+  --cream:#faf8f3;
+  --white:#ffffff;
+  --text:#1a2e4a;
+  --text-mid:#3a5070;
+  --text-light:#6a8aaa;
+  --success:#2e7d52;
+  --success-bg:#e8f5ee;
+  --error:#b0341e;
+  --error-bg:#fbeae7;
+  --border:#dde8f0;
+  --shadow-sm:0 2px 8px rgba(26,46,74,0.08);
+  --shadow-md:0 6px 24px rgba(26,46,74,0.13);
+  --shadow-lg:0 16px 48px rgba(26,46,74,0.18);
+  --radius:14px;
+  --radius-sm:8px;
+  --radius-lg:20px;
+  --transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── Utility ─── */
+.hidden{display:none!important;}
+.fade-in{animation:fadeIn .5s ease forwards;}
+.slide-up{animation:slideUp .45s cubic-bezier(.4,0,.2,1) forwards;}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes timerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+
+/* ─── Decorative Background ─── */
+.bg-pattern{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 800px 600px at 10% 15%, rgba(201,168,76,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 800px at 90% 80%, rgba(26,46,74,.07) 0%, transparent 60%);
+}
+
+/* ─── Shared Container ─── */
+.screen{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:24px 16px 48px;
+}
+
+/* ══════════════════════════════
+   PANTALLA 1 – BIENVENIDA
+══════════════════════════════ */
+#screen-welcome{
+  justify-content:center;
+}
+.welcome-card{
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  max-width:680px;width:100%;
+  overflow:hidden;
+}
+.welcome-header{
+  background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy-mid) 100%);
+  padding:40px 40px 32px;
+  text-align:center;
+  position:relative;
+}
+.welcome-header::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;
+  background:var(--white);
+  clip-path:ellipse(55% 100% at 50% 100%);
+}
+.badge-inst{
+  display:inline-block;
+  background:rgba(201,168,76,.18);
+  color:var(--gold-light);
+  font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 16px;border-radius:50px;margin-bottom:16px;
+  border:1px solid rgba(201,168,76,.3);
+}
+.welcome-header h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,4vw,2.2rem);
+  color:var(--white);line-height:1.2;margin-bottom:10px;
+}
+.welcome-header p{
+  color:rgba(255,255,255,.65);font-size:.9rem;
+}
+.welcome-body{padding:36px 40px 40px;}
+.welcome-body h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.25rem;color:var(--navy);margin-bottom:8px;
+}
+.welcome-body p{color:var(--text-mid);font-size:.93rem;margin-bottom:24px;line-height:1.7;}
+.instructions{
+  background:linear-gradient(135deg,var(--gold-pale),#fff);
+  border:1px solid var(--gold);
+  border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:28px;
+}
+.instructions h3{
+  font-size:.8rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+}
+.instructions ul{padding-left:0;list-style:none;}
+.instructions li{
+  display:flex;align-items:flex-start;gap:10px;
+  color:var(--text-mid);font-size:.88rem;margin-bottom:8px;
+}
+.instructions li::before{
+  content:'◆';color:var(--gold);font-size:.55rem;margin-top:5px;flex-shrink:0;
+}
+.meta-row{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px;
+}
+.meta-chip{
+  background:rgba(26,46,74,.07);
+  border-radius:50px;padding:7px 16px;
+  font-size:.82rem;font-weight:600;color:var(--navy);
+  display:flex;align-items:center;gap:6px;
+}
+.meta-chip span{font-size:.95rem;}
+.btn-start{
+  display:block;width:100%;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;
+  padding:16px;border-radius:50px;border:none;cursor:pointer;
+  letter-spacing:.5px;transition:var(--transition);
+  box-shadow:0 4px 20px rgba(26,46,74,.3);
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,46,74,.38);}
+.btn-start:active{transform:translateY(0);}
+
+/* ══════════════════════════════
+   PANTALLA 2 – CUESTIONARIO
+══════════════════════════════ */
+#screen-quiz{
+  align-items:stretch;max-width:1100px;margin:0 auto;
+  padding-top:16px;
+}
+.quiz-top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  padding:12px 20px;margin-bottom:16px;
+  position:sticky;top:8px;z-index:100;
+}
+.quiz-title-bar{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;color:var(--navy);font-weight:600;
+}
+.timer-wrap{
+  display:flex;align-items:center;gap:8px;
+  background:var(--navy);
+  color:var(--white);
+  border-radius:50px;padding:7px 18px;
+  font-size:.92rem;font-weight:700;letter-spacing:.5px;
+  transition:var(--transition);
+}
+.timer-wrap.warning{background:#b05e00;animation:timerPulse 1s infinite;}
+.timer-wrap.danger{background:var(--error);animation:timerPulse .5s infinite;}
+.timer-icon{font-size:1rem;}
+#timer-display{}
+
+/* Progress Bar */
+.progress-wrap{margin-bottom:16px;}
+.progress-label{
+  display:flex;justify-content:space-between;
+  font-size:.8rem;font-weight:600;color:var(--text-light);
+  margin-bottom:6px;
+}
+.progress-track{
+  height:6px;background:var(--border);border-radius:99px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--gold),var(--gold-light));
+  border-radius:99px;
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* Quiz Layout */
+.quiz-layout{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:16px;
+}
+@media(max-width:768px){
+  .quiz-layout{grid-template-columns:1fr;}
+}
+
+/* Texts Sidebar */
+.texts-panel{
+  position:sticky;top:80px;
+  align-self:flex-start;
+  max-height:calc(100vh - 100px);
+  overflow-y:auto;
+}
+.texts-panel::-webkit-scrollbar{width:4px;}
+.texts-panel::-webkit-scrollbar-track{background:transparent;}
+.texts-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.panel-header{
+  font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;padding-left:4px;
+}
+
+.text-accordion{
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  margin-bottom:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.text-accordion-btn{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--navy);text-align:left;
+  transition:background .2s;
+}
+.text-accordion-btn:hover{background:rgba(26,46,74,.04);}
+.text-accordion-btn .acc-icon{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--navy);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;flex-shrink:0;
+  transition:var(--transition);
+}
+.text-accordion-btn.open .acc-icon{transform:rotate(180deg);background:var(--gold);}
+.text-accordion-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s cubic-bezier(.4,0,.2,1);
+}
+.text-accordion-body.open{max-height:600px;}
+.text-content{
+  padding:14px 16px;
+  font-family:'Source Serif 4',serif;
+  font-size:.8rem;line-height:1.75;
+  color:var(--text-mid);
+  border-top:1px solid var(--border);
+}
+.text-source{
+  margin-top:10px;
+  font-size:.72rem;color:var(--text-light);font-style:italic;
+}
+.text-tag{
+  display:inline-block;
+  background:var(--gold-pale);
+  color:var(--gold);border:1px solid var(--gold);
+  font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;margin-bottom:8px;
+}
+/* Mobile texts toggle */
+.mobile-texts-toggle{
+  display:none;
+  width:100%;
+  background:var(--navy);color:var(--white);
+  border:none;border-radius:var(--radius);
+  padding:12px 20px;
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;
+  cursor:pointer;margin-bottom:12px;
+  transition:var(--transition);
+}
+@media(max-width:768px){
+  .mobile-texts-toggle{display:block;}
+  .texts-panel{
+    position:static;max-height:none;
+    margin-bottom:12px;
+  }
+  .texts-panel.collapsed{display:none;}
+}
+
+/* Question Card */
+.question-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  padding:28px;
+  border:1px solid var(--border);
+}
+.q-meta{
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;
+}
+.q-num{
+  font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--gold);
+}
+.q-tag{
+  background:rgba(26,46,74,.07);
+  color:var(--text-mid);
+  font-size:.72rem;font-weight:600;
+  padding:3px 10px;border-radius:50px;
+}
+.q-text-ref{
+  background:var(--gold-pale);
+  color:var(--navy);
+  font-size:.72rem;font-weight:600;
+  padding:3px 10px;border-radius:50px;
+  border:1px solid rgba(201,168,76,.4);
+}
+.q-stem{
+  font-family:'Source Serif 4',serif;
+  font-size:1rem;line-height:1.75;
+  color:var(--text);margin-bottom:6px;
+}
+.q-fragment{
+  background:linear-gradient(135deg,rgba(26,46,74,.04),rgba(26,46,74,.02));
+  border-left:3px solid var(--gold);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  padding:12px 16px;
+  font-family:'Source Serif 4',serif;
+  font-size:.88rem;font-style:italic;line-height:1.7;
+  color:var(--text-mid);margin:14px 0;
+}
+.options-list{
+  list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:10px;
+}
+.option-btn{
+  width:100%;display:flex;align-items:flex-start;gap:14px;
+  background:var(--cream);
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;line-height:1.5;
+  color:var(--text);text-align:left;
+  transition:var(--transition);
+}
+.option-btn:hover:not(:disabled){
+  border-color:var(--navy);
+  background:rgba(26,46,74,.04);
+  transform:translateX(3px);
+}
+.option-btn.selected{
+  border-color:var(--navy);
+  background:rgba(26,46,74,.07);
+}
+.option-btn:disabled{cursor:not-allowed;}
+.opt-letter{
+  display:flex;align-items:center;justify-content:center;
+  width:26px;height:26px;min-width:26px;
+  border-radius:50%;
+  background:var(--white);border:2px solid var(--border);
+  font-weight:700;font-size:.8rem;color:var(--text-light);
+  transition:var(--transition);
+}
+.option-btn.selected .opt-letter{
+  background:var(--navy);border-color:var(--navy);color:var(--white);
+}
+.option-btn.correct-ans{
+  border-color:var(--success)!important;
+  background:var(--success-bg)!important;
+}
+.option-btn.correct-ans .opt-letter{
+  background:var(--success)!important;border-color:var(--success)!important;color:#fff!important;
+}
+.option-btn.wrong-ans{
+  border-color:var(--error)!important;
+  background:var(--error-bg)!important;
+}
+.option-btn.wrong-ans .opt-letter{
+  background:var(--error)!important;border-color:var(--error)!important;color:#fff!important;
+}
+.feedback-inline{
+  margin-top:14px;
+  padding:12px 16px;
+  border-radius:var(--radius-sm);
+  font-size:.86rem;line-height:1.6;
+  display:none;
+}
+.feedback-inline.show{display:block;animation:fadeIn .3s ease;}
+.feedback-inline.correct{background:var(--success-bg);color:var(--success);border:1px solid rgba(46,125,82,.25);}
+.feedback-inline.incorrect{background:var(--error-bg);color:var(--error);border:1px solid rgba(176,52,30,.2);}
+
+.btn-next{
+  margin-top:20px;
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;
+  padding:13px 28px;border-radius:50px;border:none;cursor:pointer;
+  transition:var(--transition);box-shadow:var(--shadow-sm);
+}
+.btn-next:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ══════════════════════════════
+   PANTALLA 3 – RESULTADOS
+══════════════════════════════ */
+#screen-results{
+  justify-content:flex-start;
+  max-width:800px;margin:0 auto;
+}
+.results-header{
+  background:linear-gradient(135deg,var(--navy-deep),var(--navy-mid));
+  border-radius:var(--radius-lg);
+  padding:36px 36px 32px;
+  width:100%;text-align:center;margin-bottom:20px;
+  box-shadow:var(--shadow-md);
+  position:relative;overflow:hidden;
+}
+.results-header::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(201,168,76,.08);
+}
+.score-ring{
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(255,255,255,.08);
+  border:4px solid var(--gold);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  box-shadow:0 0 30px rgba(201,168,76,.25);
+}
+.score-pct{
+  font-family:'Playfair Display',serif;
+  font-size:2.2rem;font-weight:700;color:var(--gold-light);line-height:1;
+}
+.score-label{font-size:.7rem;color:rgba(255,255,255,.6);letter-spacing:1px;text-transform:uppercase;}
+.results-header h2{
+  font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--white);margin-bottom:8px;
+}
+.motivation-msg{color:rgba(255,255,255,.75);font-size:.92rem;max-width:480px;margin:0 auto;}
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;width:100%;
+}
+@media(max-width:480px){.stats-row{grid-template-columns:repeat(3,1fr);}}
+.stat-card{
+  background:var(--white);border-radius:var(--radius);
+  padding:20px 16px;text-align:center;
+  box-shadow:var(--shadow-sm);border:1px solid var(--border);
+}
+.stat-val{
+  font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;
+  margin-bottom:4px;
+}
+.stat-val.good{color:var(--success);}
+.stat-val.bad{color:var(--error);}
+.stat-val.neutral{color:var(--navy);}
+.stat-name{font-size:.78rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.8px;}
+
+/* Feedback list */
+.feedback-section{width:100%;margin-bottom:24px;}
+.feedback-section h3{
+  font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--navy);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.fb-card{
+  background:var(--white);border-radius:var(--radius);
+  margin-bottom:12px;overflow:hidden;
+  box-shadow:var(--shadow-sm);border:1px solid var(--border);
+}
+.fb-head{
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  cursor:pointer;
+}
+.fb-indicator{
+  width:28px;height:28px;min-width:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:700;color:#fff;
+}
+.fb-indicator.ok{background:var(--success);}
+.fb-indicator.ko{background:var(--error);}
+.fb-q-text{
+  font-size:.85rem;color:var(--text);flex:1;line-height:1.4;
+}
+.fb-chevron{
+  font-size:.75rem;color:var(--text-light);
+  transition:transform .3s;flex-shrink:0;
+}
+.fb-head.open .fb-chevron{transform:rotate(180deg);}
+.fb-body{
+  max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);
+}
+.fb-body.open{max-height:400px;}
+.fb-inner{
+  padding:14px 18px;border-top:1px solid var(--border);
+  font-size:.84rem;line-height:1.7;color:var(--text-mid);
+}
+.fb-correct-label{
+  font-weight:700;color:var(--success);margin-bottom:4px;
+}
+.fb-explanation{color:var(--text-mid);}
+
+/* Result Buttons */
+.result-btns{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  width:100%;margin-top:8px;
+}
+.btn-restart{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--navy);color:var(--white);
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;
+  padding:13px 26px;border-radius:50px;border:none;cursor:pointer;
+  transition:var(--transition);box-shadow:var(--shadow-sm);
+}
+.btn-restart:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+
+/* ─── Responsive tweaks ─── */
+@media(max-width:600px){
+  .welcome-body,.welcome-header{padding:24px 22px;}
+  .question-card{padding:20px 18px;}
+  .results-header{padding:28px 20px 24px;}
+  .stats-row{gap:8px;}
+  .stat-card{padding:14px 10px;}
+  .stat-val{font-size:1.6rem;}
+}
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+
+<!-- ══ PANTALLA 1: BIENVENIDA ══ -->
+<div id="screen-welcome" class="screen fade-in">
+  <div class="welcome-card">
+    <div class="welcome-header">
+      <div class="badge-inst">Instituto Innova</div>
+      <h1>Simulacro ICFES<br>Lectura Crítica</h1>
+      <p>Validación del Bachillerato · Primera Sesión</p>
+    </div>
+    <div class="welcome-body">
+      <h2>Temática 3 – Inferencias y Conclusiones</h2>
+      <p>Este ejercicio interactivo evalúa tu capacidad para identificar información implícita, establecer relaciones lógicas y seleccionar conclusiones válidas a partir de textos de lectura crítica. Las preguntas siguen el formato oficial de la Prueba Saber 11°.</p>
+      <div class="instructions">
+        <h3>📋 Indicaciones generales</h3>
+        <ul>
+          <li>Lee con atención los tres textos disponibles en el panel lateral (o en el menú desplegable en móvil).</li>
+          <li>Responde <strong>18 preguntas</strong> de selección múltiple con única respuesta.</li>
+          <li>Tendrás <strong>35 minutos</strong> para completar el simulacro.</li>
+          <li>Cada pregunta muestra a qué texto corresponde.</li>
+          <li>No puedes avanzar sin seleccionar una respuesta.</li>
+          <li>Al finalizar verás tu puntaje y retroalimentación detallada.</li>
+        </ul>
+      </div>
+      <div class="meta-row">
+        <div class="meta-chip"><span>❓</span> 18 preguntas</div>
+        <div class="meta-chip"><span>⏱</span> 35 minutos</div>
+        <div class="meta-chip"><span>📚</span> 3 textos base</div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">Iniciar actividad →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANTALLA 2: CUESTIONARIO ══ -->
+<div id="screen-quiz" class="screen hidden">
+  <!-- Top Bar -->
+  <div class="quiz-top-bar">
+    <div class="quiz-title-bar">Temática 3 · Inferencias y Conclusiones</div>
+    <div class="timer-wrap" id="timer-wrap">
+      <span class="timer-icon">⏱</span>
+      <span id="timer-display">35:00</span>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap" style="width:100%">
+    <div class="progress-label">
+      <span id="progress-text">Pregunta 1 de 18</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Mobile toggle -->
+  <button class="mobile-texts-toggle" onclick="toggleMobileTexts(this)">📖 Ver textos de lectura ▾</button>
+
+  <div class="quiz-layout" style="width:100%">
+    <!-- Texts Panel -->
+    <div class="texts-panel" id="texts-panel">
+      <div class="panel-header">📖 Textos base</div>
+
+      <!-- TEXT 1 -->
+      <div class="text-accordion">
+        <button class="text-accordion-btn" onclick="toggleAcc(this)">
+          <span>Texto 1 · Adriano</span>
+          <span class="acc-icon">▼</span>
+        </button>
+        <div class="text-accordion-body">
+          <div class="text-content">
+            <div class="text-tag">Novela histórica</div>
+            <p>No desprecio a los hombres. Si así fuera no tendría ningún derecho, ninguna razón para tratar de gobernarlos. Los sé, varios ignorantes, ávidos, inquietos, capaces de cualquier cosa para triunfar, para hacerse valer, incluso ante sus propios ojos, o simplemente para evitar sufrir. Lo sé: soy como ellos, al menos por momentos o hubiera podido serlo. Entre el prójimo y yo las diferencias que percibo son demasiado desdeñables como para que cuenten en la suma final.</p>
+            <p style="margin-top:10px">Los hombres más opacos emiten algún resplandor: este asesino toca bien la flauta, ese contramaestre que desgarra a latigazos la espalda de los esclavos es quizá un buen hijo; ese idiota compartiría conmigo su último mendrugo. En la mayoría de los hombres encontré inconsistencia para el bien; no los creo más consistentes para el mal; su desconfianza, su indiferencia más o menos hostil cedía demasiado pronto, casi vergonzosamente, y se convertía demasiado fácilmente en gratitud y respeto, que tampoco duraban mucho.</p>
+            <div class="text-source">— Marguerite Yourcenar, <em>Memorias de Adriano</em> (1951)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEXT 2 -->
+      <div class="text-accordion">
+        <button class="text-accordion-btn" onclick="toggleAcc(this)">
+          <span>Texto 2 · Hawking</span>
+          <span class="acc-icon">▼</span>
+        </button>
+        <div class="text-accordion-body">
+          <div class="text-content">
+            <div class="text-tag">Divulgación científica</div>
+            <p>En la teoría newtoniana, en que el tiempo existía independientemente de todo lo demás, se podía preguntar: ¿qué hacía Dios antes de crear el universo? Según San Agustín, antes de que Dios hiciera el cielo y la Tierra no hacía nada en absoluto. De hecho, esta visión resulta muy próxima a las ideas actuales.</p>
+            <p style="margin-top:10px">En la relatividad general, el tiempo y el espacio no existen independientemente del universo o separadamente el uno del otro. Están definidos por medidas efectuadas dentro del universo. Es fácilmente concebible que un tiempo definido de este modo, en el interior del universo, debe haber tenido un valor mínimo o un valor máximo —en otras palabras, un comienzo o un final—. No tendría sentido preguntar qué ocurrió antes del comienzo o después del fin, porque tales tiempos no estarían definidos.</p>
+            <div class="text-source">— Stephen Hawking, <em>El universo en una cáscara de nuez</em> (2002)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEXT 3 -->
+      <div class="text-accordion">
+        <button class="text-accordion-btn" onclick="toggleAcc(this)">
+          <span>Texto 3 · Avispa Sphex</span>
+          <span class="acc-icon">▼</span>
+        </button>
+        <div class="text-accordion-body">
+          <div class="text-content">
+            <div class="text-tag">Texto científico</div>
+            <p>Cuando llega la hora de poner huevos, la avispa Sphex construye una pequeña madriguera para este propósito y sale en búsqueda de un grillo al cual pica de manera tal que lo paraliza pero no lo mata. La avispa lleva al grillo a su madriguera, deja sus huevos, cierra la madriguera y luego se va para no volver.</p>
+            <p style="margin-top:10px">Si, mientras la avispa está dentro de la madriguera haciendo su inspección preliminar, el grillo es movido algunos centímetros de la entrada, la avispa, al salir, volverá a dejar al grillo en la entrada, pero no adentro, y repetirá el procedimiento preparatorio de entrar a la madriguera a revisarla. La avispa nunca piensa en llevar al grillo directamente a su madriguera. En una ocasión, este procedimiento fue repetido cuarenta veces, siempre con el mismo resultado.</p>
+            <div class="text-source">— Dean E. Woolridge, <em>The Machinery of the Brain</em> (1963)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Area -->
+    <div>
+      <div class="question-card slide-up" id="question-card">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANTALLA 3: RESULTADOS ══ -->
+<div id="screen-results" class="screen hidden">
+  <div class="results-header">
+    <div class="score-ring">
+      <span class="score-pct" id="res-pct">0%</span>
+      <span class="score-label">puntaje</span>
+    </div>
+    <h2 id="res-title">Resultados</h2>
+    <p class="motivation-msg" id="res-msg"></p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val good" id="res-correct">0</div>
+      <div class="stat-name">✅ Correctas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val bad" id="res-wrong">0</div>
+      <div class="stat-name">❌ Incorrectas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val neutral" id="res-total">0</div>
+      <div class="stat-name">📝 Total</div>
+    </div>
+  </div>
+
+  <div class="feedback-section">
+    <h3>🔍 Retroalimentación por pregunta</h3>
+    <div id="feedback-list"></div>
+  </div>
+
+  <div class="result-btns">
+    <button class="btn-restart" onclick="restartQuiz()">🔄 Reiniciar simulacro</button>
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=96"
+       style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;padding:13px 26px;border-radius:50px;text-decoration:none;letter-spacing:.5px;box-shadow:0 4px 20px rgba(245,158,11,.45);transition:all .3s;">
+      🏫 Regresar al Aula Virtual
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════════ JAVASCRIPT ══════════════════════ -->
+<script>
+/* ─── Mobile deep-link ─── */
+(function(){
+  const btn=document.getElementById('btn-volver');
+  const cursoUrl='https://institutoinnova.moodlecloud.com/mod/page/view.php?id=96';
+  const appUrl='moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=96';
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)) btn.href=appUrl;
+})();
+
+/* ─── Timer ─── */
+const TOTAL_SECONDS = 35 * 60;
+let timerInterval = null;
+let secondsLeft = TOTAL_SECONDS;
+
+function startTimer(){
+  clearInterval(timerInterval);
+  secondsLeft = TOTAL_SECONDS;
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    secondsLeft--;
+    updateTimerDisplay();
+    if(secondsLeft <= 0){ clearInterval(timerInterval); showResults(); }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(secondsLeft/60);
+  const s = secondsLeft % 60;
+  document.getElementById('timer-display').textContent =
+    String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const wrap = document.getElementById('timer-wrap');
+  wrap.classList.remove('warning','danger');
+  if(secondsLeft <= 60) wrap.classList.add('danger');
+  else if(secondsLeft <= 300) wrap.classList.add('warning');
+}
+
+/* ─── Question Bank ─── */
+/* Each question:
+   id, text (referencing which text), stem, fragment (optional),
+   options: [{letter,text}], correct (letter), skill, explanation */
+const ALL_QUESTIONS = [
+
+  /* ══ TEXTO 1 – ADRIANO ══ */
+  {
+    id:1, textRef:"Texto 1 · Adriano",
+    skill:"Inferencia global",
+    stem:"A partir de la totalidad del Texto 1, se puede inferir que la actitud de Adriano frente a los hombres es:",
+    fragment:"",
+    options:[
+      {l:"A", t:"De desdén hacia los seres humanos por sus defectos morales."},
+      {l:"B", t:"De comprensión crítica, reconociendo defectos pero también virtudes en todos los hombres."},
+      {l:"C", t:"De superioridad filosófica, considerándose mejor que sus gobernados."},
+      {l:"D", t:"De indiferencia, pues no le importan las cualidades de sus súbditos."}
+    ],
+    correct:"B",
+    explanation:"Adriano afirma que no desprecia a los hombres y que se reconoce parecido a ellos. Acepta sus defectos ('ignorantes, ávidos') pero señala que incluso los más opacos emiten algún resplandor (tienen alguna virtud). Esto define una actitud de comprensión crítica, no de superioridad ni indiferencia."
+  },
+  {
+    id:2, textRef:"Texto 1 · Adriano",
+    skill:"Inferencia local – información implícita",
+    stem:"Del fragmento 'ese asesino toca bien la flauta, ese contramaestre que desgarra a latigazos la espalda de los esclavos es quizá un buen hijo', se puede inferir implícitamente que:",
+    fragment:"'…ese asesino toca bien la flauta, ese contramaestre que desgarra a latigazos la espalda de los esclavos es quizá un buen hijo…'",
+    options:[
+      {l:"A", t:"La violencia y el talento artístico son siempre incompatibles."},
+      {l:"B", t:"La maldad en un ámbito no impide que una persona tenga virtudes en otro."},
+      {l:"C", t:"El narrador justifica los crímenes de estos personajes por sus cualidades positivas."},
+      {l:"D", t:"Los hombres que cometen actos violentos nunca pueden ser considerados buenos."}
+    ],
+    correct:"B",
+    explanation:"El fragmento ejemplifica la tesis anterior: 'los hombres más opacos emiten algún resplandor'. El narrador no justifica la violencia, sino que señala que la maldad en un campo coexiste con virtudes en otro. Esto es una inferencia implícita: nadie es totalmente bueno ni totalmente malo."
+  },
+  {
+    id:3, textRef:"Texto 1 · Adriano",
+    skill:"Inferencia de sentimientos y estados de ánimo",
+    stem:"Cuando el narrador dice 'Lo sé: soy como ellos, al menos por momentos o hubiera podido serlo', se puede inferir que siente:",
+    fragment:"'Lo sé: soy como ellos, al menos por momentos o hubiera podido serlo.'",
+    options:[
+      {l:"A", t:"Orgullo por haber superado los defectos de los demás hombres."},
+      {l:"B", t:"Humildad al reconocerse parte de la misma naturaleza humana imperfecta."},
+      {l:"C", t:"Vergüenza por haber actuado de manera incorrecta en el pasado."},
+      {l:"D", t:"Distancia emocional frente a los defectos humanos que describe."}
+    ],
+    correct:"B",
+    explanation:"Al decir que él mismo es o pudo haber sido como los hombres que describe (ignorantes, ávidos), el narrador se coloca en el mismo nivel que sus gobernados. Esto revela humildad, no orgullo ni vergüenza."
+  },
+  {
+    id:4, textRef:"Texto 1 · Adriano",
+    skill:"Conclusión válida vs. errónea",
+    stem:"¿Cuál de las siguientes conclusiones se puede extraer válidamente del Texto 1?",
+    fragment:"",
+    options:[
+      {l:"A", t:"La inconsistencia moral de los hombres los hace incapaces de sentir emociones positivas como la gratitud."},
+      {l:"B", t:"Los seres humanos carecen de cualquier virtud auténtica por ser fundamentalmente egoístas."},
+      {l:"C", t:"La inconsistencia moral de los seres humanos abarca tanto el bien como el mal: son capaces de ambos de manera inestable."},
+      {l:"D", t:"Gobernar bien requiere ignorar los defectos de los gobernados y enfocarse solo en sus virtudes."}
+    ],
+    correct:"C",
+    explanation:"El texto dice explícitamente: 'En la mayoría de los hombres encontré inconsistencia para el bien; no los creo más consistentes para el mal.' Esto lleva directamente a la conclusión C: son inconsistentes tanto para el bien como para el mal. Las demás opciones distorsionan o exageran lo que el texto dice."
+  },
+  {
+    id:5, textRef:"Texto 1 · Adriano",
+    skill:"Relaciones de causa y efecto – no explícitas",
+    stem:"La afirmación 'Nuestro gran error es tratar de obtener de cada uno en particular las virtudes que no posee, descuidando cultivar aquellas que posee' implica que la causa del error del gobernante es:",
+    fragment:"'Nuestro gran error es tratar de obtener de cada uno en particular las virtudes que no posee, descuidando cultivar aquellas que posee.'",
+    options:[
+      {l:"A", t:"La incapacidad de los gobernados para desarrollar virtudes."},
+      {l:"B", t:"Exigir a las personas lo que no tienen, en lugar de potenciar lo que sí tienen."},
+      {l:"C", t:"La tendencia de los hombres a engañar a sus gobernantes."},
+      {l:"D", t:"La falta de educación de los súbditos."}
+    ],
+    correct:"B",
+    explanation:"El error descrito es de quien gobierna (o trata con otros), no de los gobernados. La causa del error es la expectativa equivocada: pedirle a alguien virtudes que no posee y olvidar las que sí tiene. La opción B refleja exactamente esa causa implícita."
+  },
+  {
+    id:6, textRef:"Texto 1 · Adriano",
+    skill:"Suposición razonable vs. errónea",
+    stem:"A partir del Texto 1, sería una suposición ERRÓNEA concluir que:",
+    fragment:"",
+    options:[
+      {l:"A", t:"Adriano no se considera radicalmente superior a los hombres que gobierna."},
+      {l:"B", t:"La gratitud y el respeto que Adriano recibió de algunos hombres fueron duraderos y profundos."},
+      {l:"C", t:"Los seres humanos pueden mostrar actitudes cambiantes entre la desconfianza y la gratitud."},
+      {l:"D", t:"Adriano reconoce que algunos seres humanos lo amaron más de lo que esperaba."}
+    ],
+    correct:"B",
+    explanation:"El texto dice que la gratitud y el respeto 'tampoco duraban mucho'. Concluir que fueron duraderos contradice directamente lo expresado y constituye una sobreinterpretación errónea. Las demás opciones sí se sostienen en el texto."
+  },
+
+  /* ══ TEXTO 2 – HAWKING ══ */
+  {
+    id:7, textRef:"Texto 2 · Hawking",
+    skill:"Inferencia global",
+    stem:"La idea principal que se puede inferir del Texto 2 es que:",
+    fragment:"",
+    options:[
+      {l:"A", t:"La física relativista demuestra definitivamente que Dios no existe."},
+      {l:"B", t:"El tiempo y el espacio no son realidades absolutas sino que dependen de la existencia del universo."},
+      {l:"C", t:"La teoría de Newton es más completa que la relatividad general para explicar el universo."},
+      {l:"D", t:"San Agustín anticipó con precisión todos los descubrimientos de la física moderna."}
+    ],
+    correct:"B",
+    explanation:"El texto afirma que en la relatividad general 'el tiempo y el espacio no existen independientemente del universo'. Esto es la idea central inferible. La opción A es una sobreinterpretación: el texto no descarta a Dios. La D exagera la coincidencia con San Agustín."
+  },
+  {
+    id:8, textRef:"Texto 2 · Hawking",
+    skill:"Información implícita – causa no explícita",
+    stem:"La razón implícita por la que el texto afirma que 'no tendría sentido preguntar qué ocurrió antes del comienzo' del universo es:",
+    fragment:"'No tendría sentido preguntar qué ocurrió antes del comienzo o después del fin, porque tales tiempos no estarían definidos.'",
+    options:[
+      {l:"A", t:"Nadie tiene la capacidad intelectual para responder esa pregunta."},
+      {l:"B", t:"El tiempo mismo surgió con el universo, por lo que no hay 'antes' posible."},
+      {l:"C", t:"Dios prohíbe que los científicos investiguen ese período."},
+      {l:"D", t:"La tecnología científica aún no es suficiente para estudiar ese momento."}
+    ],
+    correct:"B",
+    explanation:"El texto dice que el tiempo está definido 'por medidas efectuadas dentro del universo'. Si el universo aún no existía, el tiempo tampoco. Por tanto, no hay un 'antes' definible. Esta es la causa implícita de la afirmación de Hawking."
+  },
+  {
+    id:9, textRef:"Texto 2 · Hawking",
+    skill:"Inferencia local – relaciones entre ideas",
+    stem:"La referencia a San Agustín cumple la función de:",
+    fragment:"'Según San Agustín, antes de que Dios hiciera el cielo y la Tierra no hacía nada en absoluto. De hecho, esta visión resulta muy próxima a las ideas actuales.'",
+    options:[
+      {l:"A", t:"Demostrar que la religión es superior a la ciencia para explicar el universo."},
+      {l:"B", t:"Señalar que la idea religiosa de que no hubo un 'antes' del universo coincide con la física moderna."},
+      {l:"C", t:"Criticar a quienes usan argumentos religiosos para discutir física."},
+      {l:"D", t:"Probar que la cosmología actual se basa en textos religiosos."}
+    ],
+    correct:"B",
+    explanation:"El autor introduce a San Agustín para mostrar que una intuición teológica antigua (no había nada antes de la creación) resulta compatible con la relatividad general. No hay jerarquía entre religión y ciencia, sino una coincidencia señalada para apoyar la explicación científica."
+  },
+  {
+    id:10, textRef:"Texto 2 · Hawking",
+    skill:"Predicción e intención no explícita",
+    stem:"Si se descubriera que el tiempo puede existir independientemente del universo, ¿cuál sería la consecuencia para el argumento de Hawking?",
+    fragment:"",
+    options:[
+      {l:"A", t:"El argumento se reforzaría, pues confirmaría la idea de un universo eterno."},
+      {l:"B", t:"El argumento quedaría invalidado, pues su base es que tiempo y universo son inseparables."},
+      {l:"C", t:"No afectaría el argumento, pues Hawking no hace afirmaciones sobre la naturaleza del tiempo."},
+      {l:"D", t:"San Agustín quedaría desacreditado como referente filosófico."}
+    ],
+    correct:"B",
+    explanation:"Toda la lógica del texto descansa en que el tiempo no existe independientemente del universo (relatividad general). Si eso fuera falso, la afirmación de que no tiene sentido preguntar por el 'antes' colapsaría. Es una inferencia condicional de tipo predictivo."
+  },
+  {
+    id:11, textRef:"Texto 2 · Hawking",
+    skill:"Diferencia entre inferencia y conclusión",
+    stem:"¿Cuál de las siguientes afirmaciones es una CONCLUSIÓN explícita del texto y NO una inferencia?",
+    fragment:"",
+    options:[
+      {l:"A", t:"La relatividad general y las ideas de San Agustín son completamente idénticas."},
+      {l:"B", t:"El universo se creó hace aproximadamente 13.800 millones de años."},
+      {l:"C", t:"No tendría sentido preguntar qué ocurrió antes del inicio del universo, pues ese tiempo no estaría definido."},
+      {l:"D", t:"Dios actuó racionalmente al crear el universo con un inicio temporal."}
+    ],
+    correct:"C",
+    explanation:"La opción C es el enunciado textual del autor: es una conclusión expresada directamente. Las opciones A, B y D no aparecen en el texto: A exagera la similitud, B es un dato externo, y D es una interpretación teológica no autorizada por el texto."
+  },
+  {
+    id:12, textRef:"Texto 2 · Hawking",
+    skill:"Selección de conclusión válida",
+    stem:"Con base en el Texto 2, ¿cuál es la conclusión más válida sobre la relación entre ciencia y religión?",
+    fragment:"",
+    options:[
+      {l:"A", t:"La ciencia reemplaza completamente las explicaciones religiosas sobre el origen del universo."},
+      {l:"B", t:"La física moderna puede coincidir puntualmente con algunas ideas religiosas sin que una subordine a la otra."},
+      {l:"C", t:"La religión fue la precursora de todos los descubrimientos de la física contemporánea."},
+      {l:"D", t:"El universo fue creado por Dios según confirma la relatividad general."}
+    ],
+    correct:"B",
+    explanation:"El texto muestra una coincidencia entre la visión de San Agustín y la física moderna, pero no jerarquiza ni fusiona las dos perspectivas. La conclusión más equilibrada y sostenida por el texto es B. Las demás imponen interpretaciones que el texto no sostiene."
+  },
+
+  /* ══ TEXTO 3 – AVISPA SPHEX ══ */
+  {
+    id:13, textRef:"Texto 3 · Avispa Sphex",
+    skill:"Inferencia global",
+    stem:"La idea que se puede inferir globalmente del Texto 3 es que el comportamiento de la avispa Sphex:",
+    fragment:"",
+    options:[
+      {l:"A", t:"Demuestra que los insectos son capaces de tomar decisiones racionales adaptativas."},
+      {l:"B", t:"Parece inteligente desde afuera, pero es una rutina rígida e inflexible que no involucra pensamiento."},
+      {l:"C", t:"Es superior en eficiencia al comportamiento de los seres humanos."},
+      {l:"D", t:"Prueba que todos los animales actúan según instintos racionales perfectamente diseñados."}
+    ],
+    correct:"B",
+    explanation:"El texto muestra que la avispa repite un procedimiento mecánicamente 40 veces sin adaptarse. Aunque su comportamiento 'lleva un sabor de lógica', no hay pensamiento real detrás. La inferencia global es que aparenta inteligencia pero carece de razonamiento adaptativo."
+  },
+  {
+    id:14, textRef:"Texto 3 · Avispa Sphex",
+    skill:"Relaciones de causa y efecto",
+    stem:"La causa directa de que la avispa repita su inspección de la madriguera una y otra vez es:",
+    fragment:"",
+    options:[
+      {l:"A", t:"Un error en la construcción de la madriguera que la obliga a revisarla constantemente."},
+      {l:"B", t:"La presencia del investigador, que la asusta y la desorienta."},
+      {l:"C", t:"Que su rutina instintiva es detonada por la posición del grillo en la entrada, sin importar cuántas veces ya lo haya revisado."},
+      {l:"D", t:"El olor del grillo paralizado, que le indica que debe volver a entrar."}
+    ],
+    correct:"C",
+    explanation:"El texto describe que cada vez que el grillo es movido de la entrada, la avispa repite toda la secuencia desde el inicio. Su comportamiento no es racional ni adaptativo: es un disparador automático (grillo en la entrada → entrar a revisar). Esa es la causa real del ciclo infinito."
+  },
+  {
+    id:15, textRef:"Texto 3 · Avispa Sphex",
+    skill:"Información implícita – pistas textuales",
+    stem:"La frase 'Para la mente humana, tal rutina tan organizada y aparentemente llena de propósitos lleva consigo un sabor de lógica y de pensamiento' implica que:",
+    fragment:"'Para la mente humana, tal rutina tan organizada y aparentemente llena de propósitos lleva consigo un sabor de lógica y de pensamiento.'",
+    options:[
+      {l:"A", t:"La avispa efectivamente posee un pensamiento lógico comparable al humano."},
+      {l:"B", t:"Los seres humanos somos incapaces de distinguir la inteligencia real de los comportamientos automáticos."},
+      {l:"C", t:"La apariencia de organización puede crear la ilusión de inteligencia donde no la hay."},
+      {l:"D", t:"La lógica humana y la lógica animal son esencialmente iguales."}
+    ],
+    correct:"C",
+    explanation:"La palabra 'aparentemente' y la frase 'sabor de lógica' indican que se trata de una ilusión. El texto dice que esto es así 'hasta que conocemos más detalles'. La implicación es que la organización visible puede engañarnos haciéndonos creer que hay pensamiento real cuando no lo hay."
+  },
+  {
+    id:16, textRef:"Texto 3 · Avispa Sphex",
+    skill:"Errores comunes al inferir – sobreinterpretación",
+    stem:"¿Cuál de las siguientes sería una sobreinterpretación errónea del Texto 3?",
+    fragment:"",
+    options:[
+      {l:"A", t:"La avispa Sphex no adapta su comportamiento cuando las condiciones cambian."},
+      {l:"B", t:"El comportamiento de la avispa es mecánico y no resulta de un proceso de razonamiento."},
+      {l:"C", t:"El comportamiento de la avispa demuestra que los insectos son inferiores moralmente a los seres humanos."},
+      {l:"D", t:"La rutina de la avispa puede parecer inteligente a primera vista pero no lo es."}
+    ],
+    correct:"C",
+    explanation:"El texto describe un comportamiento instintivo sin hacer juicios morales sobre los insectos. Inferir superioridad moral humana a partir de un texto científico sobre cognición animal es una sobreinterpretación que no tiene fundamento en el texto."
+  },
+  {
+    id:17, textRef:"Texto 3 · Avispa Sphex",
+    skill:"Inferencia de intención del autor",
+    stem:"El propósito principal del autor al narrar el experimento de mover el grillo repetidamente es:",
+    fragment:"",
+    options:[
+      {l:"A", t:"Entretener al lector con una anécdota curiosa sobre insectos."},
+      {l:"B", t:"Demostrar mediante evidencia empírica que el comportamiento de la avispa no es producto del pensamiento racional."},
+      {l:"C", t:"Defender los derechos de los animales contra el maltrato de los científicos."},
+      {l:"D", t:"Comparar la inteligencia de la avispa con la de los mamíferos superiores."}
+    ],
+    correct:"B",
+    explanation:"El experimento de repetir el estímulo 40 veces sirve como evidencia empírica de la rigidez del comportamiento. Si la avispa razonara, eventualmente llevaría el grillo directamente. El hecho de que nunca lo haga prueba la ausencia de pensamiento. El propósito del autor es argumentativo y demostrativo."
+  },
+  {
+    id:18, textRef:"Texto 3 · Avispa Sphex",
+    skill:"Selección de conclusión válida – textos múltiples",
+    stem:"Comparando el Texto 1 y el Texto 3, ¿cuál conclusión es válida a partir de ambos?",
+    fragment:"",
+    options:[
+      {l:"A", t:"Tanto los seres humanos como los animales actúan siempre de forma irracional."},
+      {l:"B", t:"A diferencia de la avispa, los seres humanos pueden reconocer sus propias inconsistencias y reflexionar sobre ellas."},
+      {l:"C", t:"La avispa y los seres humanos son igualmente incapaces de adaptarse a circunstancias nuevas."},
+      {l:"D", t:"El comportamiento animal demuestra que la moral es innecesaria en el mundo natural."}
+    ],
+    correct:"B",
+    explanation:"El Texto 1 muestra a Adriano reflexionando sobre la inconsistencia humana (él mismo la reconoce en sí y en otros). El Texto 3 muestra que la avispa no reflexiona: repite mecánicamente. La diferencia inferible entre ambos es precisamente la capacidad humana de metacognición y reflexión, ausente en el insecto."
+  }
+];
+
+/* ─── State ─── */
+let questions = [];
+let current = 0;
+let answers = [];
+let answered = false;
+
+/* ─── Shuffle ─── */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ─── Start ─── */
+function startQuiz(){
+  questions = shuffle(ALL_QUESTIONS);
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  answered = false;
+  document.getElementById('screen-welcome').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  startTimer();
+  renderQuestion();
+}
+
+/* ─── Render Question ─── */
+function renderQuestion(){
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  // Progress
+  const pct = Math.round((current/total)*100);
+  document.getElementById('progress-text').textContent=`Pregunta ${current+1} de ${total}`;
+  document.getElementById('progress-pct').textContent=`${pct}%`;
+  document.getElementById('progress-fill').style.width=pct+'%';
+
+  // Shuffle options
+  const opts = shuffle(q.options);
+
+  const frag = q.fragment
+    ? `<div class="q-fragment">${q.fragment}</div>` : '';
+
+  const optHTML = opts.map(o=>`
+    <li>
+      <button class="option-btn" data-letter="${o.l}" onclick="selectOption(this,'${o.l}')">
+        <span class="opt-letter">${o.l}</span>
+        <span>${o.t}</span>
+      </button>
+    </li>
+  `).join('');
+
+  const card = document.getElementById('question-card');
+  card.innerHTML=`
+    <div class="q-meta">
+      <span class="q-num">Pregunta ${current+1}</span>
+      <span class="q-tag">${q.skill}</span>
+      <span class="q-text-ref">📄 ${q.textRef}</span>
+    </div>
+    <p class="q-stem">${q.stem}</p>
+    ${frag}
+    <ul class="options-list">${optHTML}</ul>
+    <div class="feedback-inline" id="feedback-inline"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()" disabled>
+      ${current < total-1 ? 'Siguiente pregunta →' : 'Ver resultados →'}
+    </button>
+  `;
+  card.classList.remove('slide-up');
+  void card.offsetWidth;
+  card.classList.add('slide-up');
+}
+
+/* ─── Select Option ─── */
+function selectOption(btn, letter){
+  if(answered) return;
+  answered = true;
+  answers[current] = letter;
+  const q = questions[current];
+
+  // Disable all
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  // Remove selected class
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+
+  // Mark correct & wrong
+  document.querySelectorAll('.option-btn').forEach(b=>{
+    if(b.dataset.letter === q.correct) b.classList.add('correct-ans');
+    if(b.dataset.letter === letter && letter !== q.correct) b.classList.add('wrong-ans');
+  });
+
+  // Inline feedback
+  const fb = document.getElementById('feedback-inline');
+  const isCorrect = letter === q.correct;
+  fb.className = 'feedback-inline show ' + (isCorrect ? 'correct' : 'incorrect');
+  fb.textContent = isCorrect
+    ? '✅ ¡Correcto! ' + q.explanation
+    : '❌ Respuesta incorrecta. ' + q.explanation;
+
+  // Enable next
+  document.getElementById('btn-next').disabled = false;
+}
+
+/* ─── Next Question ─── */
+function nextQuestion(){
+  current++;
+  if(current >= questions.length){
+    clearInterval(timerInterval);
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+/* ─── Show Results ─── */
+function showResults(){
+  document.getElementById('screen-quiz').classList.add('hidden');
+  const screen = document.getElementById('screen-results');
+  screen.classList.remove('hidden');
+
+  const total = questions.length;
+  let correct = 0;
+  questions.forEach((q,i)=>{ if(answers[i]===q.correct) correct++; });
+  const wrong = total - correct;
+  const pct = Math.round((correct/total)*100);
+
+  document.getElementById('res-pct').textContent = pct+'%';
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-total').textContent = total;
+
+  // Motivational message
+  let title, msg;
+  if(pct >= 80){
+    title = '¡Excelente desempeño!';
+    msg = 'Dominas con solidez las habilidades de inferencia y conclusión. Tu lectura crítica está al nivel exigido por la prueba ICFES. ¡Sigue así!';
+  } else if(pct >= 55){
+    title = 'Buen avance';
+    msg = 'Vas por buen camino. Tienes bases sólidas pero hay oportunidad de profundizar en las inferencias implícitas y la distinción entre inferencia y conclusión. ¡Sigue practicando!';
+  } else {
+    title = '¡No te rindas!';
+    msg = 'Este es un buen punto de partida. Te recomendamos releer los textos con atención a las pistas implícitas. Cada intento te acerca más al dominio de la lectura crítica.';
+  }
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-msg').textContent = msg;
+
+  // Feedback list
+  const list = document.getElementById('feedback-list');
+  list.innerHTML = questions.map((q,i)=>{
+    const userAns = answers[i] || '—';
+    const isOk = userAns === q.correct;
+    const userOpt = q.options.find(o=>o.l===userAns);
+    const corrOpt = q.options.find(o=>o.l===q.correct);
+    return `
+      <div class="fb-card">
+        <div class="fb-head" onclick="toggleFb(this)">
+          <div class="fb-indicator ${isOk?'ok':'ko'}">${isOk?'✓':'✗'}</div>
+          <div class="fb-q-text"><strong>P${i+1}:</strong> ${q.stem.substring(0,80)}…</div>
+          <span class="fb-chevron">▼</span>
+        </div>
+        <div class="fb-body">
+          <div class="fb-inner">
+            <p><strong>Tu respuesta (${userAns}):</strong> ${userOpt ? userOpt.t : 'Sin responder'}</p>
+            <p class="fb-correct-label" style="margin-top:8px">✅ Respuesta correcta (${q.correct}): ${corrOpt ? corrOpt.t : ''}</p>
+            <p class="fb-explanation" style="margin-top:8px">${q.explanation}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  screen.classList.add('fade-in');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ─── Restart ─── */
+function restartQuiz(){
+  document.getElementById('screen-results').classList.add('hidden');
+  document.getElementById('screen-welcome').classList.remove('hidden');
+  document.getElementById('screen-welcome').classList.add('fade-in');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ─── Accordion helpers ─── */
+function toggleAcc(btn){
+  const body = btn.nextElementSibling;
+  const open = body.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+function toggleFb(head){
+  const body = head.nextElementSibling;
+  const open = body.classList.toggle('open');
+  head.classList.toggle('open', open);
+}
+
+function toggleMobileTexts(btn){
+  const panel = document.getElementById('texts-panel');
+  const collapsed = panel.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '📖 Ver textos de lectura ▾' : '📖 Ocultar textos ▴';
+}
+</script>
+</body>
+</html>

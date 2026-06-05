@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro ICFES · Lectura Crítica · Relaciones entre Ideas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --accent: #e8a045;
+    --accent2: #5fa8d3;
+    --accent3: #7ee787;
+    --danger: #f85149;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #484f58;
+    --gold: #ffd700;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(232,160,69,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(95,168,211,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: block; }
+
+  /* ══════════════════════════════
+     SCREEN 1 — BIENVENIDA
+  ══════════════════════════════ */
+  #screen-welcome {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  #screen-welcome.active { display: flex; }
+
+  .welcome-card {
+    max-width: 760px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3rem 3.5rem;
+    box-shadow: var(--shadow), 0 0 0 1px rgba(232,160,69,0.1);
+    animation: fadeUp .6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(232,160,69,0.12);
+    border: 1px solid rgba(232,160,69,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    padding: .35rem .9rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    letter-spacing: .06em;
+  }
+
+  .welcome-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: .5rem;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .welcome-card .subtitle {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .info-item .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--text-dim);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .info-item .value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .objective-box {
+    background: rgba(95,168,211,0.08);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 1rem 1.4rem;
+    margin-bottom: 2rem;
+    font-size: .95rem;
+    color: var(--text-muted);
+  }
+
+  .objective-box strong { color: var(--accent2); }
+
+  .bonus-box {
+    background: rgba(232,160,69,0.06);
+    border: 1px dashed rgba(232,160,69,0.3);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.4rem;
+    margin-bottom: 2rem;
+    font-size: .9rem;
+  }
+
+  .bonus-box h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    color: var(--accent);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+
+  .bonus-box ul { list-style: none; display: flex; flex-direction: column; gap: .35rem; }
+  .bonus-box li { display: flex; align-items: center; gap: .6rem; color: var(--text-muted); font-size: .9rem; }
+  .bonus-box li::before { content: '▸'; color: var(--accent); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--accent), #c47a20);
+    color: #0d1117;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .25s ease;
+    letter-spacing: .02em;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,160,69,0.35);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ══════════════════════════════
+     SCREEN 2 — TEXTOS
+  ══════════════════════════════ */
+  #screen-texts {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .screen-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeUp .5s ease both;
+  }
+
+  .screen-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin-bottom: .5rem;
+    color: var(--text);
+  }
+
+  .screen-header p { color: var(--text-muted); font-size: .95rem; }
+
+  .accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .acc-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    animation: fadeUp .5s ease both;
+  }
+
+  .acc-item:nth-child(2) { animation-delay: .1s; }
+  .acc-item:nth-child(3) { animation-delay: .2s; }
+
+  .acc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background .2s;
+    gap: 1rem;
+  }
+
+  .acc-header:hover { background: var(--surface2); }
+
+  .acc-title {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+  }
+
+  .acc-num {
+    width: 32px;
+    height: 32px;
+    background: rgba(232,160,69,0.15);
+    border: 1px solid rgba(232,160,69,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .acc-name { font-weight: 600; font-size: .95rem; }
+  .acc-source { font-size: .8rem; color: var(--text-muted); font-style: italic; }
+
+  .acc-arrow {
+    color: var(--text-muted);
+    transition: transform .3s ease;
+    font-size: .9rem;
+    flex-shrink: 0;
+  }
+
+  .acc-item.open .acc-arrow { transform: rotate(180deg); }
+
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease;
+  }
+
+  .acc-item.open .acc-body { max-height: 2000px; }
+
+  .acc-content {
+    padding: 0 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+
+  .acc-content p { margin-bottom: .9rem; }
+  .acc-content p:last-child { margin-bottom: 0; }
+
+  .acc-content em { color: var(--accent2); font-style: italic; }
+
+  .btn-start {
+    display: block;
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--accent3), #2ea043);
+    color: #0d1117;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .25s ease;
+    animation: fadeUp .5s .3s ease both;
+  }
+
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(126,231,135,0.3);
+  }
+
+  /* ══════════════════════════════
+     SCREEN 3 — QUIZ
+  ══════════════════════════════ */
+  #screen-quiz {
+    min-height: 100vh;
+  }
+
+  #screen-quiz.active { display: flex; flex-direction: column; }
+
+  /* TOP BAR */
+  .quiz-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .topbar-score {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .85rem;
+  }
+
+  .topbar-score .lbl { color: var(--text-dim); }
+  .topbar-score .val { color: var(--accent); font-weight: 600; font-size: 1rem; }
+
+  .topbar-timer {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .85rem;
+    margin-left: auto;
+  }
+
+  .topbar-timer .lbl { color: var(--text-dim); }
+  .topbar-timer .val { color: var(--accent2); font-weight: 600; font-size: 1rem; }
+
+  .streak-badge {
+    display: none;
+    align-items: center;
+    gap: .4rem;
+    background: rgba(232,160,69,0.15);
+    border: 1px solid rgba(232,160,69,0.4);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    padding: .3rem .8rem;
+    border-radius: 100px;
+    animation: pulse 2s infinite;
+  }
+
+  .streak-badge.show { display: flex; }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,160,69,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(232,160,69,0); }
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--surface2);
+    position: sticky;
+    top: 57px;
+    z-index: 99;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    transition: width .4s ease;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* MAIN LAYOUT */
+  .quiz-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* QUESTION PANEL */
+  .quiz-main {
+    padding: 2rem 2rem 2rem 2.5rem;
+    max-width: 700px;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    color: var(--text-dim);
+    letter-spacing: .06em;
+  }
+
+  .q-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    background: rgba(95,168,211,0.1);
+    border: 1px solid rgba(95,168,211,0.25);
+    color: var(--accent2);
+    padding: .2rem .7rem;
+    border-radius: 100px;
+    letter-spacing: .04em;
+  }
+
+  .q-text {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 1.8rem;
+    font-style: italic;
+  }
+
+  .q-text strong { font-style: normal; color: var(--accent); }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: .9rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.2rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s ease;
+    color: var(--text);
+    font-family: 'Source Serif 4', serif;
+    font-size: .95rem;
+    line-height: 1.5;
+    width: 100%;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: rgba(95,168,211,0.06);
+    transform: translateX(3px);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-btn.correct {
+    border-color: var(--accent3);
+    background: rgba(126,231,135,0.08);
+  }
+
+  .option-btn.incorrect {
+    border-color: var(--danger);
+    background: rgba(248,81,73,0.08);
+  }
+
+  .opt-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: all .2s;
+    color: var(--text-muted);
+  }
+
+  .option-btn.correct .opt-letter {
+    background: var(--accent3);
+    color: #0d1117;
+    border-color: var(--accent3);
+  }
+
+  .option-btn.incorrect .opt-letter {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+  }
+
+  /* FEEDBACK */
+  .feedback-box {
+    margin-top: 1.5rem;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.5rem;
+    animation: fadeUp .3s ease;
+    display: none;
+  }
+
+  .feedback-box.show { display: block; }
+
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 600;
+    margin-bottom: .7rem;
+    font-size: 1rem;
+  }
+
+  .feedback-header.ok { color: var(--accent3); }
+  .feedback-header.err { color: var(--danger); }
+
+  .feedback-text { font-size: .88rem; color: var(--text-muted); line-height: 1.7; }
+  .feedback-text strong { color: var(--text); }
+
+  .btn-next {
+    margin-top: 1.2rem;
+    padding: .75rem 1.8rem;
+    background: var(--accent);
+    color: #0d1117;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .85rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .04em;
+  }
+
+  .btn-next:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(232,160,69,0.3);
+  }
+
+  /* SIDEBAR */
+  .quiz-sidebar {
+    border-left: 1px solid var(--border);
+    background: var(--surface);
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+    position: sticky;
+    top: 60px;
+  }
+
+  .sidebar-inner { padding: 1.5rem; }
+
+  .sidebar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--text-dim);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .sidebar .acc-item {
+    border-radius: var(--radius-sm);
+    margin-bottom: .75rem;
+  }
+
+  .sidebar .acc-header { padding: .85rem 1rem; }
+  .sidebar .acc-num { width: 26px; height: 26px; font-size: .7rem; }
+  .sidebar .acc-name { font-size: .88rem; }
+  .sidebar .acc-content { padding: .8rem 1rem 1rem; font-size: .85rem; line-height: 1.75; }
+  .sidebar .acc-content p { margin-bottom: .8rem; }
+  .sidebar .acc-content p:last-child { margin-bottom: 0; }
+
+  /* BONUS ANIMATION */
+  .bonus-popup {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: linear-gradient(135deg, var(--accent), #c47a20);
+    color: #0d1117;
+    padding: .85rem 2rem;
+    border-radius: 100px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    z-index: 999;
+    opacity: 0;
+    transition: all .4s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .bonus-popup.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ══════════════════════════════
+     SCREEN 4 — RESULTS
+  ══════════════════════════════ */
+  #screen-results {
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .results-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeUp .6s ease both;
+  }
+
+  .results-emoji {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: bounceIn .6s .2s ease both;
+  }
+
+  @keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .results-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: .5rem;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .results-header p { color: var(--text-muted); }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    animation: fadeUp .6s .15s ease both;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.3rem 1rem;
+    text-align: center;
+  }
+
+  .stat-card .s-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    margin-bottom: .3rem;
+  }
+
+  .stat-card .s-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .perf-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    animation: fadeUp .6s .25s ease both;
+  }
+
+  .perf-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .75rem;
+  }
+
+  .perf-bar-label span:first-child { font-weight: 600; }
+  .perf-pct { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; color: var(--accent); font-weight: 600; }
+
+  .perf-bar {
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .perf-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 100px;
+    transition: width 1.2s ease;
+  }
+
+  .message-box {
+    background: rgba(232,160,69,0.07);
+    border: 1px solid rgba(232,160,69,0.2);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 2rem;
+    font-size: .97rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    animation: fadeUp .6s .3s ease both;
+  }
+
+  .learning-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    animation: fadeUp .6s .35s ease both;
+  }
+
+  .learning-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.5rem;
+  }
+
+  .learning-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: .9rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .learning-card.strengths h3 { color: var(--accent3); }
+  .learning-card.improve h3 { color: #ffa657; }
+
+  .learning-card ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+  .learning-card li { font-size: .88rem; color: var(--text-muted); display: flex; align-items: flex-start; gap: .5rem; }
+  .learning-card.strengths li::before { content: '✔'; color: var(--accent3); flex-shrink: 0; }
+  .learning-card.improve li::before { content: '⚠'; color: #ffa657; flex-shrink: 0; }
+
+  .results-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp .6s .4s ease both;
+  }
+
+  .btn-restart {
+    flex: 1;
+    min-width: 160px;
+    padding: .9rem 1.5rem;
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .9rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .btn-restart:hover {
+    background: rgba(232,160,69,0.1);
+    transform: translateY(-2px);
+  }
+
+  .btn-aula {
+    flex: 1;
+    min-width: 160px;
+    padding: .9rem 1.5rem;
+    background: linear-gradient(135deg, var(--accent2), #2d6a8f);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+  }
+
+  .btn-aula:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(95,168,211,0.3);
+  }
+
+  /* ══ RESPONSIVE ══ */
+  /* Mobile text panel shown above questions */
+  .mobile-texts-panel {
+    display: none;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1rem;
+  }
+
+  .mobile-texts-toggle {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    padding: .6rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    letter-spacing: .04em;
+    margin-bottom: .5rem;
+  }
+
+  .mobile-texts-body {
+    display: none;
+  }
+
+  .mobile-texts-body.open {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .welcome-card { padding: 2rem 1.5rem; }
+    .quiz-layout { grid-template-columns: 1fr; }
+    .quiz-sidebar { display: none; }
+    .mobile-texts-panel { display: block; }
+    .quiz-main { padding: 1.5rem 1rem; max-width: 100%; }
+    .learning-grid { grid-template-columns: 1fr; }
+    .quiz-topbar { gap: .75rem; padding: .6rem 1rem; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ SCREEN 1 — BIENVENIDA -->
+<section id="screen-welcome" class="screen active">
+  <div class="welcome-card">
+    <div class="badge">📚 NIVEL 2 · TEMÁTICA 4</div>
+    <h1>Relaciones entre Ideas</h1>
+    <p class="subtitle">Simulacro de Lectura Crítica · ICFES Saber 11°</p>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Preguntas</span>
+        <span class="value">25</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Puntos por acierto</span>
+        <span class="value">+10 pts</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Textos</span>
+        <span class="value">3</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Tiempo referencia</span>
+        <span class="value">~30 min</span>
+      </div>
+    </div>
+
+    <div class="objective-box">
+      <strong>Objetivo de aprendizaje:</strong> Evaluar y fortalecer la capacidad de identificar, analizar e interpretar las relaciones existentes entre las diferentes ideas presentes en un texto: causa-efecto, comparación, secuencia, problema-solución, argumentación y conectores.
+    </div>
+
+    <div class="bonus-box">
+      <h3>🔥 Sistema de racha</h3>
+      <ul>
+        <li>3 respuestas correctas consecutivas → <strong>+15 puntos bonus</strong></li>
+        <li>5 respuestas correctas consecutivas → <strong>+25 puntos bonus</strong></li>
+        <li>Las bonificaciones se acumulan a tu puntaje total</li>
+        <li>El temporizador es solo referencia — no hay penalización por tiempo</li>
+      </ul>
+    </div>
+
+    <button class="btn-primary" onclick="goToTexts()">Leer los textos →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ SCREEN 2 — TEXTOS -->
+<section id="screen-texts" class="screen">
+  <div class="screen-header">
+    <h2>Lee los textos con atención</h2>
+    <p>Puedes volver a consultarlos en cualquier momento durante el simulacro.</p>
+  </div>
+
+  <div class="accordion" id="acc-texts">
+
+    <div class="acc-item" id="acc1">
+      <div class="acc-header" onclick="toggleAcc('acc1')">
+        <div class="acc-title">
+          <span class="acc-num">1</span>
+          <div>
+            <div class="acc-name">Insipiencia popular / Kant sobre la Ilustración</div>
+            <div class="acc-source">Fragmentos del simulacro 11-16-C</div>
+          </div>
+        </div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p><strong>Texto A — "Río que suena piedras lleva"</strong></p>
+          <p>Malévola justificación para toda forma de calumnia, de difamación. La legitimación del chisme, del cuchicheo, de las maledicencias. Si de alguien "se dice algo", es que ha de ser cierto. ¿Se han puesto ustedes a pensar en la profunda injusticia que esto representa, estigmatizar a una persona, deshonrar su reputación, solo porque "río que suena piedras lleva"? Autentificadas quedan entonces todas las infamias, las mentiras que la envidia y la mezquindad suscitan. Conferirle al chisme el sello de la verdad. ¡Qué actitud de canallas, de jueces implacables del prójimo, de linchadores de vocación! No, de que "el río suene" no se desprende que "piedras lleve". Sucede, simplemente, que, al amparo de la "sabiduría popular" la gente se atribuye el derecho de marcar para siempre la vida de otras personas. Enfermiza manera de pensar.</p>
+          <p><strong>Texto B — Kant: La Ilustración</strong></p>
+          <p>La ilustración es la salida del hombre de su minoría de edad. El mismo es culpable de ella. La minoría de edad estriba en la incapacidad de servirse del propio entendimiento, sin la dirección de otro. Uno mismo es culpable de esta minoría de edad cuando la causa de ella no yace en un defecto del entendimiento, sino en la falta de decisión y ánimo para servirse con independencia de él, sin la conducción de otro. <em>¡Sapere aude! ¡Ten valor de servirte de tu propio entendimiento!</em> he aquí la divisa de la ilustración.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item" id="acc2">
+      <div class="acc-header" onclick="toggleAcc('acc2')">
+        <div class="acc-title">
+          <span class="acc-num">2</span>
+          <div>
+            <div class="acc-name">Los Marginados Digitales</div>
+            <div class="acc-source">Stornelli — Universidad Popular del Cesar</div>
+          </div>
+        </div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p>Existe una enorme diferencia entre el mundo desarrollado y el nuestro en cuanto a las posibilidades de acceso a las tecnologías de Información y las comunicaciones (TIC). Ese fenómeno se conoce como la brecha digital. Todo arranca por el porcentaje de población que dispone de teléfono fijo y móvil, o el número de estudiantes que realizan posgrados en línea.</p>
+          <p>Pero la brecha digital ha creado, según la Unesco, una nueva ruptura en el mundo y es la llamada brecha cognitiva, que es la diferencia en la capacidad de adquirir conocimientos entre un hombre y otro, entre una sociedad y otra.</p>
+          <p>De ahí que cuando se escucha que la tasa de analfabetismo en Colombia es del 7 por ciento y que en el Cesar llega a la friolera de 14 por ciento, no se puede menos que sentirse confundido ante los artículos en donde se afirma que estamos entrando en la sociedad del conocimiento.</p>
+          <p>Cuando tratamos de asimilar el concepto de la Unesco sobre los analfabetos funcionales —quienes saben leer y escribir y manejan las funciones básicas de matemáticas— no podemos menos que aterrarnos al constatar que muchas de las personas que conocemos tienen ese perfil. Y cuando nos dicen que profesional que no habla inglés y que no maneja funciones básicas de ofimática es 'medio profesional', se puede caer en la más profunda crisis depresiva al percatarse de que muchos de los profesionales que conocemos, incluido quien escribe, caen en esa categoría.</p>
+          <p>Todo lo anterior lo traigo a colación porque la premisa fundamental para que se dé una sociedad del conocimiento es que la población esté alfabetizada y que, obviamente, exista además una masa crítica de profesionales con alto nivel tecnológico y una alta penetración y uso de las TIC.</p>
+          <p>Pero ¿cómo definiríamos la sociedad del conocimiento? Apelemos, una vez más a la Unesco: <em>"Una sociedad del conocimiento debe garantizar el aprovechamiento compartido del saber, integrar a cada uno de sus miembros y promover nuevas formas de solidaridad con las generaciones presentes y venideras. No deberían existir marginados en las sociedades del conocimiento".</em></p>
+          <p>Es claro que nuestra sociedad está hoy mejor informada que hace veinte años. La cobertura de telefonía fija, la aparición de los celulares, los canales privados de TV, y los esfuerzos por incrementar la cobertura de Internet, sumado a la lucha por erradicar el analfabetismo y por mejorar los niveles de escolaridad, han hecho que muchos de nuestros compatriotas estén más y mejor informados.</p>
+          <p><em>Pese a ello</em>, disparidades entre regiones nos permiten afirmar que se está creando una odiosa brecha digital entre algunas ciudades privilegiadas y el resto del país. En Colombia necesitamos que los dirigentes entiendan que el uso y la apropiación de las TIC son hoy factor de desarrollo o de nuevas desigualdades, que están comenzando a crear una nueva clase de marginados, los <strong>marginados digitales</strong>. ¿Cuántos de esos conoce usted ya?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item" id="acc3">
+      <div class="acc-header" onclick="toggleAcc('acc3')">
+        <div class="acc-title">
+          <span class="acc-num">3</span>
+          <div>
+            <div class="acc-name">Novedad y Anacronismo de Cien años de soledad</div>
+            <div class="acc-source">Rodríguez Monegal — adaptado</div>
+          </div>
+        </div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p>El escandaloso éxito de Cien años de soledad en toda América Latina (cien mil ejemplares en un año) y su aceptación casi unánime por la crítica más exigente y por el público más general, han impedido hasta cierto punto la consideración de un problema literario que subyace a ese éxito: el problema del flagrante anacronismo que representa, desde cierto punto de vista, esta extraordinaria novela.</p>
+          <p>Porque, en efecto, cuando toda América Latina parece disparada hacia la modernidad, luchando a brazo partido y en todos los campos para salir del subdesarrollo, de su condición colonial, de su oprimente atmósfera de provincia marginada; cuando en el terreno político como en el cultural el gran esfuerzo de nuestros pueblos está orientado a ejercer la presión más directa sobre los centros dirigentes del mundo actual; cuando el crecimiento caótico pero incontenible de las capitales ha puesto en primer plano el conflicto del hombre enajenado de las grandes ciudades; en ese preciso instante, Gabriel García Márquez capta la atención de lectores y críticos con un libro que a primera vista va a contrapelo de ese movimiento general de contemporaneidad. ¿Cómo explicar este anacronismo no sólo del libro sino del mismo público que lo lee y lo celebra?</p>
+          <p>A primera vista, Cien años de soledad retrasa el reloj del tiempo. En un panorama literario que dominan Rayuela, Paradiso y Tres tristes tigres, García Márquez se da el lujo de contar una historia interminable sobre un pueblo colombiano perdido en una maraña de selva, montaña y pantanos; de contar su historia poniendo bien claro el acento en la violencia política, en la explotación económica del capital nacional y extranjero, en el fraude y en el atropello, temas y motivos bien conocidos de la (aparentemente) difunta novela de la protesta social que tanto engendro ha suscitado en nuestra América.</p>
+          <p>Y aún agregaría más: en momentos en que hasta el menor plumífero se siente autorizado a componer complejas y/o precarias estructuras temporales, García Márquez, con indiferencia por la técnica exterior, se larga a narrar una historia absolutamente lineal y cronológica, una historia como las de antes: con su principio, su medio y su fin.</p>
+          <p>Tienen razón, y están profundamente equivocados. Porque si bien es cierto que Cien años de soledad es apenas para la visión superficial una novela anacrónica, para una mirada profunda, el libro contiene algunas de las novedades más audaces que se hayan ensayado en las letras de este siglo: su anacronismo se presenta como algo novedoso si tenemos en cuenta el panorama literario del momento. Lo que nos lleva a plantear su lectura desde un ángulo muy distinto.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /accordion -->
+
+  <button class="btn-start" onclick="startQuiz()">Iniciar preguntas ▶</button>
+</section>
+
+<!-- ═══════════════════════════════════════ SCREEN 3 — QUIZ -->
+<section id="screen-quiz" class="screen">
+
+  <div class="quiz-topbar">
+    <div class="topbar-score"><span class="lbl">Puntaje:</span><span class="val" id="score-display">0</span></div>
+    <div class="topbar-score"><span class="lbl">Aciertos:</span><span class="val" id="correct-display">0</span></div>
+    <div id="streak-badge" class="streak-badge"><span id="streak-text">🔥 Racha ×3</span></div>
+    <div class="topbar-timer"><span class="lbl">⏱</span><span class="val" id="timer-display">00:00</span></div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <!-- MOBILE: textos desplegables encima de las preguntas -->
+  <div class="mobile-texts-panel">
+    <button class="mobile-texts-toggle" onclick="toggleMobileTexts()">
+      <span>📖 Ver textos de referencia</span>
+      <span id="mobile-arrow">▼</span>
+    </button>
+    <div class="mobile-texts-body" id="mobile-texts-body">
+      <div class="accordion" style="margin-bottom:.5rem">
+
+        <div class="acc-item" id="macc1">
+          <div class="acc-header" onclick="toggleAcc('macc1')">
+            <div class="acc-title">
+              <span class="acc-num">1</span>
+              <div><div class="acc-name">Texto 1 — Insipiencia popular / Kant</div></div>
+            </div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-content">
+              <p><strong>A — "Río que suena piedras lleva"</strong></p>
+              <p>Malévola justificación para toda forma de calumnia, de difamación. La legitimación del chisme, del cuchicheo, de las maledicencias. Si de alguien "se dice algo", es que ha de ser cierto. ¿Se han puesto ustedes a pensar en la profunda injusticia que esto representa, estigmatizar a una persona, deshonrar su reputación, solo porque "río que suena piedras lleva"? Autentificadas quedan entonces todas las infamias, las mentiras que la envidia y la mezquindad suscitan. Conferirle al chisme el sello de la verdad. ¡Qué actitud de canallas, de jueces implacables del prójimo, de linchadores de vocación! No, de que "el río suene" no se desprende que "piedras lleve". Sucede, simplemente, que, al amparo de la "sabiduría popular" la gente se atribuye el derecho de marcar para siempre la vida de otras personas. Enfermiza manera de pensar.</p>
+              <p><strong>B — Kant: La Ilustración</strong></p>
+              <p>La ilustración es la salida del hombre de su minoría de edad. El mismo es culpable de ella. La minoría de edad estriba en la incapacidad de servirse del propio entendimiento, sin la dirección de otro. Uno mismo es culpable de esta minoría de edad cuando la causa de ella no yace en un defecto del entendimiento, sino en la falta de decisión y ánimo para servirse con independencia de él, sin la conducción de otro. <em>¡Sapere aude! ¡Ten valor de servirte de tu propio entendimiento!</em> he aquí la divisa de la ilustración.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item" id="macc2">
+          <div class="acc-header" onclick="toggleAcc('macc2')">
+            <div class="acc-title">
+              <span class="acc-num">2</span>
+              <div><div class="acc-name">Texto 2 — Los Marginados Digitales</div></div>
+            </div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-content">
+              <p>Existe una enorme diferencia entre el mundo desarrollado y el nuestro en cuanto a las posibilidades de acceso a las tecnologías de Información y las comunicaciones (TIC). Ese fenómeno se conoce como la brecha digital. Todo arranca por el porcentaje de población que dispone de teléfono fijo y móvil, o el número de estudiantes que realizan posgrados en línea.</p>
+              <p>Pero la brecha digital ha creado, según la Unesco, una nueva ruptura en el mundo y es la llamada brecha cognitiva, que es la diferencia en la capacidad de adquirir conocimientos entre un hombre y otro, entre una sociedad y otra.</p>
+              <p>De ahí que cuando se escucha que la tasa de analfabetismo en Colombia es del 7 por ciento y que en el Cesar llega a la friolera de 14 por ciento, no se puede menos que sentirse confundido ante los artículos en donde se afirma que estamos entrando en la sociedad del conocimiento.</p>
+              <p>Cuando tratamos de asimilar el concepto de la Unesco sobre los analfabetos funcionales —quienes saben leer y escribir y manejan las funciones básicas de matemáticas— no podemos menos que aterrarnos al constatar que muchas de las personas que conocemos tienen ese perfil. Y cuando nos dicen que profesional que no habla inglés y que no maneja funciones básicas de ofimática es 'medio profesional', se puede caer en la más profunda crisis depresiva al percatarse de que muchos de los profesionales que conocemos, incluido quien escribe, caen en esa categoría.</p>
+              <p>Todo lo anterior lo traigo a colación porque la premisa fundamental para que se dé una sociedad del conocimiento es que la población esté alfabetizada y que, obviamente, exista además una masa crítica de profesionales con alto nivel tecnológico y una alta penetración y uso de las TIC.</p>
+              <p>Pero ¿cómo definiríamos la sociedad del conocimiento? Apelemos, una vez más a la Unesco: <em>"Una sociedad del conocimiento debe garantizar el aprovechamiento compartido del saber, integrar a cada uno de sus miembros y promover nuevas formas de solidaridad con las generaciones presentes y venideras. No deberían existir marginados en las sociedades del conocimiento".</em></p>
+              <p>Es claro que nuestra sociedad está hoy mejor informada que hace veinte años. La cobertura de telefonía fija, la aparición de los celulares, los canales privados de TV, y los esfuerzos por incrementar la cobertura de Internet, sumado a la lucha por erradicar el analfabetismo y por mejorar los niveles de escolaridad, han hecho que muchos de nuestros compatriotas estén más y mejor informados.</p>
+              <p><em>Pese a ello</em>, disparidades entre regiones nos permiten afirmar que se está creando una odiosa brecha digital entre algunas ciudades privilegiadas y el resto del país. En Colombia necesitamos que los dirigentes entiendan que el uso y la apropiación de las TIC son hoy factor de desarrollo o de nuevas desigualdades, que están comenzando a crear una nueva clase de marginados, los <strong>marginados digitales</strong>. ¿Cuántos de esos conoce usted ya?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item" id="macc3">
+          <div class="acc-header" onclick="toggleAcc('macc3')">
+            <div class="acc-title">
+              <span class="acc-num">3</span>
+              <div><div class="acc-name">Texto 3 — Cien años de soledad</div></div>
+            </div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-content">
+              <p>El escandaloso éxito de Cien años de soledad en toda América Latina (cien mil ejemplares en un año) y su aceptación casi unánime por la crítica más exigente y por el público más general, han impedido hasta cierto punto la consideración de un problema literario que subyace a ese éxito: el problema del flagrante anacronismo que representa, desde cierto punto de vista, esta extraordinaria novela.</p>
+              <p>Porque, en efecto, cuando toda América Latina parece disparada hacia la modernidad, luchando a brazo partido y en todos los campos para salir del subdesarrollo, de su condición colonial, de su oprimente atmósfera de provincia marginada; cuando en el terreno político como en el cultural el gran esfuerzo de nuestros pueblos está orientado a ejercer la presión más directa sobre los centros dirigentes del mundo actual; cuando el crecimiento caótico pero incontenible de las capitales ha puesto en primer plano el conflicto del hombre enajenado de las grandes ciudades; en ese preciso instante, Gabriel García Márquez capta la atención de lectores y críticos con un libro que a primera vista va a contrapelo de ese movimiento general de contemporaneidad. ¿Cómo explicar este anacronismo no sólo del libro sino del mismo público que lo lee y lo celebra?</p>
+              <p>A primera vista, Cien años de soledad retrasa el reloj del tiempo. En un panorama literario que dominan Rayuela, Paradiso y Tres tristes tigres, García Márquez se da el lujo de contar una historia interminable sobre un pueblo colombiano perdido en una maraña de selva, montaña y pantanos; de contar su historia poniendo bien claro el acento en la violencia política, en la explotación económica del capital nacional y extranjero, en el fraude y en el atropello, temas y motivos bien conocidos de la (aparentemente) difunta novela de la protesta social que tanto engendro ha suscitado en nuestra América.</p>
+              <p>Y aún agregaría más: en momentos en que hasta el menor plumífero se siente autorizado a componer complejas y/o precarias estructuras temporales, García Márquez, con indiferencia por la técnica exterior, se larga a narrar una historia absolutamente lineal y cronológica, una historia como las de antes: con su principio, su medio y su fin.</p>
+              <p>Tienen razón, y están profundamente equivocados. Porque si bien es cierto que Cien años de soledad es apenas para la visión superficial una novela anacrónica, para una mirada profunda, el libro contiene algunas de las novedades más audaces que se hayan ensayado en las letras de este siglo: su anacronismo se presenta como algo novedoso si tenemos en cuenta el panorama literario del momento. Lo que nos lleva a plantear su lectura desde un ángulo muy distinto.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-layout">
+    <!-- MAIN -->
+    <div class="quiz-main">
+      <div class="q-meta">
+        <span class="q-num" id="q-num-label">Pregunta 1 de 25</span>
+        <span class="q-tag" id="q-tag-label">Causa y efecto</span>
+      </div>
+      <div class="q-text" id="q-text">…</div>
+      <div class="options-list" id="options-list"></div>
+      <div class="feedback-box" id="feedback-box">
+        <div class="feedback-header" id="feedback-header"></div>
+        <div class="feedback-text" id="feedback-text"></div>
+        <button class="btn-next" onclick="nextQuestion()">Siguiente pregunta →</button>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="quiz-sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-title">📖 Textos de referencia</div>
+        <div class="accordion sidebar" id="acc-sidebar">
+
+          <div class="acc-item" id="sacc1">
+            <div class="acc-header" onclick="toggleAcc('sacc1')">
+              <div class="acc-title">
+                <span class="acc-num">1</span>
+                <div><div class="acc-name">Texto 1 — Insipiencia popular / Kant</div></div>
+              </div>
+              <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              <div class="acc-content">
+                <p><strong>A — "Río que suena piedras lleva"</strong></p>
+                <p>Malévola justificación para toda forma de calumnia, de difamación. La legitimación del chisme, del cuchicheo, de las maledicencias. Si de alguien "se dice algo", es que ha de ser cierto. ¿Se han puesto ustedes a pensar en la profunda injusticia que esto representa, estigmatizar a una persona, deshonrar su reputación, solo porque "río que suena piedras lleva"? Autentificadas quedan entonces todas las infamias, las mentiras que la envidia y la mezquindad suscitan. Conferirle al chisme el sello de la verdad. ¡Qué actitud de canallas, de jueces implacables del prójimo, de linchadores de vocación! No, de que "el río suene" no se desprende que "piedras lleve". Sucede, simplemente, que, al amparo de la "sabiduría popular" la gente se atribuye el derecho de marcar para siempre la vida de otras personas. Enfermiza manera de pensar.</p>
+                <p><strong>B — Kant: La Ilustración</strong></p>
+                <p>La ilustración es la salida del hombre de su minoría de edad. El mismo es culpable de ella. La minoría de edad estriba en la incapacidad de servirse del propio entendimiento, sin la dirección de otro. Uno mismo es culpable de esta minoría de edad cuando la causa de ella no yace en un defecto del entendimiento, sino en la falta de decisión y ánimo para servirse con independencia de él, sin la conducción de otro. <em>¡Sapere aude! ¡Ten valor de servirte de tu propio entendimiento!</em> he aquí la divisa de la ilustración.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" id="sacc2">
+            <div class="acc-header" onclick="toggleAcc('sacc2')">
+              <div class="acc-title">
+                <span class="acc-num">2</span>
+                <div><div class="acc-name">Texto 2 — Los Marginados Digitales</div></div>
+              </div>
+              <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              <div class="acc-content">
+                <p>Existe una enorme diferencia entre el mundo desarrollado y el nuestro en cuanto a las posibilidades de acceso a las tecnologías de Información y las comunicaciones (TIC). Ese fenómeno se conoce como la brecha digital. Todo arranca por el porcentaje de población que dispone de teléfono fijo y móvil, o el número de estudiantes que realizan posgrados en línea.</p>
+                <p>Pero la brecha digital ha creado, según la Unesco, una nueva ruptura en el mundo y es la llamada brecha cognitiva, que es la diferencia en la capacidad de adquirir conocimientos entre un hombre y otro, entre una sociedad y otra.</p>
+                <p>De ahí que cuando se escucha que la tasa de analfabetismo en Colombia es del 7 por ciento y que en el Cesar llega a la friolera de 14 por ciento, no se puede menos que sentirse confundido ante los artículos en donde se afirma que estamos entrando en la sociedad del conocimiento.</p>
+                <p>Cuando tratamos de asimilar el concepto de la Unesco sobre los analfabetos funcionales —quienes saben leer y escribir y manejan las funciones básicas de matemáticas— no podemos menos que aterrarnos al constatar que muchas de las personas que conocemos tienen ese perfil. Y cuando nos dicen que profesional que no habla inglés y que no maneja funciones básicas de ofimática es 'medio profesional', se puede caer en la más profunda crisis depresiva al percatarse de que muchos de los profesionales que conocemos, incluido quien escribe, caen en esa categoría.</p>
+                <p>Todo lo anterior lo traigo a colación porque la premisa fundamental para que se dé una sociedad del conocimiento es que la población esté alfabetizada y que, obviamente, exista además una masa crítica de profesionales con alto nivel tecnológico y una alta penetración y uso de las TIC.</p>
+                <p>Pero ¿cómo definiríamos la sociedad del conocimiento? Apelemos, una vez más a la Unesco: <em>"Una sociedad del conocimiento debe garantizar el aprovechamiento compartido del saber, integrar a cada uno de sus miembros y promover nuevas formas de solidaridad con las generaciones presentes y venideras. No deberían existir marginados en las sociedades del conocimiento".</em></p>
+                <p>Es claro que nuestra sociedad está hoy mejor informada que hace veinte años. La cobertura de telefonía fija, la aparición de los celulares, los canales privados de TV, y los esfuerzos por incrementar la cobertura de Internet, sumado a la lucha por erradicar el analfabetismo y por mejorar los niveles de escolaridad, han hecho que muchos de nuestros compatriotas estén más y mejor informados.</p>
+                <p><em>Pese a ello</em>, disparidades entre regiones nos permiten afirmar que se está creando una odiosa brecha digital entre algunas ciudades privilegiadas y el resto del país. En Colombia necesitamos que los dirigentes entiendan que el uso y la apropiación de las TIC son hoy factor de desarrollo o de nuevas desigualdades, que están comenzando a crear una nueva clase de marginados, los <strong>marginados digitales</strong>. ¿Cuántos de esos conoce usted ya?</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" id="sacc3">
+            <div class="acc-header" onclick="toggleAcc('sacc3')">
+              <div class="acc-title">
+                <span class="acc-num">3</span>
+                <div><div class="acc-name">Texto 3 — Cien años de soledad</div></div>
+              </div>
+              <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              <div class="acc-content">
+                <p>El escandaloso éxito de Cien años de soledad en toda América Latina (cien mil ejemplares en un año) y su aceptación casi unánime por la crítica más exigente y por el público más general, han impedido hasta cierto punto la consideración de un problema literario que subyace a ese éxito: el problema del flagrante anacronismo que representa, desde cierto punto de vista, esta extraordinaria novela.</p>
+                <p>Porque, en efecto, cuando toda América Latina parece disparada hacia la modernidad, luchando a brazo partido y en todos los campos para salir del subdesarrollo, de su condición colonial, de su oprimente atmósfera de provincia marginada; cuando en el terreno político como en el cultural el gran esfuerzo de nuestros pueblos está orientado a ejercer la presión más directa sobre los centros dirigentes del mundo actual; cuando el crecimiento caótico pero incontenible de las capitales ha puesto en primer plano el conflicto del hombre enajenado de las grandes ciudades; en ese preciso instante, Gabriel García Márquez capta la atención de lectores y críticos con un libro que a primera vista va a contrapelo de ese movimiento general de contemporaneidad. ¿Cómo explicar este anacronismo no sólo del libro sino del mismo público que lo lee y lo celebra?</p>
+                <p>A primera vista, Cien años de soledad retrasa el reloj del tiempo. En un panorama literario que dominan Rayuela, Paradiso y Tres tristes tigres, García Márquez se da el lujo de contar una historia interminable sobre un pueblo colombiano perdido en una maraña de selva, montaña y pantanos; de contar su historia poniendo bien claro el acento en la violencia política, en la explotación económica del capital nacional y extranjero, en el fraude y en el atropello, temas y motivos bien conocidos de la (aparentemente) difunta novela de la protesta social que tanto engendro ha suscitado en nuestra América.</p>
+                <p>Y aún agregaría más: en momentos en que hasta el menor plumífero se siente autorizado a componer complejas y/o precarias estructuras temporales, García Márquez, con indiferencia por la técnica exterior, se larga a narrar una historia absolutamente lineal y cronológica, una historia como las de antes: con su principio, su medio y su fin.</p>
+                <p>Tienen razón, y están profundamente equivocados. Porque si bien es cierto que Cien años de soledad es apenas para la visión superficial una novela anacrónica, para una mirada profunda, el libro contiene algunas de las novedades más audaces que se hayan ensayado en las letras de este siglo: su anacronismo se presenta como algo novedoso si tenemos en cuenta el panorama literario del momento. Lo que nos lleva a plantear su lectura desde un ángulo muy distinto.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bonus-popup" id="bonus-popup">🔥 ¡Racha! +15 puntos</div>
+</section>
+
+<!-- ═══════════════════════════════════════ SCREEN 4 — RESULTS -->
+<section id="screen-results" class="screen">
+  <div class="results-header">
+    <span class="results-emoji" id="res-emoji">🏆</span>
+    <h2 id="res-title">Excelente desempeño</h2>
+    <p id="res-subtitle">Has completado el simulacro de Lectura Crítica</p>
+  </div>
+
+  <div class="results-grid">
+    <div class="stat-card"><span class="s-val" id="r-score">0</span><span class="s-lbl">Puntaje total</span></div>
+    <div class="stat-card"><span class="s-val" id="r-correct">0</span><span class="s-lbl">Aciertos</span></div>
+    <div class="stat-card"><span class="s-val" id="r-incorrect">0</span><span class="s-lbl">Errores</span></div>
+    <div class="stat-card"><span class="s-val" id="r-time">—</span><span class="s-lbl">Tiempo empleado</span></div>
+    <div class="stat-card"><span class="s-val" id="r-bonus">0</span><span class="s-lbl">Bonus racha</span></div>
+  </div>
+
+  <div class="perf-bar-wrap">
+    <div class="perf-bar-label">
+      <span>Desempeño global</span>
+      <span class="perf-pct" id="r-pct">0%</span>
+    </div>
+    <div class="perf-bar"><div class="perf-bar-inner" id="r-bar" style="width:0%"></div></div>
+  </div>
+
+  <div class="message-box" id="r-message"></div>
+
+  <div class="learning-grid">
+    <div class="learning-card strengths">
+      <h3>✔ Fortalezas detectadas</h3>
+      <ul id="r-strengths"></ul>
+    </div>
+    <div class="learning-card improve">
+      <h3>⚠ Aspectos por reforzar</h3>
+      <ul id="r-improve"></ul>
+    </div>
+  </div>
+
+  <div class="results-actions">
+    <button class="btn-restart" onclick="restartQuiz()">↺ Reiniciar simulacro</button>
+    <a class="btn-aula" href="#" target="_blank">🎓 Ir al Aula Virtual</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ JS -->
+<script>
+// ─── BANK OF 25 QUESTIONS ───────────────────────────────────────
+const allQuestions = [
+  // ── CAUSA Y EFECTO ──────────────────────────────────────────
+  {
+    tag: "Causa y efecto",
+    text: 'Según el texto de Stornelli, ¿cuál es la <strong>causa directa</strong> de la aparición de la "brecha cognitiva"?',
+    options: [
+      "La falta de inversión en infraestructura vial en el país.",
+      "La brecha digital existente entre el mundo desarrollado y los países en desarrollo.",
+      "El bajo número de profesionales con posgrado en las regiones.",
+      "La ausencia de canales privados de televisión en zonas rurales."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El texto establece una relación causal directa: la brecha digital <em>ha creado</em> la brecha cognitiva. El conector causal 'ha creado' y la secuencia lógica del párrafo lo confirman.",
+      err: "La respuesta correcta es B. El texto señala explícitamente que 'la brecha digital ha creado (…) la llamada brecha cognitiva'. Las demás opciones mencionan factores que el texto no relaciona con la brecha cognitiva."
+    }
+  },
+  {
+    tag: "Causa y efecto",
+    text: 'En el texto "Río que suena piedras lleva", ¿qué efecto produce, según el autor, el uso de ese dicho popular?',
+    options: [
+      "Promueve la reflexión crítica sobre la reputación ajena.",
+      "Legitima el chisme y permite estigmatizar a las personas.",
+      "Advierte a la comunidad sobre comportamientos peligrosos.",
+      "Fortalece los lazos de confianza entre vecinos."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El autor argumenta que el efecto del dicho es 'la legitimación del chisme' y el derecho autoproclamado de 'marcar para siempre la vida de otras personas'. Es una relación causa-efecto explícita.",
+      err: "La respuesta es B. El autor no ve en el dicho una virtud social, sino una justificación para la difamación. Palabras como 'malévola justificación' y 'linchadores de vocación' señalan el efecto negativo."
+    }
+  },
+  {
+    tag: "Causa y efecto",
+    text: 'Según Kant, ¿cuál es la <strong>causa real</strong> de que el hombre permanezca en minoría de edad?',
+    options: [
+      "Un defecto congénito en su capacidad de razonar.",
+      "La ausencia de instituciones que guíen su pensamiento.",
+      "La falta de decisión y ánimo para usar el propio entendimiento.",
+      "La complejidad excesiva del mundo moderno."
+    ],
+    correct: 2,
+    feedback: {
+      ok: "Correcto. Kant es explícito: 'Uno mismo es culpable de esta minoría de edad cuando la causa de ella no yace en un defecto del entendimiento, sino en la <strong>falta de decisión y ánimo</strong>'. Es una relación causal con énfasis en la responsabilidad personal.",
+      err: "La respuesta es C. Kant descarta explícitamente el defecto intelectual como causa y señala en cambio la falta de voluntad. Esa distinción es central en su argumento."
+    }
+  },
+  {
+    tag: "Causa y efecto",
+    text: 'En el texto sobre Cien años de soledad, ¿qué consecuencia tiene, según el crítico, el éxito masivo de la novela?',
+    options: [
+      "Ha permitido que el público reflexione sobre el anacronismo literario.",
+      "Ha dificultado el análisis del problema literario que subyace a ese éxito.",
+      "Ha incentivado la lectura de otras novelas latinoamericanas de la época.",
+      "Ha generado controversia entre críticos sobre el valor real del libro."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El texto afirma que el éxito 'han impedido hasta cierto punto la consideración de un problema literario'. La relación causa (éxito) → efecto (impedimento del análisis crítico) es explícita.",
+      err: "La respuesta es B. El conector clave es 'han impedido': el éxito no facilitó el análisis sino que lo obstaculizó."
+    }
+  },
+
+  // ── COMPARACIÓN Y CONTRASTE ──────────────────────────────────
+  {
+    tag: "Comparación y contraste",
+    text: 'En el texto de Stornelli, ¿qué contraste central establece el autor en el último párrafo usando "Pese a ello"?',
+    options: [
+      "Contrasta la televisión privada con la televisión pública.",
+      "Opone los avances generales en información con las disparidades regionales persistentes.",
+      "Compara el analfabetismo funcional con el analfabetismo total.",
+      "Contrapone la posición de la Unesco con la del gobierno colombiano."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. 'Pese a ello' introduce un contraste adversativo: los avances en cobertura (lo positivo) vs. las brechas regionales que persisten (lo negativo). Es la función típica de los conectores de contraste.",
+      err: "La respuesta es B. El conector 'Pese a ello' siempre introduce una idea que contrasta con la anterior. En este caso, los logros del párrafo precedente se contrastan con las desigualdades regionales que persisten."
+    }
+  },
+  {
+    tag: "Comparación y contraste",
+    text: 'Según el crítico Rodríguez Monegal, ¿en qué se diferencia Cien años de soledad de novelas como <em>Rayuela</em> o <em>Tres tristes tigres</em>?',
+    options: [
+      "Estas últimas abordan temas rurales mientras García Márquez prefiere lo urbano.",
+      "Cien años de soledad usa una narración lineal y cronológica, a diferencia del experimentalismo formal de las otras.",
+      "García Márquez escribe con mayor rigor técnico que los autores de las otras novelas.",
+      "Las otras novelas son más populares comercialmente que la obra de García Márquez."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El texto contrasta explícitamente la 'historia absolutamente lineal y cronológica' de García Márquez con las 'complejas y/o precarias estructuras temporales' que otros autores preferían.",
+      err: "La respuesta es B. El contraste formal (linealidad vs. experimentalismo temporal) es el argumento central del párrafo. El texto no hace afirmaciones sobre popularidad comercial ni preferencias temáticas."
+    }
+  },
+  {
+    tag: "Comparación y contraste",
+    text: 'En el texto "Río que suena piedras lleva", ¿qué comparación implícita hace el autor entre el dicho popular y la justicia?',
+    options: [
+      "Ambos buscan proteger la reputación de las personas.",
+      "El dicho actúa como un tribunal que condena sin pruebas, contrario a los principios de la justicia.",
+      "La sabiduría popular es superior a la justicia institucional.",
+      "El dicho y la justicia coinciden en proteger a las mayorías."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Al hablar de 'estigmatizar', 'jueces implacables' y 'linchadores', el autor compara implícitamente el efecto del dicho con un tribunal que condena sin evidencias, en contraste con lo que sería una justicia real.",
+      err: "La respuesta es B. El campo semántico judicial ('jueces', 'linchadores', 'deshonrar la reputación') establece la comparación: el dicho opera como un juicio injusto."
+    }
+  },
+
+  // ── SECUENCIA Y ORDEN LÓGICO ─────────────────────────────────
+  {
+    tag: "Secuencia y orden lógico",
+    text: 'En el texto de Stornelli, ¿cuál es la secuencia lógica correcta de los problemas que describe el autor?',
+    options: [
+      "Brecha cognitiva → brecha digital → marginados digitales → analfabetismo.",
+      "Analfabetismo → brecha digital → brecha cognitiva → marginados digitales.",
+      "Marginados digitales → brecha cognitiva → brecha digital → posgrados en línea.",
+      "Brecha digital → marginados digitales → brecha cognitiva → analfabetismo."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El texto construye una cadena causal: el analfabetismo convive con la brecha digital, la cual produce brecha cognitiva, que a su vez origina los 'marginados digitales'. Es la secuencia argumentativa del texto.",
+      err: "La respuesta es B. El texto progresa desde problemas previos (analfabetismo y falta de TIC) hacia consecuencias más complejas (brecha cognitiva y exclusión digital). Leer los conectores causales del texto confirma este orden."
+    }
+  },
+  {
+    tag: "Secuencia y orden lógico",
+    text: 'Según Kant, ¿cuál es el orden correcto del proceso de alcanzar la mayoría de edad ilustrada?',
+    options: [
+      "Recibir guía de otro → desarrollar el entendimiento → actuar de forma autónoma.",
+      "Reconocer la minoría de edad → tomar la decisión de usar el propio entendimiento → actuar con independencia.",
+      "Estudiar filosofía → rechazar la tradición → alcanzar la ilustración.",
+      "Obedecer las normas sociales → reflexionar sobre ellas → reformarlas gradualmente."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Kant propone: primero, reconocer que se está en minoría de edad; luego, ejercer la voluntad de usar el propio entendimiento sin la 'conducción de otro'. El proceso es interno, no dependiente de instituciones.",
+      err: "La respuesta es B. Kant no propone un proceso externo sino interno: reconocimiento → decisión → independencia intelectual. Él mismo es 'culpable' de su situación, y solo él puede salir de ella."
+    }
+  },
+  {
+    tag: "Secuencia y orden lógico",
+    text: 'En el texto sobre Cien años de soledad, el crítico sigue una secuencia argumentativa. ¿Cuál la describe mejor?',
+    options: [
+      "Plantea la paradoja del éxito → describe el anacronismo aparente → concluye que es una novedad audaz.",
+      "Critica el libro → describe su éxito → propone releerlo desde una perspectiva clásica.",
+      "Define el anacronismo → compara con otras novelas → descarta el valor de la obra.",
+      "Presenta datos de ventas → analiza la técnica narrativa → concluye que el libro es inferior."
+    ],
+    correct: 0,
+    feedback: {
+      ok: "Correcto. La estructura del texto es: (1) éxito paradójico, (2) descripción de por qué parece anacrónico, (3) refutación: ese anacronismo es en realidad una audacia literaria.",
+      err: "La respuesta es A. El texto no critica negativamente la obra; al contrario, su movimiento argumentativo va de la apariencia (anacronismo) a la realidad (novedad profunda)."
+    }
+  },
+
+  // ── PROBLEMA Y SOLUCIÓN ──────────────────────────────────────
+  {
+    tag: "Problema y solución",
+    text: 'Según Stornelli, ¿cuál es la condición necesaria (solución mínima) para que exista una sociedad del conocimiento?',
+    options: [
+      "Que todos los ciudadanos realicen posgrados en línea.",
+      "Que la población esté alfabetizada y exista una masa crítica de profesionales con alto nivel tecnológico.",
+      "Que el gobierno elimine los canales privados de televisión.",
+      "Que la Unesco intervenga directamente en las políticas educativas nacionales."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El autor lo dice explícitamente: 'la premisa fundamental para que se dé una sociedad del conocimiento es que la población esté alfabetizada y que (…) exista una masa crítica de profesionales con alto nivel tecnológico y una alta penetración y uso de las TIC'.",
+      err: "La respuesta es B. El texto propone estas condiciones como la 'premisa fundamental'. Busca el párrafo que comienza con 'Todo lo anterior lo traigo a colación…'."
+    }
+  },
+  {
+    tag: "Problema y solución",
+    text: 'El problema central que identifica Kant en su texto es:',
+    options: [
+      "La falta de instituciones educativas que guíen al ciudadano.",
+      "La incapacidad de usar el propio entendimiento sin depender de otro.",
+      "El exceso de libertad que impide al hombre elegir bien.",
+      "La ausencia de una tradición filosófica sólida en Europa."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Kant define el problema con precisión: 'La minoría de edad estriba en la incapacidad de servirse del propio entendimiento, sin la dirección de otro'. Esa es la problemática central de su argumento.",
+      err: "La respuesta es B. Kant no habla de falta de instituciones ni de exceso de libertad. El problema es la dependencia intelectual voluntaria, y la solución es la decisión personal de razonar con independencia."
+    }
+  },
+  {
+    tag: "Problema y solución",
+    text: 'En el texto de Stornelli, ¿qué problema surge como consecuencia de no resolver la brecha digital entre regiones colombianas?',
+    options: [
+      "La desaparición de los medios de comunicación tradicionales.",
+      "La creación de una nueva clase de marginados: los marginados digitales.",
+      "El cierre de universidades en ciudades intermedias.",
+      "La pérdida de la identidad cultural de las regiones."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El autor concluye que las disparidades regionales 'están comenzando a crear una nueva clase de marginados, los marginados digitales'. Es la consecuencia-problema que cierra el argumento.",
+      err: "La respuesta es B. El autor cierra con una pregunta retórica ('¿Cuántos de esos conoce usted ya?') que refuerza la existencia de este nuevo tipo de exclusión social."
+    }
+  },
+
+  // ── GENERALIZACIÓN Y EJEMPLIFICACIÓN ────────────────────────
+  {
+    tag: "Generalización y ejemplificación",
+    text: 'En el texto de Stornelli, ¿cuál de los siguientes enunciados funciona como <strong>ejemplo concreto</strong> de la brecha digital en Colombia?',
+    options: [
+      "La Unesco define la brecha cognitiva como diferencia en la capacidad de adquirir conocimientos.",
+      "La tasa de analfabetismo en el Cesar llega al 14 por ciento.",
+      "Una sociedad del conocimiento debe garantizar el aprovechamiento compartido del saber.",
+      "El uso de las TIC es hoy factor de desarrollo o de nuevas desigualdades."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El dato del 14% de analfabetismo en el Cesar es un caso específico que ejemplifica la brecha cognitiva y digital en el contexto colombiano. Las otras opciones son generalizaciones o definiciones.",
+      err: "La respuesta es B. Los ejemplos son siempre casos particulares dentro de una afirmación general. El dato regional es más específico que las afirmaciones sobre la Unesco o las TIC."
+    }
+  },
+  {
+    tag: "Generalización y ejemplificación",
+    text: 'En el texto sobre Cien años de soledad, ¿cuál es la idea general que el crítico ilustra mencionando <em>Rayuela</em>, <em>Paradiso</em> y <em>Tres tristes tigres</em>?',
+    options: [
+      "Que el realismo mágico dominó la literatura latinoamericana en los años sesenta.",
+      "Que en la época predominaba una narrativa experimentalista con estructuras temporales complejas.",
+      "Que García Márquez era más popular que todos sus contemporáneos.",
+      "Que el público prefería novelas rurales sobre novelas urbanas."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Las tres novelas mencionadas son ejemplos de la idea general: el panorama literario dominante era el experimentalismo formal. García Márquez se diferencia de ese contexto con su linealidad.",
+      err: "La respuesta es B. Las novelas citadas funcionan como ejemplos del panorama que el crítico describe. La función ejemplificadora siempre remite a una afirmación previa más amplia."
+    }
+  },
+
+  // ── RELACIONES ARGUMENTATIVAS ────────────────────────────────
+  {
+    tag: "Relaciones argumentativas",
+    text: 'En el texto "Río que suena piedras lleva", ¿cuál es la tesis principal del autor?',
+    options: [
+      "La sabiduría popular siempre contiene una verdad oculta que debe preservarse.",
+      "El dicho 'río que suena piedras lleva' es una justificación injusta para la difamación.",
+      "Los rumores pueden ser útiles para proteger a las comunidades de comportamientos inadecuados.",
+      "La envidia es el origen de todos los males sociales."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. La tesis se expresa desde el inicio ('Malévola justificación para toda forma de calumnia') y se refuerza al final ('Enfermiza manera de pensar'). Todo el texto argumenta en torno a esta idea central.",
+      err: "La respuesta es B. El texto no defiende ni matiza el dicho: lo rechaza totalmente. La tesis es la idea central que el autor sostiene y que los demás argumentos apoyan."
+    }
+  },
+  {
+    tag: "Relaciones argumentativas",
+    text: 'En el texto de Stornelli, ¿qué función cumplen las citas de la Unesco dentro del argumento?',
+    options: [
+      "Resumir la posición ideológica del autor y respaldar sus investigaciones propias.",
+      "Representar una voz de autoridad que le permite definir conceptos y dar credibilidad al argumento.",
+      "Ejemplificar casos similares donde existe la misma problemática en otros países.",
+      "Garantizar que el tema sobre el cual se discute es completamente verídico."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Las citas de la Unesco funcionan como argumentos de autoridad: una fuente reconocida define conceptos ('brecha cognitiva', 'sociedad del conocimiento') y da respaldo institucional al argumento del autor.",
+      err: "La respuesta es B. En argumentación, citar una autoridad sirve para reforzar la propia tesis. El autor no investiga para la Unesco ni la cita para comparar con otros países; la usa para definir y validar."
+    }
+  },
+  {
+    tag: "Relaciones argumentativas",
+    text: 'En el texto de Rodríguez Monegal, la expresión "Tienen razón, y están profundamente equivocados" cumple la función de:',
+    options: [
+      "Contradecir definitivamente la posición del lector ordinario.",
+      "Introducir un matiz que reconoce la validez parcial de una opinión antes de superarla.",
+      "Resumir la posición de los críticos académicos sobre la novela.",
+      "Expresar la ambigüedad del autor respecto al valor de la obra."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Esta estrategia argumentativa (concesión + refutación) es típica del ensayo crítico: se reconoce que el lector superficial 'tiene razón' en ver anacronismo, pero se supera esa lectura para mostrar la novedad profunda.",
+      err: "La respuesta es B. El autor no descarta la opinión del lector común; la acepta parcialmente ('tienen razón') solo para mostrar que es incompleta ('están equivocados'). Es una concesión retórica."
+    }
+  },
+
+  // ── CONECTORES ───────────────────────────────────────────────
+  {
+    tag: "Relaciones mediante conectores",
+    text: 'En el texto de Stornelli: "Es claro que nuestra sociedad está hoy mejor informada que hace veinte años. (…) <strong>Pese a ello</strong>, disparidades entre regiones nos permiten afirmar…". El conector subrayado indica:',
+    options: [
+      "Una relación de causa: los avances en información generaron las disparidades regionales.",
+      "Una relación de contraste: los avances no han eliminado las desigualdades.",
+      "Una relación de consecuencia: gracias a los avances se conocen mejor las desigualdades.",
+      "Una relación de adición: se añade información positiva al párrafo anterior."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. 'Pese a ello' es un conector adversativo o de contraste. Introduce una idea que se opone o limita lo dicho antes. Equivale a 'sin embargo' o 'no obstante'.",
+      err: "La respuesta es B. 'Pese a ello' nunca indica causa ni adición. Su función es siempre adversativa: pone en tensión dos afirmaciones."
+    }
+  },
+  {
+    tag: "Relaciones mediante conectores",
+    text: 'En el texto de Rodríguez Monegal: "<strong>En efecto</strong>, cuando toda América Latina parece disparada hacia la modernidad…". ¿Qué función cumple "en efecto"?',
+    options: [
+      "Contradecir la afirmación del párrafo anterior.",
+      "Confirmar o ampliar la idea planteada en el párrafo anterior.",
+      "Introducir una consecuencia inesperada.",
+      "Presentar una excepción a la regla general."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. 'En efecto' es un conector de confirmación o refuerzo. Señala que lo que viene desarrolla o corrobora lo dicho antes. Equivale a 'efectivamente' o 'así es'.",
+      err: "La respuesta es B. 'En efecto' siempre confirma, nunca contradice ni introduce excepciones. En este caso, amplía la idea del anacronismo presentada en el párrafo inicial."
+    }
+  },
+  {
+    tag: "Relaciones mediante conectores",
+    text: 'En el texto de Kant: "La ilustración es la salida del hombre de su minoría de edad. <strong>El mismo</strong> es culpable de ella." El pronombre subrayado establece una relación de:',
+    options: [
+      "Contraste con la idea anterior.",
+      "Referencia anafórica que atribuye al hombre la responsabilidad de su situación.",
+      "Adición de un nuevo argumento sobre la minoría de edad.",
+      "Consecuencia lógica del proceso de ilustración."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. 'El mismo' es un pronombre anafórico que retoma 'el hombre' del enunciado anterior y añade la idea de responsabilidad personal. No contrasta ni añade argumento nuevo; refuerza quién es responsable.",
+      err: "La respuesta es B. Los pronombres anafóricos ('el mismo', 'ellos', 'lo') siempre retoman un referente previo. Aquí atribuye al propio hombre la culpa de su condición."
+    }
+  },
+
+  // ── INCLUSIÓN Y CLASIFICACIÓN ────────────────────────────────
+  {
+    tag: "Inclusión y clasificación",
+    text: 'Según Stornelli, ¿cuál es la relación jerárquica correcta entre "brecha digital" y "brecha cognitiva"?',
+    options: [
+      "Son fenómenos equivalentes: ambos describen la misma realidad con distintos nombres.",
+      "La brecha cognitiva es una consecuencia específica generada por la brecha digital.",
+      "La brecha digital es una subcategoría de la brecha cognitiva más amplia.",
+      "Son fenómenos independientes que coexisten sin relación causal."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El texto presenta la brecha digital como el fenómeno mayor y la brecha cognitiva como un efecto derivado ('la brecha digital ha creado (…) la brecha cognitiva'). Hay jerarquía causal, no equivalencia.",
+      err: "La respuesta es B. La brecha cognitiva está incluida como efecto dentro del campo más amplio de problemas generados por la brecha digital. No son sinónimos ni categorías independientes."
+    }
+  },
+  {
+    tag: "Inclusión y clasificación",
+    text: 'En el texto de Kant, ¿cómo clasifica el autor las posibles causas de la minoría de edad?',
+    options: [
+      "Causas externas (la sociedad) y causas internas (el individuo).",
+      "Descarta el defecto del entendimiento y señala como única causa la falta de decisión y ánimo.",
+      "Distingue entre causas filosóficas y causas políticas.",
+      "Clasifica las causas según su gravedad: graves, moderadas y leves."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. Kant hace una clasificación binaria: (1) defecto del entendimiento — que descarta — y (2) falta de decisión y ánimo — que señala como la causa verdadera. Es una clasificación por exclusión.",
+      err: "La respuesta es B. Kant no propone causas externas ni clasifica por gravedad. Su argumento es preciso: hay una falsa causa (el defecto intelectual) y una causa real (la pereza volitiva)."
+    }
+  },
+
+  // ── CONSTRUCCIÓN DE REDES DE IDEAS ──────────────────────────
+  {
+    tag: "Construcción de redes de ideas",
+    text: '¿Cuál de los siguientes esquemas representa mejor la organización temática del texto de Stornelli?',
+    options: [
+      "Definición de TIC → historia de Internet → propuestas para mejorar la cobertura.",
+      "Diagnóstico del problema (brecha digital) → agravamiento (brecha cognitiva) → evidencias → condición para solución → llamado a la acción.",
+      "Crítica al gobierno → propuesta de la Unesco → estadísticas mundiales → conclusión positiva.",
+      "Definición de analfabetismo funcional → ejemplos internacionales → solución tecnológica."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El texto sigue un esquema argumental clásico: presenta el problema, lo agrava con evidencias, establece la condición para resolverlo y cierra con una interpelación al lector/dirigentes.",
+      err: "La respuesta es B. La organización de un texto argumentativo suele ser: problema → desarrollo → solución/llamado. Identificar esta estructura es clave para la coherencia global del texto."
+    }
+  },
+  {
+    tag: "Construcción de redes de ideas",
+    text: '¿Qué relación establece el texto "Río que suena piedras lleva" entre el refrán popular y el concepto de verdad?',
+    options: [
+      "El refrán es un método eficaz para descubrir verdades ocultas en la sociedad.",
+      "El refrán confiere falsamente el sello de verdad a los rumores, sin ninguna evidencia que los respalde.",
+      "El refrán revela una verdad sobre la naturaleza humana que es difícil de aceptar.",
+      "El refrán sintetiza una verdad moral sobre las consecuencias de hablar mal de otros."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El autor señala que el efecto del refrán es 'conferirle al chisme el sello de la verdad', lo cual es injusto porque 'de que el río suene no se desprende que piedras lleve'. Hay una relación ilegítima entre rumor y verdad.",
+      err: "La respuesta es B. El autor rechaza cualquier valor epistémico al refrán. La frase 'Autentificadas quedan entonces todas las infamias' es irónica: señala que el efecto del dicho es equiparar falsedad con verdad."
+    }
+  },
+
+  // ── ERRORES COMUNES ──────────────────────────────────────────
+  {
+    tag: "Errores comunes de análisis",
+    text: 'Un estudiante lee el texto de Stornelli y concluye: "La brecha cognitiva es la causa de la brecha digital." ¿Qué error comete?',
+    options: [
+      "Confunde una idea general con un ejemplo específico.",
+      "Invierte la relación causal: en el texto, la brecha digital genera la brecha cognitiva.",
+      "Ignora la definición de la Unesco sobre la sociedad del conocimiento.",
+      "Hace una interpretación superficial que ignora los datos estadísticos."
+    ],
+    correct: 1,
+    feedback: {
+      ok: "Correcto. El error clásico de confundir causa con consecuencia. El texto dice claramente que la brecha digital 'ha creado' la brecha cognitiva; invertir esa flecha es un error de interpretación.",
+      err: "La respuesta es B. Cuando el texto usa un verbo causal como 'ha creado' o 'genera', la causa aparece antes y el efecto después. Invertirlos es uno de los errores más frecuentes en lectura crítica."
+    }
+  }
+];
+
+// ─── STATE ──────────────────────────────────────────────────────
+let questions = [];
+let currentQ = 0;
+let score = 0;
+let correctCount = 0;
+let streak = 0;
+let bonusTotal = 0;
+let timerInterval = null;
+let seconds = 0;
+let answered = false;
+let categoryResults = {};
+
+// ─── MOBILE TEXTS TOGGLE ────────────────────────────────────────
+function toggleMobileTexts() {
+  const body = document.getElementById('mobile-texts-body');
+  const arrow = document.getElementById('mobile-arrow');
+  const isOpen = body.classList.toggle('open');
+  arrow.textContent = isOpen ? '▲' : '▼';
+}
+
+// ─── NAVIGATION ─────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goToTexts() {
+  showScreen('screen-texts');
+}
+
+function startQuiz() {
+  questions = shuffle([...allQuestions]);
+  currentQ = 0;
+  score = 0;
+  correctCount = 0;
+  streak = 0;
+  bonusTotal = 0;
+  seconds = 0;
+  categoryResults = {};
+  answered = false;
+  showScreen('screen-quiz');
+  startTimer();
+  renderQuestion();
+}
+
+// ─── ACCORDION ──────────────────────────────────────────────────
+function toggleAcc(id) {
+  const item = document.getElementById(id);
+  item.classList.toggle('open');
+}
+
+// ─── TIMER ──────────────────────────────────────────────────────
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    seconds++;
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}m ${s}s`;
+}
+
+// ─── SHUFFLE ────────────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ─── RENDER QUESTION ────────────────────────────────────────────
+function renderQuestion() {
+  const q = questions[currentQ];
+  answered = false;
+
+  document.getElementById('q-num-label').textContent = `Pregunta ${currentQ + 1} de ${questions.length}`;
+  document.getElementById('q-tag-label').textContent = q.tag;
+  document.getElementById('q-text').innerHTML = q.text;
+
+  const pct = (currentQ / questions.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  // Shuffle options
+  const indices = shuffle([0, 1, 2, 3]);
+  const opts = document.getElementById('options-list');
+  opts.innerHTML = '';
+
+  indices.forEach((origIdx, pos) => {
+    const letter = ['A', 'B', 'C', 'D'][pos];
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.dataset.orig = origIdx;
+    btn.innerHTML = `<span class="opt-letter">${letter}</span><span>${q.options[origIdx]}</span>`;
+    btn.onclick = () => selectOption(origIdx, btn);
+    opts.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback-box');
+  fb.classList.remove('show');
+}
+
+// ─── SELECT OPTION ──────────────────────────────────────────────
+function selectOption(selectedIdx, clickedBtn) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQ];
+  const isCorrect = selectedIdx === q.correct;
+
+  // Disable all
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.disabled = true;
+    const orig = parseInt(btn.dataset.orig);
+    if (orig === q.correct) btn.classList.add('correct');
+    if (!isCorrect && orig === selectedIdx) btn.classList.add('incorrect');
+  });
+
+  // Update score
+  const cat = q.tag;
+  if (!categoryResults[cat]) categoryResults[cat] = { correct: 0, total: 0 };
+  categoryResults[cat].total++;
+
+  if (isCorrect) {
+    score += 10;
+    correctCount++;
+    streak++;
+    categoryResults[cat].correct++;
+
+    if (streak === 5) {
+      score += 25;
+      bonusTotal += 25;
+      showBonus('⚡ ¡Excelente análisis textual! +25 pts');
+    } else if (streak === 3) {
+      score += 15;
+      bonusTotal += 15;
+      showBonus('🔥 ¡Racha de 3 respuestas! +15 pts');
+    }
+
+    // Update streak badge
+    if (streak >= 3) {
+      const badge = document.getElementById('streak-badge');
+      badge.classList.add('show');
+      document.getElementById('streak-text').textContent = `🔥 ×${streak}`;
+    }
+  } else {
+    streak = 0;
+    document.getElementById('streak-badge').classList.remove('show');
+  }
+
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('correct-display').textContent = correctCount;
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  const fh = document.getElementById('feedback-header');
+  const ft = document.getElementById('feedback-text');
+
+  if (isCorrect) {
+    fh.className = 'feedback-header ok';
+    fh.innerHTML = '✅ ¡Respuesta correcta!';
+    ft.innerHTML = q.feedback.ok;
+  } else {
+    fh.className = 'feedback-header err';
+    fh.innerHTML = '❌ Respuesta incorrecta';
+    ft.innerHTML = q.feedback.err;
+  }
+
+  fb.classList.add('show');
+}
+
+// ─── NEXT QUESTION ──────────────────────────────────────────────
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+    // Scroll to top of main
+    document.querySelector('.quiz-main').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+}
+
+// ─── BONUS POPUP ────────────────────────────────────────────────
+function showBonus(msg) {
+  const popup = document.getElementById('bonus-popup');
+  popup.textContent = msg;
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 2800);
+}
+
+// ─── SHOW RESULTS ───────────────────────────────────────────────
+function showResults() {
+  stopTimer();
+  showScreen('screen-results');
+
+  const total = questions.length;
+  const pct = Math.round((correctCount / total) * 100);
+  const wrong = total - correctCount;
+
+  document.getElementById('r-score').textContent = score;
+  document.getElementById('r-correct').textContent = correctCount;
+  document.getElementById('r-incorrect').textContent = wrong;
+  document.getElementById('r-time').textContent = formatTime(seconds);
+  document.getElementById('r-bonus').textContent = '+' + bonusTotal;
+  document.getElementById('r-pct').textContent = pct + '%';
+
+  setTimeout(() => {
+    document.getElementById('r-bar').style.width = pct + '%';
+  }, 200);
+
+  // Messages
+  let emoji, title, msg;
+  if (pct >= 90) {
+    emoji = '🏆'; title = '¡Excelente desempeño!';
+    msg = 'Identificas con precisión las relaciones entre ideas y comprendes la estructura lógica de los textos. Tu capacidad de análisis textual es sobresaliente.';
+  } else if (pct >= 70) {
+    emoji = '🌟'; title = '¡Muy buen trabajo!';
+    msg = 'Comprendes gran parte de las relaciones textuales. Continúa fortaleciendo los análisis más complejos: conectores adversativos, argumentaciones implícitas y cadenas causales.';
+  } else if (pct >= 50) {
+    emoji = '📚'; title = 'Vas por buen camino';
+    msg = 'Reconoces relaciones básicas, pero aún puedes mejorar la identificación de conexiones implícitas. Practica la lectura de conectores y la distinción entre causa real y aparente.';
+  } else {
+    emoji = '💪'; title = 'Sigue practicando';
+    msg = 'La lectura crítica es una habilidad que se desarrolla con entrenamiento constante. Vuelve a los textos, identifica los conectores y pregúntate siempre: ¿por qué el autor escribe esto aquí?';
+  }
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('r-message').textContent = msg;
+
+  // Learning report
+  const cats = Object.keys(categoryResults);
+  const strong = [], toImprove = [];
+
+  cats.forEach(cat => {
+    const r = categoryResults[cat];
+    const catPct = r.total > 0 ? (r.correct / r.total) * 100 : 0;
+    if (catPct >= 60) strong.push(cat);
+    else toImprove.push(cat);
+  });
+
+  // Add unanswered categories to improve
+  const allCats = [...new Set(allQuestions.map(q => q.tag))];
+  allCats.forEach(cat => {
+    if (!categoryResults[cat] && !toImprove.includes(cat)) toImprove.push(cat);
+  });
+
+  const sl = document.getElementById('r-strengths');
+  const il = document.getElementById('r-improve');
+  sl.innerHTML = '';
+  il.innerHTML = '';
+
+  (strong.length ? strong : ['Continúa practicando todos los tipos']).forEach(c => {
+    sl.innerHTML += `<li>${c}</li>`;
+  });
+
+  (toImprove.length ? toImprove : ['¡Todas las categorías dominadas!']).forEach(c => {
+    il.innerHTML += `<li>${c}</li>`;
+  });
+
+  window.scrollTo(0, 0);
+}
+
+// ─── RESTART ────────────────────────────────────────────────────
+function restartQuiz() {
+  stopTimer();
+  startQuiz();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Open first accordion by default on texts screen
+  document.getElementById('acc1').classList.add('open');
+});
+</script>
+</body>
+</html>

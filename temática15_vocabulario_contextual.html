@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simulacro – Vocabulario Contextual | Instituto Innova</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #1a2e4a;
+    --navy-light: #243d61;
+    --gold: #c9a84c;
+    --gold-light: #e8c96e;
+    --gold-dim: rgba(201,168,76,0.15);
+    --white: #ffffff;
+    --off: #f4f6f9;
+    --text: #1e293b;
+    --muted: #64748b;
+    --success: #16a34a;
+    --error: #dc2626;
+    --radius: 14px;
+    --shadow: 0 4px 24px rgba(26,46,74,0.10);
+    --shadow-lg: 0 8px 40px rgba(26,46,74,0.16);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--off);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2em; font-weight: 700; color: var(--navy);
+  }
+  .header-title { font-size: 0.9em; font-weight: 600; letter-spacing: 0.02em; }
+  .header-sub { font-size: 0.72em; color: var(--gold-light); }
+  .timer-badge {
+    background: var(--gold-dim);
+    border: 1.5px solid var(--gold);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-weight: 700;
+    font-size: 1em;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.3s;
+  }
+  .timer-badge.warning { background: rgba(220,38,38,0.15); border-color: #ef4444; color: #fca5a5; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.6} }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+  /* ─── WELCOME ─── */
+  .welcome-wrap {
+    max-width: 700px; margin: 48px auto; padding: 0 20px;
+  }
+  .welcome-card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    padding: 48px 40px 36px;
+    text-align: center;
+    position: relative;
+  }
+  .welcome-hero::after {
+    content:'';
+    position: absolute; bottom: -1px; left: 0; right: 0; height: 24px;
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+  }
+  .welcome-tag {
+    display: inline-block;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+  .welcome-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5em, 4vw, 2.2em);
+    color: var(--white);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .welcome-hero h1 span { color: var(--gold); }
+  .welcome-hero p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.92em;
+    max-width: 480px; margin: 0 auto;
+  }
+  .welcome-body { padding: 32px 40px 40px; }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin-bottom: 28px;
+  }
+  .meta-item {
+    background: var(--off);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .meta-item .mi-val {
+    font-size: 1.4em; font-weight: 700; color: var(--navy); line-height: 1;
+  }
+  .meta-item .mi-label { font-size: 0.72em; color: var(--muted); margin-top: 4px; }
+  .welcome-desc {
+    background: var(--gold-dim);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    font-size: 0.88em;
+    color: var(--navy);
+    margin-bottom: 28px;
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .skill-pill {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8em; color: var(--muted);
+    padding: 6px 10px;
+    background: var(--off); border-radius: 8px;
+  }
+  .skill-pill::before { content:'✦'; color: var(--gold); font-size: 0.7em; flex-shrink:0; }
+  .btn-primary {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    border: none; border-radius: 12px;
+    font-size: 1em; font-weight: 700;
+    padding: 16px 32px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(26,46,74,0.3);
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,46,74,0.3); }
+  .btn-primary:hover::after { opacity: 0.15; }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  /* ─── QUIZ SCREEN ─── */
+  .quiz-wrap {
+    max-width: 800px; margin: 0 auto; padding: 24px 20px 60px;
+  }
+
+  /* text panel */
+  .text-panel {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.25);
+  }
+  .text-panel-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .text-panel-header h3 {
+    color: var(--white); font-size: 0.88em; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .text-panel-header h3::before { content: '📖'; }
+  .toggle-btn {
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.75em; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn:hover { background: var(--gold); color: var(--navy); }
+  .text-content {
+    padding: 20px 24px;
+    font-size: 0.88em;
+    line-height: 1.8;
+    color: var(--text);
+    max-height: 320px;
+    overflow-y: auto;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    border-top: 1px solid var(--off);
+  }
+  .text-content.collapsed {
+    max-height: 0;
+    padding-top: 0; padding-bottom: 0;
+    overflow: hidden;
+  }
+  .text-content p { margin-bottom: 10px; }
+  .text-content p:last-child { margin-bottom: 0; }
+  .text-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; color: var(--navy);
+    font-size: 1em; margin-bottom: 12px;
+    text-align: center;
+  }
+  .text-author {
+    font-size: 0.78em; color: var(--muted);
+    text-align: right; margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* progress */
+  .progress-bar-wrap {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .progress-label { font-size: 0.8em; font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .progress-track {
+    flex: 1;
+    height: 8px;
+    background: var(--off);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+  .progress-pct { font-size: 0.78em; color: var(--muted); font-weight: 600; white-space: nowrap; }
+
+  /* streak */
+  .streak-banner {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1.5px solid var(--gold);
+    border-radius: 10px;
+    padding: 10px 18px;
+    margin-bottom: 16px;
+    font-size: 0.85em; font-weight: 600; color: #92400e;
+    display: flex; align-items: center; gap: 8px;
+    animation: fadeIn 0.3s ease;
+  }
+  .streak-banner.hidden { display: none; }
+
+  /* question card */
+  .question-card {
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .q-tag {
+    display: inline-block;
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-dim);
+    border-radius: 50px;
+    padding: 3px 12px;
+    margin-bottom: 12px;
+  }
+  .q-text {
+    font-size: 0.95em;
+    line-height: 1.7;
+    color: var(--navy);
+    font-weight: 500;
+    margin-bottom: 22px;
+  }
+  .q-context {
+    background: var(--off);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 0.83em;
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--off);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.88em;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.18s;
+    line-height: 1.5;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+  .option-btn.selected {
+    border-color: var(--navy);
+    background: rgba(26,46,74,0.06);
+  }
+  .option-letter {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid #cbd5e1;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.8em;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .option-btn.selected .option-letter {
+    background: var(--navy); border-color: var(--navy); color: white;
+  }
+
+  .btn-next {
+    display: block; width: 100%;
+    background: var(--gold);
+    color: var(--navy);
+    border: none; border-radius: 12px;
+    font-size: 0.95em; font-weight: 700;
+    padding: 15px 32px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(201,168,76,0.35);
+  }
+  .btn-next:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  /* ─── RESULTS ─── */
+  .results-wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
+  .result-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-hero::before {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.08);
+    top: -60px; right: -60px;
+  }
+  .result-emoji { font-size: 3em; margin-bottom: 8px; }
+  .result-hero h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3em, 3vw, 1.8em);
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .result-msg { color: rgba(255,255,255,0.78); font-size: 0.9em; max-width: 480px; margin: 0 auto 24px; }
+  .score-ring {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold) 0%, var(--gold) var(--pct), rgba(255,255,255,0.1) var(--pct));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-ring-inner {
+    width: 82px; height: 82px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .score-pct-val { font-size: 1.5em; font-weight: 700; color: var(--gold); line-height: 1; }
+  .score-pct-label { font-size: 0.6em; color: rgba(255,255,255,0.6); }
+  .result-stats {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  }
+  .r-stat {
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 20px;
+    text-align: center;
+  }
+  .r-stat-val { font-size: 1.4em; font-weight: 700; color: var(--white); }
+  .r-stat-label { font-size: 0.7em; color: rgba(255,255,255,0.6); }
+
+  .review-section { margin-bottom: 28px; }
+  .review-title {
+    font-size: 0.75em; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px; padding-left: 4px;
+  }
+  .review-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    border-left: 4px solid transparent;
+  }
+  .review-card.correct { border-left-color: var(--success); }
+  .review-card.incorrect { border-left-color: var(--error); }
+  .review-card-header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .review-card-q { font-size: 0.85em; font-weight: 600; color: var(--navy); flex: 1; line-height: 1.5; }
+  .review-badge {
+    padding: 3px 10px; border-radius: 50px;
+    font-size: 0.7em; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .review-badge.ok { background: #dcfce7; color: #166534; }
+  .review-badge.ko { background: #fee2e2; color: #991b1b; }
+  .review-answers { font-size: 0.8em; margin-bottom: 8px; }
+  .review-answers p { margin-bottom: 4px; }
+  .review-answers .ra-correct { color: var(--success); font-weight: 600; }
+  .review-answers .ra-selected { color: var(--error); }
+  .review-explanation {
+    background: var(--off);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.8em;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .result-actions {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  .btn-restart {
+    flex: 1; min-width: 160px;
+    background: var(--navy); color: var(--white);
+    border: none; border-radius: 12px;
+    padding: 14px 24px; font-size: 0.9em; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(26,46,74,0.25);
+  }
+  .btn-restart:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width: 600px) {
+    .welcome-body { padding: 24px 20px 28px; }
+    .welcome-hero { padding: 36px 24px 28px; }
+    .question-card { padding: 20px 18px; }
+    .result-hero { padding: 28px 20px; }
+    .result-actions { flex-direction: column; }
+    .btn-restart { min-width: 100%; }
+    .header { padding: 12px 16px; }
+  }
+
+  /* scrollbar */
+  .text-content::-webkit-scrollbar { width: 5px; }
+  .text-content::-webkit-scrollbar-track { background: var(--off); }
+  .text-content::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 50px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">I</div>
+    <div>
+      <div class="header-title">Instituto Innova</div>
+      <div class="header-sub">Validación del Bachillerato</div>
+    </div>
+  </div>
+  <div class="timer-badge" id="timerBadge">
+    <span>⏱</span><span id="timerDisplay">20:00</span>
+  </div>
+</header>
+
+<!-- ══════ SCREEN 1: WELCOME ══════ -->
+<div class="screen active" id="screenWelcome">
+  <div class="welcome-wrap">
+    <div class="welcome-card">
+      <div class="welcome-hero">
+        <div class="welcome-tag">Lectura Crítica · Temática 5</div>
+        <h1>Vocabulario <span>Contextual</span></h1>
+        <p>Simulacro interactivo tipo ICFES para fortalecer tu comprensión léxica y análisis textual.</p>
+      </div>
+      <div class="welcome-body">
+        <div class="meta-grid">
+          <div class="meta-item"><div class="mi-val">11</div><div class="mi-label">Preguntas</div></div>
+          <div class="meta-item"><div class="mi-val">20 min</div><div class="mi-label">Tiempo límite</div></div>
+          <div class="meta-item"><div class="mi-val">Tipo I</div><div class="mi-label">Modalidad</div></div>
+          <div class="meta-item"><div class="mi-val">+Bonus</div><div class="mi-label">Sistema de racha</div></div>
+        </div>
+        <div class="welcome-desc">
+          📌 Lee con atención el texto base antes de responder cada pregunta. Puedes consultarlo en cualquier momento durante el ejercicio usando el panel desplegable.
+        </div>
+        <div class="skills-grid">
+          <div class="skill-pill">Significado contextual</div>
+          <div class="skill-pill">Inferencia de significado</div>
+          <div class="skill-pill">Sinónimos y antónimos</div>
+          <div class="skill-pill">Polisemia y lenguaje figurado</div>
+          <div class="skill-pill">Connotación y denotación</div>
+          <div class="skill-pill">Registro lingüístico</div>
+          <div class="skill-pill">Relaciones léxicas</div>
+          <div class="skill-pill">Errores comunes</div>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()"><span>▶ Iniciar actividad</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SCREEN 2: QUIZ ══════ -->
+<div class="screen" id="screenQuiz">
+  <div class="quiz-wrap">
+
+    <!-- Text panel -->
+    <div class="text-panel">
+      <div class="text-panel-header" onclick="toggleText()">
+        <h3>Texto base del simulacro</h3>
+        <button class="toggle-btn" id="toggleBtnLabel">▼ Mostrar texto</button>
+      </div>
+      <div class="text-content collapsed" id="textContent">
+        <div class="text-title">¿Es arrogante la ciencia?</div>
+        <p>Es totalmente cierto que la ciencia moderna pretende llegar a un conocimiento verdadero, y es también cierto que ha tenido un éxito extraordinario en esa pretensión. Pero de igual manera es totalmente falso que pretende ser dueña de una verdad absoluta, ni siquiera que es posible llegar a ella.</p>
+        <p>La ciencia moderna consiste en una metodología que permite eficientemente distinguir entre la apariencia y la verdad y por tanto tiene la capacidad para acercarse a ésta última, por un camino relativamente directo, sin los retrocesos que en otros campos han producido creencias irracionales, dogmas, ideologías e intereses de grupo.</p>
+        <p>El texto anterior tiene la intención de dar a conocer al público NO especializado las razones por las cuales puede considerarse que un conocimiento es científico. En este sentido, podemos suponer que el medio de comunicación (suplemento dominical del periódico El Tiempo) sirve de enlace entre el mundo de la ciencia y el mundo de la opinión pública, constituyéndose en el soporte de una información que permitiría a las personas elegir entre diversos conocimientos según su acercamiento a la verdad.</p>
+        <p>Esto porque se supone que el autor del artículo prueba que es posible distinguir entre superchería y verdad. Podemos sin embargo, hacer una pregunta: ¿quién prueba que lo que el autor dice sobre la verdad es verdad?</p>
+        <div class="text-author">— Moisés Wasserman, Lecturas Dominicales de El Tiempo, 27 de junio de 1999.</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar-wrap">
+      <span class="progress-label" id="progressLabel">Pregunta 1 de 11</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+
+    <!-- Streak banner -->
+    <div class="streak-banner hidden" id="streakBanner">🔥 <span id="streakText"></span></div>
+
+    <!-- Question card -->
+    <div class="question-card" id="questionCard">
+      <div class="q-tag" id="qTag">Subtemática</div>
+      <div class="q-text" id="qText">Texto de la pregunta</div>
+      <div class="q-context" id="qContext" style="display:none"></div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+
+    <button class="btn-next" id="btnNext" disabled onclick="nextQuestion()">Siguiente pregunta →</button>
+  </div>
+</div>
+
+<!-- ══════ SCREEN 3: RESULTS ══════ -->
+<div class="screen" id="screenResults">
+  <div class="results-wrap">
+    <div class="result-hero" id="resultHero">
+      <div class="result-emoji" id="resultEmoji"></div>
+      <div class="score-ring" id="scoreRing">
+        <div class="score-ring-inner">
+          <div class="score-pct-val" id="scorePctVal">0%</div>
+          <div class="score-pct-label">logrado</div>
+        </div>
+      </div>
+      <h2 id="resultTitle"></h2>
+      <p class="result-msg" id="resultMsg"></p>
+      <div class="result-stats">
+        <div class="r-stat"><div class="r-stat-val" id="statAciertos">0</div><div class="r-stat-label">✅ Aciertos</div></div>
+        <div class="r-stat"><div class="r-stat-val" id="statErrores">0</div><div class="r-stat-label">❌ Errores</div></div>
+        <div class="r-stat"><div class="r-stat-val" id="statBonus">+0</div><div class="r-stat-label">⭐ Bonus racha</div></div>
+        <div class="r-stat"><div class="r-stat-val" id="statTotal">0</div><div class="r-stat-label">🏆 Puntos totales</div></div>
+      </div>
+    </div>
+
+    <div class="review-section">
+      <div class="review-title">Retroalimentación por pregunta</div>
+      <div id="reviewContainer"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-restart" onclick="restartQuiz()">🔄 Reiniciar simulacro</button>
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=662"
+         style="flex:1;min-width:160px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'Inter',sans-serif;font-weight:700;font-size:0.9em;padding:14px 24px;border-radius:12px;text-decoration:none;letter-spacing:0.03em;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// TIMER CONFIG (seconds)
+const QUIZ_TIME = 20 * 60;
+// ═══════════════════════════════════════════════
+
+const QUESTIONS = [
+  {
+    tag: "Significado contextual",
+    text: 'En el texto, el autor afirma que la ciencia moderna "pretende llegar a un conocimiento verdadero". En este contexto, ¿qué significa la palabra <strong>pretende</strong>?',
+    context: '"Es totalmente cierto que la ciencia moderna pretende llegar a un conocimiento verdadero, y es también cierto que ha tenido un éxito extraordinario en esa pretensión."',
+    options: [
+      { letter: "A", text: "Finge o aparenta algo que no es" },
+      { letter: "B", text: "Aspira o se propone alcanzar algo" },
+      { letter: "C", text: "Exige o reclamó algo con arrogancia" },
+      { letter: "D", text: "Ignora los límites del conocimiento" }
+    ],
+    correct: 1,
+    explanation: "En este contexto, 'pretende' significa 'aspira' o 'tiene como propósito'. El autor no usa la palabra con sentido negativo (fingir), sino para indicar la meta de la ciencia. Lo confirma el complemento 'ha tenido un éxito extraordinario en esa pretensión', donde 'pretensión' equivale a 'intento'."
+  },
+  {
+    tag: "Inferencia de significado",
+    text: 'Según el contexto del texto, ¿qué significa la expresión <strong>"superchería"</strong>?',
+    context: '"...el autor del artículo prueba que es posible distinguir entre superchería y verdad."',
+    options: [
+      { letter: "A", text: "Un tipo de conocimiento científico comprobado" },
+      { letter: "B", text: "Una creencia popular con base empírica" },
+      { letter: "C", text: "Engaño o conocimiento falso que se hace pasar por cierto" },
+      { letter: "D", text: "Metodología alternativa a la ciencia moderna" }
+    ],
+    correct: 2,
+    explanation: "El texto opone 'superchería' a 'verdad', lo que indica que el término alude a algo falso o engañoso. Además, el párrafo anterior menciona 'creencias irracionales, dogmas, ideologías' como obstáculos al conocimiento, reforzando que superchería equivale a engaño o falsedad presentada como verdad."
+  },
+  {
+    tag: "Sinónimos contextuales",
+    text: '¿Cuál de las siguientes palabras podría sustituir a <strong>"metodología"</strong> en el texto sin alterar su sentido?',
+    context: '"La ciencia moderna consiste en una metodología que permite eficientemente distinguir entre la apariencia y la verdad..."',
+    options: [
+      { letter: "A", text: "Ideología" },
+      { letter: "B", text: "Procedimiento" },
+      { letter: "C", text: "Creencia" },
+      { letter: "D", text: "Dogma" }
+    ],
+    correct: 1,
+    explanation: "En el contexto, 'metodología' hace referencia al conjunto de métodos o procedimientos que usa la ciencia. 'Procedimiento' es el sinónimo más adecuado. 'Ideología', 'creencia' y 'dogma' son justamente los factores que el texto opone a la ciencia como obstáculos para llegar a la verdad."
+  },
+  {
+    tag: "Antónimos contextuales",
+    text: '¿Cuál sería el antónimo más apropiado de <strong>"retrocesos"</strong> tal como se usa en el texto?',
+    context: '"...por un camino relativamente directo, sin los retrocesos que en otros campos han producido creencias irracionales, dogmas, ideologías e intereses de grupo."',
+    options: [
+      { letter: "A", text: "Dudas" },
+      { letter: "B", text: "Avances" },
+      { letter: "C", text: "Errores" },
+      { letter: "D", text: "Tradiciones" }
+    ],
+    correct: 1,
+    explanation: "En el texto, 'retrocesos' implica obstáculos o regresiones que impiden el progreso del conocimiento. Su antónimo directo, en este contexto, es 'avances': movimiento hacia adelante en la comprensión de la realidad. Las demás opciones no son opuestos semánticos apropiados."
+  },
+  {
+    tag: "Polisemia",
+    text: 'La palabra <strong>"campo"</strong> aparece en el texto: "sin los retrocesos que en <em>otros campos</em> han producido creencias irracionales". ¿Con cuál de estos significados se usa?',
+    context: '"...por un camino relativamente directo, sin los retrocesos que en otros campos han producido creencias irracionales..."',
+    options: [
+      { letter: "A", text: "Terreno agrícola destinado al cultivo" },
+      { letter: "B", text: "Espacio físico abierto fuera de la ciudad" },
+      { letter: "C", text: "Área o dominio del conocimiento humano" },
+      { letter: "D", text: "Campo magnético o energético en la física" }
+    ],
+    correct: 2,
+    explanation: "La palabra 'campo' es polisémica. En este contexto, se refiere a 'área o dominio del saber', es decir, otras disciplinas del conocimiento humano (filosofía, religión, política) donde los dogmas y creencias irracionales han generado obstáculos. No se refiere a espacio físico ni a fenómenos magnéticos."
+  },
+  {
+    tag: "Connotación y denotación",
+    text: '¿En cuál de los siguientes usos la palabra <strong>"verdad"</strong> posee una carga connotativa (más allá de su significado literal)?',
+    options: [
+      { letter: "A", text: '"La ciencia pretende llegar a un conocimiento verdadero"' },
+      { letter: "B", text: '"La verdad absoluta no existe según el autor"' },
+      { letter: "C", text: '"¿Quién prueba que lo que el autor dice sobre la verdad es verdad?" — aquí la repetición cuestiona la autoridad del discurso científico' },
+      { letter: "D", text: '"La ciencia distingue entre la apariencia y la verdad"' }
+    ],
+    correct: 2,
+    explanation: "La opción C presenta un uso connotativo: la repetición de 'verdad' no es redundante, sino una estrategia retórica que cuestiona la legitimidad del propio discurso científico. El autor usa la palabra para sembrar duda sobre quién tiene autoridad para definir la verdad, dándole una carga argumentativa e irónica."
+  },
+  {
+    tag: "Registro lingüístico",
+    text: '¿Cuál es el registro lingüístico predominante en el texto de Wasserman?',
+    options: [
+      { letter: "A", text: "Coloquial, pues usa expresiones propias de la conversación cotidiana" },
+      { letter: "B", text: "Académico-formal, orientado a un público general con intención divulgativa" },
+      { letter: "C", text: "Literario, pues emplea recursos estéticos y narrativos propios de la ficción" },
+      { letter: "D", text: "Técnico-especializado, con terminología exclusiva para científicos" }
+    ],
+    correct: 1,
+    explanation: "El texto usa un registro académico-divulgativo: emplea vocabulario preciso ('metodología', 'dogmas', 'ideologías') pero con intención de llegar a lectores no especializados. Es el tipo de lenguaje propio de un suplemento dominical de periódico, que busca informar con rigor pero de manera accesible."
+  },
+  {
+    tag: "Intención comunicativa",
+    text: '¿Cuál es la principal intención comunicativa del texto de Wasserman según el contexto en que fue publicado?',
+    options: [
+      { letter: "A", text: "Entretener al lector con anécdotas sobre el mundo científico" },
+      { letter: "B", text: "Divulgar y defender el papel de la ciencia ante el público general" },
+      { letter: "C", text: "Refutar todas las teorías filosóficas sobre el conocimiento" },
+      { letter: "D", text: "Promover la desconfianza hacia los medios de comunicación" }
+    ],
+    correct: 1,
+    explanation: "El texto fue publicado en un suplemento dominical con el fin de explicar al público no especializado qué hace científico a un conocimiento y por qué la ciencia es un método confiable. La intención es divulgativa y argumentativa: defender la ciencia sin afirmar que posee la verdad absoluta."
+  },
+  {
+    tag: "Lenguaje figurado",
+    text: 'El autor menciona que la ciencia avanza "por un camino relativamente directo". Esta expresión es un ejemplo de:',
+    options: [
+      { letter: "A", text: "Hipérbole, porque exagera la velocidad del avance científico" },
+      { letter: "B", text: "Metáfora, porque usa 'camino' para representar el proceso del conocimiento" },
+      { letter: "C", text: "Ironía, porque el autor no cree que la ciencia sea directa" },
+      { letter: "D", text: "Metonimia, porque 'camino' sustituye el nombre de un científico famoso" }
+    ],
+    correct: 1,
+    explanation: "El autor usa 'camino' de forma metafórica para referirse al proceso de construcción del conocimiento científico. No hay un camino físico real; la palabra representa un trayecto conceptual. Se trata de una metáfora orientacional, muy común en el lenguaje académico para hablar de progreso o avance."
+  },
+  {
+    tag: "Relaciones léxicas y cohesión",
+    text: '¿Qué función cohesiva cumple la expresión <strong>"de igual manera"</strong> en el siguiente fragmento?',
+    context: '"Es totalmente cierto que la ciencia moderna pretende llegar a un conocimiento verdadero, y es también cierto que ha tenido un éxito extraordinario en esa pretensión. Pero de igual manera es totalmente falso que pretende ser dueña de una verdad absoluta..."',
+    options: [
+      { letter: "A", text: "Introduce una causa que explica lo anterior" },
+      { letter: "B", text: "Señala una consecuencia de lo dicho antes" },
+      { letter: "C", text: "Agrega un elemento que contrasta o equilibra la idea previa" },
+      { letter: "D", text: "Resume las ideas del párrafo anterior" }
+    ],
+    correct: 2,
+    explanation: "'De igual manera' funciona como un conector aditivo que agrega una idea de igual peso a la afirmación anterior, pero con carácter contrastivo: el autor afirma que es 'igualmente cierto' que algo es falso, equilibrando las afirmaciones positivas con una negación. Esto construye la cohesión argumentativa del texto."
+  },
+  {
+    tag: "Errores comunes al interpretar vocabulario",
+    text: 'Un estudiante lee "verdad absoluta" y concluye que el texto afirma que la ciencia sí posee esa verdad. ¿Qué error de interpretación cometió?',
+    options: [
+      { letter: "A", text: "Confundió el significado denotativo con el connotativo de 'absoluta'" },
+      { letter: "B", text: "No atendió la negación explícita del texto, que descarta que la ciencia posea esa verdad" },
+      { letter: "C", text: "Ignoró que 'verdad' y 'absoluta' pertenecen a campos semánticos distintos" },
+      { letter: "D", text: "Confundió el registro coloquial con el académico" }
+    ],
+    correct: 1,
+    explanation: "El texto dice explícitamente: 'es totalmente falso que pretende ser dueña de una verdad absoluta'. El error del estudiante fue no identificar la negación que modifica directamente la frase 'verdad absoluta'. Este es uno de los errores más frecuentes: leer palabras clave sin considerar los elementos gramaticales que las acompañan y alteran su sentido."
+  }
+];
+
+// ─── STATE ───
+let shuffledQ = [];
+let currentIdx = 0;
+let score = 0;
+let bonusTotal = 0;
+let streak = 0;
+let answers = []; // {question, selected, correct, isCorrect}
+let timerSec = QUIZ_TIME;
+let timerInterval = null;
+let textVisible = false;
+
+// ─── HELPERS ───
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── TIMER ───
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSec = QUIZ_TIME;
+  renderTimer();
+  timerInterval = setInterval(() => {
+    timerSec--;
+    renderTimer();
+    if (timerSec <= 0) {
+      clearInterval(timerInterval);
+      showResults();
+    }
+  }, 1000);
+}
+function renderTimer() {
+  const m = Math.floor(timerSec / 60).toString().padStart(2, '0');
+  const s = (timerSec % 60).toString().padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  const badge = document.getElementById('timerBadge');
+  badge.classList.toggle('warning', timerSec <= 120);
+}
+
+// ─── QUIZ START ───
+function startQuiz() {
+  shuffledQ = shuffle(QUESTIONS);
+  currentIdx = 0;
+  score = 0;
+  bonusTotal = 0;
+  streak = 0;
+  answers = [];
+  textVisible = false;
+  // Reset text panel
+  document.getElementById('textContent').classList.add('collapsed');
+  document.getElementById('toggleBtnLabel').textContent = '▼ Mostrar texto';
+  showScreen('screenQuiz');
+  startTimer();
+  renderQuestion();
+}
+
+// ─── RENDER QUESTION ───
+function renderQuestion() {
+  const q = shuffledQ[currentIdx];
+  const total = shuffledQ.length;
+
+  // progress
+  const pct = Math.round((currentIdx / total) * 100);
+  document.getElementById('progressLabel').textContent = `Pregunta ${currentIdx + 1} de ${total}`;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  // streak banner
+  const banner = document.getElementById('streakBanner');
+  if (streak >= 5) {
+    banner.classList.remove('hidden');
+    document.getElementById('streakText').textContent = `¡Racha de ${streak}! 🌟 +3 puntos de bonificación — ¡desempeño excepcional!`;
+  } else if (streak >= 3) {
+    banner.classList.remove('hidden');
+    document.getElementById('streakText').textContent = `¡Racha de ${streak} respuestas correctas! +1 punto de bonificación`;
+  } else {
+    banner.classList.add('hidden');
+  }
+
+  document.getElementById('qTag').textContent = q.tag;
+  document.getElementById('qText').innerHTML = q.text;
+
+  const ctxEl = document.getElementById('qContext');
+  if (q.context) {
+    ctxEl.style.display = 'block';
+    ctxEl.innerHTML = q.context;
+  } else {
+    ctxEl.style.display = 'none';
+  }
+
+  // options (shuffled)
+  const opts = shuffle(q.options.map((o, i) => ({ ...o, origIdx: i })));
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  opts.forEach((opt) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.dataset.origIdx = opt.origIdx;
+    btn.innerHTML = `<div class="option-letter">${opt.letter}</div><div>${opt.text}</div>`;
+    btn.addEventListener('click', () => selectOption(btn, opt.origIdx));
+    container.appendChild(btn);
+  });
+
+  document.getElementById('btnNext').disabled = true;
+}
+
+// ─── SELECT OPTION ───
+function selectOption(btn, origIdx) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  btn.dataset.selected = '1';
+  document.getElementById('btnNext').disabled = false;
+  document.getElementById('btnNext')._selectedIdx = origIdx;
+}
+
+// ─── NEXT QUESTION ───
+function nextQuestion() {
+  const q = shuffledQ[currentIdx];
+  const selectedIdx = parseInt(document.getElementById('btnNext')._selectedIdx);
+  const isCorrect = selectedIdx === q.correct;
+
+  // Find selected option letter
+  const selectedOption = q.options[selectedIdx];
+  const correctOption = q.options[q.correct];
+
+  answers.push({
+    question: q.text,
+    tag: q.tag,
+    selectedText: selectedOption.text,
+    correctText: correctOption.text,
+    isCorrect,
+    explanation: q.explanation
+  });
+
+  if (isCorrect) {
+    score++;
+    streak++;
+    if (streak >= 5) { bonusTotal += 3; }
+    else if (streak >= 3) { bonusTotal += 1; }
+  } else {
+    streak = 0;
+  }
+
+  currentIdx++;
+  if (currentIdx >= shuffledQ.length) {
+    clearInterval(timerInterval);
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ─── RESULTS ───
+function showResults() {
+  clearInterval(timerInterval);
+  showScreen('screenResults');
+
+  const total = shuffledQ.length;
+  const pct = Math.round((score / total) * 100);
+  const totalPts = score + bonusTotal;
+
+  document.getElementById('scorePctVal').textContent = pct + '%';
+  document.getElementById('scoreRing').style.setProperty('--pct', pct + '%');
+
+  document.getElementById('statAciertos').textContent = score;
+  document.getElementById('statErrores').textContent = total - score;
+  document.getElementById('statBonus').textContent = '+' + bonusTotal;
+  document.getElementById('statTotal').textContent = totalPts;
+
+  let emoji, title, msg;
+  if (pct >= 80) {
+    emoji = '🏆'; title = '¡Desempeño excelente!';
+    msg = 'Tienes un dominio sobresaliente del vocabulario contextual. Tu capacidad de análisis textual está al nivel que exige el ICFES. ¡Sigue así!';
+  } else if (pct >= 60) {
+    emoji = '📈'; title = 'Buen progreso';
+    msg = 'Vas por el camino correcto. Hay aspectos a reforzar, especialmente en polisemia y lenguaje figurado. Revisa la retroalimentación y practica de nuevo.';
+  } else {
+    emoji = '💪'; title = '¡Sigue practicando!';
+    msg = 'Este resultado es un punto de partida. Cada error es una oportunidad de aprendizaje. Lee la retroalimentación con calma y vuelve a intentarlo.';
+  }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultMsg').textContent = msg;
+
+  // Review
+  const container = document.getElementById('reviewContainer');
+  container.innerHTML = '';
+  answers.forEach((a, i) => {
+    const card = document.createElement('div');
+    card.className = `review-card ${a.isCorrect ? 'correct' : 'incorrect'}`;
+    card.innerHTML = `
+      <div class="review-card-header">
+        <div class="review-card-q"><strong>P${i+1}.</strong> ${a.tag} — ${a.question.replace(/<[^>]+>/g,'')}</div>
+        <span class="review-badge ${a.isCorrect ? 'ok' : 'ko'}">${a.isCorrect ? '✓ Correcto' : '✗ Incorrecto'}</span>
+      </div>
+      <div class="review-answers">
+        ${!a.isCorrect ? `<p class="ra-selected">Tu respuesta: ${a.selectedText}</p>` : ''}
+        <p class="ra-correct">Respuesta correcta: ${a.correctText}</p>
+      </div>
+      <div class="review-explanation">💡 ${a.explanation}</div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Mobile redirect
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=662';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=662';
+  if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    btn.href = appUrl;
+  } else {
+    btn.href = cursoUrl;
+  }
+}
+
+// ─── RESTART ───
+function restartQuiz() {
+  showScreen('screenWelcome');
+}
+
+// ─── TEXT TOGGLE ───
+function toggleText() {
+  textVisible = !textVisible;
+  const content = document.getElementById('textContent');
+  const btn = document.getElementById('toggleBtnLabel');
+  if (textVisible) {
+    content.classList.remove('collapsed');
+    btn.textContent = '▲ Ocultar texto';
+  } else {
+    content.classList.add('collapsed');
+    btn.textContent = '▼ Mostrar texto';
+  }
+}
+</script>
+</body>
+</html>

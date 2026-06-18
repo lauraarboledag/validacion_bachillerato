@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simulacro – Intención Comunicativa | Validación del Bachillerato</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --azul: #1a2e4a;
+    --azul-medio: #243d62;
+    --azul-claro: #2e5080;
+    --dorado: #c9a84c;
+    --dorado-claro: #e2c270;
+    --dorado-bg: #fdf8ee;
+    --blanco: #ffffff;
+    --gris-suave: #f4f6f9;
+    --gris-medio: #dde3ec;
+    --gris-texto: #5a6680;
+    --verde: #1e8a5e;
+    --verde-bg: #eaf7f2;
+    --rojo: #c0392b;
+    --rojo-bg: #fdecea;
+    --radio: 14px;
+    --sombra: 0 4px 24px rgba(26,46,74,0.10);
+    --sombra-hover: 0 8px 32px rgba(26,46,74,0.18);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gris-suave);
+    color: var(--azul);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+    color: var(--blanco);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-logo {
+    width: 36px; height: 36px;
+    background: var(--dorado);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-title { font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
+  .header-title span { display: block; color: var(--dorado-claro); font-size: 0.72rem; font-weight: 400; }
+  .timer-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid var(--dorado);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dorado-claro);
+    letter-spacing: 1px;
+    min-width: 90px;
+    text-align: center;
+    transition: background 0.3s;
+  }
+  .timer-badge.urgente { background: rgba(192,57,43,0.25); border-color: #e74c3c; color: #ff7675; animation: pulseTimer 1s infinite; }
+  @keyframes pulseTimer { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  /* ── CONTENEDOR PRINCIPAL ── */
+  .main { max-width: 860px; margin: 0 auto; padding: 28px 16px 60px; }
+
+  /* ── PANTALLAS ── */
+  .screen { display: none; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── BIENVENIDA ── */
+  .welcome-card {
+    background: var(--blanco);
+    border-radius: 20px;
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-claro) 100%);
+    padding: 40px 32px 32px;
+    text-align: center;
+    position: relative;
+  }
+  .welcome-hero::after {
+    content:'';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 32px;
+    background: var(--blanco);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .welcome-badge {
+    display: inline-block;
+    background: var(--dorado);
+    color: var(--azul);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+  .welcome-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: var(--blanco);
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .welcome-hero h1 em { color: var(--dorado-claro); font-style: normal; }
+  .welcome-hero p { color: rgba(255,255,255,0.8); font-size: 0.92rem; }
+  .welcome-body { padding: 36px 32px; }
+  .welcome-desc {
+    color: var(--gris-texto);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .info-card {
+    background: var(--gris-suave);
+    border: 1.5px solid var(--gris-medio);
+    border-radius: var(--radio);
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .info-card .ic { font-size: 1.8rem; margin-bottom: 6px; }
+  .info-card .val { font-size: 1.2rem; font-weight: 700; color: var(--azul); }
+  .info-card .lbl { font-size: 0.75rem; color: var(--gris-texto); margin-top: 2px; }
+  .instrucciones {
+    background: var(--dorado-bg);
+    border-left: 4px solid var(--dorado);
+    border-radius: 0 var(--radio) var(--radio) 0;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+  }
+  .instrucciones h3 { font-size: 0.85rem; font-weight: 700; color: var(--azul); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .instrucciones ul { padding-left: 18px; }
+  .instrucciones li { font-size: 0.88rem; color: var(--gris-texto); line-height: 1.8; }
+
+  /* ── BOTONES ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--dorado) 0%, #e8b93d 100%);
+    color: var(--azul);
+    box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+    width: 100%;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.5); }
+  .btn-secondary {
+    background: var(--gris-suave);
+    color: var(--azul);
+    border: 1.5px solid var(--gris-medio);
+  }
+  .btn-secondary:hover { background: var(--gris-medio); }
+  .btn-outline {
+    background: transparent;
+    color: var(--azul);
+    border: 2px solid var(--azul);
+  }
+  .btn-outline:hover { background: var(--azul); color: var(--blanco); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  /* ── TEXTO COLAPSABLE ── */
+  .texto-panel {
+    background: var(--blanco);
+    border-radius: 16px;
+    box-shadow: var(--sombra);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .texto-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+    color: var(--blanco);
+    gap: 12px;
+    user-select: none;
+    transition: opacity 0.2s;
+  }
+  .texto-toggle:hover { opacity: 0.92; }
+  .texto-toggle-left { display: flex; align-items: center; gap: 10px; }
+  .texto-toggle-icon { font-size: 1.1rem; }
+  .texto-toggle-title { font-size: 0.9rem; font-weight: 600; }
+  .texto-toggle-hint { font-size: 0.75rem; color: var(--dorado-claro); }
+  .texto-chevron { font-size: 1rem; transition: transform 0.3s; }
+  .texto-panel.abierto .texto-chevron { transform: rotate(180deg); }
+  .texto-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .texto-panel.abierto .texto-body { max-height: 9999px; }
+  .texto-inner {
+    padding: 24px 28px;
+    border-top: 3px solid var(--dorado);
+  }
+  .texto-inner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--azul);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gris-medio);
+  }
+  .texto-inner blockquote {
+    border-left: 4px solid var(--dorado);
+    background: var(--dorado-bg);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 22px;
+    margin: 14px 0;
+    font-style: italic;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #3a4a60;
+  }
+  .texto-inner .fuente {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--gris-texto);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ── PROGRESO ── */
+  .progreso-wrap { margin-bottom: 18px; }
+  .progreso-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--gris-texto);
+    margin-bottom: 6px;
+  }
+  .progreso-bar {
+    height: 8px;
+    background: var(--gris-medio);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+  .progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dorado), #e8b93d);
+    border-radius: 50px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── RACHA ── */
+  .racha-banner {
+    display: none;
+    background: linear-gradient(135deg, #1e8a5e, #27ae60);
+    color: var(--blanco);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    animation: rachaIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes rachaIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+  .racha-banner.visible { display: block; }
+  .racha-banner.epica { background: linear-gradient(135deg, #8e44ad, #9b59b6); }
+
+  /* ── TARJETA DE PREGUNTA ── */
+  .pregunta-card {
+    background: var(--blanco);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+  .pregunta-header {
+    background: var(--azul);
+    padding: 18px 26px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .pregunta-num {
+    background: var(--dorado);
+    color: var(--azul);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 50px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .pregunta-texto {
+    font-size: 0.96rem;
+    font-weight: 600;
+    color: var(--blanco);
+    line-height: 1.5;
+  }
+  .pregunta-fragmento {
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid var(--dorado);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+  }
+  .opciones { padding: 24px 26px; display: flex; flex-direction: column; gap: 11px; }
+  .opcion {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 14px 18px;
+    border: 2px solid var(--gris-medio);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: var(--blanco);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--azul);
+  }
+  .opcion:hover { border-color: var(--dorado); background: var(--dorado-bg); }
+  .opcion.seleccionada { border-color: var(--azul-claro); background: #edf3fb; }
+  .opcion.correcta { border-color: var(--verde); background: var(--verde-bg); }
+  .opcion.incorrecta { border-color: var(--rojo); background: var(--rojo-bg); }
+  .opcion-letra {
+    min-width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gris-medio);
+    color: var(--azul);
+    font-weight: 800;
+    font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .opcion.seleccionada .opcion-letra { background: var(--azul); color: var(--blanco); }
+  .opcion.correcta .opcion-letra { background: var(--verde); color: var(--blanco); }
+  .opcion.incorrecta .opcion-letra { background: var(--rojo); color: var(--blanco); }
+  .pregunta-footer { padding: 0 26px 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ── FEEDBACK INMEDIATO ── */
+  .feedback-inmediato {
+    display: none;
+    margin: 0 26px 20px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 0.87rem;
+    line-height: 1.6;
+  }
+  .feedback-inmediato.ok { background: var(--verde-bg); border-left: 4px solid var(--verde); color: #155c40; }
+  .feedback-inmediato.mal { background: var(--rojo-bg); border-left: 4px solid var(--rojo); color: #7b241c; }
+  .feedback-inmediato.visible { display: block; }
+
+  /* ── PANTALLA FINAL ── */
+  .resultado-card {
+    background: var(--blanco);
+    border-radius: 20px;
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+  .resultado-hero {
+    background: linear-gradient(135deg, var(--azul), var(--azul-claro));
+    padding: 40px 28px;
+    text-align: center;
+  }
+  .resultado-emoji { font-size: 3.5rem; margin-bottom: 12px; }
+  .resultado-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    color: var(--blanco);
+    margin-bottom: 6px;
+  }
+  .resultado-subtitulo { color: rgba(255,255,255,0.75); font-size: 0.9rem; }
+  .resultado-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-bottom: 1px solid var(--gris-medio);
+  }
+  .stat-box {
+    padding: 24px 12px;
+    text-align: center;
+    border-right: 1px solid var(--gris-medio);
+  }
+  .stat-box:last-child { border-right: none; }
+  .stat-box .val { font-size: 1.8rem; font-weight: 800; color: var(--azul); }
+  .stat-box .val.dorado { color: var(--dorado); }
+  .stat-box .val.verde { color: var(--verde); }
+  .stat-box .val.rojo { color: var(--rojo); }
+  .stat-box .lbl { font-size: 0.72rem; color: var(--gris-texto); margin-top: 3px; }
+  .mensaje-motivacional {
+    margin: 24px 28px;
+    padding: 18px 22px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    text-align: center;
+    font-weight: 500;
+  }
+  .msg-alto { background: #eaf7f2; color: #1e5c42; border: 1.5px solid #1e8a5e; }
+  .msg-medio { background: #fdf8ee; color: #7a5a15; border: 1.5px solid var(--dorado); }
+  .msg-bajo { background: #fdecea; color: #7b241c; border: 1.5px solid #c0392b; }
+  .revision-titulo {
+    padding: 0 28px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gris-texto);
+    border-top: 1px solid var(--gris-medio);
+    padding-top: 24px;
+  }
+  .revision-item {
+    margin: 0 28px 14px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid var(--gris-medio);
+  }
+  .revision-item.ok { border-color: var(--verde); }
+  .revision-item.mal { border-color: var(--rojo); }
+  .revision-header {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 13px 16px;
+    cursor: pointer;
+    font-size: 0.87rem;
+    font-weight: 600;
+    line-height: 1.4;
+    background: var(--gris-suave);
+  }
+  .revision-item.ok .revision-header { background: var(--verde-bg); color: #155c40; }
+  .revision-item.mal .revision-header { background: var(--rojo-bg); color: #7b241c; }
+  .revision-icon { font-size: 1rem; flex-shrink: 0; }
+  .revision-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .revision-item.abierto .revision-body { max-height: 500px; }
+  .revision-body-inner {
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    border-top: 1px solid var(--gris-medio);
+  }
+  .revision-body-inner strong { color: var(--azul); }
+  .resultado-acciones { padding: 24px 28px 32px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .main { padding: 16px 10px 50px; }
+    .welcome-body { padding: 24px 18px; }
+    .welcome-hero { padding: 30px 20px 24px; }
+    .texto-inner { padding: 18px 16px; }
+    .opciones { padding: 16px; }
+    .pregunta-header { padding: 16px 18px; }
+    .pregunta-footer { padding: 0 16px 18px; }
+    .feedback-inmediato { margin: 0 16px 16px; }
+    .resultado-stats { grid-template-columns: repeat(2, 1fr); }
+    .stat-box:nth-child(2) { border-right: none; }
+    .stat-box:nth-child(3) { border-top: 1px solid var(--gris-medio); }
+    .revision-item { margin: 0 14px 12px; }
+    .resultado-acciones { padding: 20px 14px 28px; }
+    .mensaje-motivacional { margin: 16px; }
+  }
+  .bono-banner {
+    display: none;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--verde);
+    font-weight: 700;
+    margin-bottom: 6px;
+    animation: fadeIn 0.3s;
+  }
+  .bono-banner.visible { display: block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">📖</div>
+    <div class="header-title">
+      Lectura Crítica
+      <span>Intención Comunicativa · Temática 6</span>
+    </div>
+  </div>
+  <div class="timer-badge" id="timer-display">20:00</div>
+</header>
+
+<main class="main">
+
+  <!-- ════ PANTALLA 1: BIENVENIDA ════ -->
+  <section class="screen active" id="screen-welcome">
+    <div class="welcome-card">
+      <div class="welcome-hero">
+        <div class="welcome-badge">Validación del Bachillerato</div>
+        <h1>Simulacro de<br><em>Intención Comunicativa</em></h1>
+        <p>Basado en fragmento del Quijote · Tipo ICFES</p>
+      </div>
+      <div class="welcome-body">
+        <p class="welcome-desc">
+          Lee con atención el texto base tomado de un simulacro ICFES real y responde las preguntas evaluando tu comprensión de la <strong>intención comunicativa</strong> del autor.
+        </p>
+        <div class="info-grid">
+          <div class="info-card"><div class="ic">📝</div><div class="val">10</div><div class="lbl">Preguntas</div></div>
+          <div class="info-card"><div class="ic">⏱️</div><div class="val">20 min</div><div class="lbl">Tiempo límite</div></div>
+          <div class="info-card"><div class="ic">🎯</div><div class="val">Único</div><div class="lbl">Una respuesta</div></div>
+          <div class="info-card"><div class="ic">🔀</div><div class="val">Aleatorio</div><div class="lbl">Orden mezclado</div></div>
+        </div>
+        <div class="instrucciones">
+          <h3>📋 Instrucciones</h3>
+          <ul>
+            <li>Lee el texto completo antes de responder.</li>
+            <li>Puedes consultar el texto en cualquier momento desplegando el panel.</li>
+            <li>Selecciona <strong>una sola opción</strong> por pregunta antes de continuar.</li>
+            <li>Si el tiempo termina, el sistema mostrará tus resultados automáticamente.</li>
+            <li>Al finalizar recibirás retroalimentación detallada de cada pregunta.</li>
+          </ul>
+        </div>
+        <button class="btn btn-primary" onclick="iniciarActividad()">✨ Iniciar actividad</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ PANTALLA 2: CUESTIONARIO ════ -->
+  <section class="screen" id="screen-quiz">
+
+    <!-- Texto colapsable -->
+    <div class="texto-panel" id="texto-panel">
+      <div class="texto-toggle" onclick="toggleTexto()">
+        <div class="texto-toggle-left">
+          <span class="texto-toggle-icon">📜</span>
+          <div>
+            <div class="texto-toggle-title">Texto base del simulacro</div>
+            <div class="texto-toggle-hint">Toca para leer / ocultar el texto</div>
+          </div>
+        </div>
+        <span class="texto-chevron">▼</span>
+      </div>
+      <div class="texto-body">
+        <div class="texto-inner">
+          <h2>De lo que le sucedió a Don Quijote en la entrada de Barcelona, con otras cosas que tienen más de lo verdadero que de lo discreto.</h2>
+          <blockquote>
+            "(…) Tendieron don Quijote y Sancho la vista por todas partes: vieron el mar, hasta entonces de ellos no visto; parecioles espaciosísimo y largo, harto más que las lagunas de Ruidera que en la Mancha habían visto; vieron las galeras que estaban en la playa, las cuales, abatiendo las tiendas, se descubrieron llenas de flámulas y gallardetes que tremolaban al viento y besaban y barrían el agua; dentro sonaban clarines, trompetas y chirimías que cerca y lejos llenaban el aire de suaves y belicosos acentos. Comenzaron a moverse y a hacer un modo de escaramuza por las sosegadas aguas, correspondiéndoles casi al mismo modo infinitos caballeros que de la ciudad sobre hermosos caballos y con vistosas libreas salían. Los soldados de las galeras disparaban infinita artillería, a quien respondían los que estaban en las murallas y fuertes de la ciudad y la artillería gruesa con espantoso estruendo rompía los vientos a quien respondían los cañones de crujía de las galeras. El mar alegre, la tierra jocunda, el aire claro, sólo tal vez turbio del humo de la artillería, parece que iba infundiendo y engendrando gusto súbito en todas las gentes. No podía imaginar Sancho cómo pudiesen tener tantos pies aquellos bultos que por el mar se movían. (…)"
+          </blockquote>
+          <p class="fuente">Fragmento de <em>Don Quijote de la Mancha</em>, Miguel de Cervantes. Tomado de: Examen Universidad Nacional, 2006-1</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progreso -->
+    <div class="progreso-wrap">
+      <div class="progreso-label">
+        <span id="progreso-texto">Pregunta 1 de 10</span>
+        <span id="progreso-pct">0%</span>
+      </div>
+      <div class="progreso-bar"><div class="progreso-fill" id="progreso-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Racha -->
+    <div class="racha-banner" id="racha-banner">🔥 ¡Racha de 3! +2 puntos extra</div>
+    <div class="bono-banner" id="bono-banner"></div>
+
+    <!-- Tarjeta de pregunta -->
+    <div class="pregunta-card">
+      <div class="pregunta-header">
+        <span class="pregunta-num" id="q-num">P1</span>
+        <div>
+          <div class="pregunta-texto" id="q-texto"></div>
+          <div class="pregunta-fragmento" id="q-fragmento" style="display:none"></div>
+        </div>
+      </div>
+      <div class="opciones" id="opciones-container"></div>
+      <div class="feedback-inmediato" id="feedback-inmediato"></div>
+      <div class="pregunta-footer">
+        <button class="btn btn-primary" id="btn-confirmar" onclick="confirmarRespuesta()" disabled style="flex:1">Confirmar respuesta</button>
+        <button class="btn btn-secondary" id="btn-siguiente" onclick="siguientePregunta()" style="display:none;flex:1">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ PANTALLA 3: RESULTADO ════ -->
+  <section class="screen" id="screen-resultado">
+    <div class="resultado-card">
+      <div class="resultado-hero">
+        <div class="resultado-emoji" id="res-emoji">🎓</div>
+        <div class="resultado-titulo" id="res-titulo">Actividad finalizada</div>
+        <div class="resultado-subtitulo" id="res-subtitulo"></div>
+      </div>
+      <div class="resultado-stats">
+        <div class="stat-box"><div class="val dorado" id="res-puntaje">0</div><div class="lbl">Puntaje</div></div>
+        <div class="stat-box"><div class="val verde" id="res-aciertos">0</div><div class="lbl">Aciertos</div></div>
+        <div class="stat-box"><div class="val rojo" id="res-errores">0</div><div class="lbl">Errores</div></div>
+        <div class="stat-box"><div class="val" id="res-pct">0%</div><div class="lbl">Desempeño</div></div>
+      </div>
+      <div class="mensaje-motivacional" id="mensaje-motivacional"></div>
+      <div class="revision-titulo">📋 Revisión pregunta por pregunta</div>
+      <div id="revision-container"></div>
+      <div class="resultado-acciones">
+        <button class="btn btn-primary" onclick="reiniciar()" style="width:100%;max-width:360px">🔄 Reiniciar simulacro</button>
+        <a id="btn-volver"
+           href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=672"
+           class="btn"
+           style="width:100%;max-width:360px;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-weight:700;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+          🏫 Regresar al Aula Virtual
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════
+//  CONFIGURACIÓN
+// ══════════════════════════════════════════
+const TIEMPO_SEGUNDOS = 20 * 60;
+
+// ══════════════════════════════════════════
+//  BANCO DE PREGUNTAS (10 preguntas)
+// ══════════════════════════════════════════
+const BANCO = [
+  {
+    id: 1,
+    subtema: "¿Qué es la intención comunicativa?",
+    texto: "En el fragmento de Don Quijote de la Mancha, la intención comunicativa es el propósito que guía la escritura del autor. ¿Cuál de las siguientes opciones define mejor este concepto?",
+    fragmento: null,
+    opciones: [
+      { letra:"A", texto:"Es el tema central que el autor desarrolla a lo largo del texto.", esCorrecta:false, feedback:"El tema se refiere al asunto del texto (el mar, Barcelona), pero no es lo mismo que la intención, que apunta al propósito del autor." },
+      { letra:"B", texto:"Es el propósito o finalidad que el autor persigue al escribir un texto para provocar un efecto en el lector.", esCorrecta:true, feedback:"Correcto. La intención comunicativa es justamente el propósito del emisor: qué quiere lograr en su receptor (informar, narrar, persuadir, etc.)." },
+      { letra:"C", texto:"Es la postura personal del autor sobre los hechos que narra.", esCorrecta:false, feedback:"La postura es la opinión o punto de vista del autor, lo cual es diferente de la intención comunicativa." },
+      { letra:"D", texto:"Es el conjunto de palabras y oraciones que forman el texto.", esCorrecta:false, feedback:"Esto describe la forma del texto, no el propósito del autor al escribirlo." }
+    ]
+  },
+  {
+    id: 2,
+    subtema: "Diferencia entre intención, tema y postura",
+    texto: "Considerando el fragmento del Quijote, ¿cuál de las siguientes afirmaciones distingue correctamente la intención comunicativa del tema del texto?",
+    fragmento: null,
+    opciones: [
+      { letra:"A", texto:"El tema es la llegada a Barcelona y la intención es criticar la ignorancia de Sancho.", esCorrecta:false, feedback:"Aunque se podría leer cierta ironía en Sancho, la intención principal no es criticarlo, sino narrar la escena." },
+      { letra:"B", texto:"El tema es la guerra naval y la intención es persuadir al lector de participar en ella.", esCorrecta:false, feedback:"No hay persuasión en este fragmento; el texto describe una escena festiva, no una convocatoria a la guerra." },
+      { letra:"C", texto:"El tema es la llegada de los personajes al mar y a Barcelona, mientras que la intención es narrar y describir vívidamente esa experiencia.", esCorrecta:true, feedback:"Correcto. El tema responde al 'qué' (la llegada al mar) y la intención responde al 'para qué' (narrar y describir esa experiencia al lector)." },
+      { letra:"D", texto:"El tema y la intención son lo mismo, pues ambos se refieren a lo que ocurre en el texto.", esCorrecta:false, feedback:"El tema y la intención son conceptos distintos: el primero es el asunto tratado y el segundo es el propósito del emisor." }
+    ]
+  },
+  {
+    id: 3,
+    subtema: "Intención de informar y explicar",
+    texto: "El siguiente pasaje podría interpretarse como informativo. Sin embargo, ¿qué rasgo del texto indica que su intención va más allá de simplemente informar?",
+    fragmento: "«El mar alegre, la tierra jocunda, el aire claro, sólo tal vez turbio del humo de la artillería, parece que iba infundiendo y engendrando gusto súbito en todas las gentes.»",
+    opciones: [
+      { letra:"A", texto:"El uso de datos históricos precisos sobre las galeras y la artillería del siglo XVII.", esCorrecta:false, feedback:"El texto no ofrece datos históricos exactos; no es un informe documental." },
+      { letra:"B", texto:"La presencia de adjetivos valorativos y sensaciones emotivas que buscan hacer vivir la escena al lector.", esCorrecta:true, feedback:"Correcto. Términos como 'alegre', 'jocunda' y la imagen del 'gusto súbito' revelan una intención expresiva y narrativa, no puramente informativa." },
+      { letra:"C", texto:"La enumeración de los personajes presentes en la escena.", esCorrecta:false, feedback:"Enumerar personajes puede ser informativo, pero no es el rasgo que distingue la intención en este fragmento." },
+      { letra:"D", texto:"La explicación técnica del funcionamiento de los cañones de las galeras.", esCorrecta:false, feedback:"El texto no explica el funcionamiento técnico de la artillería; solo la menciona como elemento narrativo." }
+    ]
+  },
+  {
+    id: 4,
+    subtema: "Intención de persuadir o convencer",
+    texto: "¿En cuál de las siguientes afirmaciones se identifica correctamente que el fragmento del Quijote NO tiene una intención persuasiva?",
+    fragmento: null,
+    opciones: [
+      { letra:"A", texto:"El texto llama al lector a adoptar una postura política sobre la guerra naval del siglo XVI.", esCorrecta:false, feedback:"Esto sería persuasión política, pero no corresponde a lo que hace Cervantes en este fragmento." },
+      { letra:"B", texto:"El autor no utiliza argumentos ni apelaciones directas al lector para cambiar su forma de pensar, sino que narra y describe.", esCorrecta:true, feedback:"Correcto. En el texto no hay argumentos, preguntas retóricas dirigidas al lector ni llamados a la acción. Predomina la narración y la descripción sensorial." },
+      { letra:"C", texto:"Cervantes quiere convencer al lector de que Barcelona es mejor ciudad que Madrid.", esCorrecta:false, feedback:"Esto sería una interpretación sin fundamento en el texto; Cervantes no hace ese tipo de comparación." },
+      { letra:"D", texto:"Las imágenes del mar y las galeras son estrategias para persuadir al lector de que viaje a Barcelona.", esCorrecta:false, feedback:"Las imágenes son recursos narrativos y descriptivos, no recursos persuasivos para inducir un comportamiento." }
+    ]
+  },
+  {
+    id: 5,
+    subtema: "Intención de narrar y describir",
+    texto: "¿Cuál de los siguientes recursos evidencia con mayor claridad que la intención del autor en este fragmento es narrar y describir?",
+    fragmento: "«Vieron las galeras que estaban en la playa, las cuales, abatiendo las tiendas, se descubrieron llenas de flámulas y gallardetes que tremolaban al viento y besaban y barrían el agua.»",
+    opciones: [
+      { letra:"A", texto:"El uso de verbos de percepción ('vieron') y adjetivos visuales que construyen una imagen detallada de la escena.", esCorrecta:true, feedback:"Correcto. Verbos como 'vieron' ubican al lector desde la perspectiva de los personajes, y los detalles sensoriales ('tremolaban', 'besaban', 'barrían') construyen la descripción vívida." },
+      { letra:"B", texto:"La presencia de argumentos lógicos para demostrar la importancia de las galeras.", esCorrecta:false, feedback:"No hay argumentos lógicos; el texto no intenta demostrar nada, sino mostrar la escena." },
+      { letra:"C", texto:"El uso de estadísticas y cifras para cuantificar los recursos militares de Barcelona.", esCorrecta:false, feedback:"No hay estadísticas ni cifras en este texto; es un relato literario, no un informe." },
+      { letra:"D", texto:"La exhortación directa al lector para que imagine las galeras.", esCorrecta:false, feedback:"No hay exhortaciones al lector ('imagina tú...'); la descripción se construye a través de los personajes, no de apelaciones directas." }
+    ]
+  },
+  {
+    id: 6,
+    subtema: "Intención de opinar, criticar o cuestionar",
+    texto: "Al final del fragmento, Cervantes describe la perplejidad de Sancho ante las galeras. ¿Qué intención comunicativa secundaria podría identificarse en ese cierre?",
+    fragmento: "«No podía imaginar Sancho cómo pudiesen tener tantos pies aquellos bultos que por el mar se movían.»",
+    opciones: [
+      { letra:"A", texto:"Informar al lector sobre la ignorancia geográfica del campesinado español del Siglo de Oro.", esCorrecta:false, feedback:"Si bien hay un referente histórico, la intención aquí no es informar sino crear un efecto literario e irónico." },
+      { letra:"B", texto:"Persuadir al lector de que Sancho es un personaje incompetente que no merece ser el escudero de Don Quijote.", esCorrecta:false, feedback:"El texto no busca convencer al lector de desestimar a Sancho; es un recurso de contraste y humor." },
+      { letra:"C", texto:"Introducir una nota de humor e ironía que cuestiona sutilmente la estrechez de miras del personaje, contrastándola con la grandiosidad de la escena.", esCorrecta:true, feedback:"Correcto. La observación ingenua de Sancho (los remos como pies) funciona como ironía narrativa que invita al lector a reflexionar, con humor, sobre los límites del personaje." },
+      { letra:"D", texto:"Advertir al lector sobre los peligros de viajar por mar sin experiencia.", esCorrecta:false, feedback:"No hay ninguna advertencia sobre viajes marítimos; es una observación cómica sobre la ignorancia de Sancho." }
+    ]
+  },
+  {
+    id: 7,
+    subtema: "Intención de advertir, recomendar o sugerir",
+    texto: "¿Cuál de las siguientes afirmaciones es correcta respecto a la ausencia de intención de advertencia en el fragmento del Quijote?",
+    fragmento: null,
+    opciones: [
+      { letra:"A", texto:"El texto advierte al lector sobre los peligros de las batallas navales en el Mediterráneo.", esCorrecta:false, feedback:"No hay ninguna advertencia en el texto; no se presentan peligros ni se alerta al lector sobre nada." },
+      { letra:"B", texto:"Cervantes recomienda al lector visitar Barcelona para disfrutar de su belleza marítima.", esCorrecta:false, feedback:"No hay recomendación explícita ni implícita de visitar Barcelona; el texto es una narración literaria." },
+      { letra:"C", texto:"El texto no contiene intención de advertir ni de recomendar; su propósito es narrar una experiencia y crear una imagen estética de la llegada a Barcelona.", esCorrecta:true, feedback:"Correcto. En este fragmento no hay marcas de advertencia ('ten cuidado', 'es importante que...') ni de recomendación. La intención es estética, narrativa y descriptiva." },
+      { letra:"D", texto:"El narrador sugiere que Don Quijote debería abandonar sus aventuras y vivir en Barcelona.", esCorrecta:false, feedback:"Esta interpretación no tiene sustento en el texto; el narrador no emite consejos al personaje." }
+    ]
+  },
+  {
+    id: 8,
+    subtema: "Relación entre intención y tipo de texto",
+    texto: "Este fragmento proviene de una novela. ¿Qué relación existe entre el tipo de texto (narrativo literario) y la intención comunicativa predominante?",
+    fragmento: null,
+    opciones: [
+      { letra:"A", texto:"Por ser literario, el texto tiene intención exclusivamente estética y no puede tener ninguna otra intención.", esCorrecta:false, feedback:"Un texto literario puede tener múltiples intenciones (estética, crítica, filosófica). La intención no es exclusiva." },
+      { letra:"B", texto:"El texto narrativo literario no tiene intención comunicativa porque es ficción.", esCorrecta:false, feedback:"Todos los textos, incluyendo los de ficción, tienen una intención comunicativa. La ficción comunica igual que los textos factuales." },
+      { letra:"C", texto:"El tipo narrativo literario corresponde a una intención de contar una historia y crear experiencias estéticas en el lector mediante el lenguaje.", esCorrecta:true, feedback:"Correcto. Los textos narrativos literarios buscan contar, crear imágenes, generar emociones y experiencias estéticas. Esa es su intención comunicativa fundamental." },
+      { letra:"D", texto:"Al ser un texto descriptivo, su intención es únicamente enumerar características de los objetos mencionados.", esCorrecta:false, feedback:"Aunque hay descripción, el texto no es meramente descriptivo-enumerativo; la descripción está al servicio de la narración y la experiencia estética." }
+    ]
+  },
+  {
+    id: 9,
+    subtema: "Recursos que revelan la intención",
+    texto: "¿Cuál de los siguientes recursos lingüísticos revela de manera más clara la intención narrativa y descriptiva del autor en el texto?",
+    fragmento: "«dentro sonaban clarines, trompetas y chirimías que cerca y lejos llenaban el aire de suaves y belicosos acentos»",
+    opciones: [
+      { letra:"A", texto:"El uso de conectores argumentativos como 'por lo tanto', 'en consecuencia' y 'sin embargo'.", esCorrecta:false, feedback:"Esos conectores son propios de los textos argumentativos o expositivos, y no aparecen en este fragmento." },
+      { letra:"B", texto:"La enumeración de instrumentos musicales y los adjetivos sensoriales que recrean el ambiente sonoro de la escena.", esCorrecta:true, feedback:"Correcto. La enumeración ('clarines, trompetas y chirimías') y los adjetivos ('suaves', 'belicosos') son recursos descriptivos que crean una imagen auditiva, típica de la intención narrativa-descriptiva." },
+      { letra:"C", texto:"Las preguntas retóricas dirigidas al lector para invitarlo a reflexionar sobre la guerra.", esCorrecta:false, feedback:"No hay preguntas retóricas en el fragmento; las preguntas retóricas son propias de textos argumentativos o ensayos." },
+      { letra:"D", texto:"Los datos estadísticos sobre el número de barcos y soldados presentes en la bahía.", esCorrecta:false, feedback:"No hay datos estadísticos; el 'infinita artillería' es una hipérbole literaria, no un dato cuantitativo." }
+    ]
+  },
+  {
+    id: 10,
+    subtema: "Intención explícita e implícita",
+    texto: "En el fragmento, la intención de maravillar al lector con la grandiosidad de Barcelona opera principalmente de forma:",
+    fragmento: null,
+    opciones: [
+      { letra:"A", texto:"Explícita, porque el narrador declara directamente que Barcelona es una ciudad maravillosa.", esCorrecta:false, feedback:"El narrador nunca dice explícitamente 'Barcelona es maravillosa'; esa valoración se construye a través de imágenes y recursos literarios." },
+      { letra:"B", texto:"Implícita, porque se construye a través del deslumbramiento de los personajes, la acumulación de imágenes festivas y la riqueza sensorial del lenguaje.", esCorrecta:true, feedback:"Correcto. La intención de asombrar al lector es implícita: se infiere de la reacción de los personajes (Sancho sin palabras) y de la profusión de imágenes visuales, auditivas y emotivas." },
+      { letra:"C", texto:"Explícita, porque el autor firma el texto con su nombre y declara su propósito.", esCorrecta:false, feedback:"Que el texto lleve el nombre de Cervantes no lo hace explícito en la intención. La intención sigue siendo implícita en la construcción narrativa." },
+      { letra:"D", texto:"Implícita, porque el texto oculta intencionalmente su contenido para confundir al lector.", esCorrecta:false, feedback:"La intención implícita no significa ocultar: significa que el propósito se desprende del análisis del texto, no de una declaración directa del autor." }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════
+let preguntas = [];
+let indiceActual = 0;
+let puntaje = 0;
+let aciertos = 0;
+let racha = 0;
+let respuestaSeleccionada = null;
+let confirmado = false;
+let historial = [];
+let timerInterval = null;
+let segundosRestantes = TIEMPO_SEGUNDOS;
+let activo = false;
+
+// ══════════════════════════════════════════
+//  FUNCIONES AUXILIARES
+// ══════════════════════════════════════════
+function mezclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function formatTiempo(s) {
+  const m = Math.floor(s / 60);
+  const seg = s % 60;
+  return `${String(m).padStart(2,'0')}:${String(seg).padStart(2,'0')}`;
+}
+
+function actualizarTimer() {
+  const el = document.getElementById('timer-display');
+  el.textContent = formatTiempo(segundosRestantes);
+  if (segundosRestantes <= 60) el.classList.add('urgente');
+  else el.classList.remove('urgente');
+  if (segundosRestantes <= 0) {
+    clearInterval(timerInterval);
+    mostrarResultados();
+  } else {
+    segundosRestantes--;
+  }
+}
+
+// ══════════════════════════════════════════
+//  PANTALLAS
+// ══════════════════════════════════════════
+function mostrarScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function iniciarActividad() {
+  preguntas = mezclar(BANCO);
+  indiceActual = 0; puntaje = 0; aciertos = 0; racha = 0;
+  historial = [];
+  segundosRestantes = TIEMPO_SEGUNDOS;
+  activo = true;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(actualizarTimer, 1000);
+  actualizarTimer();
+  mostrarScreen('screen-quiz');
+  // Abrir texto al inicio
+  const panel = document.getElementById('texto-panel');
+  panel.classList.add('abierto');
+  renderPregunta();
+}
+
+// ══════════════════════════════════════════
+//  TEXTO TOGGLE
+// ══════════════════════════════════════════
+function toggleTexto() {
+  document.getElementById('texto-panel').classList.toggle('abierto');
+}
+
+// ══════════════════════════════════════════
+//  PREGUNTAS
+// ══════════════════════════════════════════
+function renderPregunta() {
+  const q = preguntas[indiceActual];
+  respuestaSeleccionada = null;
+  confirmado = false;
+
+  // Progreso
+  const pct = Math.round((indiceActual / preguntas.length) * 100);
+  document.getElementById('progreso-texto').textContent = `Pregunta ${indiceActual + 1} de ${preguntas.length}`;
+  document.getElementById('progreso-pct').textContent = pct + '%';
+  document.getElementById('progreso-fill').style.width = pct + '%';
+
+  // Número
+  document.getElementById('q-num').textContent = `P${indiceActual + 1}`;
+  // Texto
+  document.getElementById('q-texto').textContent = q.texto;
+  // Fragmento
+  const fragEl = document.getElementById('q-fragmento');
+  if (q.fragmento) {
+    fragEl.textContent = q.fragmento;
+    fragEl.style.display = 'block';
+  } else {
+    fragEl.style.display = 'none';
+  }
+
+  // Opciones mezcladas
+  const opsMezcladas = mezclar(q.opciones);
+  const letras = ['A','B','C','D'];
+  const cont = document.getElementById('opciones-container');
+  cont.innerHTML = '';
+  opsMezcladas.forEach((op, i) => {
+    const div = document.createElement('div');
+    div.className = 'opcion';
+    div.dataset.idx = i;
+    div.dataset.esCorrecta = op.esCorrecta;
+    div.dataset.feedback = op.feedback;
+    div.innerHTML = `<span class="opcion-letra">${letras[i]}</span><span>${op.texto}</span>`;
+    div.addEventListener('click', () => seleccionarOpcion(div, opsMezcladas, letras[i]));
+    cont.appendChild(div);
+  });
+
+  // Botones
+  document.getElementById('btn-confirmar').disabled = true;
+  document.getElementById('btn-siguiente').style.display = 'none';
+  document.getElementById('btn-confirmar').style.display = 'inline-flex';
+  // Feedback
+  const fb = document.getElementById('feedback-inmediato');
+  fb.className = 'feedback-inmediato';
+  fb.textContent = '';
+
+  // Racha banner
+  document.getElementById('racha-banner').classList.remove('visible');
+  document.getElementById('bono-banner').classList.remove('visible');
+}
+
+function seleccionarOpcion(el, ops, letra) {
+  if (confirmado) return;
+  document.querySelectorAll('.opcion').forEach(o => o.classList.remove('seleccionada'));
+  el.classList.add('seleccionada');
+  respuestaSeleccionada = el;
+  document.getElementById('btn-confirmar').disabled = false;
+}
+
+function confirmarRespuesta() {
+  if (!respuestaSeleccionada || confirmado) return;
+  confirmado = true;
+  document.getElementById('btn-confirmar').disabled = true;
+
+  const q = preguntas[indiceActual];
+  const esCorrecta = respuestaSeleccionada.dataset.esCorrecta === 'true';
+  const feedbackTexto = respuestaSeleccionada.dataset.feedback;
+
+  // Marcar opciones
+  document.querySelectorAll('.opcion').forEach(o => {
+    if (o.dataset.esCorrecta === 'true') o.classList.add('correcta');
+    else if (o === respuestaSeleccionada) o.classList.add('incorrecta');
+    o.style.cursor = 'default';
+  });
+
+  // Puntaje y racha
+  const fb = document.getElementById('feedback-inmediato');
+  const rBanner = document.getElementById('racha-banner');
+  const bBanner = document.getElementById('bono-banner');
+
+  let bono = 0;
+  if (esCorrecta) {
+    puntaje += 10;
+    aciertos++;
+    racha++;
+    fb.className = 'feedback-inmediato ok visible';
+    fb.innerHTML = `<strong>✅ ¡Correcto!</strong> ${feedbackTexto}`;
+    if (racha === 3) { bono=2; puntaje+=bono; rBanner.textContent='🔥 ¡Racha de 3! +2 puntos extra'; rBanner.className='racha-banner visible'; }
+    if (racha === 5) { bono=5; puntaje+=bono; rBanner.textContent='⚡ ¡Racha de 5! +5 puntos extra · ¡Extraordinario!'; rBanner.className='racha-banner epica visible'; }
+    if (bono > 0) { bBanner.textContent=`+${bono} puntos de bonificación`; bBanner.classList.add('visible'); }
+  } else {
+    racha = 0;
+    fb.className = 'feedback-inmediato mal visible';
+    fb.innerHTML = `<strong>❌ Incorrecto.</strong> ${feedbackTexto}`;
+    rBanner.classList.remove('visible');
+  }
+
+  // Guardar historial
+  historial.push({
+    pregunta: q.texto,
+    subtema: q.subtema,
+    esCorrecta,
+    feedbackTexto,
+    opciones: q.opciones
+  });
+
+  // Mostrar siguiente
+  document.getElementById('btn-siguiente').style.display = 'inline-flex';
+  document.getElementById('btn-confirmar').style.display = 'none';
+}
+
+function siguientePregunta() {
+  indiceActual++;
+  if (indiceActual >= preguntas.length) {
+    mostrarResultados();
+  } else {
+    renderPregunta();
+  }
+}
+
+// ══════════════════════════════════════════
+//  RESULTADOS
+// ══════════════════════════════════════════
+function mostrarResultados() {
+  clearInterval(timerInterval);
+  activo = false;
+  const errores = preguntas.length - aciertos;
+  const pct = Math.round((aciertos / preguntas.length) * 100);
+
+  document.getElementById('res-puntaje').textContent = puntaje;
+  document.getElementById('res-aciertos').textContent = aciertos;
+  document.getElementById('res-errores').textContent = errores;
+  document.getElementById('res-pct').textContent = pct + '%';
+
+  let emoji, titulo, subtitulo, msgClass, msgTexto;
+  if (pct >= 80) {
+    emoji = '🏆'; titulo = '¡Desempeño sobresaliente!';
+    subtitulo = 'Dominas la intención comunicativa con claridad.';
+    msgClass = 'msg-alto';
+    msgTexto = '🎖️ ¡Excelente trabajo! Tu capacidad para identificar la intención comunicativa, distinguirla del tema y la postura, y reconocer los recursos que la revelan es destacable. ¡Sigue así!';
+  } else if (pct >= 50) {
+    emoji = '📈'; titulo = '¡Buen progreso!';
+    subtitulo = 'Estás avanzando muy bien. Algunos conceptos necesitan refuerzo.';
+    msgClass = 'msg-medio';
+    msgTexto = '💪 ¡Vas por buen camino! Revisa especialmente la diferencia entre intención explícita e implícita, y cómo los recursos lingüísticos revelan el propósito del autor. ¡Con práctica llegarás al tope!';
+  } else {
+    emoji = '🌱'; titulo = 'Sigue practicando';
+    subtitulo = 'Cada intento te acerca más a dominar el tema.';
+    msgClass = 'msg-bajo';
+    msgTexto = '✨ ¡No te desanimes! La intención comunicativa requiere práctica lectora. Te recomendamos releer el texto con calma, comparar cada opción con los recursos del fragmento y volver a intentarlo. ¡Tú puedes!';
+  }
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-titulo').textContent = titulo;
+  document.getElementById('res-subtitulo').textContent = subtitulo;
+  const msgEl = document.getElementById('mensaje-motivacional');
+  msgEl.className = 'mensaje-motivacional ' + msgClass;
+  msgEl.textContent = msgTexto;
+
+  // Revisión
+  const cont = document.getElementById('revision-container');
+  cont.innerHTML = '';
+  historial.forEach((h, i) => {
+    const item = document.createElement('div');
+    item.className = 'revision-item ' + (h.esCorrecta ? 'ok' : 'mal');
+    item.innerHTML = `
+      <div class="revision-header" onclick="toggleRevision(this.parentElement)">
+        <span class="revision-icon">${h.esCorrecta ? '✅' : '❌'}</span>
+        <span>P${i+1}: ${h.pregunta.substring(0,80)}${h.pregunta.length > 80 ? '…' : ''}</span>
+      </div>
+      <div class="revision-body">
+        <div class="revision-body-inner">
+          <strong>Subtema:</strong> ${h.subtema}<br><br>
+          <strong>${h.esCorrecta ? '✅ Respuesta correcta.' : '❌ Respuesta incorrecta.'}</strong><br>
+          ${h.feedbackTexto}
+        </div>
+      </div>`;
+    cont.appendChild(item);
+  });
+
+  mostrarScreen('screen-resultado');
+}
+
+function toggleRevision(el) {
+  el.classList.toggle('abierto');
+}
+
+function reiniciar() {
+  mostrarScreen('screen-welcome');
+  document.getElementById('timer-display').textContent = formatTiempo(TIEMPO_SEGUNDOS);
+  document.getElementById('timer-display').classList.remove('urgente');
+}
+
+// ══════════════════════════════════════════
+//  BOTÓN AULA VIRTUAL (móvil/escritorio)
+// ══════════════════════════════════════════
+(function(){
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=672';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=672';
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (esMóvil) btn.href = appUrl;
+})();
+</script>
+</body>
+</html>

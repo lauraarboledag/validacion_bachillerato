@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro – Lectura Crítica | Temática 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2e4a;
+    --navy-mid: #223a5e;
+    --navy-light: #2d4f78;
+    --gold: #c9a84c;
+    --gold-light: #e8c870;
+    --gold-pale: #fdf6e3;
+    --white: #ffffff;
+    --gray-50: #f8f9fb;
+    --gray-100: #eef0f4;
+    --gray-200: #d8dce6;
+    --gray-400: #8a93a8;
+    --gray-700: #3d4660;
+    --success: #2a7a4b;
+    --success-bg: #eaf6ef;
+    --error: #b83232;
+    --error-bg: #fdf0f0;
+    --warn: #b8660a;
+    --warn-bg: #fef6ec;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(26,46,74,0.10);
+    --shadow-md: 0 8px 36px rgba(26,46,74,0.16);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-50);
+    color: var(--navy);
+    min-height: 100vh;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.22);
+  }
+  .app-header .logo {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+  }
+  .app-header .logo span { color: var(--white); font-weight: 300; }
+
+  /* ── TIMER ── */
+  #timer-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.15);
+    border: 1.5px solid var(--gold);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    transition: background 0.3s, color 0.3s;
+  }
+  #timer-box.warning { background: rgba(184,50,50,0.15); border-color: #e05252; color: #e05252; }
+  #timer-box svg { flex-shrink: 0; }
+
+  /* ── MAIN CONTAINER ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── WELCOME ── */
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: var(--radius);
+    padding: 48px 40px;
+    color: var(--white);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.10);
+    pointer-events: none;
+  }
+  .welcome-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.06);
+    pointer-events: none;
+  }
+  .welcome-badge {
+    display: inline-block;
+    background: rgba(201,168,76,0.20);
+    border: 1px solid rgba(201,168,76,0.5);
+    color: var(--gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 50px;
+    margin-bottom: 18px;
+  }
+  .welcome-hero h1 {
+    font-family: 'Merriweather', serif;
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .welcome-hero p {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.82);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .info-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--gold);
+  }
+  .info-card .num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .info-card .lbl { font-size: 0.82rem; color: var(--gray-400); font-weight: 500; }
+
+  .instructions-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+  }
+  .instructions-card h2 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .instructions-card ul { list-style: none; }
+  .instructions-card li {
+    padding: 7px 0;
+    font-size: 0.93rem;
+    color: var(--gray-700);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .instructions-card li:last-child { border-bottom: none; }
+  .instructions-card li::before {
+    content: '→';
+    color: var(--gold);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 50px;
+    padding: 14px 36px;
+    transition: all 0.2s;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, #e8c870 100%);
+    color: var(--navy);
+    box-shadow: 0 4px 20px rgba(201,168,76,0.38);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.5); }
+  .btn-navy {
+    background: var(--navy);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(26,46,74,0.25);
+  }
+  .btn-navy:hover { background: var(--navy-light); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--navy);
+    border: 2px solid var(--navy);
+  }
+  .btn-outline:hover { background: var(--navy); color: var(--white); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+  .btn-center { display: flex; justify-content: center; }
+
+  /* ── TEXTS PANEL ── */
+  .texts-header {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 0;
+  }
+  .texts-panel {
+    background: var(--white);
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .text-accordion {
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .text-accordion:last-child { border-bottom: none; }
+  .text-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.93rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-align: left;
+    gap: 12px;
+    transition: background 0.18s;
+  }
+  .text-toggle:hover { background: var(--gray-50); }
+  .text-toggle .tag {
+    background: rgba(201,168,76,0.15);
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 50px;
+    flex-shrink: 0;
+  }
+  .text-toggle .chevron {
+    flex-shrink: 0;
+    transition: transform 0.28s;
+  }
+  .text-toggle.open .chevron { transform: rotate(180deg); }
+  .text-body {
+    display: none;
+    padding: 6px 22px 24px;
+    font-family: 'Merriweather', serif;
+    font-size: 0.9rem;
+    line-height: 1.85;
+    color: var(--gray-700);
+    border-top: 1px solid var(--gray-100);
+  }
+  .text-body.open { display: block; }
+  .text-body p { margin-bottom: 1em; }
+  .text-body p:last-child { margin-bottom: 0; }
+  .text-source {
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    font-style: italic;
+    margin-top: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── QUIZ ── */
+  .progress-bar-wrap {
+    background: var(--gray-200);
+    border-radius: 50px;
+    height: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .question-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .q-num {
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 50px;
+  }
+  .q-skill {
+    background: var(--gold-pale);
+    color: var(--warn);
+    font-size: 0.73rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 50px;
+    letter-spacing: 0.04em;
+  }
+  .q-text-ref {
+    font-size: 0.73rem;
+    color: var(--gray-400);
+    font-style: italic;
+    margin-left: auto;
+  }
+  .question-card h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .options { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .option-item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+    font-size: 0.93rem;
+    line-height: 1.5;
+  }
+  .option-item label:hover { border-color: var(--gold); background: var(--gold-pale); }
+  .option-item input[type="radio"] { display: none; }
+  .option-item input[type="radio"]:checked + label {
+    border-color: var(--navy);
+    background: #eef2f9;
+  }
+  .opt-letter {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    background: var(--gray-100);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    transition: background 0.18s, color 0.18s;
+    margin-top: 1px;
+  }
+  .option-item input[type="radio"]:checked + label .opt-letter {
+    background: var(--navy);
+    color: var(--gold);
+  }
+
+  /* ── STREAK ── */
+  .streak-toast {
+    position: fixed;
+    top: 70px; right: 20px;
+    background: var(--navy);
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 14px 22px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    z-index: 500;
+    box-shadow: var(--shadow-md);
+    animation: toastIn 0.35s ease;
+    max-width: 280px;
+    text-align: center;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── RESULTS ── */
+  .result-hero {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 28px;
+  }
+  .result-top {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    padding: 40px 32px;
+    text-align: center;
+    color: var(--white);
+  }
+  .result-top .score-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    border: 6px solid var(--gold);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    background: rgba(255,255,255,0.06);
+  }
+  .result-top .score-ring .pct { font-size: 2rem; font-weight: 700; color: var(--gold); }
+  .result-top .score-ring .pct-lbl { font-size: 0.72rem; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; }
+  .result-top h2 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+  .result-top .motivation { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 500px; margin: 0 auto; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    background: var(--white);
+  }
+  .stat-cell {
+    padding: 22px 16px;
+    text-align: center;
+    border-right: 1px solid var(--gray-100);
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell .sv { font-size: 1.8rem; font-weight: 700; color: var(--navy); }
+  .stat-cell .sl { font-size: 0.78rem; color: var(--gray-400); font-weight: 500; margin-top: 4px; }
+  .stat-cell.correct .sv { color: var(--success); }
+  .stat-cell.wrong .sv { color: var(--error); }
+
+  .feedback-section {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .feedback-header {
+    padding: 18px 28px;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .feedback-item {
+    border-bottom: 1px solid var(--gray-100);
+    overflow: hidden;
+  }
+  .feedback-item:last-child { border-bottom: none; }
+  .fb-toggle {
+    width: 100%; background: none; border: none;
+    padding: 16px 24px;
+    display: flex; align-items: flex-start; gap: 14px;
+    cursor: pointer; text-align: left;
+    font-family: 'Inter', sans-serif; font-size: 0.88rem;
+    color: var(--navy); font-weight: 500;
+    transition: background 0.15s;
+  }
+  .fb-toggle:hover { background: var(--gray-50); }
+  .fb-icon { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; }
+  .fb-icon.ok { background: var(--success-bg); color: var(--success); }
+  .fb-icon.no { background: var(--error-bg); color: var(--error); }
+  .fb-body { display: none; padding: 0 24px 20px 64px; font-size: 0.87rem; line-height: 1.6; color: var(--gray-700); }
+  .fb-body.open { display: block; }
+  .fb-correct { color: var(--success); font-weight: 600; margin-bottom: 6px; }
+  .fb-chosen { color: var(--error); font-weight: 600; margin-bottom: 6px; }
+  .fb-explanation { margin-top: 8px; font-style: italic; color: var(--gray-400); font-size: 0.83rem; }
+
+  .result-actions {
+    display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .welcome-hero { padding: 32px 22px; }
+    .instructions-card { padding: 20px 18px; }
+    .question-card { padding: 22px 18px; }
+    .stats-row { grid-template-columns: 1fr; }
+    .stat-cell { border-right: none; border-bottom: 1px solid var(--gray-100); }
+    .result-top { padding: 30px 20px; }
+    .container { padding: 18px 12px 50px; }
+    .btn { font-size: 0.9rem; padding: 12px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="app-header">
+  <div class="logo">Instituto <span>Innova</span> · Lectura Crítica</div>
+  <div id="timer-box" style="display:none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span id="timer-display">40:00</span>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<div class="container">
+
+  <!-- ══ SCREEN 1: WELCOME ══ -->
+  <div id="screen-welcome" class="screen active">
+    <div class="welcome-hero">
+      <div class="welcome-badge">Temática 7 · Estrategias de Lectura Crítica</div>
+      <h1>Simulacro Interactivo<br>de Lectura Crítica</h1>
+      <p>Validación del Bachillerato · Nivel 2 ICFES<br>Pon a prueba tus habilidades lectoras en condiciones reales de evaluación.</p>
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="num">3</div><div class="lbl">Textos académicos</div></div>
+      <div class="info-card"><div class="num">20</div><div class="lbl">Preguntas</div></div>
+      <div class="info-card"><div class="num">40</div><div class="lbl">Minutos</div></div>
+      <div class="info-card"><div class="num">10</div><div class="lbl">Habilidades evaluadas</div></div>
+    </div>
+    <div class="instructions-card">
+      <h2>📋 Indicaciones generales</h2>
+      <ul>
+        <li>Lee los tres textos antes de responder o consúltalos cuando lo necesites.</li>
+        <li>Cada pregunta tiene cuatro opciones y una única respuesta correcta.</li>
+        <li>No puedes avanzar sin seleccionar una respuesta.</li>
+        <li>Las preguntas aparecen en orden aleatorio en cada intento.</li>
+        <li>El temporizador regresivo corre durante todo el cuestionario.</li>
+        <li>Al finalizar recibirás retroalimentación detallada de cada pregunta.</li>
+        <li>Las rachas de aciertos consecutivos te otorgan puntos de bonificación.</li>
+      </ul>
+    </div>
+    <div class="btn-center">
+      <button class="btn btn-primary" onclick="startActivity()">✦ Iniciar actividad</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: QUIZ ══ -->
+  <div id="screen-quiz" class="screen">
+
+    <!-- Texts Panel -->
+    <div>
+      <div class="texts-header">
+        <span>📄 Textos de referencia — disponibles durante todo el cuestionario</span>
+        <button onclick="toggleAllTexts()" style="background:rgba(201,168,76,0.2);border:1px solid var(--gold);color:var(--gold);border-radius:50px;padding:4px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">Expandir / Colapsar todos</button>
+      </div>
+      <div class="texts-panel">
+
+        <div class="text-accordion">
+          <button class="text-toggle" onclick="toggleText(this, 'text1')">
+            <span><span class="tag">Texto 1</span>  &nbsp;La lectura como práctica social: más allá de la decodificación</span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="text1" class="text-body">
+            <p>Leer no es simplemente convertir grafías en sonidos ni extraer un significado transparente e inmutable de un conjunto de palabras impresas. Desde las teorías contemporáneas de la comprensión lectora, leer implica un acto de construcción activa: el lector no descubre el sentido que el texto «contiene», sino que lo produce mediante la interacción entre sus conocimientos previos, sus propósitos particulares y las señales lingüísticas que el texto le ofrece.</p>
+            <p>Esta perspectiva, denominada modelo transaccional por Louise Rosenblatt, sostiene que el significado no reside ni exclusivamente en el texto ni exclusivamente en el lector, sino que emerge de la transacción entre ambos. Un mismo fragmento puede producir lecturas radicalmente distintas dependiendo de quién lo lea, con qué intención y en qué contexto. El lector experto es consciente de este fenómeno y lo utiliza a su favor: antes de abordar un texto, se pregunta para qué lo va a leer, qué tipo de información necesita y cuál es el nivel de profundidad que la tarea exige.</p>
+            <p>Esta conciencia sobre los propios procesos de lectura recibe el nombre de metacognición lectora. Un lector metacognitivo supervisa su comprensión mientras lee: detecta cuándo una idea le resulta confusa, regula su velocidad según la densidad del texto y aplica estrategias de corrección cuando identifica que ha perdido el hilo. Investigaciones como las de Flavell (1979) y Brown (1980) mostraron que los lectores de bajo rendimiento no solo comprenden menos, sino que tampoco son capaces de identificar que están comprendiendo mal: leen con la misma velocidad un párrafo sencillo y uno técnico, sin ajustar su estrategia.</p>
+            <p>La jerarquización de la información es otra habilidad central en la lectura crítica. No toda la información de un texto posee el mismo peso argumentativo. Existe información nuclear, que sostiene la tesis o el propósito central del texto, e información periférica, que cumple funciones ilustrativas, ejemplificadoras o de transición. Confundir lo nuclear con lo periférico es uno de los errores más frecuentes en las pruebas estandarizadas: el estudiante elige la opción que recuerda con más detalle en lugar de la que responde de manera más precisa a lo que el texto afirma.</p>
+            <p>Finalmente, la lectura crítica exige que el lector adopte una postura evaluativa frente a lo que lee: no solo comprende lo que el texto dice, sino que evalúa la solidez de los argumentos, detecta posibles falacias, identifica el propósito comunicativo del autor y determina si las afirmaciones están respaldadas por evidencias suficientes. Esta capacidad de evaluación no es innata; se desarrolla mediante práctica sistemática y reflexión sobre los errores cometidos durante el proceso lector.</p>
+            <p class="text-source">Texto original elaborado con fines académicos. Basado en teorías de la comprensión lectora de Rosenblatt (1978), Flavell (1979) y Brown (1980).</p>
+          </div>
+        </div>
+
+        <div class="text-accordion">
+          <button class="text-toggle" onclick="toggleText(this, 'text2')">
+            <span><span class="tag">Texto 2</span>  &nbsp;Relaciones lógicas en el discurso académico: causas, consecuencias y contraargumentos</span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="text2" class="text-body">
+            <p>El discurso académico no es una suma desordenada de ideas: es una arquitectura de relaciones lógicas que conectan afirmaciones, datos, ejemplos y conclusiones en una red coherente de significado. Identificar estas relaciones es la tarea central del lector crítico cuando enfrenta textos de alta complejidad como los que aparecen en pruebas estandarizadas de ingreso universitario o de validación de estudios secundarios.</p>
+            <p>Las relaciones causales son las más frecuentes en el texto científico y argumentativo. Se expresan mediante conectores como «porque», «dado que», «en consecuencia», «por tanto», «como resultado de» y «lo que explica que». Sin embargo, la presencia de estos conectores no garantiza por sí sola que la relación causal sea válida: un lector crítico evalúa si la causa aducida es suficiente para producir el efecto descrito, si existe una tercera variable que pudiera explicar mejor la correlación observada, o si el autor ha confundido una relación de simultaneidad con una relación de causalidad —error conocido como post hoc ergo propter hoc.</p>
+            <p>Las relaciones de contraste o concesión son igualmente frecuentes y suelen ser mal interpretadas por lectores inexpertos. Expresiones como «si bien», «aunque», «a pesar de que» y «no obstante» introducen una restricción a la afirmación principal, pero no la niegan. El lector que no distingue entre negación y restricción tenderá a seleccionar la opción que contradice la tesis central del texto, en lugar de la que la matiza o limita.</p>
+            <p>Un tercer tipo de relación lógica, frecuentemente mal identificado, es la relación de ejemplificación. Los ejemplos no son argumentos en sí mismos: son ilustraciones concretas de una afirmación más general. Una pregunta de lectura crítica puede indagar si el estudiante es capaz de distinguir entre el argumento principal y el ejemplo que lo ilustra. Quien confunde ambos planos suele seleccionar respuestas que reemplazan el argumento por el ejemplo, perdiendo la dimensión general del planteamiento.</p>
+            <p>La comprensión de la estructura retórica del texto —es decir, de cómo está organizado argumentativamente— permite al lector anticipar hacia dónde se dirige el razonamiento del autor. Un texto que comienza enunciando un problema y termina proponiendo una solución tiene una estructura problema-solución. Uno que parte de una tesis y la defiende mediante evidencias tiene una estructura deductiva. Uno que parte de casos específicos para llegar a una conclusión general tiene una estructura inductiva. Reconocer este andamiaje retórico reduce el esfuerzo cognitivo del lector y aumenta la velocidad de comprensión, lo que en contextos de evaluación cronometrada representa una ventaja significativa.</p>
+            <p class="text-source">Texto original elaborado con fines académicos. Orientado al análisis del discurso argumentativo en pruebas estandarizadas.</p>
+          </div>
+        </div>
+
+        <div class="text-accordion">
+          <button class="text-toggle" onclick="toggleText(this, 'text3')">
+            <span><span class="tag">Texto 3</span>  &nbsp;Estrategias eficientes para la gestión del tiempo en pruebas de lectura crítica</span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="text3" class="text-body">
+            <p>Uno de los factores que más incide en el rendimiento de los estudiantes durante las pruebas de lectura crítica no es, paradójicamente, la falta de comprensión, sino la gestión inadecuada del tiempo. Numerosos estudios sobre desempeño en pruebas estandarizadas han documentado que un porcentaje significativo de estudiantes que dominan las habilidades evaluadas no logran demostrar ese dominio porque no distribuyen de manera eficiente el tiempo disponible entre los distintos textos y preguntas.</p>
+            <p>La primera estrategia de gestión del tiempo es la lectura estratégica de las preguntas antes de abordar el texto completo. Esta técnica, contraintuitiva para quienes fueron entrenados en la lectura lineal desde inicio hasta fin, consiste en identificar primero qué tipo de información demandan las preguntas —datos específicos, ideas globales, relaciones causales, evaluación de afirmaciones— y luego leer el texto con ese mapa de búsqueda activo. La investigación en psicolingüística ha demostrado que esta modalidad de lectura dirigida por preguntas reduce hasta un 35 % el tiempo de relecture necesario para responder con precisión.</p>
+            <p>La segunda estrategia consiste en distinguir entre preguntas de recuperación literal, preguntas inferenciales y preguntas de evaluación crítica. Las preguntas de recuperación literal tienen una única respuesta claramente localizable en el texto; se responden con rapidez mediante búsqueda selectiva. Las preguntas inferenciales requieren relacionar dos o más fragmentos del texto o conectar la información textual con el conocimiento previo del lector; exigen más tiempo. Las preguntas de evaluación crítica demandan que el lector adopte una postura razonada frente al texto; son las que más tiempo consumen y, por tanto, conviene responderlas al final cuando el tiempo es limitado.</p>
+            <p>El tercer elemento clave es la gestión del pánico ante los textos extensos. Un texto largo no es, necesariamente, más difícil que uno corto: puede serlo si el lector intenta leerlo en su totalidad antes de revisar las preguntas, pero resulta tratable si el lector aplica la estrategia de lectura selectiva. Esta estrategia consiste en identificar los párrafos introductores y conclusivos, las oraciones temáticas de cada párrafo y los conectores lógicos, para construir un mapa general del texto antes de sumergirse en los detalles.</p>
+            <p>Finalmente, un error frecuente y poco diagnosticado es el de las respuestas impulsivas: el estudiante selecciona la primera opción que le parece plausible sin leer las demás, o elige la opción que repite literalmente palabras del texto bajo el supuesto de que la coincidencia léxica garantiza la corrección de la respuesta. Las pruebas ICFES explotan sistemáticamente esta tendencia: los distractores con mayor léxico compartido con el texto son, con frecuencia, las opciones incorrectas. La técnica de corrección consiste en leer todas las opciones, descartar por eliminación y contrastar la opción seleccionada con la información textual antes de confirmar la respuesta.</p>
+            <p class="text-source">Texto original elaborado con fines académicos. Basado en investigaciones sobre gestión del tiempo en evaluaciones estandarizadas de comprensión lectora.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-label">
+      <span id="progress-text">Pregunta 1 de 20</span>
+      <span id="streak-label" style="color:var(--gold);font-weight:700;"></span>
+    </div>
+
+    <!-- Question -->
+    <div class="question-card" id="question-card">
+      <div class="q-meta">
+        <span class="q-num" id="q-num">P. 1</span>
+        <span class="q-skill" id="q-skill"></span>
+        <span class="q-text-ref" id="q-ref"></span>
+      </div>
+      <h3 id="q-text"></h3>
+      <ul class="options" id="options-list"></ul>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3: RESULTS ══ -->
+  <div id="screen-results" class="screen">
+    <div class="result-hero">
+      <div class="result-top">
+        <div class="score-ring"><span class="pct" id="res-pct">0%</span><span class="pct-lbl">DESEMPEÑO</span></div>
+        <h2 id="res-title"></h2>
+        <p class="motivation" id="res-motivation"></p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-cell"><div class="sv" id="res-correct">0</div><div class="sl">Aciertos</div></div>
+        <div class="stat-cell wrong"><div class="sv" id="res-wrong">0</div><div class="sl">Errores</div></div>
+        <div class="stat-cell"><div class="sv" id="res-score">0</div><div class="sl">Puntos totales</div></div>
+      </div>
+    </div>
+
+    <div class="feedback-section">
+      <div class="feedback-header">📝 Retroalimentación por pregunta</div>
+      <div id="feedback-list"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-navy" onclick="restartQuiz()">🔄 Reiniciar simulacro</button>
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=684"
+         class="btn"
+         style="background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'Inter',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- STREAK TOAST -->
+<div id="streak-toast" class="streak-toast" style="display:none"></div>
+
+<script>
+/* ─────────────────────────────────────────────
+   QUESTION BANK — 20 questions across 3 texts
+   ───────────────────────────────────────────── */
+const QUESTIONS = [
+  // ── TEXTO 1 ──
+  {
+    text: "Texto 1",
+    skill: "Propósito de lectura",
+    q: "Según el Texto 1, ¿cuál de los siguientes propósitos de lectura resulta más adecuado cuando un estudiante debe resumir la postura central de un artículo académico para exponerla en clase?",
+    opts: [
+      "Leer con el propósito de memorizar todos los ejemplos que el autor ofrece para ilustrar sus argumentos.",
+      "Leer con el propósito de identificar la tesis principal y los argumentos que la sostienen, priorizando la información nuclear.",
+      "Leer con el propósito de disfrutar el estilo literario del autor y su manejo del lenguaje figurado.",
+      "Leer con el propósito de localizar datos estadísticos que puedan ser citados en la exposición."
+    ],
+    correct: 1,
+    explanation: "El Texto 1 indica que el lector experto se pregunta «para qué va a leer» y qué nivel de profundidad exige la tarea. Resumir la postura central requiere identificar la tesis y los argumentos (información nuclear), no memorizar ejemplos ni buscar datos puntuales. Las opciones A, C y D corresponden a propósitos inadecuados para esa tarea específica."
+  },
+  {
+    text: "Texto 1",
+    skill: "Metacognición lectora",
+    q: "De acuerdo con el Texto 1, ¿qué caracteriza principalmente a un lector de bajo rendimiento según las investigaciones de Flavell y Brown?",
+    opts: [
+      "Lee más lento de lo necesario y por eso no termina el texto en el tiempo asignado.",
+      "Comprende bien el texto pero no puede explicarlo con sus propias palabras.",
+      "No distingue cuándo está comprendiendo mal y aplica la misma velocidad a textos de diferente complejidad.",
+      "Prefiere textos cortos y evita los textos técnicos por considerar que son demasiado difíciles."
+    ],
+    correct: 2,
+    explanation: "El Texto 1 afirma explícitamente que «los lectores de bajo rendimiento no solo comprenden menos, sino que tampoco son capaces de identificar que están comprendiendo mal: leen con la misma velocidad un párrafo sencillo y uno técnico». La opción C recoge exactamente esa idea. Las demás opciones no corresponden a lo planteado en el texto."
+  },
+  {
+    text: "Texto 1",
+    skill: "Jerarquización de información",
+    q: "El Texto 1 distingue entre información nuclear e información periférica. ¿Cuál de las siguientes afirmaciones describe mejor esa distinción?",
+    opts: [
+      "La información nuclear es la que aparece al principio del texto y la periférica es la que aparece al final.",
+      "La información nuclear es la que sostiene la tesis central del texto, mientras que la periférica cumple funciones ilustrativas o de transición.",
+      "La información nuclear es siempre más larga y detallada que la información periférica.",
+      "La información periférica es irrelevante y puede ignorarse sin afectar la comprensión del texto."
+    ],
+    correct: 1,
+    explanation: "El texto define explícitamente: «Existe información nuclear, que sostiene la tesis o el propósito central del texto, e información periférica, que cumple funciones ilustrativas, ejemplificadoras o de transición». La opción B reproduce fielmente esta definición. Las otras opciones introducen criterios no mencionados en el texto (posición, extensión, irrelevancia total)."
+  },
+  {
+    text: "Texto 1",
+    skill: "Evaluación crítica",
+    q: "El Texto 1 afirma que «el lector no descubre el sentido que el texto contiene, sino que lo produce». ¿Cuál es la implicación más directa de esta afirmación para la evaluación de la comprensión lectora?",
+    opts: [
+      "Que todas las interpretaciones de un texto son igualmente válidas y no puede haber respuestas incorrectas.",
+      "Que el texto en sí mismo no tiene ningún valor comunicativo sin la presencia del lector.",
+      "Que la comprensión es un proceso activo en el que los conocimientos y propósitos del lector inciden en el sentido que construye.",
+      "Que el autor del texto no puede controlar la manera en que sus ideas serán recibidas por ningún lector."
+    ],
+    correct: 2,
+    explanation: "La afirmación del texto, basada en el modelo transaccional de Rosenblatt, señala que el significado se construye en la interacción texto-lector. La implicación directa es que la comprensión es un proceso activo condicionado por el lector. La opción A es incorrecta porque el texto no dice que todas las interpretaciones sean válidas; la opción B exagera negando valor al texto; la opción D habla del autor, que no es el foco de la afirmación."
+  },
+  {
+    text: "Texto 1",
+    skill: "Identificación de evidencias textuales",
+    q: "¿Qué evidencia ofrece el Texto 1 para sustentar la afirmación de que la lectura crítica es una capacidad que se desarrolla y no una habilidad innata?",
+    opts: [
+      "Cita los datos estadísticos obtenidos por Rosenblatt en sus estudios comparativos entre lectores expertos y novatos.",
+      "Afirma que «esta capacidad de evaluación no es innata; se desarrolla mediante práctica sistemática y reflexión sobre los errores».",
+      "Menciona que los estudiantes que más leen en su tiempo libre alcanzan mejores resultados en las pruebas estandarizadas.",
+      "Describe experimentos de laboratorio en los que se midió el tiempo de lectura de expertos frente a principiantes."
+    ],
+    correct: 1,
+    explanation: "La evidencia textual directa es la afirmación del último párrafo: «Esta capacidad de evaluación no es innata; se desarrolla mediante práctica sistemática y reflexión sobre los errores cometidos durante el proceso lector.» Las opciones A, C y D mencionan datos o experimentos que el texto no incluye; solo la opción B cita fielmente el texto."
+  },
+
+  // ── TEXTO 2 ──
+  {
+    text: "Texto 2",
+    skill: "Análisis de relaciones lógicas",
+    q: "Según el Texto 2, ¿por qué la simple presencia de conectores causales como «porque» o «en consecuencia» no garantiza que la relación causal que introducen sea válida?",
+    opts: [
+      "Porque estos conectores pueden pertenecer indistintamente a relaciones causales, concesivas o ejemplificadoras.",
+      "Porque el lector crítico debe evaluar si la causa es suficiente, si existe una tercera variable explicativa o si se confunde simultaneidad con causalidad.",
+      "Porque en el lenguaje académico los conectores causales son usados de manera convencional y no implican una relación real de causa y efecto.",
+      "Porque los conectores causales solo son válidos cuando aparecen en textos científicos con datos estadísticos verificables."
+    ],
+    correct: 1,
+    explanation: "El texto señala que el lector crítico «evalúa si la causa aducida es suficiente para producir el efecto descrito, si existe una tercera variable que pudiera explicar mejor la correlación, o si el autor ha confundido una relación de simultaneidad con una de causalidad». La opción B sintetiza fielmente estos tres criterios. Las demás opciones distorsionan o no corresponden al planteamiento del texto."
+  },
+  {
+    text: "Texto 2",
+    skill: "Lectura estratégica tipo ICFES",
+    q: "El Texto 2 menciona el error denominado «post hoc ergo propter hoc». ¿Cuál es la descripción más precisa de ese error según lo planteado en el texto?",
+    opts: [
+      "Confundir el argumento principal de un texto con los ejemplos que lo ilustran.",
+      "Seleccionar una opción de respuesta basándose en la coincidencia léxica con el texto y no en su contenido argumentativo.",
+      "Confundir una relación de simultaneidad o sucesión temporal con una relación de causalidad.",
+      "Interpretar una restricción a una afirmación como si fuera una negación total de esa afirmación."
+    ],
+    correct: 2,
+    explanation: "El Texto 2 define este error como «confundir una relación de simultaneidad con una relación de causalidad». La opción C lo reproduce con precisión. La opción A describe un error diferente (argumento vs. ejemplo); la opción B corresponde a respuestas impulsivas (tratado en el Texto 3); la opción D describe la confusión entre restricción y negación, un error diferente mencionado en el mismo texto."
+  },
+  {
+    text: "Texto 2",
+    skill: "Relaciones lógicas — contraste",
+    q: "El Texto 2 explica que conectores como «si bien», «aunque» y «no obstante» introducen una restricción y no una negación. ¿Cuál de los siguientes enunciados ejemplifica correctamente esa distinción?",
+    opts: [
+      "«Aunque los conectores causales son frecuentes en el texto académico, su presencia no garantiza por sí sola la validez de la relación causal.» → Aquí «aunque» niega la frecuencia de los conectores causales.",
+      "«Si bien la lectura estratégica reduce el tiempo de relectura, no elimina la necesidad de comprender el texto en profundidad.» → Aquí «si bien» restringe la afirmación sin negarla.",
+      "«No obstante la complejidad del texto, los lectores expertos siempre comprenden todo en la primera lectura.» → Aquí «no obstante» convierte la afirmación en una negación de la complejidad.",
+      "«Aunque el estudiante aplicó estrategias de lectura, no logró responder correctamente ninguna pregunta.» → Aquí «aunque» confirma que las estrategias son inútiles."
+    ],
+    correct: 1,
+    explanation: "La opción B ilustra correctamente el funcionamiento de la concesión: «si bien» acepta que la lectura estratégica reduce el tiempo, pero limita esa afirmación aclarando que no elimina la necesidad de comprensión profunda. Las otras opciones interpretan incorrectamente el conector como si produjera una negación o una invalidación total."
+  },
+  {
+    text: "Texto 2",
+    skill: "Jerarquización — argumento vs. ejemplo",
+    q: "De acuerdo con el Texto 2, ¿por qué constituye un error seleccionar en una pregunta de comprensión lectora la opción que describe el ejemplo en lugar de la que describe el argumento general?",
+    opts: [
+      "Porque los ejemplos son siempre incorrectos y no deben tomarse en cuenta al interpretar un texto académico.",
+      "Porque los ejemplos solo ilustran afirmaciones generales y reemplazarlos por el argumento supone perder la dimensión universal del planteamiento.",
+      "Porque los ejemplos son información periférica que nunca se evalúa en las pruebas de lectura crítica tipo ICFES.",
+      "Porque el argumento y el ejemplo siempre expresan ideas contradictorias en el discurso académico."
+    ],
+    correct: 1,
+    explanation: "El texto explica que «quien confunde ambos planos suele seleccionar respuestas que reemplazan el argumento por el ejemplo, perdiendo la dimensión general del planteamiento». La opción B recoge fielmente esta idea: los ejemplos son ilustraciones concretas de afirmaciones generales, no sus equivalentes. Las demás opciones introducen ideas que el texto no sostiene."
+  },
+  {
+    text: "Texto 2",
+    skill: "Estructura retórica del texto",
+    q: "Según el Texto 2, ¿qué ventaja concreta ofrece al lector reconocer la estructura retórica de un texto durante una evaluación cronometrada?",
+    opts: [
+      "Le permite leer solo los primeros y últimos párrafos de cada texto sin necesidad de revisar el contenido intermedio.",
+      "Le da acceso directo a la respuesta correcta sin necesidad de leer los distractores.",
+      "Reduce el esfuerzo cognitivo y aumenta la velocidad de comprensión al anticipar hacia dónde se dirige el razonamiento del autor.",
+      "Le garantiza una comprensión total del texto independientemente del nivel de complejidad léxica."
+    ],
+    correct: 2,
+    explanation: "El texto afirma explícitamente que reconocer el andamiaje retórico «reduce el esfuerzo cognitivo del lector y aumenta la velocidad de comprensión», lo que «en contextos de evaluación cronometrada representa una ventaja significativa». La opción C recoge esta idea con precisión. Las otras opciones exageran o distorsionan la ventaja descrita."
+  },
+
+  // ── TEXTO 3 ──
+  {
+    text: "Texto 3",
+    skill: "Gestión del tiempo",
+    q: "Según el Texto 3, ¿cuál es el principal factor que impide que algunos estudiantes demuestren en las pruebas el dominio que sí poseen de las habilidades evaluadas?",
+    opts: [
+      "La dificultad excesiva de los textos empleados en las pruebas estandarizadas respecto al nivel real de los estudiantes.",
+      "La falta de vocabulario académico suficiente para comprender las preguntas y las opciones de respuesta.",
+      "La gestión inadecuada del tiempo disponible entre los distintos textos y preguntas.",
+      "La ausencia de estrategias de memorización que permitan retener la información de los textos largos."
+    ],
+    correct: 2,
+    explanation: "El Texto 3 señala explícitamente que «uno de los factores que más incide en el rendimiento [...] no es la falta de comprensión, sino la gestión inadecuada del tiempo disponible entre los distintos textos y preguntas». La opción C reproduce fielmente esta idea. Las demás opciones mencionan factores que el texto no identifica como principales."
+  },
+  {
+    text: "Texto 3",
+    skill: "Lectura estratégica — preguntas primero",
+    q: "El Texto 3 recomienda leer las preguntas antes de abordar el texto completo. ¿Cuál es el fundamento de esta estrategia según lo planteado en el texto?",
+    opts: [
+      "Permite al estudiante identificar cuáles preguntas son muy difíciles para omitirlas desde el inicio y ahorrar tiempo.",
+      "Activa un «mapa de búsqueda» que convierte la lectura en un proceso dirigido, reduciendo hasta un 35 % el tiempo de relectura necesario.",
+      "Garantiza que el estudiante no leerá párrafos irrelevantes, puesto que las preguntas siempre cubren todos los párrafos del texto.",
+      "Permite al estudiante memorizar las preguntas de antemano para responderlas de manera automática al terminar la lectura."
+    ],
+    correct: 1,
+    explanation: "El texto explica que leer las preguntas primero permite identificar qué tipo de información se necesita y luego leer «con ese mapa de búsqueda activo», lo que «reduce hasta un 35 % el tiempo de relectura necesario». La opción B recoge fielmente esta idea. Las demás opciones distorsionan el propósito de la estrategia."
+  },
+  {
+    text: "Texto 3",
+    skill: "Tipos de preguntas ICFES",
+    q: "De acuerdo con el Texto 3, ¿cuál de los siguientes tipos de preguntas debería resolverse al final cuando el tiempo disponible es limitado?",
+    opts: [
+      "Las preguntas de recuperación literal, porque requieren buscar datos específicos difíciles de localizar rápidamente.",
+      "Las preguntas inferenciales, porque relacionar fragmentos distintos del texto consume más tiempo que evaluar afirmaciones.",
+      "Las preguntas de evaluación crítica, porque exigen que el lector adopte una postura razonada frente al texto y son las que más tiempo consumen.",
+      "Las preguntas sobre vocabulario, porque el significado de las palabras varía según el contexto y requiere reflexión extendida."
+    ],
+    correct: 2,
+    explanation: "El texto indica que «las preguntas de evaluación crítica demandan que el lector adopte una postura razonada frente al texto; son las que más tiempo consumen y, por tanto, conviene responderlas al final cuando el tiempo es limitado». La opción C reproduce exactamente esta recomendación."
+  },
+  {
+    text: "Texto 3",
+    skill: "Estrategias para textos extensos",
+    q: "Según el Texto 3, ¿qué implica la estrategia de lectura selectiva aplicada a textos extensos?",
+    opts: [
+      "Leer únicamente el primer párrafo del texto y responder las preguntas con base en esa información parcial.",
+      "Identificar párrafos introductores y conclusivos, oraciones temáticas y conectores lógicos para construir un mapa general antes de profundizar en los detalles.",
+      "Dividir el tiempo igualmente entre todos los párrafos del texto, independientemente de su contenido o relevancia.",
+      "Omitir los párrafos de mayor complejidad léxica y concentrarse únicamente en los que contienen ejemplos concretos."
+    ],
+    correct: 1,
+    explanation: "El texto define la lectura selectiva como «identificar los párrafos introductores y conclusivos, las oraciones temáticas de cada párrafo y los conectores lógicos, para construir un mapa general del texto antes de sumergirse en los detalles». La opción B recoge fielmente esta definición."
+  },
+  {
+    text: "Texto 3",
+    skill: "Errores avanzados — respuestas impulsivas",
+    q: "El Texto 3 identifica el error de las «respuestas impulsivas» como uno de los más frecuentes y poco diagnosticados. ¿Cuál de las siguientes afirmaciones describe correctamente este error y la técnica de corrección propuesta?",
+    opts: [
+      "El error consiste en leer todas las opciones antes de seleccionar, lo que genera confusión. La corrección consiste en elegir la primera opción plausible sin revisar las demás.",
+      "El error consiste en seleccionar opciones con léxico distinto al del texto. La corrección consiste en buscar siempre la opción con más palabras en común con el texto.",
+      "El error consiste en elegir la primera opción plausible o la que repite palabras del texto; la corrección implica leer todas las opciones, descartar por eliminación y contrastar con el texto.",
+      "El error consiste en tardar demasiado en responder. La corrección consiste en seleccionar rápidamente la opción que parece más académica o formal."
+    ],
+    correct: 2,
+    explanation: "El texto describe el error como seleccionar «la primera opción que le parece plausible sin leer las demás, o elegir la opción que repite literalmente palabras del texto». La técnica de corrección es «leer todas las opciones, descartar por eliminación y contrastar la opción seleccionada con la información textual». La opción C reproduce fielmente ambos elementos."
+  },
+  {
+    text: "Texto 3",
+    skill: "Evaluación crítica de distractores",
+    q: "De acuerdo con el Texto 3, ¿cuál es la característica que presentan con frecuencia los distractores más peligrosos en las pruebas ICFES de lectura crítica?",
+    opts: [
+      "Contienen información completamente falsa y fácilmente verificable mediante una relectura rápida del texto.",
+      "Están redactados en un lenguaje mucho más técnico y complejo que el del texto original.",
+      "Comparten mayor cantidad de léxico con el texto, lo que genera la ilusión de ser la opción correcta.",
+      "Hacen referencia a información que no aparece en el texto pero que el estudiante podría conocer previamente."
+  ],
+    correct: 2,
+    explanation: "El texto señala que «los distractores con mayor léxico compartido con el texto son, con frecuencia, las opciones incorrectas», y que las pruebas ICFES «explotan sistemáticamente esta tendencia». La opción C recoge fielmente esta característica del distractor más peligroso."
+  },
+
+  // ── CROSS-TEXT QUESTIONS ──
+  {
+    text: "Texto 1 y Texto 3",
+    skill: "Metacognición lectora",
+    q: "Tanto el Texto 1 como el Texto 3 abordan la idea de que el lector debe supervisar activamente su propio proceso de lectura. ¿Cuál de los siguientes enunciados sintetiza mejor el punto de encuentro entre ambos textos en relación con este tema?",
+    opts: [
+      "Ambos textos afirman que la velocidad de lectura es el factor determinante del rendimiento en las pruebas estandarizadas.",
+      "Los dos textos sostienen que la supervisión del propio proceso lector —sea detectando errores de comprensión o gestionando el tiempo— mejora el desempeño en la evaluación.",
+      "Tanto el Texto 1 como el Texto 3 concluyen que la lectura crítica es una habilidad innata que no puede ser entrenada.",
+      "Ambos textos recomiendan leer primero las preguntas y luego el texto como la única estrategia válida de lectura en contextos evaluativos."
+    ],
+    correct: 1,
+    explanation: "El Texto 1 presenta la metacognición como la capacidad de supervisar la propia comprensión y ajustar la estrategia cuando se detectan dificultades. El Texto 3 desarrolla cómo esa supervisión debe aplicarse en contextos de tiempo limitado (gestión del tiempo, tipos de preguntas). La opción B sintetiza correctamente ese punto de encuentro."
+  },
+  {
+    text: "Texto 2 y Texto 3",
+    skill: "Análisis de relaciones lógicas",
+    q: "El Texto 2 habla del error de confundir argumentos con ejemplos, y el Texto 3 habla del error de elegir opciones por coincidencia léxica. ¿Qué tienen en común ambos errores según lo planteado en los textos?",
+    opts: [
+      "Ambos son errores exclusivos de lectores con nivel de comprensión muy bajo que no podrían resolverse con estrategias de estudio.",
+      "Ambos son errores que se producen por no leer el texto con suficiente atención a los detalles gramaticales.",
+      "En ambos casos el lector se queda en la superficie del texto —en la forma o en el ejemplo concreto— sin alcanzar el nivel de comprensión profunda que la pregunta exige.",
+      "Ambos errores son producto de la ansiedad durante la prueba y desaparecen cuando el estudiante tiene tiempo ilimitado para responder."
+    ],
+    correct: 2,
+    explanation: "Confundir el argumento con el ejemplo implica quedarse en lo concreto sin captar la generalización. Elegir por coincidencia léxica implica quedarse en la forma superficial sin evaluar el contenido. En ambos casos el lector opera en la superficie del texto. La opción C captura correctamente este denominador común."
+  },
+  {
+    text: "Texto 1",
+    skill: "Propósito del autor",
+    q: "¿Cuál es el propósito comunicativo principal del Texto 1?",
+    opts: [
+      "Describir las características biográficas de Rosenblatt, Flavell y Brown y sus contribuciones a la psicología educativa.",
+      "Criticar los métodos de enseñanza de la lectura utilizados en las instituciones de educación secundaria colombiana.",
+      "Explicar en qué consiste la lectura como proceso activo de construcción de sentido e identificar habilidades clave del lector crítico.",
+      "Proponer un programa de entrenamiento específico para mejorar la velocidad lectora de los estudiantes en pruebas estandarizadas."
+    ],
+    correct: 2,
+    explanation: "El Texto 1 desarrolla una explicación de la lectura como proceso constructivo (modelo transaccional), de la metacognición lectora y de la jerarquización de la información, todo ello orientado a caracterizar al lector crítico. Su propósito es explicativo-informativo, no biográfico ni prescriptivo de un programa concreto."
+  },
+  {
+    text: "Texto 2",
+    skill: "Propósito del autor",
+    q: "¿Con qué propósito el autor del Texto 2 explica los tres tipos de relaciones lógicas (causales, de contraste y de ejemplificación)?",
+    opts: [
+      "Para demostrar que el lenguaje académico es artificialmente complejo y dificulta la comprensión de los lectores promedio.",
+      "Para dotar al lector de herramientas concretas que le permitan identificar y evaluar las relaciones entre ideas en textos argumentativos.",
+      "Para argumentar que los conectores lógicos son suficientes por sí solos para garantizar la coherencia de cualquier texto.",
+      "Para presentar una clasificación exhaustiva de todos los conectores del español académico y sus usos normativos."
+    ],
+    correct: 1,
+    explanation: "El Texto 2 presenta los tres tipos de relaciones lógicas como herramientas que el lector crítico debe dominar para enfrentar textos de alta complejidad en pruebas estandarizadas. El propósito es instrumental: dotar al lector de recursos analíticos. Las demás opciones distorsionan ese propósito."
+  }
+];
+
+/* ─────────────────────────────────────────────
+   TIMER CONFIG
+   ───────────────────────────────────────────── */
+const TOTAL_SECONDS = 40 * 60; // 40 minutos
+let timerInterval = null;
+let secondsLeft = TOTAL_SECONDS;
+
+function startTimer() {
+  document.getElementById('timer-box').style.display = 'flex';
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      endQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60);
+  const s = secondsLeft % 60;
+  document.getElementById('timer-display').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  const box = document.getElementById('timer-box');
+  if (secondsLeft <= 300) box.classList.add('warning');
+  else box.classList.remove('warning');
+}
+
+/* ─────────────────────────────────────────────
+   QUIZ STATE
+   ───────────────────────────────────────────── */
+let shuffledQ = [];
+let currentIdx = 0;
+let score = 0;
+let correctCount = 0;
+let streak = 0;
+let maxStreak = 0;
+let bonusPoints = 0;
+let answers = []; // {q, chosen, correct, isCorrect}
+const LETTERS = ['A','B','C','D'];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startActivity() {
+  showScreen('screen-quiz');
+  shuffledQ = shuffle(QUESTIONS);
+  currentIdx = 0;
+  score = 0;
+  correctCount = 0;
+  streak = 0;
+  maxStreak = 0;
+  bonusPoints = 0;
+  answers = [];
+  secondsLeft = TOTAL_SECONDS;
+  updateTimerDisplay();
+  startTimer();
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const total = shuffledQ.length;
+  const q = shuffledQ[currentIdx];
+
+  // Progress
+  const pct = Math.round((currentIdx / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `Pregunta ${currentIdx + 1} de ${total}`;
+  document.getElementById('streak-label').textContent = streak >= 3 ? `🔥 Racha: ${streak}` : '';
+
+  // Meta
+  document.getElementById('q-num').textContent = `P. ${currentIdx + 1}`;
+  document.getElementById('q-skill').textContent = q.skill;
+  document.getElementById('q-ref').textContent = `📄 ${q.text}`;
+
+  // Question
+  document.getElementById('q-text').textContent = q.q;
+
+  // Shuffle options
+  const optIndices = shuffle([0,1,2,3]);
+  const optList = document.getElementById('options-list');
+  optList.innerHTML = '';
+
+  optIndices.forEach((origIdx, displayIdx) => {
+    const li = document.createElement('li');
+    li.className = 'option-item';
+    li.innerHTML = `
+      <input type="radio" name="opt" id="opt${displayIdx}" value="${origIdx}">
+      <label for="opt${displayIdx}">
+        <span class="opt-letter">${LETTERS[displayIdx]}</span>
+        <span>${q.opts[origIdx]}</span>
+      </label>
+    `;
+    optList.appendChild(li);
+  });
+}
+
+function nextQuestion() {
+  const selected = document.querySelector('input[name="opt"]:checked');
+  if (!selected) {
+    alert('Por favor selecciona una respuesta antes de continuar.');
+    return;
+  }
+
+  const q = shuffledQ[currentIdx];
+  const chosen = parseInt(selected.value);
+  const isCorrect = chosen === q.correct;
+
+  // Score
+  if (isCorrect) {
+    score += 5;
+    correctCount++;
+    streak++;
+    if (streak > maxStreak) maxStreak = streak;
+    if (streak === 3) { showStreak('🔥 ¡Racha de 3! +3 puntos bonus', 3); score += 3; bonusPoints += 3; }
+    if (streak === 5) { showStreak('⚡ ¡Racha de 5! +7 puntos bonus', 7); score += 7; bonusPoints += 7; }
+    if (streak > 5 && streak % 5 === 0) { showStreak(`🌟 ¡Racha de ${streak}! +5 puntos bonus`, 5); score += 5; bonusPoints += 5; }
+  } else {
+    streak = 0;
+    document.getElementById('streak-label').textContent = '';
+  }
+
+  answers.push({ q: q.q, skill: q.skill, chosen, correct: q.correct, isCorrect, opts: q.opts, explanation: q.explanation });
+
+  currentIdx++;
+  if (currentIdx >= shuffledQ.length) {
+    endQuiz(false);
+  } else {
+    renderQuestion();
+  }
+}
+
+function showStreak(msg, bonus) {
+  const toast = document.getElementById('streak-toast');
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
+function endQuiz(timeOut) {
+  clearInterval(timerInterval);
+  document.getElementById('timer-box').style.display = 'none';
+  buildResults(timeOut);
+  showScreen('screen-results');
+}
+
+function buildResults(timeOut) {
+  const total = shuffledQ.length;
+  const wrong = total - correctCount;
+  const pct = Math.round((correctCount / total) * 100);
+
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-correct').textContent = correctCount;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-score').textContent = score;
+
+  let title, motivation;
+  if (pct >= 80) {
+    title = '¡Excelente desempeño!';
+    motivation = 'Demostraste un dominio sólido de las estrategias de lectura crítica. Tu capacidad analítica y tu gestión del tiempo son tus grandes fortalezas. ¡Sigue así!';
+  } else if (pct >= 60) {
+    title = 'Buen progreso';
+    motivation = 'Vas por el camino correcto. Refuerza las habilidades en las que fallaste y en el próximo intento verás una mejora notable. ¡Tú puedes!';
+  } else {
+    title = '¡Sigue practicando!';
+    motivation = 'Cada intento es una oportunidad de aprender. Revisa la retroalimentación, identifica tus errores frecuentes y vuelve a intentarlo con confianza. El progreso es tuyo.';
+  }
+  if (timeOut) {
+    title = 'Tiempo agotado';
+    motivation = 'El tiempo llegó a su fin. Revisa la retroalimentación para identificar en qué áreas necesitas mejorar la velocidad y la estrategia lectora.';
+  }
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-motivation').textContent = motivation;
+
+  // Feedback list
+  const fbList = document.getElementById('feedback-list');
+  fbList.innerHTML = '';
+  answers.forEach((a, i) => {
+    const item = document.createElement('div');
+    item.className = 'feedback-item';
+    item.innerHTML = `
+      <button class="fb-toggle" onclick="toggleFb(this, 'fb${i}')">
+        <span class="fb-icon ${a.isCorrect ? 'ok' : 'no'}">${a.isCorrect ? '✓' : '✗'}</span>
+        <span><strong>${i+1}.</strong> ${a.q}</span>
+      </button>
+      <div id="fb${i}" class="fb-body">
+        ${!a.isCorrect ? `<div class="fb-chosen">Tu respuesta: ${a.opts[a.chosen]}</div>` : ''}
+        <div class="fb-correct">Respuesta correcta: ${a.opts[a.correct]}</div>
+        <div class="fb-explanation">${a.explanation}</div>
+      </div>
+    `;
+    fbList.appendChild(item);
+  });
+}
+
+function toggleFb(btn, id) {
+  const body = document.getElementById(id);
+  body.classList.toggle('open');
+}
+
+function restartQuiz() {
+  showScreen('screen-welcome');
+}
+
+/* ─────────────────────────────────────────────
+   ACCORDION — TEXTS
+   ───────────────────────────────────────────── */
+function toggleText(btn, id) {
+  const body = document.getElementById(id);
+  btn.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+let allExpanded = false;
+function toggleAllTexts() {
+  allExpanded = !allExpanded;
+  ['text1','text2','text3'].forEach(id => {
+    const body = document.getElementById(id);
+    const btn = body.previousElementSibling;
+    if (allExpanded) { body.classList.add('open'); btn.classList.add('open'); }
+    else { body.classList.remove('open'); btn.classList.remove('open'); }
+  });
+}
+
+/* ─────────────────────────────────────────────
+   SCREEN SWITCHER
+   ───────────────────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ─────────────────────────────────────────────
+   RETURN BUTTON — MOBILE/DESKTOP
+   ───────────────────────────────────────────── */
+const btn = document.getElementById('btn-volver');
+const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=684';
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=684';
+const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+if (esMóvil) { btn.href = appUrl; }
+</script>
+</body>
+</html>

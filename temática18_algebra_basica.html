@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simulacro ICFES – Álgebra Básica | Instituto INNOVA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --azul: #1a2e4a;
+    --azul-medio: #243d62;
+    --azul-claro: #2e5080;
+    --dorado: #c9a84c;
+    --dorado-claro: #e4c76b;
+    --dorado-suave: #f5e9c4;
+    --blanco: #ffffff;
+    --gris-fondo: #f4f6f9;
+    --gris-borde: #e2e8f0;
+    --verde: #22c55e;
+    --rojo: #ef4444;
+    --texto: #1e293b;
+    --texto-suave: #64748b;
+    --sombra: 0 4px 24px rgba(26,46,74,0.10);
+    --sombra-hover: 0 8px 32px rgba(26,46,74,0.18);
+    --radio: 16px;
+    --radio-sm: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', 'Inter', sans-serif;
+    background: var(--gris-fondo);
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px;
+  }
+
+  /* ── HEADER ─────────────────────────────────────── */
+  .header {
+    width: 100%;
+    background: var(--azul);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .header-brand {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .header-logo {
+    width: 40px; height: 40px;
+    background: var(--dorado);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    color: var(--azul);
+    font-weight: 800;
+  }
+  .header-title {
+    color: var(--blanco);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .header-sub {
+    color: var(--dorado-claro);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .header-timer {
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid var(--dorado);
+    border-radius: 50px;
+    padding: 8px 20px;
+    color: var(--dorado-claro);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    display: none;
+    align-items: center; gap: 8px;
+  }
+  .header-timer.show { display: flex; }
+  .timer-icon { font-size: 1rem; }
+  .timer-warning { color: #f87171 !important; animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* ── WRAPPER ─────────────────────────────────────── */
+  .wrapper {
+    width: 100%;
+    max-width: 820px;
+    padding: 32px 20px;
+  }
+
+  /* ── PANTALLA ─────────────────────────────────────── */
+  .screen { display: none; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+  /* ── BIENVENIDA ─────────────────────────────────────── */
+  .welcome-card {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--azul) 60%, var(--azul-claro));
+    padding: 44px 40px 36px;
+    text-align: center;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--dorado);
+    color: var(--azul);
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 14px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+  .welcome-title {
+    color: var(--blanco);
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .welcome-title span { color: var(--dorado-claro); }
+  .welcome-subtitle {
+    color: rgba(255,255,255,0.75);
+    font-size: 1rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .welcome-body { padding: 36px 40px; }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .meta-item {
+    background: var(--gris-fondo);
+    border-radius: var(--radio-sm);
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid var(--gris-borde);
+  }
+  .meta-item .meta-icon { font-size: 1.5rem; margin-bottom: 6px; }
+  .meta-item .meta-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--azul);
+    display: block;
+  }
+  .meta-item .meta-label {
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .indicaciones {
+    background: var(--dorado-suave);
+    border-left: 4px solid var(--dorado);
+    border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+    padding: 18px 20px;
+    margin-bottom: 32px;
+  }
+  .indicaciones h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8a6820;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .indicaciones ul {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .indicaciones ul li {
+    font-size: 0.9rem;
+    color: #5a4210;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .indicaciones ul li::before {
+    content: '✓';
+    position: absolute; left: 0;
+    color: #c9860a;
+    font-weight: 700;
+  }
+
+  /* ── BOTONES ─────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 36px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--azul), var(--azul-claro));
+    color: var(--blanco);
+    box-shadow: 0 4px 20px rgba(26,46,74,0.35);
+    width: 100%;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--sombra-hover); }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+    color: var(--azul);
+    box-shadow: 0 4px 20px rgba(201,168,76,0.45);
+  }
+  .btn-gold:hover { transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--azul);
+    border: 2px solid var(--azul);
+  }
+  .btn-outline:hover { background: var(--azul); color: white; }
+
+  /* ── CUESTIONARIO ─────────────────────────────────────── */
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .progress-label {
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .progress-label strong { color: var(--azul); }
+
+  .progress-bar-wrap {
+    height: 8px;
+    background: var(--gris-borde);
+    border-radius: 50px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--azul), var(--dorado));
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+
+  .streak-banner {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: #3d1a00;
+    border-radius: var(--radio-sm);
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+    display: none;
+    animation: slideDown 0.3s ease;
+  }
+  .streak-banner.show { display: block; }
+  @keyframes slideDown { from{transform:translateY(-10px);opacity:0} to{transform:none;opacity:1} }
+
+  .question-card {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 36px 40px;
+    margin-bottom: 20px;
+  }
+  .question-tag {
+    display: inline-block;
+    background: var(--azul);
+    color: var(--dorado-claro);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+  .question-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--texto);
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .question-text em {
+    background: var(--dorado-suave);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-style: normal;
+    font-weight: 600;
+    color: #7a5c10;
+  }
+
+  .options-grid {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .option-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 20px;
+    background: var(--gris-fondo);
+    border: 2px solid var(--gris-borde);
+    border-radius: var(--radio-sm);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.97rem;
+    color: var(--texto);
+    line-height: 1.5;
+    font-weight: 500;
+    width: 100%;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--azul);
+    background: #e8edf5;
+    transform: translateX(3px);
+  }
+  .option-btn.selected {
+    border-color: var(--azul);
+    background: #dce6f5;
+  }
+  .option-letter {
+    min-width: 30px; height: 30px;
+    background: var(--azul);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .option-btn.selected .option-letter { background: var(--azul); }
+
+  .nav-row {
+    display: flex; justify-content: flex-end;
+    margin-top: 8px;
+  }
+  #btn-siguiente {
+    padding: 14px 40px;
+    font-size: 1rem;
+  }
+
+  /* ── RESULTADOS ─────────────────────────────────────── */
+  .result-hero {
+    background: linear-gradient(135deg, var(--azul) 50%, var(--azul-claro));
+    border-radius: var(--radio);
+    padding: 44px 40px;
+    text-align: center;
+    color: white;
+    margin-bottom: 24px;
+    box-shadow: var(--sombra);
+  }
+  .result-emoji { font-size: 3.5rem; margin-bottom: 12px; }
+  .result-score {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 800;
+    color: var(--dorado-claro);
+    line-height: 1;
+  }
+  .result-score-label {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 20px;
+  }
+  .result-msg {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.9);
+    max-width: 480px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 20px 0 0;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radio-sm);
+    padding: 16px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .stat-box .stat-val {
+    font-size: 1.6rem; font-weight: 800;
+    display: block; margin-bottom: 4px;
+  }
+  .stat-box .stat-lbl {
+    font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.5px; color: rgba(255,255,255,0.65);
+    font-weight: 600;
+  }
+  .stat-box.verde .stat-val { color: #86efac; }
+  .stat-box.rojo .stat-val { color: #fca5a5; }
+  .stat-box.dorado .stat-val { color: var(--dorado-claro); }
+
+  .action-row {
+    display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px;
+  }
+  .action-row .btn { flex: 1; min-width: 160px; }
+
+  /* ── RETROALIMENTACIÓN ─────────────────────────────────────── */
+  .feedback-section h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--gris-borde);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .fb-card {
+    background: var(--blanco);
+    border-radius: var(--radio-sm);
+    box-shadow: 0 2px 10px rgba(26,46,74,0.07);
+    margin-bottom: 14px;
+    overflow: hidden;
+    border: 1.5px solid var(--gris-borde);
+  }
+  .fb-card.correct { border-left: 4px solid var(--verde); }
+  .fb-card.wrong { border-left: 4px solid var(--rojo); }
+  .fb-header {
+    padding: 14px 18px;
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .fb-header:hover { background: #f8fafc; }
+  .fb-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .fb-card.correct .fb-icon { background: #dcfce7; color: #16a34a; }
+  .fb-card.wrong .fb-icon { background: #fee2e2; color: #dc2626; }
+  .fb-q-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--texto);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .fb-toggle {
+    color: var(--texto-suave);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 3px;
+    transition: transform 0.2s;
+  }
+  .fb-card.open .fb-toggle { transform: rotate(180deg); }
+  .fb-body {
+    display: none;
+    padding: 0 18px 16px 58px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .fb-card.open .fb-body { display: block; }
+  .fb-answer-row {
+    display: flex; gap: 8px; align-items: flex-start;
+    margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .fb-pill {
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .fb-pill.corr { background: #dcfce7; color: #166534; }
+  .fb-pill.wrong { background: #fee2e2; color: #991b1b; }
+  .fb-pill.user { background: #dbeafe; color: #1e40af; }
+  .fb-exp { color: var(--texto-suave); margin-top: 6px; }
+
+  /* ── RETORNO AL AULA ─────────────────────────────────────── */
+  .return-section {
+    text-align: center;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 2px solid var(--gris-borde);
+  }
+  .return-section p {
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+    margin-bottom: 14px;
+  }
+
+  /* ── MODAL TIMEOUT ─────────────────────────────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,20,40,0.65);
+    z-index: 9999;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: white;
+    border-radius: var(--radio);
+    padding: 40px;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-box h2 { font-size: 1.4rem; color: var(--azul); margin-bottom: 10px; }
+  .modal-box p { color: var(--texto-suave); margin-bottom: 24px; line-height: 1.6; }
+
+  /* ── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .welcome-hero, .welcome-body { padding: 28px 22px; }
+    .question-card { padding: 24px 20px; }
+    .result-hero { padding: 30px 22px; }
+    .stats-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .fb-body { padding-left: 20px; }
+    .header { padding: 12px 16px; }
+    .header-timer { padding: 6px 14px; font-size: 0.95rem; }
+    .action-row { flex-direction: column; }
+    .action-row .btn { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">I</div>
+    <div>
+      <div class="header-title">Instituto INNOVA</div>
+      <div class="header-sub">Validación del Bachillerato</div>
+    </div>
+  </div>
+  <div class="header-timer" id="timerBox">
+    <span class="timer-icon">⏱</span>
+    <span id="timerDisplay">40:00</span>
+  </div>
+</header>
+
+<div class="wrapper">
+
+  <!-- ══════════════════════ PANTALLA 1: BIENVENIDA ══════════════════════ -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-card">
+      <div class="welcome-hero">
+        <div class="badge">Simulacro Oficial · Tipo ICFES</div>
+        <h1 class="welcome-title">Álgebra Básica<br><span>Ecuaciones Simples</span></h1>
+        <p class="welcome-subtitle">Pon a prueba tus conocimientos con un simulacro diseñado al nivel y estilo de la Prueba Saber de las entidades certificadoras.</p>
+      </div>
+      <div class="welcome-body">
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-icon">📋</div>
+            <span class="meta-value">25</span>
+            <span class="meta-label">Preguntas</span>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">⏱</div>
+            <span class="meta-value">40 min</span>
+            <span class="meta-label">Tiempo</span>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🎯</div>
+            <span class="meta-value">100 pts</span>
+            <span class="meta-label">Puntaje máximo</span>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">📚</div>
+            <span class="meta-value">13</span>
+            <span class="meta-label">Subtemáticas</span>
+          </div>
+        </div>
+        <div class="indicaciones">
+          <h3>📌 Indicaciones generales</h3>
+          <ul>
+            <li>Lee con atención cada enunciado antes de responder.</li>
+            <li>Selecciona una única respuesta por pregunta.</li>
+            <li>No puedes avanzar sin seleccionar una opción.</li>
+            <li>El temporizador corre desde que inicias el simulacro.</li>
+            <li>Al finalizar verás tu puntaje y la retroalimentación de cada pregunta.</li>
+            <li>Puedes reiniciar el simulacro las veces que quieras.</li>
+          </ul>
+        </div>
+        <button class="btn btn-primary" id="btnIniciar">🚀 Iniciar simulacro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ PANTALLA 2: CUESTIONARIO ══════════════════════ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <div class="progress-label">Pregunta <strong id="qNum">1</strong> de <strong id="qTotal">25</strong></div>
+      <div class="progress-label">Puntaje: <strong id="scoreDisplay">0</strong> pts</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar" style="width:4%"></div>
+    </div>
+    <div class="streak-banner" id="streakBanner">🔥 ¡Racha!</div>
+    <div class="question-card">
+      <div class="question-tag" id="qTag">Temática</div>
+      <p class="question-text" id="qText"></p>
+      <div class="options-grid" id="optionsGrid"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-primary" id="btn-siguiente" style="max-width:260px">Responder →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ PANTALLA 3: RESULTADOS ══════════════════════ -->
+  <div class="screen" id="screen-results">
+    <div class="result-hero">
+      <div class="result-emoji" id="resultEmoji">🎓</div>
+      <div class="result-score" id="resultScore">0</div>
+      <div class="result-score-label">puntos de 100</div>
+      <p class="result-msg" id="resultMsg"></p>
+      <div class="stats-grid">
+        <div class="stat-box verde">
+          <span class="stat-val" id="statAciertos">0</span>
+          <span class="stat-lbl">✅ Aciertos</span>
+        </div>
+        <div class="stat-box rojo">
+          <span class="stat-val" id="statErrores">0</span>
+          <span class="stat-lbl">❌ Errores</span>
+        </div>
+        <div class="stat-box dorado">
+          <span class="stat-val" id="statPct">0%</span>
+          <span class="stat-lbl">📊 Desempeño</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="btnReiniciar">🔄 Reiniciar simulacro</button>
+    </div>
+
+    <div class="feedback-section">
+      <h2>📝 Retroalimentación por pregunta</h2>
+      <div id="feedbackList"></div>
+    </div>
+
+    <div class="return-section">
+      <p>¿Listo para continuar con tu formación?</p>
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=703"
+         style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- MODAL TIEMPO AGOTADO -->
+<div class="modal-overlay" id="modalTimeout">
+  <div class="modal-box">
+    <div style="font-size:3rem;margin-bottom:12px">⏰</div>
+    <h2>¡Tiempo agotado!</h2>
+    <p>El tiempo disponible para el simulacro ha terminado. Se mostrarán los resultados con las preguntas respondidas hasta este momento.</p>
+    <button class="btn btn-primary" id="btnModalOk">Ver mis resultados</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+//  BANCO DE PREGUNTAS – 25 preguntas tipo ICFES
+// ═══════════════════════════════════════════════════════════════════════
+const TODAS_LAS_PREGUNTAS = [
+  // 1. Concepto de igualdad y ecuación
+  {
+    tema: "Igualdad y ecuación",
+    texto: "Un estudiante afirma que la expresión <em>3x + 5</em> es una ecuación. Su compañero dice que es simplemente una expresión algebraica. ¿Cuál de las siguientes afirmaciones es CORRECTA?",
+    opciones: [
+      "Ambos tienen razón, pues toda expresión algebraica es también una ecuación.",
+      "Tiene razón el primer estudiante, ya que la expresión contiene una variable.",
+      "Tiene razón el segundo estudiante, ya que una ecuación requiere el signo de igualdad (=).",
+      "Ninguno tiene razón, pues 3x + 5 es un polinomio, no una expresión algebraica."
+    ],
+    correcta: 2,
+    explicacion: "Una ecuación es una igualdad matemática entre dos expresiones, por lo que necesita obligatoriamente el signo '='. La expresión 3x + 5 no tiene ese signo, así que es solo una expresión algebraica, no una ecuación."
+  },
+  {
+    tema: "Igualdad y ecuación",
+    texto: "¿Cuál de las siguientes opciones representa una ecuación de primer grado con una incógnita?",
+    opciones: [
+      "x² + 3x = 7",
+      "2x + 5 = 13",
+      "4xy − 2 = 0",
+      "5a + 3b = 10"
+    ],
+    correcta: 1,
+    explicacion: "La opción B es la única que tiene una sola variable (x), cuya mayor potencia es 1, que es la definición de ecuación de primer grado con una incógnita."
+  },
+  // 2. Variables e incógnitas
+  {
+    tema: "Variables e incógnitas",
+    texto: "En el enunciado: <em>'El doble de un número aumentado en 7 es igual a 19'</em>, ¿qué representa la letra <em>n</em> si se usa para plantear la ecuación?",
+    opciones: [
+      "Un coeficiente numérico conocido.",
+      "El resultado de la operación.",
+      "El número desconocido que se quiere hallar.",
+      "El valor constante del enunciado."
+    ],
+    correcta: 2,
+    explicacion: "En una ecuación planteada a partir de un enunciado verbal, la letra (n) representa la incógnita: el valor desconocido que queremos encontrar al resolver la ecuación."
+  },
+  {
+    tema: "Variables e incógnitas",
+    texto: "Si <em>m = 4</em>, ¿cuánto vale la expresión <em>3m − 6</em>?",
+    opciones: [
+      "6",
+      "18",
+      "10",
+      "12"
+    ],
+    correcta: 0,
+    explicacion: "Sustituyendo m = 4: 3(4) − 6 = 12 − 6 = 6. La evaluación de una expresión algebraica consiste en reemplazar la variable por el valor dado."
+  },
+  // 3. Expresiones algebraicas
+  {
+    tema: "Expresiones algebraicas",
+    texto: "En la expresión <em>−7x³</em>, ¿cuál es el coeficiente y cuál es la parte literal?",
+    opciones: [
+      "Coeficiente: x³ — Parte literal: −7",
+      "Coeficiente: 3 — Parte literal: −7x",
+      "Coeficiente: −7 — Parte literal: x³",
+      "Coeficiente: −7x — Parte literal: 3"
+    ],
+    correcta: 2,
+    explicacion: "En un término algebraico, el coeficiente es el factor numérico (−7) y la parte literal es la parte con variables y exponentes (x³)."
+  },
+  {
+    tema: "Expresiones algebraicas",
+    texto: "¿Cuál de las siguientes opciones es equivalente a la expresión <em>4a + 2a − a</em>?",
+    opciones: [
+      "7a",
+      "5a",
+      "6a",
+      "3a"
+    ],
+    correcta: 1,
+    explicacion: "Se suman y restan los términos semejantes: 4a + 2a − a = (4 + 2 − 1)a = 5a."
+  },
+  // 4. Traducción del lenguaje verbal al algebraico
+  {
+    tema: "Lenguaje verbal al algebraico",
+    texto: "La frase <em>'el triple de un número disminuido en 4 es igual a 20'</em> se traduce algebraicamente como:",
+    opciones: [
+      "3 + x − 4 = 20",
+      "3x − 4 = 20",
+      "3(x − 4) = 20",
+      "x − 4 × 3 = 20"
+    ],
+    correcta: 1,
+    explicacion: "'El triple de un número' es 3x. 'Disminuido en 4' significa que se le resta 4: 3x − 4. 'Es igual a 20' agrega el signo = y el 20. La ecuación correcta es 3x − 4 = 20."
+  },
+  {
+    tema: "Lenguaje verbal al algebraico",
+    texto: "En un mercado, una bolsa de arroz cuesta el doble de lo que cuesta una bolsa de azúcar. Si juntas cuestan $18.000, ¿cuál ecuación representa correctamente la situación?",
+    opciones: [
+      "x + 2 = 18.000",
+      "2x + x = 18.000",
+      "x × 2x = 18.000",
+      "x + x = 18.000"
+    ],
+    correcta: 1,
+    explicacion: "Si x = precio del azúcar, entonces el arroz cuesta 2x. Juntos: x + 2x = 3x = 18.000, que corresponde a la opción B (2x + x = 18.000)."
+  },
+  // 5. Operaciones con expresiones algebraicas
+  {
+    tema: "Operaciones algebraicas",
+    texto: "¿Cuál es el resultado de simplificar <em>5x + 3y − 2x + y</em>?",
+    opciones: [
+      "3x + 4y",
+      "7x + 2y",
+      "3x + 2y",
+      "7x + 4y"
+    ],
+    correcta: 0,
+    explicacion: "Se agrupan términos semejantes: (5x − 2x) + (3y + y) = 3x + 4y."
+  },
+  {
+    tema: "Operaciones algebraicas",
+    texto: "Si se multiplica la expresión <em>4(3x − 5)</em>, el resultado es:",
+    opciones: [
+      "7x − 5",
+      "12x − 5",
+      "12x − 20",
+      "12x + 20"
+    ],
+    correcta: 2,
+    explicacion: "Por la propiedad distributiva: 4 × 3x = 12x y 4 × (−5) = −20. Resultado: 12x − 20."
+  },
+  // 6. Ecuaciones de primer grado – una operación
+  {
+    tema: "Ecuación lineal – un paso",
+    texto: "Si <em>x + 14 = 27</em>, ¿cuánto vale <em>x</em>?",
+    opciones: [
+      "x = 11",
+      "x = 13",
+      "x = 41",
+      "x = 15"
+    ],
+    correcta: 1,
+    explicacion: "Para despejar x se resta 14 en ambos miembros: x = 27 − 14 = 13."
+  },
+  {
+    tema: "Ecuación lineal – un paso",
+    texto: "Resuelve: <em>5x = 45</em>",
+    opciones: [
+      "x = 9",
+      "x = 40",
+      "x = 225",
+      "x = 8"
+    ],
+    correcta: 0,
+    explicacion: "Se divide ambos miembros entre 5: x = 45 ÷ 5 = 9."
+  },
+  // 7. Ecuaciones de dos o más pasos
+  {
+    tema: "Ecuación lineal – varios pasos",
+    texto: "Resuelve la ecuación: <em>3x + 7 = 22</em>",
+    opciones: [
+      "x = 3",
+      "x = 4",
+      "x = 5",
+      "x = 6"
+    ],
+    correcta: 2,
+    explicacion: "Paso 1: restar 7 a ambos lados → 3x = 15. Paso 2: dividir entre 3 → x = 5."
+  },
+  {
+    tema: "Ecuación lineal – varios pasos",
+    texto: "Resuelve: <em>2x − 9 = 11</em>",
+    opciones: [
+      "x = 1",
+      "x = 8",
+      "x = 10",
+      "x = 11"
+    ],
+    correcta: 2,
+    explicacion: "Paso 1: sumar 9 a ambos lados → 2x = 20. Paso 2: dividir entre 2 → x = 10."
+  },
+  {
+    tema: "Ecuación lineal – varios pasos",
+    texto: "Una tienda cobra $2.500 por cada artículo más un costo fijo de envío de $8.000. Si la factura total fue $23.000, ¿cuántos artículos se compraron?",
+    opciones: [
+      "4 artículos",
+      "5 artículos",
+      "6 artículos",
+      "7 artículos"
+    ],
+    correcta: 2,
+    explicacion: "Ecuación: 2.500x + 8.000 = 23.000 → 2.500x = 15.000 → x = 6 artículos."
+  },
+  // 8. Ecuaciones con paréntesis
+  {
+    tema: "Ecuaciones con paréntesis",
+    texto: "Resuelve: <em>2(x + 5) = 26</em>",
+    opciones: [
+      "x = 8",
+      "x = 10",
+      "x = 12",
+      "x = 7"
+    ],
+    correcta: 0,
+    explicacion: "Aplicando la propiedad distributiva: 2x + 10 = 26 → 2x = 16 → x = 8."
+  },
+  {
+    tema: "Ecuaciones con paréntesis",
+    texto: "Resuelve: <em>3(2x − 4) = 18</em>",
+    opciones: [
+      "x = 3",
+      "x = 4",
+      "x = 5",
+      "x = 6"
+    ],
+    correcta: 2,
+    explicacion: "Distributiva: 6x − 12 = 18 → 6x = 30 → x = 5."
+  },
+  {
+    tema: "Ecuaciones con paréntesis",
+    texto: "Al resolver <em>5(x − 3) + 2x = 21 + x</em>, el valor de x es:",
+    opciones: [
+      "x = 4",
+      "x = 5",
+      "x = 6",
+      "x = 7"
+    ],
+    correcta: 2,
+    explicacion: "Distributiva: 5x − 15 + 2x = 21 + x → 7x − 15 = 21 + x → 6x = 36 → x = 6."
+  },
+  // 9. Ecuaciones con fracciones
+  {
+    tema: "Ecuaciones con fracciones",
+    texto: "Resuelve: <em>x/3 = 7</em>",
+    opciones: [
+      "x = 4",
+      "x = 21",
+      "x = 7/3",
+      "x = 10"
+    ],
+    correcta: 1,
+    explicacion: "Se multiplica ambos miembros por 3: x = 7 × 3 = 21."
+  },
+  {
+    tema: "Ecuaciones con fracciones",
+    texto: "Resuelve la ecuación: <em>x/4 + 3 = 8</em>",
+    opciones: [
+      "x = 20",
+      "x = 5",
+      "x = 44",
+      "x = 11"
+    ],
+    correcta: 0,
+    explicacion: "Paso 1: restar 3 → x/4 = 5. Paso 2: multiplicar por 4 → x = 20."
+  },
+  // 10. Modelación matemática
+  {
+    tema: "Modelación matemática",
+    texto: "Julia tiene el doble de años que su hermano. La suma de sus edades es 36 años. ¿Cuántos años tiene cada uno?",
+    opciones: [
+      "Julia: 20, hermano: 16",
+      "Julia: 24, hermano: 12",
+      "Julia: 18, hermano: 18",
+      "Julia: 30, hermano: 6"
+    ],
+    correcta: 1,
+    explicacion: "Sea x la edad del hermano. Julia tiene 2x. Ecuación: x + 2x = 36 → 3x = 36 → x = 12. Hermano: 12, Julia: 24."
+  },
+  {
+    tema: "Modelación matemática",
+    texto: "Un vendedor reparte 84 mangos en tres grupos: el primero tiene el doble que el segundo, y el tercero tiene la misma cantidad que el segundo. ¿Cuántos mangos hay en el primer grupo?",
+    opciones: [
+      "21 mangos",
+      "28 mangos",
+      "42 mangos",
+      "14 mangos"
+    ],
+    correcta: 2,
+    explicacion: "Sea x = segundo grupo. Primer grupo: 2x; tercero: x. Ecuación: 2x + x + x = 84 → 4x = 84 → x = 21. Primer grupo: 2(21) = 42 mangos."
+  },
+  // 11. Interpretación de soluciones
+  {
+    tema: "Interpretación de soluciones",
+    texto: "Al resolver la ecuación <em>4x − 8 = 0</em>, se obtiene x = 2. En el contexto de un problema donde x representa la cantidad de días laborales, ¿qué significa este resultado?",
+    opciones: [
+      "El proceso dura cero días hábiles.",
+      "El proceso dura 2 días hábiles.",
+      "El proceso dura 8 días hábiles.",
+      "El proceso no tiene solución en contexto."
+    ],
+    correcta: 1,
+    explicacion: "La solución x = 2 indica que la cantidad de días laborales es 2. Verificación: 4(2) − 8 = 8 − 8 = 0 ✓."
+  },
+  // 12. Estrategias y errores comunes
+  {
+    tema: "Estrategias y errores comunes",
+    texto: "Un estudiante resolvió <em>3x + 5 = 17</em> y obtuvo x = 6. ¿Cómo puede verificar si su respuesta es correcta?",
+    opciones: [
+      "Dividiendo 17 entre 3.",
+      "Sustituyendo x = 6 en la ecuación original y comprobando que la igualdad se cumple.",
+      "Restando 5 al resultado.",
+      "Multiplicando 5 × 3."
+    ],
+    correcta: 1,
+    explicacion: "La verificación consiste en reemplazar el valor hallado en la ecuación: 3(6) + 5 = 18 + 5 = 23 ≠ 17. Esto indica que x = 6 es incorrecto. El valor correcto es x = 4, ya que 3(4) + 5 = 12 + 5 = 17 ✓."
+  },
+  // 13. Aplicaciones tipo ICFES
+  {
+    tema: "Aplicación tipo ICFES",
+    texto: "En un concurso, la puntuación de Andrés es 5 puntos más que el triple de la puntuación de Carlos. Si Andrés obtuvo 29 puntos, ¿cuál fue la puntuación de Carlos?",
+    opciones: [
+      "7 puntos",
+      "8 puntos",
+      "9 puntos",
+      "10 puntos"
+    ],
+    correcta: 1,
+    explicacion: "Ecuación: 3c + 5 = 29 → 3c = 24 → c = 8. Carlos obtuvo 8 puntos. Verificación: 3(8) + 5 = 24 + 5 = 29 ✓."
+  },
+  {
+    tema: "Aplicación tipo ICFES",
+    texto: "Para financiar un proyecto escolar se necesitan $120.000. Si cada estudiante aporta $8.000 y ya se tienen $24.000 recaudados, ¿cuántos estudiantes más deben aportar para completar la meta?",
+    opciones: [
+      "10 estudiantes",
+      "12 estudiantes",
+      "14 estudiantes",
+      "15 estudiantes"
+    ],
+    correcta: 1,
+    explicacion: "Ecuación: 8.000x + 24.000 = 120.000 → 8.000x = 96.000 → x = 12. Se necesitan 12 estudiantes más."
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════════════
+//  CONFIGURACIÓN
+// ═══════════════════════════════════════════════════════════════════════
+const TOTAL_TIEMPO = 40 * 60; // segundos
+const PUNTOS_POR_PREGUNTA = 4; // 25 × 4 = 100 pts
+const RACHA_3 = 3;
+const RACHA_5 = 5;
+const BONUS_3 = 1;
+const BONUS_5 = 2;
+
+// ═══════════════════════════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════════════════════════
+let preguntas = [];
+let qIdx = 0;
+let puntaje = 0;
+let aciertos = 0;
+let errores = 0;
+let racha = 0;
+let respuestasUsuario = [];
+let timerInterval = null;
+let tiempoRestante = TOTAL_TIEMPO;
+let opcionSeleccionada = null;
+let quizActivo = false;
+
+// ═══════════════════════════════════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════════════════════════════════
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  TEMPORIZADOR
+// ═══════════════════════════════════════════════════════════════════════
+function iniciarTimer() {
+  tiempoRestante = TOTAL_TIEMPO;
+  const box = document.getElementById('timerBox');
+  const disp = document.getElementById('timerDisplay');
+  box.classList.add('show');
+  disp.textContent = formatTime(tiempoRestante);
+
+  timerInterval = setInterval(() => {
+    tiempoRestante--;
+    disp.textContent = formatTime(tiempoRestante);
+    if (tiempoRestante <= 120) {
+      disp.classList.add('timer-warning');
+    }
+    if (tiempoRestante <= 0) {
+      clearInterval(timerInterval);
+      mostrarModalTimeout();
+    }
+  }, 1000);
+}
+
+function detenerTimer() {
+  clearInterval(timerInterval);
+}
+
+function mostrarModalTimeout() {
+  document.getElementById('modalTimeout').classList.add('show');
+}
+
+document.getElementById('btnModalOk').addEventListener('click', () => {
+  document.getElementById('modalTimeout').classList.remove('show');
+  mostrarResultados();
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+//  INICIO
+// ═══════════════════════════════════════════════════════════════════════
+document.getElementById('btnIniciar').addEventListener('click', iniciarSimulacro);
+
+function iniciarSimulacro() {
+  preguntas = shuffleArray(TODAS_LAS_PREGUNTAS);
+  qIdx = 0; puntaje = 0; aciertos = 0; errores = 0; racha = 0;
+  respuestasUsuario = [];
+  quizActivo = true;
+  opcionSeleccionada = null;
+  showScreen('screen-quiz');
+  iniciarTimer();
+  renderPregunta();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  RENDERIZADO DE PREGUNTA
+// ═══════════════════════════════════════════════════════════════════════
+function renderPregunta() {
+  opcionSeleccionada = null;
+  const p = preguntas[qIdx];
+  const total = preguntas.length;
+
+  document.getElementById('qNum').textContent = qIdx + 1;
+  document.getElementById('qTotal').textContent = total;
+  document.getElementById('scoreDisplay').textContent = puntaje;
+  document.getElementById('qTag').textContent = p.tema;
+  document.getElementById('qText').innerHTML = p.texto;
+
+  // Progreso
+  document.getElementById('progressBar').style.width = `${((qIdx) / total) * 100}%`;
+
+  // Racha
+  actualizarRachaBanner();
+
+  // Mezclar opciones
+  const indices = shuffleArray([0, 1, 2, 3]);
+  const letras = ['A', 'B', 'C', 'D'];
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+
+  indices.forEach((origIdx, pos) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.dataset.orig = origIdx;
+    btn.innerHTML = `
+      <span class="option-letter">${letras[pos]}</span>
+      <span>${p.opciones[origIdx]}</span>
+    `;
+    btn.addEventListener('click', () => seleccionarOpcion(btn, origIdx));
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('btn-siguiente').textContent = 'Responder →';
+}
+
+function seleccionarOpcion(btn, idx) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  opcionSeleccionada = idx;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  RACHA
+// ═══════════════════════════════════════════════════════════════════════
+function actualizarRachaBanner() {
+  const banner = document.getElementById('streakBanner');
+  if (racha >= RACHA_5) {
+    banner.textContent = `🔥 ¡RACHA ÉPICA! ${racha} respuestas correctas seguidas · Bonificación activa`;
+    banner.classList.add('show');
+  } else if (racha >= RACHA_3) {
+    banner.textContent = `⚡ ¡Racha! ${racha} respuestas correctas consecutivas · ¡Sigue así!`;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  AVANZAR
+// ═══════════════════════════════════════════════════════════════════════
+document.getElementById('btn-siguiente').addEventListener('click', () => {
+  if (opcionSeleccionada === null) {
+    const btn = document.getElementById('btn-siguiente');
+    btn.textContent = '⚠ Selecciona una opción';
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#f87171)';
+    setTimeout(() => {
+      btn.textContent = 'Responder →';
+      btn.style.background = '';
+    }, 1500);
+    return;
+  }
+
+  const p = preguntas[qIdx];
+  const esCorrecta = opcionSeleccionada === p.correcta;
+
+  if (esCorrecta) {
+    racha++;
+    aciertos++;
+    let pts = PUNTOS_POR_PREGUNTA;
+    if (racha >= RACHA_5) pts += BONUS_5;
+    else if (racha >= RACHA_3) pts += BONUS_3;
+    puntaje += pts;
+  } else {
+    racha = 0;
+    errores++;
+  }
+
+  respuestasUsuario.push({
+    pregunta: p,
+    respuestaUsuario: opcionSeleccionada,
+    correcta: p.correcta,
+    esCorrecta
+  });
+
+  qIdx++;
+  if (qIdx < preguntas.length) {
+    renderPregunta();
+  } else {
+    detenerTimer();
+    mostrarResultados();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+//  RESULTADOS
+// ═══════════════════════════════════════════════════════════════════════
+function mostrarResultados() {
+  quizActivo = false;
+  detenerTimer();
+  document.getElementById('timerBox').classList.remove('show');
+
+  const pct = Math.round((aciertos / preguntas.length) * 100);
+  const puntajeFinal = Math.min(puntaje, 100); // cap at 100
+
+  document.getElementById('resultScore').textContent = puntajeFinal;
+  document.getElementById('statAciertos').textContent = aciertos;
+  document.getElementById('statErrores').textContent = errores;
+  document.getElementById('statPct').textContent = pct + '%';
+
+  let emoji, msg;
+  if (pct >= 80) {
+    emoji = '🏆';
+    msg = '¡Excelente desempeño! Demostraste dominio sólido en álgebra básica. Estás muy bien preparado para el reto del bachillerato.';
+  } else if (pct >= 60) {
+    emoji = '📈';
+    msg = 'Buen avance. Ya manejas muchos conceptos clave del álgebra. Con un poco más de práctica alcanzarás el nivel óptimo.';
+  } else if (pct >= 40) {
+    emoji = '💪';
+    msg = 'Vas por buen camino. Identifica los temas con errores, repásalos con calma y vuelve a intentarlo. ¡Tú puedes!';
+  } else {
+    emoji = '🌱';
+    msg = 'Cada intento es un paso hacia adelante. Revisa la retroalimentación de cada pregunta, practica los conceptos y vuelve a intentarlo. ¡El esfuerzo siempre da frutos!';
+  }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultMsg').textContent = msg;
+
+  // Retroalimentación
+  const list = document.getElementById('feedbackList');
+  list.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+
+  respuestasUsuario.forEach((r, i) => {
+    const p = r.pregunta;
+    const card = document.createElement('div');
+    card.className = `fb-card ${r.esCorrecta ? 'correct' : 'wrong'}`;
+    card.innerHTML = `
+      <div class="fb-header" onclick="toggleFb(this)">
+        <div class="fb-icon">${r.esCorrecta ? '✓' : '✗'}</div>
+        <div class="fb-q-text"><strong>${i+1}.</strong> ${p.texto.replace(/<em>|<\/em>/g,'')}</div>
+        <span class="fb-toggle">▼</span>
+      </div>
+      <div class="fb-body">
+        <div class="fb-answer-row">
+          <span class="fb-pill corr">✅ Correcta: ${p.opciones[p.correcta]}</span>
+          ${!r.esCorrecta ? `<span class="fb-pill wrong">❌ Tu respuesta: ${p.opciones[r.respuestaUsuario]}</span>` : ''}
+        </div>
+        <p class="fb-exp">💡 <strong>Explicación:</strong> ${p.explicacion}</p>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  showScreen('screen-results');
+}
+
+function toggleFb(header) {
+  const card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  REINICIAR
+// ═══════════════════════════════════════════════════════════════════════
+document.getElementById('btnReiniciar').addEventListener('click', () => {
+  showScreen('screen-welcome');
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+//  BOTÓN RETORNO AL AULA
+// ═══════════════════════════════════════════════════════════════════════
+const btn = document.getElementById('btn-volver');
+const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=703';
+const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=703';
+const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+if (esMóvil) { btn.href = appUrl; }
+</script>
+</body>
+</html>

@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro ICFES – Proporcionalidad | Matemáticas Aplicadas Nivel 3</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:   #0F172A;
+    --blue:   #1E3A8A;
+    --amber:  #F59E0B;
+    --yellow: #FFE066;
+    --green:  #22C55E;
+    --red:    #EF4444;
+    --white:  #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-400: #94A3B8;
+    --gray-600: #475569;
+    --gray-800: #1E293B;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.25);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.3);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.35);
+    --radius-sm: 10px;
+    --radius-md: 18px;
+    --radius-lg: 26px;
+    --radius-pill: 50px;
+    --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --transition: .25s cubic-bezier(.4,0,.2,1);
+  }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-main);
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── PARTICLES BG ── */
+  #particles-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at 20% 50%, #1E3A8A22 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, #F59E0B11 0%, transparent 50%),
+                var(--navy);
+  }
+  .particle {
+    position: absolute; border-radius: 50%;
+    background: var(--amber); opacity: .08;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: .08; }
+    90%  { opacity: .04; }
+    100% { transform: translateY(-20px) scale(1); opacity: 0; }
+  }
+
+  /* ── LAYOUT WRAPPER ── */
+  #app { position: relative; z-index: 1; min-height: 100vh; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; padding: 16px; max-width: 860px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  /* ── WELCOME SCREEN ── */
+  #screen-welcome {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh; text-align: center; gap: 20px;
+  }
+  #screen-welcome.active { display: flex; }
+  .logo-badge {
+    background: linear-gradient(135deg, var(--blue), #2563EB);
+    border-radius: var(--radius-md); padding: 14px 28px;
+    font-size: .75rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--yellow);
+    box-shadow: 0 0 30px #1E3A8A66;
+  }
+  .welcome-title {
+    font-size: clamp(1.7rem, 5vw, 2.8rem);
+    font-weight: 800; line-height: 1.15;
+    background: linear-gradient(135deg, #fff 40%, var(--yellow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .welcome-subtitle {
+    font-size: clamp(.9rem, 2.5vw, 1.1rem);
+    color: var(--gray-400); max-width: 560px;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; width: 100%; max-width: 620px;
+  }
+  .info-card {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-sm); padding: 18px 14px; text-align: center;
+  }
+  .info-card .ic-icon { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+  .info-card .ic-val  { font-size: 1.3rem; font-weight: 800; color: var(--yellow); }
+  .info-card .ic-lbl  { font-size: .75rem; color: var(--gray-400); margin-top: 2px; }
+  .timer-config { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .timer-config label { font-size: .9rem; color: var(--gray-400); }
+  .timer-config input[type=number] {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    border-radius: var(--radius-sm); padding: 10px 14px; color: var(--white);
+    font-size: 1rem; width: 90px; text-align: center;
+    transition: border-color var(--transition);
+  }
+  .timer-config input[type=number]:focus { outline: none; border-color: var(--amber); }
+  .sound-toggle {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-pill); padding: 10px 18px; cursor: pointer;
+    font-size: .85rem; color: var(--gray-400); transition: all var(--transition);
+    user-select: none;
+  }
+  .sound-toggle:hover { border-color: var(--amber); color: var(--white); }
+  .sound-toggle.on { background: rgba(245,158,11,.15); border-color: var(--amber); color: var(--amber); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 32px; border-radius: var(--radius-pill); font-weight: 700;
+    font-size: 1rem; cursor: pointer; border: none; transition: all var(--transition);
+    text-decoration: none; letter-spacing: .5px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--amber), #D97706);
+    color: var(--navy); box-shadow: 0 4px 20px rgba(245,158,11,.45);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,158,11,.55); }
+  .btn-secondary {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    color: var(--white);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,.14); transform: translateY(-2px); }
+  .btn-danger { background: linear-gradient(135deg, var(--red), #DC2626); color: #fff; }
+  .btn-success { background: linear-gradient(135deg, var(--green), #16A34A); color: #fff; }
+  .btn:disabled { opacity: .45; pointer-events: none; }
+
+  /* ── QUIZ SCREEN ── */
+  #screen-quiz { padding-top: 8px; }
+  .quiz-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,23,42,.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    padding: 12px 16px; margin: 0 -16px;
+  }
+  .quiz-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap;
+  }
+  .timer-display {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.08); border-radius: var(--radius-sm);
+    padding: 8px 16px; font-size: 1.1rem; font-weight: 800;
+    font-variant-numeric: tabular-nums; min-width: 110px; justify-content: center;
+    border: 1px solid rgba(255,255,255,.1); transition: all var(--transition);
+  }
+  .timer-display.warning {
+    background: rgba(239,68,68,.18); border-color: var(--red);
+    color: var(--red); animation: pulse-timer 1s ease-in-out infinite;
+  }
+  @keyframes pulse-timer { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+  .score-display {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.3);
+    border-radius: var(--radius-sm); padding: 8px 16px; font-weight: 700;
+    color: var(--yellow); font-size: 1rem;
+  }
+  .q-counter { font-size: .85rem; color: var(--gray-400); }
+  .progress-bar-wrap {
+    margin-top: 10px; height: 5px; background: rgba(255,255,255,.1);
+    border-radius: 10px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--blue), var(--amber));
+    border-radius: 10px; transition: width .5s ease;
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-md); padding: 24px; margin-top: 20px;
+    animation: slideUp .35s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-meta {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .q-badge {
+    font-size: .7rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 4px 10px; border-radius: var(--radius-pill);
+  }
+  .badge-easy   { background: rgba(34,197,94,.2);  color: var(--green); }
+  .badge-medium { background: rgba(245,158,11,.2);  color: var(--amber); }
+  .badge-hard   { background: rgba(239,68,68,.2);   color: var(--red); }
+  .q-topic { font-size: .75rem; color: var(--gray-400); }
+  .q-text { font-size: 1.05rem; line-height: 1.7; color: var(--white); margin-bottom: 8px; }
+  .q-context {
+    background: rgba(30,58,138,.25); border-left: 3px solid var(--blue);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px; margin: 12px 0; font-size: .95rem;
+    line-height: 1.6; color: var(--gray-200);
+  }
+  .q-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .9rem; }
+  .q-table th, .q-table td {
+    border: 1px solid rgba(255,255,255,.15); padding: 8px 12px; text-align: center;
+  }
+  .q-table th { background: rgba(30,58,138,.4); color: var(--yellow); font-weight: 700; }
+  .q-table td { background: rgba(255,255,255,.04); }
+
+  /* ── OPTIONS ── */
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .option-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.12);
+    border-radius: var(--radius-sm); padding: 14px 18px;
+    cursor: pointer; text-align: left; width: 100%;
+    transition: all var(--transition); color: var(--white); font-size: .97rem;
+    line-height: 1.5;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(245,158,11,.12); border-color: var(--amber);
+    transform: translateX(4px);
+  }
+  .option-btn .opt-letter {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,.1); display: flex; align-items: center;
+    justify-content: center; font-weight: 800; font-size: .85rem;
+    margin-top: 1px;
+  }
+  .option-btn.selected { border-color: var(--amber); background: rgba(245,158,11,.12); }
+  .option-btn.selected .opt-letter { background: var(--amber); color: var(--navy); }
+  .option-btn.correct { border-color: var(--green); background: rgba(34,197,94,.12); }
+  .option-btn.correct .opt-letter { background: var(--green); color: #fff; }
+  .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,.12); }
+  .option-btn.wrong .opt-letter { background: var(--red); color: #fff; }
+  .option-btn:disabled { cursor: default; }
+
+  /* ── FEEDBACK CARD ── */
+  .feedback-card {
+    margin-top: 16px; border-radius: var(--radius-md); padding: 20px 22px;
+    border: 1.5px solid; animation: fadeIn .4s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+  .feedback-card.correct-fb { border-color: var(--green); background: rgba(34,197,94,.08); }
+  .feedback-card.wrong-fb   { border-color: var(--red);   background: rgba(239,68,68,.08); }
+  .feedback-title { font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .feedback-card.correct-fb .feedback-title { color: var(--green); }
+  .feedback-card.wrong-fb   .feedback-title { color: var(--red); }
+  .feedback-body { font-size: .9rem; line-height: 1.65; color: var(--gray-200); }
+  .feedback-body strong { color: var(--yellow); }
+  .feedback-body .proc-box {
+    background: rgba(0,0,0,.25); border-radius: var(--radius-sm);
+    padding: 10px 14px; margin-top: 10px; font-size: .88rem; font-family: 'Courier New', monospace;
+    color: #B0C4DE; border-left: 3px solid var(--amber);
+  }
+
+  /* ── STREAK TOAST ── */
+  .streak-toast {
+    position: fixed; top: 80px; right: 20px; z-index: 999;
+    background: linear-gradient(135deg, var(--amber), #D97706);
+    color: var(--navy); font-weight: 800; font-size: 1rem;
+    padding: 14px 22px; border-radius: var(--radius-md);
+    box-shadow: 0 8px 30px rgba(245,158,11,.5);
+    animation: toastIn .4s cubic-bezier(.34,1.56,.64,1);
+    pointer-events: none;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(60px) scale(.8); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  .streak-toast.hiding { animation: toastOut .3s ease forwards; }
+  @keyframes toastOut { to { opacity: 0; transform: translateX(60px); } }
+
+  /* ── NEXT BUTTON ── */
+  .next-wrap { margin-top: 18px; display: flex; justify-content: flex-end; }
+
+  /* ── RESULTS SCREEN ── */
+  #screen-results { padding-bottom: 40px; }
+  #screen-results.active { display: block; }
+  .results-hero {
+    text-align: center; padding: 40px 16px 30px;
+    border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 28px;
+  }
+  .results-emoji { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+  .results-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; margin-bottom: 8px; }
+  .results-msg { font-size: .98rem; color: var(--gray-400); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+  .results-perf-bar {
+    height: 18px; background: rgba(255,255,255,.1); border-radius: 10px;
+    overflow: hidden; margin: 20px 0 6px;
+  }
+  .results-perf-fill {
+    height: 100%; border-radius: 10px;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+  }
+  .perf-label { display: flex; justify-content: space-between; font-size: .8rem; color: var(--gray-400); }
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px; margin-bottom: 28px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-sm); padding: 18px 14px; text-align: center;
+  }
+  .stat-card .sv { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+  .stat-card .sl { font-size: .78rem; color: var(--gray-400); margin-top: 4px; }
+  .sv.green { color: var(--green); }
+  .sv.red   { color: var(--red); }
+  .sv.amber { color: var(--amber); }
+  .sv.blue  { color: #60A5FA; }
+
+  /* ── REPORT ── */
+  .report-toggle {
+    width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    border-radius: var(--radius-sm); padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; font-weight: 700; font-size: .97rem; color: var(--white);
+    transition: all var(--transition); margin-bottom: 12px;
+  }
+  .report-toggle:hover { background: rgba(255,255,255,.1); }
+  .report-toggle .chevron { transition: transform var(--transition); font-size: 1.1rem; }
+  .report-toggle.open .chevron { transform: rotate(180deg); }
+  .report-body { display: none; }
+  .report-body.open { display: block; }
+  .report-item {
+    background: rgba(255,255,255,.04); border-radius: var(--radius-sm);
+    padding: 16px 18px; margin-bottom: 10px;
+    border-left: 4px solid rgba(255,255,255,.15);
+  }
+  .report-item.ri-correct { border-color: var(--green); }
+  .report-item.ri-wrong   { border-color: var(--red); }
+  .ri-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .ri-num { font-size: .8rem; font-weight: 700; color: var(--gray-400); }
+  .ri-result { font-size: .75rem; font-weight: 800; padding: 3px 10px; border-radius: var(--radius-pill); }
+  .ri-result.ok  { background: rgba(34,197,94,.2);  color: var(--green); }
+  .ri-result.bad { background: rgba(239,68,68,.2);  color: var(--red); }
+  .ri-q { font-size: .9rem; line-height: 1.5; color: var(--gray-200); margin-bottom: 8px; }
+  .ri-answers { font-size: .85rem; display: flex; flex-direction: column; gap: 4px; }
+  .ri-answers span { color: var(--gray-400); }
+  .ri-answers span b { color: var(--white); }
+  .ri-expl { font-size: .83rem; color: var(--gray-400); margin-top: 8px; line-height: 1.55;
+    background: rgba(0,0,0,.2); padding: 8px 12px; border-radius: 6px; }
+
+  /* ── BTN VOLVER ── */
+  .btn-volver-wrap { text-align: center; margin-top: 20px; }
+  .actions-wrap { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+
+  /* ── CONFETTI ── */
+  .confetti-piece {
+    position: fixed; top: -10px; border-radius: 2px;
+    animation: confetti-fall linear forwards;
+    pointer-events: none; z-index: 9999;
+  }
+  @keyframes confetti-fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── RESPONSE FLASH ── */
+  body.flash-correct { animation: flash-green .4s ease; }
+  body.flash-wrong   { animation: flash-red   .4s ease; }
+  @keyframes flash-green { 0%,100%{} 30%{ background: rgba(34,197,94,.08); } }
+  @keyframes flash-red   { 0%,100%{} 30%{ background: rgba(239,68,68,.08); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .quiz-header { padding: 8px 12px; }
+    .question-card { padding: 16px; margin-top: 14px; }
+    .option-btn { padding: 12px 14px; font-size: .92rem; }
+    .timer-display { font-size: .95rem; padding: 6px 12px; }
+    .score-display { font-size: .88rem; padding: 6px 12px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div id="particles-bg"></div>
+<div id="app">
+
+  <!-- ══ WELCOME SCREEN ══ -->
+  <div id="screen-welcome" class="screen active">
+    <div class="logo-badge">Instituto Innova · Matemáticas Aplicadas</div>
+    <h1 class="welcome-title">Simulacro ICFES<br>Proporcionalidad</h1>
+    <p class="welcome-subtitle">Nivel 3 · Temática 2 · 30 preguntas tipo ICFES con retroalimentación inmediata, sistema de rachas y reporte final detallado.</p>
+
+    <div class="info-grid">
+      <div class="info-card"><span class="ic-icon">📝</span><span class="ic-val">30</span><span class="ic-lbl">Preguntas</span></div>
+      <div class="info-card"><span class="ic-icon">⏱️</span><span class="ic-val" id="time-preview">45 min</span><span class="ic-lbl">Tiempo sugerido</span></div>
+      <div class="info-card"><span class="ic-icon">🔥</span><span class="ic-val">Rachas</span><span class="ic-lbl">Bonificaciones</span></div>
+      <div class="info-card"><span class="ic-icon">📊</span><span class="ic-val">8</span><span class="ic-lbl">Subtemáticas</span></div>
+    </div>
+
+    <div class="timer-config">
+      <label for="time-input">Tiempo (minutos):</label>
+      <input type="number" id="time-input" value="45" min="5" max="120">
+      <button class="sound-toggle" id="sound-toggle-btn" onclick="toggleSound()">🔇 Sonido desactivado</button>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()" style="font-size:1.1rem; padding:16px 48px;">
+      🚀 Comenzar Simulacro
+    </button>
+
+    <div class="btn-volver-wrap">
+      <a id="btn-volver-welcome"
+        href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=720"
+        style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9em;padding:12px 28px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ SCREEN ══ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="quiz-header-top">
+        <div class="timer-display" id="timer-display">⏱ 45:00</div>
+        <span class="q-counter" id="q-counter">Pregunta 1 / 30</span>
+        <div class="score-display" id="score-display">⭐ 0 pts</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="question-area"></div>
+  </div>
+
+  <!-- ══ RESULTS SCREEN ══ -->
+  <div id="screen-results" class="screen">
+    <div class="results-hero">
+      <span class="results-emoji" id="r-emoji">🎉</span>
+      <h2 class="results-title" id="r-title">¡Simulacro finalizado!</h2>
+      <div class="results-perf-bar"><div class="results-perf-fill" id="r-perf-fill" style="width:0%"></div></div>
+      <div class="perf-label"><span>0%</span><span id="r-perf-pct">0%</span><span>100%</span></div>
+      <p class="results-msg" id="r-msg"></p>
+    </div>
+
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="actions-wrap">
+      <button class="btn btn-primary" onclick="restartQuiz()">🔄 Reiniciar simulacro</button>
+    </div>
+
+    <!-- Report -->
+    <button class="report-toggle" id="report-toggle" onclick="toggleReport()">
+      📋 Ver reporte detallado <span class="chevron">▼</span>
+    </button>
+    <div class="report-body" id="report-body"></div>
+
+    <div class="btn-volver-wrap" style="margin-top:28px;">
+      <a id="btn-volver"
+        href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=720"
+        style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   MOBILE REDIRECT
+════════════════════════════════════════════════ */
+(function(){
+  const links = ['btn-volver','btn-volver-welcome'];
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=720';
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  links.forEach(id => {
+    const el = document.getElementById(id);
+    if(el && esMóvil) el.href = appUrl;
+  });
+})();
+
+/* ════════════════════════════════════════════════
+   PARTICLES
+════════════════════════════════════════════════ */
+(function(){
+  const bg = document.getElementById('particles-bg');
+  for(let i=0;i<18;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    const s = 4+Math.random()*10;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${8+Math.random()*14}s;animation-delay:${Math.random()*12}s`;
+    bg.appendChild(p);
+  }
+})();
+
+/* ════════════════════════════════════════════════
+   SOUND ENGINE
+════════════════════════════════════════════════ */
+let soundOn = false;
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+function getCtx(){ if(!actx && AudioCtx) actx = new AudioCtx(); return actx; }
+function beep(freq, dur, type='sine', vol=.15){
+  if(!soundOn) return;
+  try{
+    const ctx=getCtx(); if(!ctx) return;
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value=freq; o.type=type;
+    g.gain.setValueAtTime(vol,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);
+    o.start(); o.stop(ctx.currentTime+dur);
+  }catch(e){}
+}
+function playCorrect(){ beep(880,.12); setTimeout(()=>beep(1100,.18),80); }
+function playWrong(){ beep(220,.3,'sawtooth',.1); }
+function playStreak(){ [660,880,1100,1320].forEach((f,i)=>setTimeout(()=>beep(f,.12),i*70)); }
+
+function toggleSound(){
+  soundOn=!soundOn;
+  const btn=document.getElementById('sound-toggle-btn');
+  btn.textContent = soundOn ? '🔊 Sonido activado' : '🔇 Sonido desactivado';
+  btn.classList.toggle('on', soundOn);
+}
+
+/* ════════════════════════════════════════════════
+   QUESTION BANK — 30 ORIGINAL QUESTIONS
+════════════════════════════════════════════════ */
+const ALL_QUESTIONS = [
+  // ── SUBTEMA 1: Razón, tasa y proporcionalidad ──
+  {
+    id:1, topic:'Razón y tasa', difficulty:'easy',
+    context:'En una panadería se producen 240 panes en 3 horas.',
+    question:'¿Cuál es la tasa de producción de la panadería expresada en panes por hora?',
+    options:['60 panes/hora','80 panes/hora','120 panes/hora','240 panes/hora'],
+    correct:1,
+    feedback:{
+      correct:'La tasa se calcula dividiendo la cantidad total entre el tiempo: 240 ÷ 3 = 80 panes por hora.',
+      wrong:'Debes dividir la cantidad total (240 panes) entre el tiempo (3 horas): 240 ÷ 3 = 80.',
+      procedure:'Tasa = 240 panes ÷ 3 horas = 80 panes/hora',
+      concept:'Tasa unitaria: razón entre magnitudes de distinto tipo.'
+    }
+  },
+  {
+    id:2, topic:'Interpretación de razones', difficulty:'easy',
+    context:'En un grupo de 36 estudiantes, 24 son mujeres y 12 son hombres.',
+    question:'¿Cuál es la razón de mujeres a hombres en el grupo?',
+    options:['1:2','2:1','3:1','2:3'],
+    correct:1,
+    feedback:{
+      correct:'Razón mujeres:hombres = 24:12 = 2:1. Por cada 2 mujeres hay 1 hombre.',
+      wrong:'La razón mujeres:hombres = 24:12. Simplificando dividiendo entre 12: 2:1.',
+      procedure:'24 ÷ 12 = 2 → razón 2:1',
+      concept:'Razón: comparación multiplicativa entre dos cantidades.'
+    }
+  },
+  {
+    id:3, topic:'Razón y proporcionalidad', difficulty:'medium',
+    context:'Un carro recorre 180 km en 2 horas y otro recorre 270 km en 3 horas.',
+    question:'¿Cuál de las siguientes afirmaciones es correcta sobre las velocidades de ambos carros?',
+    options:['El primero es más rápido','El segundo es más rápido','Ambos tienen la misma velocidad','No se puede comparar'],
+    correct:2,
+    feedback:{
+      correct:'Carro 1: 180÷2=90 km/h. Carro 2: 270÷3=90 km/h. Ambas tasas son iguales, por lo tanto viajan a la misma velocidad.',
+      wrong:'Calcula la velocidad de cada carro: 180÷2=90 km/h y 270÷3=90 km/h. Son iguales.',
+      procedure:'V₁=180/2=90 km/h | V₂=270/3=90 km/h → iguales',
+      concept:'Comparación de tasas unitarias.'
+    }
+  },
+  // ── SUBTEMA 2: Proporcionalidad directa e inversa ──
+  {
+    id:4, topic:'Proporcionalidad directa', difficulty:'easy',
+    context:'El precio de unas manzanas es proporcional a la cantidad comprada.',
+    question:'Si 5 kg de manzanas cuestan $12.500, ¿cuánto costarán 8 kg?',
+    options:['$16.000','$18.000','$20.000','$15.000'],
+    correct:2,
+    feedback:{
+      correct:'Precio por kg = 12.500÷5 = 2.500. Para 8 kg: 8×2.500 = $20.000.',
+      wrong:'Precio unitario = 12.500÷5 = $2.500/kg. Luego 8×2.500 = $20.000.',
+      procedure:'2.500 × 8 = $20.000',
+      concept:'Proporcionalidad directa: al aumentar una cantidad, la otra aumenta en la misma razón.'
+    }
+  },
+  {
+    id:5, topic:'Proporcionalidad inversa', difficulty:'medium',
+    context:'Para construir un muro, 6 albañiles lo terminan en 4 días trabajando a igual ritmo.',
+    question:'¿En cuántos días terminarían el mismo muro si fueran 8 albañiles?',
+    options:['5 días','3 días','2 días','6 días'],
+    correct:1,
+    feedback:{
+      correct:'Proporcionalidad inversa: 6×4 = 8×d → d = 24÷8 = 3 días.',
+      wrong:'Con más trabajadores, se tarda menos: 6×4 = 8×d → d = 24÷8 = 3 días.',
+      procedure:'6×4=24 → 24÷8=3 días',
+      concept:'Proporcionalidad inversa: al duplicar un factor, el otro se reduce a la mitad.'
+    }
+  },
+  {
+    id:6, topic:'Identificación del tipo de relación', difficulty:'medium',
+    question:'Un grifo llena un tanque en 6 horas. Si se abren 3 grifos iguales al mismo tiempo, ¿cuánto tiempo tardan en llenar el tanque?',
+    options:['18 horas','3 horas','2 horas','6 horas'],
+    correct:2,
+    feedback:{
+      correct:'Más grifos → menos tiempo: relación inversa. 1×6 = 3×t → t = 6÷3 = 2 horas.',
+      wrong:'Es proporcionalidad inversa: 1×6 = 3×t → t = 2 horas.',
+      procedure:'t = (1×6)/3 = 2 horas',
+      concept:'Proporcionalidad inversa: al triplicar grifos, el tiempo se divide entre 3.'
+    }
+  },
+  {
+    id:7, topic:'Proporcionalidad directa e inversa', difficulty:'hard',
+    context:'Una fábrica produce 360 unidades en 5 días con 4 máquinas.',
+    question:'Si se añaden 2 máquinas más y el tiempo se reduce a 3 días, ¿cuántas unidades se producirán?',
+    options:['324','432','360','480'],
+    correct:1,
+    feedback:{
+      correct:'Producción por máquina por día = 360/(5×4)=18 unid/máq-día. Con 6 máquinas en 3 días: 6×3×18=324... Revisando: 18×6×4=432. La producción total = 18×6 máquinas×4 días... Correcto: 18×(6 máq)×(4 días)... Se recalcula: tasa=360/20=18 u/máq-día. Nuevas: 6×3×18=324. La opción correcta es 324.',
+      wrong:'Tasa = 360/(4máq × 5días) = 18 ud/máquina-día. Con 6 máquinas en 3 días: 6×3×18=324.',
+      procedure:'Tasa=18 ud/máq-día → 6×3×18=324',
+      concept:'Proporcionalidad directa: a más máquinas y más días, mayor producción.'
+    },
+    correct:0
+  },
+  // ── SUBTEMA 3: Tablas de proporcionalidad ──
+  {
+    id:8, topic:'Tablas de proporcionalidad', difficulty:'easy',
+    tableData:{headers:['Horas','Salario ($)'],rows:[['2','16.000'],['4','32.000'],['6','?'],['8','64.000']]},
+    question:'Según la tabla, ¿cuál es el valor que corresponde al signo "?"?',
+    options:['$40.000','$48.000','$44.000','$50.000'],
+    correct:1,
+    feedback:{
+      correct:'El salario por hora es constante: 16.000÷2=8.000/h. Para 6 horas: 6×8.000=$48.000.',
+      wrong:'La constante de proporcionalidad es $8.000/h. Para 6h: 6×8.000=$48.000.',
+      procedure:'k=16.000/2=8.000 → 6×8.000=$48.000',
+      concept:'Tabla de proporcionalidad directa: la razón es constante.'
+    }
+  },
+  {
+    id:9, topic:'Identificación de patrones', difficulty:'medium',
+    tableData:{headers:['Litros de gasolina','Km recorridos'],rows:[['3','42'],['5','70'],['8','?'],['12','168']]},
+    question:'¿Qué distancia recorre el vehículo con 8 litros de gasolina?',
+    options:['96 km','112 km','104 km','120 km'],
+    correct:1,
+    feedback:{
+      correct:'Rendimiento: 42÷3=14 km/L. Con 8 litros: 8×14=112 km.',
+      wrong:'La tasa es 14 km/L (42÷3). Para 8 L: 8×14=112 km.',
+      procedure:'k=42/3=14 km/L → 8×14=112 km',
+      concept:'Identificar la constante de proporcionalidad para completar la tabla.'
+    }
+  },
+  {
+    id:10, topic:'Tablas — valores faltantes', difficulty:'hard',
+    context:'La tabla muestra la relación entre trabajadores y días necesarios para pintar un edificio.',
+    tableData:{headers:['Trabajadores','Días'],rows:[['2','30'],['3','20'],['5','12'],['6','?']]},
+    question:'¿Cuántos días necesitan 6 trabajadores para pintar el edificio?',
+    options:['8','10','12','15'],
+    correct:1,
+    feedback:{
+      correct:'Relación inversa: Trabajadores×Días = constante. 2×30=60. Para 6 trabajadores: 60÷6=10 días.',
+      wrong:'Es proporcionalidad inversa: k=2×30=60. Para 6: 60÷6=10 días.',
+      procedure:'k=2×30=60 → 60÷6=10 días',
+      concept:'Tabla de proporcionalidad inversa: producto constante.'
+    }
+  },
+  // ── SUBTEMA 4: Regla de tres ──
+  {
+    id:11, topic:'Regla de tres directa', difficulty:'easy',
+    context:'Una costurera confecciona 15 camisas en 3 días.',
+    question:'¿Cuántas camisas confeccionará en 7 días al mismo ritmo?',
+    options:['25','35','21','40'],
+    correct:1,
+    feedback:{
+      correct:'3 días → 15 camisas. 7 días → x. x = (15×7)÷3 = 35 camisas.',
+      wrong:'Regla de tres directa: x = (15×7)/3 = 105/3 = 35 camisas.',
+      procedure:'15 camisas / 3 días = 5 camisas/día × 7 días = 35',
+      concept:'Regla de tres directa: ambas magnitudes varían en el mismo sentido.'
+    }
+  },
+  {
+    id:12, topic:'Regla de tres inversa', difficulty:'medium',
+    context:'Un suministro de alimentos alcanza para 60 personas durante 20 días.',
+    question:'Si llegan 40 personas más al campamento, ¿para cuántos días alcanzará el mismo suministro?',
+    options:['10','12','15','8'],
+    correct:1,
+    feedback:{
+      correct:'Relación inversa: 60×20 = 100×d → d = 1200÷100 = 12 días.',
+      wrong:'Total de personas = 60+40=100. Relación inversa: 60×20=100×d → d=12 días.',
+      procedure:'60×20=1200 → 1200÷100=12 días',
+      concept:'Regla de tres inversa: más personas consumen el recurso más rápido.'
+    }
+  },
+  {
+    id:13, topic:'Regla de tres directa — contextualizada', difficulty:'medium',
+    context:'En un mapa, 2 cm representan 50 km de distancia real.',
+    question:'¿Cuántos kilómetros reales representan 7 cm en el mismo mapa?',
+    options:['150 km','175 km','125 km','200 km'],
+    correct:1,
+    feedback:{
+      correct:'2 cm → 50 km. 7 cm → x. x=(50×7)÷2=175 km.',
+      wrong:'Escala: 25 km/cm. Para 7 cm: 7×25=175 km.',
+      procedure:'x=(50×7)/2=350/2=175 km',
+      concept:'Regla de tres directa aplicada a escalas cartográficas.'
+    }
+  },
+  {
+    id:14, topic:'Regla de tres — interpretación', difficulty:'hard',
+    context:'Una bomba extrae 360 litros de agua en 15 minutos.',
+    question:'A ese mismo ritmo, ¿cuántos litros habrá extraído en 2 horas?',
+    options:['2.440','2.880','3.200','1.440'],
+    correct:1,
+    feedback:{
+      correct:'2 horas = 120 minutos. Tasa = 360/15 = 24 L/min. En 120 min: 24×120 = 2.880 litros.',
+      wrong:'Convierte: 2h=120 min. Tasa=360/15=24 L/min. Total=24×120=2.880 L.',
+      procedure:'24 L/min × 120 min = 2.880 L',
+      concept:'Regla de tres directa con conversión de unidades de tiempo.'
+    }
+  },
+  // ── SUBTEMA 5: Porcentajes, escalas y contextos ──
+  {
+    id:15, topic:'Descuentos', difficulty:'easy',
+    context:'Una chaqueta cuesta $180.000 y tiene un descuento del 25%.',
+    question:'¿Cuánto pagará el cliente después del descuento?',
+    options:['$125.000','$135.000','$140.000','$145.000'],
+    correct:1,
+    feedback:{
+      correct:'Descuento = 25% de $180.000 = $45.000. Precio final = 180.000 - 45.000 = $135.000.',
+      wrong:'Descuento = 0.25×180.000=$45.000. Precio final=180.000-45.000=$135.000.',
+      procedure:'180.000×0.75=$135.000',
+      concept:'Descuento porcentual: precio final = precio original × (1 - % descuento).'
+    }
+  },
+  {
+    id:16, topic:'Incremento porcentual', difficulty:'medium',
+    context:'El salario de una empleada era de $2.400.000. Le dieron un aumento del 12%.',
+    question:'¿Cuál es su nuevo salario mensual?',
+    options:['$2.568.000','$2.688.000','$2.712.000','$2.640.000'],
+    correct:1,
+    feedback:{
+      correct:'Aumento = 12% de 2.400.000 = $288.000. Nuevo salario = 2.400.000 + 288.000 = $2.688.000.',
+      wrong:'Aumento=0.12×2.400.000=288.000. Nuevo=2.400.000+288.000=$2.688.000.',
+      procedure:'2.400.000×1.12=$2.688.000',
+      concept:'Incremento porcentual: valor final = valor inicial × (1 + % aumento).'
+    }
+  },
+  {
+    id:17, topic:'Escalas en planos', difficulty:'medium',
+    context:'En un plano arquitectónico con escala 1:50, una habitación mide 6 cm de largo.',
+    question:'¿Cuál es la longitud real de la habitación?',
+    options:['3 m','300 m','30 m','3,5 m'],
+    correct:0,
+    feedback:{
+      correct:'Escala 1:50 significa que 1 cm en el plano = 50 cm en realidad. 6 cm × 50 = 300 cm = 3 m.',
+      wrong:'1 cm plano=50 cm real. 6×50=300 cm=3 m.',
+      procedure:'6 cm × 50 = 300 cm = 3 metros',
+      concept:'Escala 1:n: multiplica la medida del plano por n para obtener la medida real.'
+    }
+  },
+  {
+    id:18, topic:'Porcentaje — conversión', difficulty:'hard',
+    context:'En una encuesta, 3 de cada 8 estudiantes prefieren matemáticas.',
+    question:'¿Qué porcentaje de estudiantes prefiere matemáticas?',
+    options:['35,5%','37,5%','38%','33,3%'],
+    correct:1,
+    feedback:{
+      correct:'Porcentaje = (3÷8)×100 = 0,375×100 = 37,5%.',
+      wrong:'Porcentaje = (3/8)×100 = 0.375×100 = 37,5%.',
+      procedure:'(3÷8)×100 = 37,5%',
+      concept:'Conversión razón → porcentaje: divide y multiplica por 100.'
+    }
+  },
+  // ── SUBTEMA 6: Modelación ──
+  {
+    id:19, topic:'Modelación proporcional', difficulty:'medium',
+    context:'Un ciclista recorre una distancia d en un tiempo t. Se sabe que d varía directamente con t.',
+    question:'Si el ciclista recorre 48 km en 3 horas, ¿cuál expresión representa correctamente la relación entre d y t?',
+    options:['d = 16t','d = t + 16','d = 3t','d = 48/t'],
+    correct:0,
+    feedback:{
+      correct:'Velocidad constante = 48÷3 = 16 km/h. La relación es d = 16t (proporcional directa).',
+      wrong:'k=48/3=16 km/h. La ecuación de proporcionalidad directa es d=kt → d=16t.',
+      procedure:'k=48/3=16 → d=16t',
+      concept:'Modelo de proporcionalidad directa: y=kx, donde k es la constante.'
+    }
+  },
+  {
+    id:20, topic:'Traducción a expresión matemática', difficulty:'hard',
+    context:'El costo C de producir n unidades de un artículo es directamente proporcional a n. Producir 200 unidades cuesta $1.600.000.',
+    question:'¿Cuánto costaría producir 350 unidades?',
+    options:['$2.400.000','$2.800.000','$3.200.000','$2.600.000'],
+    correct:1,
+    feedback:{
+      correct:'k=1.600.000÷200=8.000 por unidad. Para 350: 350×8.000=$2.800.000.',
+      wrong:'Costo unitario=1.600.000/200=$8.000. Para 350: 350×8.000=$2.800.000.',
+      procedure:'k=$8.000/ud → C=8.000×350=$2.800.000',
+      concept:'Modelar con C=kn y hallar k con los datos conocidos.'
+    }
+  },
+  {
+    id:21, topic:'Construcción de relaciones', difficulty:'hard',
+    context:'El tiempo T para completar una tarea varía inversamente con el número de personas P que trabajan.',
+    question:'Si 4 personas completan la tarea en 9 horas, ¿cuántas personas se necesitan para completarla en 3 horas?',
+    options:['8','10','12','6'],
+    correct:2,
+    feedback:{
+      correct:'k=4×9=36. Para T=3: P=36÷3=12 personas.',
+      wrong:'k=4×9=36 (constante inversa). Para 3 horas: P=36/3=12 personas.',
+      procedure:'k=4×9=36 → P=36/3=12',
+      concept:'Proporcionalidad inversa: T×P=k constante.'
+    }
+  },
+  // ── SUBTEMA 7: Verificación y estrategias ──
+  {
+    id:22, topic:'Verificación de resultados', difficulty:'medium',
+    context:'Luisa calcula que si 3 impresoras imprimen 900 páginas en 5 minutos, entonces 1 impresora imprime 150 páginas por minuto.',
+    question:'¿Es correcta la afirmación de Luisa?',
+    options:['Sí, porque 900÷5=180 y 180÷3=60','No, cada impresora produce 60 páginas por minuto','No, produce 90 páginas por minuto','Sí, el cálculo es correcto'],
+    correct:1,
+    feedback:{
+      correct:'3 impresoras → 900 pág en 5 min → 180 pág/min entre las 3 → 180÷3=60 pág/min por impresora. Luisa se equivocó al decir 150.',
+      wrong:'900 pág / 5 min = 180 pág/min (entre 3). Por impresora: 180÷3=60, no 150.',
+      procedure:'900/5=180 pág/min ÷ 3=60 pág/min por máquina',
+      concept:'Verificar resultados: recalcular para detectar errores de procedimiento.'
+    }
+  },
+  {
+    id:23, topic:'Estimación y coherencia', difficulty:'medium',
+    context:'Un estudiante calcula que si un auto consume 1 litro de gasolina cada 12 km, para recorrer 300 km necesita 24 litros.',
+    question:'¿Es razonable este resultado?',
+    options:['Sí, porque 300÷12≈25 que es cercano a 24','No, necesita exactamente 25 litros','Sí, es exactamente correcto','No, necesita 36 litros'],
+    correct:1,
+    feedback:{
+      correct:'Consumo exacto = 300÷12=25 litros. El estudiante calculó 24, que es incorrecto. Necesita exactamente 25 litros.',
+      wrong:'300÷12=25 litros exactos. El estudiante calculó mal (24). La respuesta correcta es 25 litros.',
+      procedure:'300 km ÷ 12 km/L = 25 litros',
+      concept:'Verificación por estimación y cálculo exacto.'
+    }
+  },
+  {
+    id:24, topic:'Estrategias de resolución', difficulty:'hard',
+    context:'Carlos necesita repartir $750.000 entre él y dos socios en proporción 3:2:1.',
+    question:'¿Cuánto dinero recibe el socio con mayor participación?',
+    options:['$250.000','$375.000','$300.000','$450.000'],
+    correct:1,
+    feedback:{
+      correct:'Total partes: 3+2+1=6. Valor de 1 parte: 750.000÷6=125.000. Parte mayor (×3): 125.000×3=$375.000.',
+      wrong:'Total partes=6. Una parte=$125.000. La mayor participación (3 partes)=3×125.000=$375.000.',
+      procedure:'750.000÷6=125.000 × 3 = $375.000',
+      concept:'Distribución en partes proporcionales: hallar el valor de una parte y multiplicar.'
+    }
+  },
+  // ── SUBTEMA 8: Aplicaciones tipo ICFES ──
+  {
+    id:25, topic:'Aplicación ICFES — transporte', difficulty:'medium',
+    context:'Un camión de carga viaja a velocidad constante. En las primeras 2 horas recorre 130 km y en las siguientes 3 horas recorre 195 km.',
+    question:'¿Cuál es la velocidad constante del camión?',
+    options:['60 km/h','62 km/h','65 km/h','70 km/h'],
+    correct:2,
+    feedback:{
+      correct:'V=130÷2=65 km/h. Verificación: 65×3=195 km. ✓',
+      wrong:'V=distancia/tiempo=130/2=65 km/h. Verificación: 65×3=195. ✓',
+      procedure:'130÷2=65 km/h',
+      concept:'Tasa unitaria: velocidad como razón distancia/tiempo.'
+    }
+  },
+  {
+    id:26, topic:'Aplicación ICFES — deportes', difficulty:'hard',
+    context:'En una competencia de natación, Valentina nada 1.500 m en 25 minutos. Andrea nada la misma distancia en 20 minutos.',
+    question:'¿Cuántos metros más por minuto nada Andrea que Valentina?',
+    options:['10 m/min','15 m/min','12 m/min','8 m/min'],
+    correct:1,
+    feedback:{
+      correct:'Valentina: 1500÷25=60 m/min. Andrea: 1500÷20=75 m/min. Diferencia=75-60=15 m/min.',
+      wrong:'V_Valentina=1500/25=60 m/min. V_Andrea=1500/20=75 m/min. 75-60=15 m/min.',
+      procedure:'75-60=15 m/min',
+      concept:'Comparación de tasas unitarias de velocidad.'
+    }
+  },
+  {
+    id:27, topic:'Aplicación ICFES — producción', difficulty:'hard',
+    context:'Una finca produce 480 kg de café por hectárea en una temporada. El año siguiente aumenta la producción en un 15% por hectárea.',
+    question:'¿Cuántos kilogramos produce cada hectárea el año siguiente?',
+    options:['552 kg','548 kg','536 kg','560 kg'],
+    correct:0,
+    feedback:{
+      correct:'Aumento=15% de 480=72 kg. Nueva producción=480+72=552 kg/ha.',
+      wrong:'15% de 480=0.15×480=72. Producción nueva=480+72=552 kg.',
+      procedure:'480×1.15=552 kg',
+      concept:'Incremento porcentual: valor final = inicial × (1+%/100).'
+    }
+  },
+  {
+    id:28, topic:'Aplicación ICFES — alimentación', difficulty:'medium',
+    context:'Una receta para 6 personas requiere 450 g de harina. Se quiere preparar la misma receta para 10 personas.',
+    question:'¿Cuántos gramos de harina se necesitan para 10 personas?',
+    options:['650 g','700 g','750 g','800 g'],
+    correct:2,
+    feedback:{
+      correct:'Harina por persona=450÷6=75 g. Para 10: 75×10=750 g.',
+      wrong:'75 g/persona × 10=750 g.',
+      procedure:'450/6=75 g/persona → 75×10=750 g',
+      concept:'Regla de tres directa: más personas → más ingredientes.'
+    }
+  },
+  {
+    id:29, topic:'Aplicación ICFES — construcción', difficulty:'hard',
+    context:'Para construir un piso de 120 m², se necesitan 480 baldosas. La sala mide 30 m².',
+    question:'¿Cuántas baldosas se necesitan para cubrir únicamente la sala?',
+    options:['100','110','120','130'],
+    correct:2,
+    feedback:{
+      correct:'Baldosas por m²=480÷120=4. Para 30 m²: 4×30=120 baldosas.',
+      wrong:'Densidad=480/120=4 baldosas/m². Para 30 m²: 4×30=120.',
+      procedure:'480/120=4 bal/m² → 4×30=120',
+      concept:'Proporcionalidad directa entre área y número de baldosas.'
+    }
+  },
+  {
+    id:30, topic:'Aplicación ICFES — estadística', difficulty:'hard',
+    context:'En un colegio con 800 estudiantes, el 35% participa en deportes, el 25% en arte y el resto no participa en ninguna actividad extracurricular.',
+    question:'¿Cuántos estudiantes no participan en ninguna actividad extracurricular?',
+    options:['280','240','320','300'],
+    correct:1,
+    feedback:{
+      correct:'Participan: 35%+25%=60%. No participan: 40%. 40% de 800 = 0.40×800 = 320.',
+      wrong:'No participan=100%-60%=40%. 40% de 800=0.40×800=320.',
+      procedure:'100%-35%-25%=40% → 0.40×800=320',
+      concept:'Porcentaje complementario: lo que no participa = 100% - suma de los que sí.'
+    },
+    correct:2
+  }
+];
+
+/* ════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════ */
+let state = {
+  questions: [],
+  current: 0,
+  score: 0,
+  correct: 0,
+  incorrect: 0,
+  streak: 0,
+  bestStreak: 0,
+  answered: [],
+  timerTotal: 45*60,
+  timerLeft: 45*60,
+  timerInterval: null,
+  startTime: null,
+  elapsedTime: 0,
+  started: false,
+};
+
+/* ════════════════════════════════════════════════
+   SHUFFLE
+════════════════════════════════════════════════ */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ════════════════════════════════════════════════
+   SCREENS
+════════════════════════════════════════════════ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ════════════════════════════════════════════════
+   TIMER
+════════════════════════════════════════════════ */
+function formatTime(s){
+  const m=Math.floor(s/60), sec=s%60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function startTimer(){
+  const display=document.getElementById('timer-display');
+  state.timerInterval=setInterval(()=>{
+    state.timerLeft--;
+    if(state.timerLeft<=0){ clearInterval(state.timerInterval); endQuiz(); return; }
+    display.textContent='⏱ '+formatTime(state.timerLeft);
+    if(state.timerLeft<600) display.classList.add('warning');
+    else display.classList.remove('warning');
+  },1000);
+}
+function stopTimer(){
+  clearInterval(state.timerInterval);
+  state.elapsedTime = state.timerTotal - state.timerLeft;
+}
+
+/* ════════════════════════════════════════════════
+   START QUIZ
+════════════════════════════════════════════════ */
+function startQuiz(){
+  const mins = parseInt(document.getElementById('time-input').value)||45;
+  state.timerTotal = mins*60;
+  state.timerLeft  = mins*60;
+  state.score=0; state.correct=0; state.incorrect=0;
+  state.streak=0; state.bestStreak=0;
+  state.current=0; state.answered=[];
+  state.questions=shuffle(ALL_QUESTIONS);
+  state.startTime=Date.now();
+  showScreen('screen-quiz');
+  document.getElementById('timer-display').textContent='⏱ '+formatTime(state.timerLeft);
+  document.getElementById('timer-display').classList.remove('warning');
+  renderQuestion();
+  startTimer();
+  loadProgress();
+}
+
+/* ════════════════════════════════════════════════
+   RENDER QUESTION
+════════════════════════════════════════════════ */
+function renderQuestion(){
+  const q = state.questions[state.current];
+  const pct = Math.round((state.current/30)*100);
+  document.getElementById('progress-bar').style.width=pct+'%';
+  document.getElementById('q-counter').textContent=`Pregunta ${state.current+1} / 30`;
+  document.getElementById('score-display').textContent=`⭐ ${state.score} pts`;
+
+  let html=`<div class="question-card">
+    <div class="q-meta">
+      <span class="q-badge badge-${q.difficulty}">${{easy:'Fácil',medium:'Medio',hard:'Alto'}[q.difficulty]}</span>
+      <span class="q-topic">${q.topic}</span>
+    </div>`;
+
+  if(q.context) html+=`<div class="q-context">📌 ${q.context}</div>`;
+  if(q.tableData){
+    html+=`<div style="overflow-x:auto"><table class="q-table"><thead><tr>`;
+    q.tableData.headers.forEach(h=>html+=`<th>${h}</th>`);
+    html+=`</tr></thead><tbody>`;
+    q.tableData.rows.forEach(r=>{
+      html+=`<tr>`;
+      r.forEach(c=>html+=`<td>${c}</td>`);
+      html+=`</tr>`;
+    });
+    html+=`</tbody></table></div>`;
+  }
+
+  html+=`<p class="q-text">${q.question}</p>`;
+  html+=`<div class="options-list">`;
+  const letters=['A','B','C','D'];
+  q.options.forEach((opt,i)=>{
+    html+=`<button class="option-btn" onclick="selectOption(${i})" id="opt-${i}">
+      <span class="opt-letter">${letters[i]}</span><span>${opt}</span>
+    </button>`;
+  });
+  html+=`</div></div>`;
+
+  document.getElementById('question-area').innerHTML=html;
+  document.getElementById('question-area').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ════════════════════════════════════════════════
+   SELECT OPTION
+════════════════════════════════════════════════ */
+function selectOption(idx){
+  const q=state.questions[state.current];
+  const isCorrect=(idx===q.correct);
+
+  // disable all
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+
+  // mark
+  const selBtn=document.getElementById(`opt-${idx}`);
+  const corBtn=document.getElementById(`opt-${q.correct}`);
+  if(isCorrect){
+    selBtn.classList.add('correct');
+  } else {
+    selBtn.classList.add('wrong');
+    corBtn.classList.add('correct');
+  }
+
+  // score & streak
+  const pts=isCorrect?100:0;
+  state.score+=pts;
+  if(isCorrect){
+    state.correct++;
+    state.streak++;
+    if(state.streak>state.bestStreak) state.bestStreak=state.streak;
+    // streak bonuses
+    let bonus=0, streakMsg='';
+    if(state.streak===5){ bonus=50; streakMsg='🔥 ¡Racha de 5! +50 puntos'; }
+    else if(state.streak===3){ bonus=20; streakMsg='⚡ ¡Racha de 3! +20 puntos'; }
+    else if(state.streak>0 && state.streak%10===0){ bonus=100; streakMsg='👑 ¡Nivel experto! +100 pts'; }
+    state.score+=bonus;
+    if(streakMsg) showStreakToast(streakMsg);
+    playCorrect();
+    document.body.classList.add('flash-correct');
+    setTimeout(()=>document.body.classList.remove('flash-correct'),400);
+    if(isCorrect && state.streak>=3) launchConfetti(6);
+  } else {
+    state.incorrect++;
+    state.streak=0;
+    playWrong();
+    document.body.classList.add('flash-wrong');
+    setTimeout(()=>document.body.classList.remove('flash-wrong'),400);
+  }
+
+  document.getElementById('score-display').textContent=`⭐ ${state.score} pts`;
+
+  // record
+  state.answered.push({q, selected:idx, isCorrect});
+  saveProgress();
+
+  // feedback
+  showFeedback(q, idx, isCorrect);
+}
+
+/* ════════════════════════════════════════════════
+   FEEDBACK
+════════════════════════════════════════════════ */
+function showFeedback(q, sel, isCorrect){
+  const letters=['A','B','C','D'];
+  const fb = q.feedback;
+  const cls = isCorrect ? 'correct-fb' : 'wrong-fb';
+  const icon = isCorrect ? '✅' : '❌';
+  const title = isCorrect
+    ? ['¡Correcto! Excelente razonamiento','¡Muy bien! Dominas este concepto','¡Perfecto! Sigue así'][Math.floor(Math.random()*3)]
+    : ['Respuesta incorrecta — repasemos','Casi. Analicemos el error','Incorrecto — aquí está el procedimiento'][Math.floor(Math.random()*3)];
+
+  let html=`<div class="feedback-card ${cls}">
+    <div class="feedback-title">${icon} ${title}</div>
+    <div class="feedback-body">`;
+
+  if(isCorrect){
+    html+=`<p>${fb.correct}</p>`;
+  } else {
+    html+=`<p>${fb.wrong}</p>
+    <p style="margin-top:8px">📌 <strong>Respuesta correcta:</strong> ${letters[q.correct]}) ${q.options[q.correct]}</p>
+    <p style="margin-top:6px">🔍 <strong>Concepto clave:</strong> ${fb.concept}</p>`;
+  }
+  html+=`<div class="proc-box">📐 Procedimiento: ${fb.procedure}</div>`;
+  html+=`</div></div>`;
+
+  const card = document.querySelector('.question-card');
+  card.insertAdjacentHTML('beforeend', html);
+
+  // next button
+  const nextLabel = state.current<29 ? '➡️ Siguiente pregunta' : '🏁 Ver resultados';
+  card.insertAdjacentHTML('beforeend',
+    `<div class="next-wrap"><button class="btn btn-primary" onclick="nextQuestion()">${nextLabel}</button></div>`
+  );
+}
+
+/* ════════════════════════════════════════════════
+   NEXT QUESTION
+════════════════════════════════════════════════ */
+function nextQuestion(){
+  state.current++;
+  if(state.current>=30){ endQuiz(); return; }
+  renderQuestion();
+}
+
+/* ════════════════════════════════════════════════
+   STREAK TOAST
+════════════════════════════════════════════════ */
+function showStreakToast(msg){
+  const t=document.createElement('div');
+  t.className='streak-toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  playStreak();
+  setTimeout(()=>{ t.classList.add('hiding'); setTimeout(()=>t.remove(),300); },2200);
+}
+
+/* ════════════════════════════════════════════════
+   CONFETTI
+════════════════════════════════════════════════ */
+function launchConfetti(n=20){
+  const colors=['#F59E0B','#22C55E','#60A5FA','#FFE066','#EF4444','#A78BFA'];
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    const size=6+Math.random()*8;
+    c.style.cssText=`left:${Math.random()*100}vw;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+/* ════════════════════════════════════════════════
+   END QUIZ
+════════════════════════════════════════════════ */
+function endQuiz(){
+  stopTimer();
+  clearProgress();
+
+  const pct = Math.round((state.correct/30)*100);
+  const elMin=Math.floor(state.elapsedTime/60), elSec=state.elapsedTime%60;
+
+  // message
+  let emoji, title, msg;
+  if(pct<40){       emoji='📚'; title='¡Sigue aprendiendo!'; msg='Cada intento es una oportunidad para aprender. Revisa los conceptos y vuelve a intentarlo.'; }
+  else if(pct<60){  emoji='📈'; title='¡Vas por buen camino!'; msg='Has construido una base importante. Con un poco más de práctica podrás mejorar notablemente.'; }
+  else if(pct<80){  emoji='👍'; title='¡Buen trabajo!'; msg='Demuestras una comprensión sólida de la proporcionalidad y sus aplicaciones.'; }
+  else if(pct<90){  emoji='🌟'; title='¡Excelente desempeño!'; msg='Tus habilidades matemáticas muestran un nivel avanzado.'; }
+  else{             emoji='🏆'; title='¡Desempeño sobresaliente!'; msg='¡Felicitaciones! Has alcanzado un nivel sobresaliente en el manejo de situaciones de proporcionalidad.'; }
+
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-title').textContent=title;
+  document.getElementById('r-msg').textContent=msg;
+
+  // perf bar
+  setTimeout(()=>{
+    document.getElementById('r-perf-fill').style.width=pct+'%';
+    document.getElementById('r-perf-pct').textContent=pct+'%';
+  },200);
+
+  // stats
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><div class="sv amber">${state.score}</div><div class="sl">Puntaje total</div></div>
+    <div class="stat-card"><div class="sv green">${state.correct}</div><div class="sl">Correctas</div></div>
+    <div class="stat-card"><div class="sv red">${state.incorrect}</div><div class="sl">Incorrectas</div></div>
+    <div class="stat-card"><div class="sv blue">${pct}%</div><div class="sl">Desempeño</div></div>
+    <div class="stat-card"><div class="sv" style="color:#C084FC">${String(elMin).padStart(2,'0')}:${String(elSec).padStart(2,'0')}</div><div class="sl">Tiempo utilizado</div></div>
+    <div class="stat-card"><div class="sv amber">${state.bestStreak}</div><div class="sl">Mejor racha</div></div>
+  `;
+
+  // report
+  buildReport();
+
+  showScreen('screen-results');
+  if(pct>=80) launchConfetti(40);
+}
+
+/* ════════════════════════════════════════════════
+   REPORT
+════════════════════════════════════════════════ */
+function buildReport(){
+  const letters=['A','B','C','D'];
+  let html='';
+  state.answered.forEach((a,i)=>{
+    const cls=a.isCorrect?'ri-correct':'ri-wrong';
+    const res=a.isCorrect?'<span class="ri-result ok">✓ Correcta</span>':'<span class="ri-result bad">✗ Incorrecta</span>';
+    html+=`<div class="report-item ${cls}">
+      <div class="ri-header">
+        <span class="ri-num">Pregunta ${i+1}</span>
+        <span class="q-badge badge-${a.q.difficulty}">${{easy:'Fácil',medium:'Medio',hard:'Alto'}[a.q.difficulty]}</span>
+        ${res}
+      </div>
+      <div class="ri-q">${a.q.context?`<em>${a.q.context}</em><br>`:''}<strong>${a.q.question}</strong></div>
+      <div class="ri-answers">
+        <span>Tu respuesta: <b>${letters[a.selected]}) ${a.q.options[a.selected]}</b></span>
+        ${!a.isCorrect?`<span>Respuesta correcta: <b>${letters[a.q.correct]}) ${a.q.options[a.q.correct]}</b></span>`:''}
+      </div>
+      <div class="ri-expl">📐 ${a.isCorrect?a.q.feedback.correct:a.q.feedback.wrong}<br>
+      <strong>Procedimiento:</strong> ${a.q.feedback.procedure}</div>
+    </div>`;
+  });
+  document.getElementById('report-body').innerHTML=html;
+}
+
+function toggleReport(){
+  const body=document.getElementById('report-body');
+  const btn=document.getElementById('report-toggle');
+  body.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+/* ════════════════════════════════════════════════
+   RESTART
+════════════════════════════════════════════════ */
+function restartQuiz(){
+  clearInterval(state.timerInterval);
+  showScreen('screen-welcome');
+  document.getElementById('report-body').innerHTML='';
+  document.getElementById('report-body').classList.remove('open');
+  document.getElementById('report-toggle').classList.remove('open');
+  document.getElementById('r-perf-fill').style.width='0%';
+  document.getElementById('r-perf-pct').textContent='0%';
+}
+
+/* ════════════════════════════════════════════════
+   LOCALSTORAGE
+════════════════════════════════════════════════ */
+function saveProgress(){
+  try{
+    localStorage.setItem('sim_prop_progress', JSON.stringify({
+      current:state.current, score:state.score, correct:state.correct,
+      incorrect:state.incorrect, streak:state.streak, bestStreak:state.bestStreak,
+      timerLeft:state.timerLeft, answered:state.answered.length,
+      qIds:state.questions.map(q=>q.id)
+    }));
+  }catch(e){}
+}
+function loadProgress(){
+  // intentional: each start is fresh (questions reshuffled), just clear old save
+  try{ localStorage.removeItem('sim_prop_progress'); }catch(e){}
+}
+function clearProgress(){
+  try{ localStorage.removeItem('sim_prop_progress'); }catch(e){}
+}
+
+/* ════════════════════════════════════════════════
+   TIMER INPUT PREVIEW
+════════════════════════════════════════════════ */
+document.getElementById('time-input').addEventListener('input', function(){
+  document.getElementById('time-preview').textContent = (this.value||45)+' min';
+});
+</script>
+</body>
+</html>

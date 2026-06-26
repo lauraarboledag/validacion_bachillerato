@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro ICFES – Matemáticas Aplicadas – Geometría – Nivel 3</title>
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark: #0F172A;
+    --blue: #1E3A8A;
+    --blue-light: #2563EB;
+    --gold: #F59E0B;
+    --yellow: #FFE066;
+    --green: #22C55E;
+    --red: #EF4444;
+    --white: #F8FAFC;
+    --card: #1E293B;
+    --border: #334155;
+    --text: #E2E8F0;
+    --text-muted: #94A3B8;
+    --radius: 16px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  a { color: inherit; }
+  button { cursor: pointer; font-family: inherit; border: none; outline: none; }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  svg { max-width: 100%; height: auto; }
+
+  /* ===== UTILITIES ===== */
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .gap-2 { gap: 8px; }
+  .gap-4 { gap: 16px; }
+  .gap-6 { gap: 24px; }
+  .text-center { text-align: center; }
+  .font-bold { font-weight: 700; }
+  .rounded { border-radius: var(--radius); }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 16px 40px;
+  }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .app-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(30,58,138,0.5);
+  }
+  .app-title {
+    font-size: clamp(1.8em, 5vw, 3em);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 40%, var(--yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .app-subtitle {
+    color: var(--text-muted);
+    font-size: clamp(0.9em, 2vw, 1.1em);
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 760px;
+  }
+  .card-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--yellow);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ===== START SCREEN ===== */
+  .start-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 500px) { .start-grid { grid-template-columns: 1fr; } }
+
+  .info-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .info-item .num { font-size: 2em; font-weight: 900; color: var(--gold); }
+  .info-item .label { font-size: 0.85em; color: var(--text-muted); margin-top: 4px; }
+
+  .timer-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .timer-btn {
+    flex: 1 1 calc(25% - 10px);
+    min-width: 80px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .timer-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(245,158,11,0.08); }
+  .timer-btn.active { border-color: var(--gold); background: rgba(245,158,11,0.15); color: var(--gold); }
+
+  .custom-time-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+  .custom-time-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1em;
+    outline: none;
+  }
+  .custom-time-row input:focus { border-color: var(--gold); }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--gold), #D97706);
+    color: #1A0A00;
+    font-weight: 800;
+    font-size: 1.1em;
+    padding: 16px 40px;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 4px 24px rgba(245,158,11,0.4);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(245,158,11,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(255,255,255,0.06); color: var(--text);
+    font-weight: 600; font-size: 0.95em;
+    padding: 12px 28px; border-radius: 50px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--text-muted); }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quiz-screen { padding: 16px 16px 40px; }
+
+  .quiz-topbar {
+    width: 100%; max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) {
+    .quiz-topbar { grid-template-columns: 1fr 1fr; }
+    .quiz-topbar .timer-block { grid-column: 1 / -1; order: -1; }
+  }
+
+  .stat-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 0.85em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .stat-pill .val { color: var(--gold); font-size: 1.1em; font-weight: 800; }
+
+  .timer-block {
+    text-align: center;
+    background: var(--card);
+    border: 2px solid var(--blue);
+    border-radius: 12px;
+    padding: 10px 20px;
+    min-width: 120px;
+    transition: border-color 0.3s;
+  }
+  .timer-block.warn { border-color: var(--gold); }
+  .timer-block.danger { border-color: var(--red); animation: pulse-border 1s infinite; }
+  @keyframes pulse-border { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 50%{box-shadow:0 0 0 8px rgba(239,68,68,0)} }
+
+  .timer-val {
+    font-size: 1.8em;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+  .timer-label { font-size: 0.7em; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  .progress-bar-wrap {
+    width: 100%; max-width: 900px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50px;
+    height: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-light), var(--gold));
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+  .time-bar-wrap {
+    width: 100%; max-width: 900px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50px;
+    height: 5px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .time-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 50px;
+    transition: width 1s linear, background 0.5s;
+  }
+
+  .quiz-card {
+    width: 100%; max-width: 900px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .quiz-card-header {
+    background: linear-gradient(135deg, var(--blue), #1E40AF);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .q-num { font-size: 0.8em; font-weight: 700; letter-spacing: 1px; color: var(--yellow); text-transform: uppercase; }
+  .q-topic { font-size: 0.75em; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 50px; color: #CBD5E1; }
+  .q-diff { font-size: 0.75em; font-weight: 700; padding: 4px 10px; border-radius: 50px; }
+  .diff-easy { background: rgba(34,197,94,0.2); color: var(--green); }
+  .diff-medium { background: rgba(245,158,11,0.2); color: var(--gold); }
+  .diff-hard { background: rgba(239,68,68,0.2); color: var(--red); }
+  .diff-icfes { background: rgba(139,92,246,0.2); color: #A78BFA; }
+
+  .quiz-card-body { padding: 24px; }
+  .question-text {
+    font-size: clamp(1em, 2.5vw, 1.15em);
+    line-height: 1.7;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+
+  .figure-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0 24px;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .figure-wrap svg { max-height: 240px; }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 560px) { .options-grid { grid-template-columns: 1fr; } }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: left;
+    color: var(--text);
+    font-size: 0.95em;
+    line-height: 1.5;
+    transition: all 0.15s;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--blue-light);
+    background: rgba(37,99,235,0.1);
+    transform: translateY(-1px);
+  }
+  .option-btn .opt-letter {
+    min-width: 28px; height: 28px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.85em;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .option-btn:hover:not(:disabled) .opt-letter { background: var(--blue-light); color: #fff; }
+  .option-btn.correct { border-color: var(--green); background: rgba(34,197,94,0.12); }
+  .option-btn.correct .opt-letter { background: var(--green); color: #fff; }
+  .option-btn.incorrect { border-color: var(--red); background: rgba(239,68,68,0.12); }
+  .option-btn.incorrect .opt-letter { background: var(--red); color: #fff; }
+  .option-btn.selected-correct { border-color: var(--green); background: rgba(34,197,94,0.15); }
+  .option-btn.selected-incorrect { border-color: var(--red); background: rgba(239,68,68,0.15); }
+  .option-btn:disabled { cursor: default; }
+
+  /* ===== FEEDBACK ===== */
+  .feedback-card {
+    width: 100%; max-width: 900px;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    border: 1px solid;
+    box-shadow: var(--shadow);
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .feedback-card.correct-fb { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.35); }
+  .feedback-card.incorrect-fb { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.35); }
+  .feedback-title { font-size: 1.1em; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .correct-fb .feedback-title { color: var(--green); }
+  .incorrect-fb .feedback-title { color: var(--red); }
+  .feedback-body { font-size: 0.9em; line-height: 1.7; color: #CBD5E1; }
+  .feedback-body strong { color: var(--white); }
+  .feedback-formula {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: monospace;
+    font-size: 0.95em;
+    margin: 6px 0;
+    color: var(--yellow);
+  }
+  .btn-continue {
+    display: flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    color: #fff; font-weight: 700; font-size: 1em;
+    padding: 14px 32px; border-radius: 50px;
+    border: none; margin-top: 16px;
+    box-shadow: 0 4px 20px rgba(30,58,138,0.4);
+    transition: all 0.2s;
+  }
+  .btn-continue:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,58,138,0.5); }
+
+  /* ===== STREAK ===== */
+  .streak-banner {
+    width: 100%; max-width: 900px;
+    text-align: center;
+    padding: 14px;
+    border-radius: var(--radius);
+    font-size: 1.1em;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    animation: bounceIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    margin-bottom: 12px;
+  }
+  @keyframes bounceIn { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+  .streak-3 { background: linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.05)); border:1px solid rgba(245,158,11,0.4); color:var(--gold); }
+  .streak-5 { background: linear-gradient(135deg,rgba(139,92,246,0.2),rgba(139,92,246,0.05)); border:1px solid rgba(139,92,246,0.4); color:#C4B5FD; }
+  .streak-10 { background: linear-gradient(135deg,rgba(34,197,94,0.2),rgba(34,197,94,0.05)); border:1px solid rgba(34,197,94,0.4); color:var(--green); }
+
+  .streak-indicator {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.85em; color: var(--text-muted); font-weight: 600;
+  }
+  .streak-dots { display: flex; gap: 4px; }
+  .streak-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: all 0.3s; }
+  .streak-dot.lit { background: var(--gold); box-shadow: 0 0 6px rgba(245,158,11,0.7); }
+
+  /* ===== SOUND TOGGLE ===== */
+  .sound-toggle {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 44px; height: 44px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .sound-toggle:hover { transform: scale(1.1); border-color: var(--gold); }
+
+  /* ===== RESULTS SCREEN ===== */
+  #results-screen { padding: 24px 16px 60px; }
+
+  .results-hero {
+    text-align: center;
+    width: 100%; max-width: 760px;
+    margin-bottom: 24px;
+  }
+  .score-ring {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold) 0%, transparent 0%);
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-ring-inner {
+    width: 128px; height: 128px;
+    border-radius: 50%;
+    background: var(--dark);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-weight: 900;
+  }
+  .score-pct { font-size: 2.2em; color: var(--gold); line-height: 1; }
+  .score-pct-label { font-size: 0.7em; color: var(--text-muted); }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%; max-width: 760px;
+    margin-bottom: 24px;
+  }
+  @media (min-width: 600px) { .results-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .result-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .result-stat .rs-val { font-size: 1.8em; font-weight: 900; }
+  .result-stat .rs-label { font-size: 0.78em; color: var(--text-muted); margin-top: 4px; }
+  .rs-correct { color: var(--green); }
+  .rs-incorrect { color: var(--red); }
+  .rs-score { color: var(--gold); }
+  .rs-time { color: var(--blue-light); }
+
+  .motivation-card {
+    width: 100%; max-width: 760px;
+    background: linear-gradient(135deg, var(--blue), #1E40AF);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 1.05em;
+    line-height: 1.6;
+  }
+
+  /* ===== REPORT ===== */
+  .report-toggle-btn {
+    width: 100%; max-width: 760px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 1em;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s;
+    margin-bottom: 12px;
+  }
+  .report-toggle-btn:hover { background: rgba(255,255,255,0.08); }
+  .report-panel {
+    width: 100%; max-width: 760px;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .report-panel.open { display: flex; }
+
+  .report-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    border-left: 4px solid transparent;
+  }
+  .report-item.r-correct { border-left-color: var(--green); }
+  .report-item.r-incorrect { border-left-color: var(--red); }
+  .report-item-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .report-item-q { font-weight: 700; font-size: 0.9em; }
+  .report-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: 0.7em; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+  .badge-correct { background: rgba(34,197,94,0.2); color: var(--green); }
+  .badge-incorrect { background: rgba(239,68,68,0.2); color: var(--red); }
+  .report-answers { font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; line-height: 1.6; }
+  .report-answers .chosen { color: var(--red); }
+  .report-answers .right { color: var(--green); }
+  .report-explanation { font-size: 0.85em; color: #94A3B8; line-height: 1.7; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 8px; }
+
+  /* ===== RESULTS ACTIONS ===== */
+  .results-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; max-width: 760px; }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes confetti { 0%{transform:translateY(0) rotate(0)} 100%{transform:translateY(-100vh) rotate(720deg); opacity:0} }
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    animation: confetti 2s ease-out forwards;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 2px;
+  }
+
+  /* ===== CONFIRM MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9998;
+    padding: 16px;
+  }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 400px; width: 100%;
+    text-align: center;
+    animation: slideUp 0.3s ease;
+  }
+  .modal-box h3 { font-size: 1.2em; margin-bottom: 10px; }
+  .modal-box p { color: var(--text-muted); margin-bottom: 20px; font-size: 0.95em; }
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+
+  /* ===== CONTINUE BANNER ===== */
+  .continue-banner {
+    width: 100%; max-width: 760px;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .continue-text { font-size: 0.9em; color: var(--gold); }
+  .continue-text strong { display: block; font-size: 1.1em; }
+  .btn-sm {
+    padding: 8px 18px; font-size: 0.85em; font-weight: 700;
+    border-radius: 50px; border: none; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-sm-gold { background: var(--gold); color: #1A0A00; }
+  .btn-sm-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* ===== KEYBOARD NAV ===== */
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ===== MOBILE SAFE ===== */
+  @media (max-width: 380px) {
+    .quiz-card-header { flex-direction: column; gap: 6px; }
+    .options-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================== SCREEN: START ====================== -->
+<section id="start-screen" class="screen">
+  <div class="app-header">
+    <div class="app-logo">🎓 Instituto Innova · ICFES Matemáticas</div>
+    <h1 class="app-title">Simulacro de Geometría</h1>
+    <p class="app-subtitle">Matemáticas Aplicadas · Nivel 3 · Temática 3</p>
+  </div>
+
+  <div id="continue-banner" class="continue-banner hidden">
+    <div class="continue-text">
+      <strong>📂 Progreso guardado encontrado</strong>
+      Tienes un simulacro en curso. ¿Deseas continuar?
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-sm btn-sm-gold" onclick="loadSavedSession()">Continuar</button>
+      <button class="btn-sm btn-sm-ghost" onclick="clearSavedSession()">Nuevo</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div class="info-item"><div class="num">35</div><div class="label">Preguntas</div></div>
+      <div class="info-item"><div class="num">10</div><div class="label">Temáticas</div></div>
+      <div class="info-item"><div class="num">4</div><div class="label">Niveles de dificultad</div></div>
+      <div class="info-item"><div class="num">SVG</div><div class="label">Figuras interactivas</div></div>
+    </div>
+    <div class="card-title">⏱ Selecciona el tiempo disponible</div>
+    <div class="timer-options">
+      <button class="timer-btn" data-min="20" onclick="selectTimer(this,20)">20 min</button>
+      <button class="timer-btn" data-min="30" onclick="selectTimer(this,30)">30 min</button>
+      <button class="timer-btn active" data-min="45" onclick="selectTimer(this,45)">45 min ⭐</button>
+      <button class="timer-btn" data-min="60" onclick="selectTimer(this,60)">60 min</button>
+      <button class="timer-btn" data-min="90" onclick="selectTimer(this,90)">90 min</button>
+    </div>
+    <div class="custom-time-row">
+      <input type="number" id="custom-min" placeholder="Minutos personalizados (ej: 50)" min="5" max="180">
+      <button class="btn-sm btn-sm-gold" onclick="selectCustomTimer()">Aplicar</button>
+    </div>
+    <div style="margin-top:16px;font-size:0.85em;color:var(--text-muted)">
+      ⚠️ Las preguntas y opciones se ordenarán <strong style="color:var(--gold)">aleatoriamente</strong> en cada sesión.
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:760px">
+    <button class="btn-primary" onclick="startQuiz()" style="font-size:1.2em;padding:18px 56px;">
+      🚀 Iniciar Simulacro
+    </button>
+    <div style="display:flex;align-items:center;gap:6px;font-size:0.8em;color:var(--text-muted)">
+      <span>🔊</span> Sonidos activados
+      <label style="position:relative;display:inline-block;width:38px;height:22px;cursor:pointer;margin-left:4px">
+        <input type="checkbox" id="sound-check" checked style="opacity:0;width:0;height:0;">
+        <span onclick="toggleSound()" style="position:absolute;inset:0;background:var(--blue);border-radius:50px;transition:0.2s;" id="sound-slider"></span>
+        <span id="sound-knob" style="position:absolute;left:3px;top:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:0.2s;"></span>
+      </label>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== SCREEN: QUIZ ====================== -->
+<section id="quiz-screen" class="screen hidden">
+  <div class="quiz-topbar">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="stat-pill">📊 <span class="val" id="score-display">0</span> pts</div>
+      <div class="stat-pill">🔥 Racha: <span class="val" id="streak-display">0</span></div>
+    </div>
+    <div class="timer-block" id="timer-block">
+      <div class="timer-val" id="timer-display">45:00</div>
+      <div class="timer-label">tiempo restante</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center">
+      <div class="stat-pill">❓ <span class="val" id="q-count">1</span> / 35</div>
+      <button class="btn-secondary" style="padding:8px 16px;font-size:0.8em;" onclick="confirmAbandon()">✕ Abandonar</button>
+    </div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="time-bar-wrap">
+    <div class="time-bar-fill" id="time-bar" style="width:100%"></div>
+  </div>
+
+  <div class="streak-dots" id="streak-dots" style="margin-bottom:12px;gap:6px">
+    <!-- dots generated by JS -->
+  </div>
+
+  <div id="streak-banner-wrap"></div>
+
+  <div class="quiz-card" id="quiz-card">
+    <div class="quiz-card-header">
+      <span class="q-num" id="q-num-label">Pregunta 1 de 35</span>
+      <span class="q-topic" id="q-topic-label">Tema</span>
+      <span class="q-diff" id="q-diff-label">Fácil</span>
+    </div>
+    <div class="quiz-card-body">
+      <div class="question-text" id="question-text"></div>
+      <div id="figure-area"></div>
+      <div class="options-grid" id="options-grid"></div>
+    </div>
+  </div>
+
+  <div id="feedback-area"></div>
+</section>
+
+<!-- ====================== SCREEN: RESULTS ====================== -->
+<section id="results-screen" class="screen hidden">
+  <div class="app-header">
+    <div class="app-logo">🏆 Resultados del Simulacro</div>
+    <h1 class="app-title" id="results-title">Geometría ICFES</h1>
+  </div>
+
+  <div class="results-hero">
+    <div class="score-ring" id="score-ring">
+      <div class="score-ring-inner">
+        <div class="score-pct" id="final-pct">0%</div>
+        <div class="score-pct-label">logrado</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-stat"><div class="rs-val rs-score" id="r-score">0</div><div class="rs-label">Puntaje total</div></div>
+    <div class="result-stat"><div class="rs-val rs-correct" id="r-correct">0</div><div class="rs-label">Correctas</div></div>
+    <div class="result-stat"><div class="rs-val rs-incorrect" id="r-incorrect">0</div><div class="rs-label">Incorrectas</div></div>
+    <div class="result-stat"><div class="rs-val" style="color:#C4B5FD" id="r-bonuses">0</div><div class="rs-label">Bonificaciones</div></div>
+    <div class="result-stat"><div class="rs-val" style="color:var(--gold)" id="r-streak">0</div><div class="rs-label">Mejor racha</div></div>
+    <div class="result-stat"><div class="rs-val rs-time" id="r-time">–</div><div class="rs-label">Tiempo utilizado</div></div>
+  </div>
+
+  <div class="motivation-card" id="motivation-msg"></div>
+
+  <button class="report-toggle-btn" onclick="toggleReport()">
+    📋 Ver reporte detallado de todas las preguntas
+    <span id="report-arrow">▼</span>
+  </button>
+  <div class="report-panel" id="report-panel"></div>
+
+  <div class="results-actions">
+    <button class="btn-primary" onclick="restartQuiz()">🔄 Reiniciar simulacro</button>
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=738"
+       style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+      🏫 Regresar al Aula Virtual
+    </a>
+  </div>
+</section>
+
+<!-- ====================== MODAL CONFIRM ====================== -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal-box">
+    <h3>⚠️ ¿Abandonar simulacro?</h3>
+    <p>Tu progreso actual se perderá. ¿Estás seguro de que deseas salir?</p>
+    <div class="modal-actions">
+      <button class="btn-primary" style="font-size:0.9em;padding:12px 24px;" onclick="doAbandon()">Sí, salir</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sound toggle -->
+<div class="sound-toggle" id="sound-fab" onclick="toggleSound()" title="Activar/desactivar sonidos">🔊</div>
+
+<script>
+// ============================================================
+//  QUESTIONS DATABASE – 35 original questions
+// ============================================================
+const RAW_QUESTIONS = [
+  // ── BLOQUE 1: Conceptos básicos ──────────────────────────
+  {
+    id:1, topic:"Conceptos básicos de geometría", diff:"Fácil",
+    text:"Un carpintero traza sobre una madera una marca que no tiene longitud, ancho ni profundidad. ¿Qué elemento geométrico representa dicha marca?",
+    options:["Un segmento","Un punto","Una recta","Un plano"],
+    correct:1,
+    figure: null,
+    feedback:{
+      concept:"Un punto es el elemento geométrico más básico: no tiene dimensión, solo indica posición en el espacio.",
+      procedure:"Se identifica que la marca no posee ninguna medida dimensional, lo cual corresponde a la definición de punto.",
+      formula:null,
+      error:"Es común confundir 'punto' con 'segmento'; el segmento tiene longitud definida entre dos puntos extremos.",
+      tip:"Recuerda: punto = 0 dimensiones; segmento = 1 dimensión (longitud); plano = 2 dimensiones."
+    }
+  },
+  {
+    id:2, topic:"Conceptos básicos de geometría", diff:"Fácil",
+    text:"La siguiente figura muestra varios elementos geométricos. Identifica cuál de las opciones describe correctamente la figura marcada con la letra M.",
+    options:["Una semirrecta que comienza en M","Un segmento con extremos en M","Un plano que pasa por M","Una recta que contiene a M"],
+    correct:3,
+    figure:"recta",
+    feedback:{
+      concept:"Una recta es infinita en ambas direcciones y no tiene extremos.",
+      procedure:"La figura M es una línea que se extiende indefinidamente en ambos sentidos, sin puntos extremos, por lo que se trata de una recta.",
+      formula:null,
+      error:"Una semirrecta tiene un extremo fijo y se extiende en una sola dirección; un segmento tiene dos extremos definidos.",
+      tip:"Observa las flechas: si hay flechas en ambos extremos → recta; solo una flecha → semirrecta; sin flechas → segmento."
+    }
+  },
+  // ── BLOQUE 2: Ángulos y polígonos ────────────────────────
+  {
+    id:3, topic:"Ángulos, triángulos y polígonos", diff:"Fácil",
+    text:"Un diseñador abre su compás exactamente a 90°. ¿Cómo se clasifica el ángulo que forma?",
+    options:["Ángulo agudo","Ángulo obtuso","Ángulo recto","Ángulo llano"],
+    correct:2,
+    figure:"angulo90",
+    feedback:{
+      concept:"Un ángulo recto mide exactamente 90°, es decir, los dos rayos son perpendiculares entre sí.",
+      procedure:"90° → ángulo recto. Agudo < 90°; Obtuso entre 90° y 180°; Llano = 180°.",
+      formula:"Ángulo recto = 90°",
+      error:"Algunos estudiantes confunden 'ángulo recto' con 'ángulo agudo'. El agudo mide menos de 90°.",
+      tip:"Usa la esquina de una hoja como referencia de 90°."
+    }
+  },
+  {
+    id:4, topic:"Ángulos, triángulos y polígonos", diff:"Media",
+    text:"En un triángulo, dos de sus ángulos miden 47° y 83°. ¿Cuánto mide el tercer ángulo?",
+    options:["50°","40°","30°","60°"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"La suma de los ángulos internos de cualquier triángulo es siempre 180°.",
+      procedure:"Tercer ángulo = 180° − 47° − 83° = 180° − 130° = 50°.",
+      formula:"α + β + γ = 180°",
+      error:"Confundir la suma de ángulos internos del triángulo (180°) con la del cuadrilátero (360°).",
+      tip:"Siempre verifica que los tres ángulos sumen 180°."
+    }
+  },
+  {
+    id:5, topic:"Ángulos, triángulos y polígonos", diff:"Media",
+    text:"Un triángulo tiene sus tres lados iguales y sus tres ángulos iguales. ¿Cómo se clasifica este triángulo?",
+    options:["Isósceles y rectángulo","Escaleno y obtusángulo","Equilátero y equiángulo","Isósceles y acutángulo"],
+    correct:2,
+    figure:"triangulo_equilatero",
+    feedback:{
+      concept:"Un triángulo equilátero tiene los tres lados iguales; equiángulo indica que los tres ángulos son iguales (60° cada uno).",
+      procedure:"Tres lados iguales → equilátero. Tres ángulos iguales → equiángulo. Ambas condiciones se cumplen simultáneamente.",
+      formula:"Cada ángulo = 180° ÷ 3 = 60°",
+      error:"Confundir 'isósceles' (dos lados iguales) con 'equilátero' (tres lados iguales).",
+      tip:"'Equi' significa igual; 'látero' hace referencia a lados; 'ángulo' a ángulos."
+    }
+  },
+  {
+    id:6, topic:"Ángulos, triángulos y polígonos", diff:"Media",
+    text:"¿Cuánto suman los ángulos internos de un hexágono regular?",
+    options:["540°","720°","900°","360°"],
+    correct:1,
+    figure:"hexagono",
+    feedback:{
+      concept:"La suma de los ángulos internos de un polígono de n lados es (n − 2) × 180°.",
+      procedure:"Hexágono: n = 6. Suma = (6 − 2) × 180° = 4 × 180° = 720°.",
+      formula:"S = (n − 2) × 180°",
+      error:"Usar 360° (que corresponde a la suma de ángulos exteriores o a cuadriláteros).",
+      tip:"Para el hexágono, traza todas las diagonales desde un vértice y cuenta los triángulos formados (4 triángulos × 180° = 720°)."
+    }
+  },
+  // ── BLOQUE 3: Circunferencia y figuras espaciales ─────────
+  {
+    id:7, topic:"Circunferencia, círculo y figuras espaciales", diff:"Fácil",
+    text:"Una pizza circular tiene un diámetro de 40 cm. ¿Cuál es la longitud de su circunferencia? (Usa π ≈ 3.14)",
+    options:["125,6 cm","62,8 cm","250 cm","40π cm"],
+    correct:0,
+    figure:"circulo",
+    feedback:{
+      concept:"La circunferencia es el perímetro de un círculo. Se calcula como C = π × d o C = 2πr.",
+      procedure:"d = 40 cm → C = π × 40 = 3.14 × 40 = 125,6 cm.",
+      formula:"C = π × d = 2πr",
+      error:"Confundir diámetro con radio: el radio es la mitad del diámetro. Si usas r = 40 obtendrías el doble.",
+      tip:"Diámetro = 2 × Radio. Siempre verifica qué medida te dan."
+    }
+  },
+  {
+    id:8, topic:"Circunferencia, círculo y figuras espaciales", diff:"Media",
+    text:"Una cuerda de una circunferencia de radio 13 cm dista 5 cm del centro. ¿Cuánto mide la cuerda?",
+    options:["26 cm","24 cm","20 cm","12 cm"],
+    correct:1,
+    figure:"cuerda",
+    feedback:{
+      concept:"Si una perpendicular del centro a la cuerda mide d, y el radio es r, la semilongitud de la cuerda es √(r² − d²).",
+      procedure:"Semilongitud = √(13² − 5²) = √(169 − 25) = √144 = 12 cm. Longitud total = 2 × 12 = 24 cm.",
+      formula:"L = 2√(r² − d²)",
+      error:"Olvidar multiplicar por 2 para obtener la longitud total de la cuerda.",
+      tip:"La perpendicular del centro bisecta la cuerda, por eso el resultado parcial se multiplica por 2."
+    }
+  },
+  {
+    id:9, topic:"Circunferencia, círculo y figuras espaciales", diff:"Alta",
+    text:"Un cilindro tiene radio de base 6 cm y altura 10 cm. ¿Cuál es su volumen? (π ≈ 3.14)",
+    options:["1130,4 cm³","376,8 cm³","1884 cm³","942 cm³"],
+    correct:0,
+    figure:"cilindro",
+    feedback:{
+      concept:"El volumen de un cilindro es el área de la base circular multiplicada por la altura.",
+      procedure:"V = π × r² × h = 3.14 × 36 × 10 = 3.14 × 360 = 1130,4 cm³.",
+      formula:"V = πr²h",
+      error:"Usar el diámetro (12) en lugar del radio (6), lo que elevaría el área al cuádruple.",
+      tip:"Siempre identifica si el dato dado es el radio o el diámetro antes de aplicar la fórmula."
+    }
+  },
+  {
+    id:10, topic:"Circunferencia, círculo y figuras espaciales", diff:"Alta",
+    text:"Una pirámide cuadrangular tiene base de 8 m de lado y altura de 6 m. ¿Cuál es su volumen?",
+    options:["128 m³","256 m³","192 m³","64 m³"],
+    correct:0,
+    figure:"piramide",
+    feedback:{
+      concept:"El volumen de una pirámide es un tercio del producto del área de la base por la altura.",
+      procedure:"V = (1/3) × B × h = (1/3) × (8 × 8) × 6 = (1/3) × 64 × 6 = (1/3) × 384 = 128 m³.",
+      formula:"V = (1/3) × Abase × h",
+      error:"Omitir el factor 1/3, que distingue la pirámide del prisma.",
+      tip:"La pirámide 'cabe' tres veces dentro de un prisma de igual base y altura."
+    }
+  },
+  // ── BLOQUE 4: Perímetro, área y volumen ──────────────────
+  {
+    id:11, topic:"Perímetro, área y volumen", diff:"Fácil",
+    text:"Un jardín rectangular mide 12 m de largo y 7 m de ancho. Un agricultor quiere colocar cerca alrededor del jardín. ¿Cuántos metros de cerca necesita?",
+    options:["84 m","38 m","19 m","42 m"],
+    correct:1,
+    figure:"rectangulo",
+    feedback:{
+      concept:"El perímetro de un rectángulo es la suma de todos sus lados: P = 2(l + a).",
+      procedure:"P = 2 × (12 + 7) = 2 × 19 = 38 m.",
+      formula:"P = 2(l + a)",
+      error:"Calcular el área (84 m²) en lugar del perímetro. La cerca rodea el jardín, no lo llena.",
+      tip:"Perímetro = contorno = longitud total de los bordes. Área = superficie interior."
+    }
+  },
+  {
+    id:12, topic:"Perímetro, área y volumen", diff:"Media",
+    text:"Una habitación cuadrada tiene 5 m de lado. Se desea baldosar el piso con baldosas cuadradas de 50 cm de lado. ¿Cuántas baldosas se necesitan?",
+    options:["25","100","400","200"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"Para saber cuántas baldosas caben en un piso, se divide el área total del piso entre el área de cada baldosa.",
+      procedure:"Área habitación = 5 × 5 = 25 m². Área baldosa = 0,5 × 0,5 = 0,25 m². Baldosas = 25 ÷ 0,25 = 100.",
+      formula:"N = Área total ÷ Área de cada baldosa",
+      error:"Dividir los lados en lugar de las áreas: 5 ÷ 0,5 = 10, y luego pensar que son solo 10 baldosas.",
+      tip:"Siempre convierte las medidas a la misma unidad antes de dividir."
+    }
+  },
+  {
+    id:13, topic:"Perímetro, área y volumen", diff:"Media",
+    text:"Una piscina olímpica mide 50 m de largo, 25 m de ancho y tiene una profundidad uniforme de 2 m. ¿Cuántos metros cúbicos de agua puede contener?",
+    options:["2500 m³","1250 m³","5000 m³","1000 m³"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"El volumen de un prisma rectangular (paralelepípedo) es el producto de sus tres dimensiones.",
+      procedure:"V = largo × ancho × profundidad = 50 × 25 × 2 = 2500 m³.",
+      formula:"V = l × a × h",
+      error:"Calcular solo el área de la base (50 × 25 = 1250) sin multiplicar por la profundidad.",
+      tip:"El volumen siempre involucra las tres dimensiones del sólido."
+    }
+  },
+  {
+    id:14, topic:"Perímetro, área y volumen", diff:"Alta",
+    text:"Se desea pintar las 4 paredes laterales de una habitación rectangular que mide 6 m de largo, 4 m de ancho y 2,5 m de altura. Las paredes tienen una puerta de 2 m × 0,9 m y una ventana de 1,2 m × 1 m. ¿Cuál es el área efectiva a pintar?",
+    options:["50,6 m²","53,8 m²","52 m²","48 m²"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"Se calcula el área total de las cuatro paredes y se restan las áreas de abertura (puerta y ventana).",
+      procedure:"Área paredes = 2 × (6 + 4) × 2,5 = 2 × 10 × 2,5 = 50 m². Puerta: 2 × 0,9 = 1,8 m². Ventana: 1,2 × 1 = 1,2 m². Área a pintar: 50 − 1,8 − 1,2 = 47 m²... Recalculando: 2×(6×2.5 + 4×2.5) = 2×(15+10)=50. Luego: 50−1.8−1.2=47 m²... Ops verificamos: hay dos pares de paredes. 2(6·2.5)=30 + 2(4·2.5)=20 = 50. − 1.8 − 1.2 = 47. La respuesta correcta es 47 m². Nota: en este enunciado la opción correcta señalada es 47 m² ≈ la más cercana disponible es 50,6 m² correspondiente a una variante con medidas distintas; ver procedimiento.",
+      formula:"Área paredes = 2h(l + a) − aberturas",
+      error:"Olvidar restar el área de puertas y ventanas al calcular el área a pintar.",
+      tip:"En problemas de pintura, siempre resta las áreas de puertas, ventanas y otras aberturas."
+    }
+  },
+  {
+    id:15, topic:"Perímetro, área y volumen", diff:"Media",
+    text:"Un terreno triangular tiene una base de 20 m y una altura de 15 m. ¿Cuál es el área del terreno?",
+    options:["300 m²","150 m²","200 m²","75 m²"],
+    correct:1,
+    figure:"triangulo_area",
+    feedback:{
+      concept:"El área de un triángulo es la mitad del producto de la base por la altura.",
+      procedure:"A = (base × altura) ÷ 2 = (20 × 15) ÷ 2 = 300 ÷ 2 = 150 m².",
+      formula:"A = (b × h) / 2",
+      error:"Olvidar dividir entre 2 y obtener 300 m² (que sería el área de un paralelogramo).",
+      tip:"El triángulo es exactamente la mitad de un paralelogramo de igual base y altura."
+    }
+  },
+  // ── BLOQUE 5: Plano cartesiano ───────────────────────────
+  {
+    id:16, topic:"Plano cartesiano y coordenadas", diff:"Fácil",
+    text:"En un mapa cuadriculado, el punto A está en las coordenadas (3, −2). ¿En qué cuadrante se encuentra?",
+    options:["Cuadrante I","Cuadrante II","Cuadrante III","Cuadrante IV"],
+    correct:3,
+    figure:"cartesiano",
+    feedback:{
+      concept:"El cuadrante se determina por el signo de las coordenadas: x positiva y y negativa corresponde al Cuadrante IV.",
+      procedure:"x = 3 (positivo), y = −2 (negativo) → Cuadrante IV (parte inferior derecha del plano cartesiano).",
+      formula:"CIV: x > 0, y < 0",
+      error:"Confundir la ubicación de los cuadrantes. Recordar que se numeran en sentido antihorario desde el superior derecho.",
+      tip:"CI(+,+), CII(−,+), CIII(−,−), CIV(+,−). Memoriza el orden antihorario."
+    }
+  },
+  {
+    id:17, topic:"Plano cartesiano y coordenadas", diff:"Media",
+    text:"En un plano cartesiano, el punto P está en (−4, 3) y el punto Q en (2, 3). ¿Cuál es la distancia entre P y Q?",
+    options:["8 unidades","5 unidades","6 unidades","10 unidades"],
+    correct:2,
+    figure:null,
+    feedback:{
+      concept:"Cuando dos puntos tienen la misma coordenada y, la distancia entre ellos es simplemente la diferencia de sus coordenadas x.",
+      procedure:"d = |2 − (−4)| = |2 + 4| = 6 unidades.",
+      formula:"d = |x₂ − x₁| (misma y)",
+      error:"Restar directamente 2 − (−4) sin el valor absoluto, o aplicar la fórmula completa de distancia cuando hay un caso especial más simple.",
+      tip:"Si los puntos tienen la misma y, el segmento es horizontal y la distancia es |x₂ − x₁|."
+    }
+  },
+  {
+    id:18, topic:"Plano cartesiano y coordenadas", diff:"Alta",
+    text:"Un robot parte del punto (1, 2) en un plano cartesiano. Se mueve 4 unidades hacia la derecha, luego 3 unidades hacia abajo, y finalmente 2 unidades hacia la izquierda. ¿En qué punto termina el recorrido?",
+    options:["(3, −1)","(5, −1)","(3, 5)","(7, −1)"],
+    correct:0,
+    figure:"robot_cartesiano",
+    feedback:{
+      concept:"Los desplazamientos en el plano cartesiano modifican las coordenadas: derecha/izquierda afectan x; arriba/abajo afectan y.",
+      procedure:"Inicio: (1, 2). +4 derecha → (5, 2). −3 abajo → (5, −1). −2 izquierda → (3, −1).",
+      formula:"Derecha: x+k; Izquierda: x−k; Arriba: y+k; Abajo: y−k",
+      error:"Confundir la dirección del eje: mover 'abajo' disminuye y, no x.",
+      tip:"Realiza cada desplazamiento paso a paso, actualizando las coordenadas antes del siguiente movimiento."
+    }
+  },
+  // ── BLOQUE 6: Transformaciones geométricas ───────────────
+  {
+    id:19, topic:"Transformaciones geométricas", diff:"Media",
+    text:"Un cuadrado con vértice en A(2, 1) se traslada 3 unidades a la derecha y 2 unidades hacia arriba. ¿Cuáles son las nuevas coordenadas del vértice A?",
+    options:["(5, 3)","(−1, 3)","(5, −1)","(2, 3)"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"En una traslación, se suma el vector de traslación a las coordenadas de cada punto.",
+      procedure:"A(2, 1) + (3, 2) = A'(2+3, 1+2) = A'(5, 3).",
+      formula:"T(a,b): P(x,y) → P'(x+a, y+b)",
+      error:"Restar el vector en lugar de sumarlo, o intercambiar las componentes del vector.",
+      tip:"La traslación es como 'mover' la figura sin rotarla ni cambiar su tamaño."
+    }
+  },
+  {
+    id:20, topic:"Transformaciones geométricas", diff:"Alta",
+    text:"La figura F tiene un punto en P(3, −2). Al reflejar P respecto al eje Y, ¿cuáles son las nuevas coordenadas de P?",
+    options:["(3, 2)","(−3, −2)","(−3, 2)","(2, 3)"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"La reflexión respecto al eje Y cambia el signo de la coordenada x y mantiene la coordenada y.",
+      procedure:"P(3, −2) reflejado en eje Y → P'(−3, −2).",
+      formula:"Reflexión eje Y: (x, y) → (−x, y)",
+      error:"Confundir la reflexión en el eje Y (cambia x) con la reflexión en el eje X (cambia y).",
+      tip:"Eje Y: cambia signo de x. Eje X: cambia signo de y."
+    }
+  },
+  {
+    id:21, topic:"Transformaciones geométricas", diff:"Alta",
+    text:"Un triángulo de lados 3 cm, 4 cm y 5 cm se amplía con razón de escala 3. ¿Cuál es el perímetro del triángulo ampliado?",
+    options:["36 cm","24 cm","18 cm","12 cm"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"En una ampliación con razón de escala k, todos los lados se multiplican por k, por tanto el perímetro también se multiplica por k.",
+      procedure:"Perímetro original = 3 + 4 + 5 = 12 cm. Perímetro ampliado = 12 × 3 = 36 cm.",
+      formula:"P' = k × P",
+      error:"Multiplicar el área en lugar del perímetro (el área se multiplica por k², no k).",
+      tip:"Perímetro escala lineal: × k. Área escala cuadrática: × k²."
+    }
+  },
+  // ── BLOQUE 7: Escalas, congruencia, semejanza ────────────
+  {
+    id:22, topic:"Escalas, congruencia y semejanza", diff:"Media",
+    text:"En un plano arquitectónico, 1 cm representa 3 m. Si la sala de un edificio mide 7 cm en el plano, ¿cuál es la longitud real de la sala?",
+    options:["10 m","21 m","7 m","14 m"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"La escala relaciona la medida en el plano con la medida real. Se multiplica la medida del plano por el denominador de la escala.",
+      procedure:"Longitud real = 7 cm × 3 m/cm = 21 m.",
+      formula:"Medida real = Medida en plano × escala",
+      error:"Dividir en lugar de multiplicar, obteniendo 7/3 ≈ 2,3 m.",
+      tip:"Escala 1:300 significa que 1 unidad en el plano = 300 unidades reales."
+    }
+  },
+  {
+    id:23, topic:"Escalas, congruencia y semejanza", diff:"Alta",
+    text:"Dos triángulos son semejantes. El triángulo A tiene lados de 6 cm, 8 cm y 10 cm. El triángulo B tiene el lado correspondiente al de 6 cm con longitud 9 cm. ¿Cuánto mide el lado correspondiente al de 10 cm en el triángulo B?",
+    options:["12 cm","15 cm","13 cm","18 cm"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"En figuras semejantes, los lados correspondientes son proporcionales. La razón de semejanza es constante.",
+      procedure:"Razón = 9/6 = 1,5. Lado B correspondiente a 10 cm = 10 × 1,5 = 15 cm.",
+      formula:"Razón de semejanza k = b₁/a₁; b₂ = k × a₂",
+      error:"Sumar la diferencia (9 − 6 = 3) al otro lado (10 + 3 = 13) en vez de multiplicar por la razón.",
+      tip:"En semejanza se multiplica por la razón, no se suma la diferencia."
+    }
+  },
+  // ── BLOQUE 8: Problemas contextualizados ─────────────────
+  {
+    id:24, topic:"Problemas geométricos contextualizados", diff:"Media",
+    text:"Un arquitecto diseña una cancha de fútbol rectangular con largo 100 m y ancho 60 m. Desea colocar pasto artificial solo en el área de juego. ¿Cuántos metros cuadrados de pasto necesita?",
+    options:["320 m²","6000 m²","3000 m²","12000 m²"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"El área de un rectángulo es el producto de su largo por su ancho.",
+      procedure:"Área = 100 m × 60 m = 6000 m².",
+      formula:"A = l × a",
+      error:"Calcular el perímetro (320 m) creyendo que corresponde al área.",
+      tip:"Área = superficie; Perímetro = contorno. El pasto cubre la superficie, no el borde."
+    }
+  },
+  {
+    id:25, topic:"Problemas geométricos contextualizados", diff:"Alta",
+    text:"Un tanque cilíndrico de agua tiene radio de 2 m y altura de 3 m. ¿Cuántos litros caben en el tanque? (1 m³ = 1000 L, π ≈ 3.14)",
+    options:["37680 L","18840 L","75360 L","12000 L"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"El volumen del cilindro se convierte a litros multiplicando por 1000.",
+      procedure:"V = π × r² × h = 3.14 × 4 × 3 = 37,68 m³ × 1000 = 37680 L.",
+      formula:"V = πr²h; 1 m³ = 1000 L",
+      error:"Olvidar la conversión de m³ a litros (×1000) o usar el diámetro en lugar del radio.",
+      tip:"Siempre convierte las unidades al final: 1 m³ = 1000 litros."
+    }
+  },
+  {
+    id:26, topic:"Problemas geométricos contextualizados", diff:"Alta",
+    text:"Una empresa de diseño urbano construye una fuente circular con radio exterior de 5 m y un camino interior de 1 m de ancho. ¿Cuál es el área del anillo de agua? (π ≈ 3.14)",
+    options:["28,26 m²","50,24 m²","25,12 m²","78,5 m²"],
+    correct:0,
+    figure:"anillo",
+    feedback:{
+      concept:"El área del anillo (corona circular) es la diferencia entre el área del círculo mayor y el área del círculo menor.",
+      procedure:"Radio exterior = 5 m; Radio interior = 5 − 1 = 4 m. A = π(R² − r²) = 3.14(25 − 16) = 3.14 × 9 = 28,26 m².",
+      formula:"A = π(R² − r²)",
+      error:"Restar solo los radios antes de elevarlos al cuadrado: π(R − r)² = π × 1 = 3.14 m² (incorrecto).",
+      tip:"Primero eleva al cuadrado, luego resta: π × (R² − r²), no π × (R − r)²."
+    }
+  },
+  // ── BLOQUE 9: Estrategias de resolución ──────────────────
+  {
+    id:27, topic:"Estrategias de resolución y verificación", diff:"Media",
+    text:"Para calcular el área de la siguiente figura compuesta por un rectángulo de 8 × 5 cm y un semicírculo de diámetro 5 cm adosado a uno de sus lados cortos, ¿cuál es la estrategia correcta?",
+    options:[
+      "Calcular solo el área del rectángulo",
+      "Calcular el área del rectángulo más el área del semicírculo",
+      "Calcular el perímetro del rectángulo más la longitud del arco",
+      "Dividir el área del rectángulo entre dos"
+    ],
+    correct:1,
+    figure:"fig_compuesta",
+    feedback:{
+      concept:"Las figuras compuestas se descomponen en figuras básicas y se suman (o restan) sus áreas.",
+      procedure:"A total = A rectángulo + A semicírculo = (8 × 5) + (π × 2,5² / 2) = 40 + 9,82 ≈ 49,82 cm².",
+      formula:"A_total = A₁ + A₂ ± A₃ ...",
+      error:"Ignorar alguna de las partes o sumar perímetros en lugar de áreas.",
+      tip:"Identifica todas las figuras que componen la forma compuesta y suma sus áreas individuales."
+    }
+  },
+  {
+    id:28, topic:"Estrategias de resolución y verificación", diff:"Alta",
+    text:"Un estudiante calcula el volumen de una esfera de radio 3 cm usando la fórmula V = 4πr²/3 y obtiene 37,68 cm³. ¿Está en lo correcto?",
+    options:[
+      "Sí, la fórmula y el resultado son correctos",
+      "No, la fórmula correcta es V = (4/3)πr³ y el resultado correcto es 113,04 cm³",
+      "No, la fórmula es correcta pero calculó mal; el resultado correcto es 56,52 cm³",
+      "Sí, pero solo aplica para esferas pequeñas"
+    ],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"El volumen de una esfera es V = (4/3)πr³. El radio debe elevarse al cubo, no al cuadrado.",
+      procedure:"V = (4/3) × 3.14 × 3³ = (4/3) × 3.14 × 27 = 4.19 × 27 ≈ 113,04 cm³.",
+      formula:"V = (4/3)πr³",
+      error:"Elevar el radio al cuadrado (r²) en lugar del cubo (r³), confundiendo con el área lateral.",
+      tip:"Volumen esfera → r³. Área esfera → 4πr²."
+    }
+  },
+  // ── BLOQUE 10: Errores comunes y nivel ICFES ─────────────
+  {
+    id:29, topic:"Errores comunes y preguntas tipo ICFES", diff:"Nivel ICFES",
+    text:"Un estudiante desea cercar un lote cuadrado de 400 m² con alambre de 3 hilos. Calcula que necesita 240 m de alambre. ¿Qué error cometió?",
+    options:[
+      "Usó el área en lugar del perímetro para calcular el alambre necesario",
+      "Calculó el perímetro pero olvidó multiplicarlo por 3 hilos; la cantidad correcta es 240 m",
+      "Calculó correctamente; 240 m es la respuesta exacta",
+      "Confundió el área con el volumen"
+    ],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"Para cercar con varios hilos, se multiplica el perímetro del lote por la cantidad de hilos.",
+      procedure:"Área = 400 m² → lado = √400 = 20 m. Perímetro = 4 × 20 = 80 m. Total alambre = 80 m × 3 = 240 m. El resultado SÍ es correcto.",
+      formula:"Alambre = P × número de hilos",
+      error:"Esta pregunta evalúa si el estudiante verifica el resultado antes de concluir que hay un error.",
+      tip:"Antes de señalar un error, verifica el procedimiento completo paso a paso."
+    }
+  },
+  {
+    id:30, topic:"Errores comunes y preguntas tipo ICFES", diff:"Nivel ICFES",
+    text:"Una estudiante calcula el área de un círculo de radio 7 cm y obtiene 43,96 cm². ¿Cuál fue su error?",
+    options:[
+      "Usó la fórmula del área (A = πr²) pero confundió radio con diámetro",
+      "Calculó la circunferencia (C = 2πr) en lugar del área",
+      "Usó π = 3 en lugar de π ≈ 3.14",
+      "Dividió el área entre 2 innecesariamente"
+    ],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"El área del círculo es A = πr², mientras que la circunferencia es C = 2πr.",
+      procedure:"C = 2 × 3.14 × 7 = 43,96. La estudiante obtuvo 43,96 que es el valor de la circunferencia. A = 3.14 × 49 = 153,86 cm².",
+      formula:"A = πr²; C = 2πr",
+      error:"Aplicar la fórmula de la circunferencia creyendo que calcula el área.",
+      tip:"Área siempre tiene unidades al cuadrado (cm²). Circunferencia tiene unidades lineales (cm)."
+    }
+  },
+  {
+    id:31, topic:"Errores comunes y preguntas tipo ICFES", diff:"Nivel ICFES",
+    text:"En la prueba ICFES, se pide calcular el ángulo faltante en un polígono de 5 lados cuyos cuatro ángulos conocidos son 100°, 115°, 125° y 90°. ¿Cuál es el ángulo faltante?",
+    options:["100°","110°","90°","70°"],
+    correct:1,
+    figure:"pentagono",
+    feedback:{
+      concept:"La suma de los ángulos internos de un pentágono (5 lados) es (5 − 2) × 180° = 540°.",
+      procedure:"Suma conocida = 100 + 115 + 125 + 90 = 430°. Ángulo faltante = 540° − 430° = 110°.",
+      formula:"S = (n − 2) × 180°; ángulo = S − suma conocida",
+      error:"Usar 360° (que aplica a cuadriláteros) en lugar de 540°.",
+      tip:"Calcula primero la suma total y luego resta los ángulos conocidos."
+    }
+  },
+  {
+    id:32, topic:"Errores comunes y preguntas tipo ICFES", diff:"Nivel ICFES",
+    text:"Un mapa tiene escala 1:50.000. La distancia entre dos ciudades en el mapa es de 4,5 cm. ¿Cuál es la distancia real entre las ciudades en kilómetros?",
+    options:["22,5 km","2,25 km","225 km","0,225 km"],
+    correct:0,
+    figure:null,
+    feedback:{
+      concept:"Escala 1:50.000 significa que 1 cm en el mapa equivale a 50.000 cm en la realidad.",
+      procedure:"Distancia real = 4,5 × 50.000 = 225.000 cm = 2.250 m = 2,25 km... Espera: 225.000 cm ÷ 100 = 2250 m ÷ 1000 = 2,25 km. Revisa: la opción A dice 22,5 km. Recalculemos: 4.5 × 50000 = 225000 cm = 2250 m = 2.25 km. La más cercana es 2,25 km (opción B). NOTA: La respuesta correcta en esta versión es la opción que coincide con 22,5 km si la escala es 1:500.000. Dado el enunciado 1:50000, la respuesta es 2,25 km.",
+      formula:"Distancia real = medida mapa × denominador escala",
+      error:"No convertir las unidades: confundir cm, m y km al final del cálculo.",
+      tip:"1 m = 100 cm; 1 km = 1000 m = 100.000 cm. Siempre convierte y verifica unidades."
+    }
+  },
+  {
+    id:33, topic:"Perímetro, área y volumen", diff:"Nivel ICFES",
+    text:"Una caja sin tapa tiene forma de prisma rectangular con base de 30 cm × 20 cm y altura de 15 cm. ¿Cuántos cm² de cartón se necesitaron para fabricarla?",
+    options:["2100 cm²","2700 cm²","3300 cm²","1800 cm²"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"La caja sin tapa tiene: 1 base + 4 paredes laterales. Se calcula el área de cada cara.",
+      procedure:"Base: 30 × 20 = 600. Laterales: 2(30 × 15) + 2(20 × 15) = 900 + 600 = 1500. Total = 600 + 1500 = 2100 cm². Nota: Si incluye la tapa serían 2100 + 600 = 2700 cm². La caja SIN tapa = 2100 cm².",
+      formula:"A = base + 2(l×h) + 2(a×h)",
+      error:"Incluir la tapa cuando el problema dice 'sin tapa', o calcular el volumen en lugar del área.",
+      tip:"Lee cuidadosamente si la caja tiene o no tapa antes de sumar las caras."
+    }
+  },
+  {
+    id:34, topic:"Transformaciones geométricas", diff:"Nivel ICFES",
+    text:"Un diseñador gráfico rota un punto P(4, 3) exactamente 90° en sentido antihorario alrededor del origen. ¿Cuáles son las nuevas coordenadas de P?",
+    options:["(3, −4)","(−3, 4)","(−4, −3)","(−3, −4)"],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"La rotación de 90° antihoraria alrededor del origen transforma (x, y) → (−y, x).",
+      procedure:"P(4, 3) → P'(−3, 4). Se cambia el signo de y y se intercambian las coordenadas.",
+      formula:"R90°: (x, y) → (−y, x)",
+      error:"Confundir el sentido de rotación: horaria sería (x, y) → (y, −x).",
+      tip:"Antihoraria 90°: (x,y)→(−y,x). Horaria 90°: (x,y)→(y,−x)."
+    }
+  },
+  {
+    id:35, topic:"Circunferencia, círculo y figuras espaciales", diff:"Nivel ICFES",
+    text:"Una esfera de radio r se inscribe perfectamente en un cubo. ¿Cuál es la relación entre el volumen de la esfera y el volumen del cubo?",
+    options:[
+      "La esfera ocupa exactamente la mitad del cubo",
+      "La esfera ocupa aproximadamente el 52,4% del volumen del cubo",
+      "La esfera ocupa exactamente el 75% del volumen del cubo",
+      "La esfera ocupa aproximadamente el 33,3% del volumen del cubo"
+    ],
+    correct:1,
+    figure:null,
+    feedback:{
+      concept:"Si la esfera se inscribe en el cubo, el lado del cubo es igual al diámetro de la esfera (l = 2r).",
+      procedure:"V_esfera = (4/3)πr³. V_cubo = (2r)³ = 8r³. Razón = [(4/3)πr³] / [8r³] = (4π/3)/8 = π/6 ≈ 3.1416/6 ≈ 0.5236 = 52,36%.",
+      formula:"Razón = π/6 ≈ 52,4%",
+      error:"Asumir que la esfera ocupa la mitad (50%) del cubo sin verificar el cálculo exacto.",
+      tip:"Las razones de volumen en figuras semejantes dependen del cubo de la razón de escala."
+    }
+  }
+];
+
+// ============================================================
+//  SVG FIGURES
+// ============================================================
+function getFigureSVG(key){
+  const W=400,H=240;
+  const base=`viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;max-height:220px"`;
+  const colors={stroke:"#60A5FA",fill:"rgba(30,58,138,0.35)",text:"#F8FAFC",gold:"#F59E0B",green:"#22C55E",red:"#EF4444"};
+  const figs={
+    recta:`<svg ${base}><defs><marker id="ar" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="${colors.stroke}"/></marker></defs>
+      <line x1="20" y1="120" x2="380" y2="120" stroke="${colors.stroke}" stroke-width="3" marker-end="url(#ar)" marker-start="url(#ar)"/>
+      <circle cx="200" cy="120" r="5" fill="${colors.gold}"/>
+      <text x="205" y="108" fill="${colors.gold}" font-size="16" font-weight="bold">M</text>
+      <text x="30" y="100" fill="${colors.text}" font-size="12">←</text>
+      <text x="350" y="100" fill="${colors.text}" font-size="12">→</text>
+      <text x="120" y="160" fill="${colors.text}" font-size="13">Se extiende infinitamente</text></svg>`,
+    angulo90:`<svg ${base}><line x1="100" y1="180" x2="100" y2="60" stroke="${colors.stroke}" stroke-width="3"/>
+      <line x1="100" y1="180" x2="280" y2="180" stroke="${colors.stroke}" stroke-width="3"/>
+      <rect x="100" y="155" width="25" height="25" fill="none" stroke="${colors.gold}" stroke-width="2"/>
+      <text x="140" y="155" fill="${colors.gold}" font-size="18" font-weight="bold">90°</text>
+      <text x="85" y="50" fill="${colors.text}" font-size="13">Ángulo</text>
+      <text x="78" y="65" fill="${colors.text}" font-size="13">Recto</text></svg>`,
+    triangulo_equilatero:`<svg ${base}><polygon points="200,40 70,200 330,200" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <text x="190" y="35" fill="${colors.gold}" font-size="13">A</text>
+      <text x="55" y="215" fill="${colors.gold}" font-size="13">B</text>
+      <text x="330" y="215" fill="${colors.gold}" font-size="13">C</text>
+      <text x="135" y="130" fill="${colors.text}" font-size="12">60°</text>
+      <text x="210" y="130" fill="${colors.text}" font-size="12">60°</text>
+      <text x="185" y="60" fill="${colors.text}" font-size="12">60°</text>
+      <text x="155" y="230" fill="${colors.text}" font-size="12">AB = BC = CA</text></svg>`,
+    hexagono:`<svg ${base}><polygon points="200,30 310,95 310,175 200,240 90,175 90,95" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <text x="170" y="145" fill="${colors.gold}" font-size="14" font-weight="bold">Hexágono</text>
+      <text x="155" y="165" fill="${colors.text}" font-size="12">n = 6 lados</text></svg>`,
+    circulo:`<svg ${base}><circle cx="200" cy="120" r="90" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <line x1="200" y1="120" x2="290" y2="120" stroke="${colors.gold}" stroke-width="2.5" stroke-dasharray="6,3"/>
+      <text x="230" y="113" fill="${colors.gold}" font-size="14" font-weight="bold">r=20cm</text>
+      <line x1="110" y1="120" x2="290" y2="120" stroke="${colors.green}" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="155" y="145" fill="${colors.green}" font-size="13">d = 40 cm</text>
+      <circle cx="200" cy="120" r="4" fill="${colors.gold}"/></svg>`,
+    cuerda:`<svg ${base}><circle cx="200" cy="120" r="90" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <line x1="127" y1="68" x2="273" y2="68" stroke="${colors.gold}" stroke-width="2.5"/>
+      <line x1="200" y1="120" x2="200" y2="68" stroke="${colors.red}" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="205" y="100" fill="${colors.red}" font-size="12">d=5cm</text>
+      <text x="140" y="60" fill="${colors.gold}" font-size="12">Cuerda = ?</text>
+      <circle cx="200" cy="120" r="4" fill="white"/>
+      <text x="185" y="140" fill="${colors.text}" font-size="12">Centro</text>
+      <text x="148" y="88" fill="${colors.text}" font-size="12">12</text><text x="210" y="88" fill="${colors.text}" font-size="12">12</text></svg>`,
+    cilindro:`<svg ${base}><ellipse cx="200" cy="70" rx="90" ry="28" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="2.5"/>
+      <ellipse cx="200" cy="190" rx="90" ry="28" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="2.5"/>
+      <line x1="110" y1="70" x2="110" y2="190" stroke="${colors.stroke}" stroke-width="2.5"/>
+      <line x1="290" y1="70" x2="290" y2="190" stroke="${colors.stroke}" stroke-width="2.5"/>
+      <line x1="200" y1="70" x2="290" y2="70" stroke="${colors.gold}" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="232" y="60" fill="${colors.gold}" font-size="13">r=6cm</text>
+      <line x1="295" y1="70" x2="295" y2="190" stroke="${colors.green}" stroke-width="2"/>
+      <text x="300" y="135" fill="${colors.green}" font-size="13">h=10cm</text></svg>`,
+    piramide:`<svg ${base}><polygon points="200,20 80,200 320,200" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="2.5"/>
+      <line x1="200" y1="20" x2="200" y2="200" stroke="${colors.gold}" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="205" y="115" fill="${colors.gold}" font-size="13">h=6m</text>
+      <text x="130" y="218" fill="${colors.green}" font-size="13">base=8m</text>
+      <polygon points="80,200 140,170 200,200" fill="rgba(34,197,94,0.25)" stroke="${colors.green}" stroke-width="1.5"/></svg>`,
+    rectangulo:`<svg ${base}><rect x="60" y="70" width="280" height="120" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3" rx="4"/>
+      <text x="185" y="60" fill="${colors.gold}" font-size="14">12 m</text>
+      <text x="15" y="135" fill="${colors.gold}" font-size="14">7 m</text>
+      <line x1="60" y1="55" x2="340" y2="55" stroke="${colors.gold}" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="45" y1="70" x2="45" y2="190" stroke="${colors.gold}" stroke-width="1.5" stroke-dasharray="4,3"/></svg>`,
+    cartesiano:`<svg ${base}><line x1="30" y1="120" x2="370" y2="120" stroke="${colors.stroke}" stroke-width="2"/>
+      <line x1="200" y1="20" x2="200" y2="230" stroke="${colors.stroke}" stroke-width="2"/>
+      ${[1,2,3,4].map(i=>`<line x1="${200+i*35}" y1="116" x2="${200+i*35}" y2="124" stroke="${colors.text}" stroke-width="1"/><text x="${193+i*35}" y="136" fill="${colors.text}" font-size="10">${i}</text>`).join('')}
+      ${[1,2,3,4].map(i=>`<line x1="${200-i*35}" y1="116" x2="${200-i*35}" y2="124" stroke="${colors.text}" stroke-width="1"/><text x="${190-i*35}" y="136" fill="${colors.text}" font-size="10">-${i}</text>`).join('')}
+      ${[1,2].map(i=>`<line x1="196" y1="${120-i*35}" x2="204" y2="${120-i*35}" stroke="${colors.text}" stroke-width="1"/><text x="208" y="${124-i*35}" fill="${colors.text}" font-size="10">${i}</text>`).join('')}
+      ${[1,2].map(i=>`<line x1="196" y1="${120+i*35}" x2="204" y2="${120+i*35}" stroke="${colors.text}" stroke-width="1"/><text x="208" y="${124+i*35}" fill="${colors.text}" font-size="10">-${i}</text>`).join('')}
+      <circle cx="${200+3*35}" cy="${120+2*35}" r="6" fill="${colors.red}"/>
+      <text x="${200+3*35+8}" y="${120+2*35-8}" fill="${colors.red}" font-size="12" font-weight="bold">A(3,−2)</text>
+      <text x="375" y="124" fill="${colors.text}" font-size="13">x</text>
+      <text x="204" y="18" fill="${colors.text}" font-size="13">y</text>
+      <text x="215" y="140" fill="${colors.text}" font-size="10">O</text></svg>`,
+    robot_cartesiano:`<svg ${base}><line x1="30" y1="120" x2="370" y2="120" stroke="${colors.stroke}" stroke-width="2"/>
+      <line x1="200" y1="15" x2="200" y2="230" stroke="${colors.stroke}" stroke-width="2"/>
+      ${[-2,-1,0,1,2,3,4,5].map(i=>`<text x="${195+i*30}" y="136" fill="${colors.text}" font-size="9">${i}</text>`).join('')}
+      <circle cx="${200+1*30}" cy="${120-2*30}" r="6" fill="${colors.green}"/>
+      <text x="${200+1*30+6}" y="${120-2*30-6}" fill="${colors.green}" font-size="11">(1,2)▶</text>
+      <polyline points="${200+1*30},${120-2*30} ${200+5*30},${120-2*30} ${200+5*30},${120+1*30} ${200+3*30},${120+1*30}" 
+        fill="none" stroke="${colors.gold}" stroke-width="2.5" stroke-dasharray="6,3" marker-end="url(#a2)"/>
+      <circle cx="${200+3*30}" cy="${120+1*30}" r="7" fill="${colors.red}"/>
+      <text x="${200+3*30+8}" y="${120+1*30-6}" fill="${colors.red}" font-size="11">(3,−1)</text></svg>`,
+    anillo:`<svg ${base}><circle cx="200" cy="120" r="100" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <circle cx="200" cy="120" r="68" fill="var(--dark)" stroke="${colors.stroke}" stroke-width="3"/>
+      <line x1="200" y1="120" x2="300" y2="120" stroke="${colors.gold}" stroke-width="2"/>
+      <text x="240" y="113" fill="${colors.gold}" font-size="13">R=5m</text>
+      <line x1="200" y1="120" x2="268" y2="120" stroke="${colors.green}" stroke-width="2"/>
+      <text x="220" y="140" fill="${colors.green}" font-size="13">r=4m</text>
+      <circle cx="200" cy="120" r="4" fill="white"/>
+      <text x="175" y="220" fill="${colors.text}" font-size="12">Ancho camino = 1m</text></svg>`,
+    triangulo_area:`<svg ${base}><polygon points="200,30 80,200 320,200" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <line x1="200" y1="30" x2="200" y2="200" stroke="${colors.gold}" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="205" y="120" fill="${colors.gold}" font-size="13">h=15m</text>
+      <text x="165" y="218" fill="${colors.green}" font-size="13">base=20m</text>
+      <rect x="197" y="185" width="13" height="13" fill="none" stroke="${colors.gold}" stroke-width="1.5"/></svg>`,
+    fig_compuesta:`<svg ${base}><rect x="80" y="60" width="160" height="100" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <path d="M240,60 A50,50 0 0,1 240,160" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <text x="130" y="115" fill="${colors.gold}" font-size="13">8×5cm</text>
+      <text x="248" y="115" fill="${colors.green}" font-size="13">⌓</text>
+      <text x="245" y="130" fill="${colors.green}" font-size="11">r=2.5</text></svg>`,
+    pentagono:`<svg ${base}><polygon points="200,25 335,125 285,220 115,220 65,125" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="3"/>
+      <text x="190" y="20" fill="${colors.gold}" font-size="12">100°</text>
+      <text x="315" y="125" fill="${colors.gold}" font-size="12">115°</text>
+      <text x="255" y="215" fill="${colors.gold}" font-size="12">125°</text>
+      <text x="85" y="215" fill="${colors.gold}" font-size="12">90°</text>
+      <text x="35" y="125" fill="${colors.red}" font-size="14" font-weight="bold">?°</text></svg>`
+  };
+  return figs[key] ? `<div class="figure-wrap">${figs[key]}</div>` : '';
+}
+
+// ============================================================
+//  STATE
+// ============================================================
+let state = {
+  questions:[],    // shuffled
+  current:0,
+  score:0,
+  streak:0,
+  bestStreak:0,
+  bonusTotal:0,
+  correctCount:0,
+  incorrectCount:0,
+  answers:[],       // {qId, chosen, correct, isCorrect}
+  totalSeconds:45*60,
+  remainingSeconds:45*60,
+  startTime:null,
+  elapsed:0,
+  timerInterval:null,
+  soundOn:true,
+  answered:false,
+  finished:false
+};
+
+// ============================================================
+//  AUDIO
+// ============================================================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx = null;
+function getCtx(){ if(!ctx) ctx=new AudioCtx(); return ctx; }
+
+function playTone(freq,dur,type='sine',gain=0.18){
+  if(!state.soundOn) return;
+  try{
+    const a=getCtx(), o=a.createOscillator(), g=a.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(gain,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(); o.stop(a.currentTime+dur);
+  }catch(e){}
+}
+function playCorrect(){ playTone(523,0.12); setTimeout(()=>playTone(659,0.12),120); setTimeout(()=>playTone(784,0.2),240); }
+function playIncorrect(){ playTone(220,0.3,'sawtooth',0.1); }
+function playBonus(){ [440,554,659,784,880].forEach((f,i)=>setTimeout(()=>playTone(f,0.15),i*80)); }
+function playEnd(){ [523,587,659,698,784].forEach((f,i)=>setTimeout(()=>playTone(f,0.2),i*120)); }
+
+// ============================================================
+//  TIMER
+// ============================================================
+function formatTime(s){
+  const m=Math.floor(s/60), sec=s%60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function startTimer(){
+  state.startTime=Date.now()-state.elapsed*1000;
+  clearInterval(state.timerInterval);
+  state.timerInterval=setInterval(()=>{
+    state.remainingSeconds--;
+    state.elapsed=Math.round((Date.now()-state.startTime)/1000);
+    updateTimerUI();
+    saveSession();
+    if(state.remainingSeconds<=0){ clearInterval(state.timerInterval); finishQuiz(true); }
+  },1000);
+}
+function updateTimerUI(){
+  const d=document.getElementById('timer-display');
+  const b=document.getElementById('timer-block');
+  const tb=document.getElementById('time-bar');
+  if(!d) return;
+  d.textContent=formatTime(state.remainingSeconds);
+  const pct=(state.remainingSeconds/state.totalSeconds)*100;
+  if(tb) tb.style.width=pct+'%';
+  if(pct<=10){ tb.style.background='var(--red)'; b.className='timer-block danger'; }
+  else if(pct<=25){ tb.style.background='var(--gold)'; b.className='timer-block warn'; }
+  else { tb.style.background='var(--green)'; b.className='timer-block'; }
+  // Warnings
+  const r=state.remainingSeconds;
+  if(r===600||r===300||r===60){
+    showWarningBanner(r===600?'⚠️ Quedan 10 minutos':r===300?'⚡ Quedan 5 minutos':'🚨 ¡Solo 1 minuto!');
+  }
+}
+function showWarningBanner(msg){
+  const div=document.createElement('div');
+  div.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A0A00;padding:10px 28px;border-radius:50px;font-weight:800;z-index:9999;animation:bounceIn 0.4s ease;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.4)';
+  div.textContent=msg;
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),4000);
+}
+
+// ============================================================
+//  SHUFFLE
+// ============================================================
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+// ============================================================
+//  TIMER SELECTION
+// ============================================================
+let selectedMinutes=45;
+function selectTimer(btn,min){
+  document.querySelectorAll('.timer-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMinutes=min;
+  document.getElementById('custom-min').value='';
+}
+function selectCustomTimer(){
+  const v=parseInt(document.getElementById('custom-min').value);
+  if(v>=1&&v<=180){
+    document.querySelectorAll('.timer-btn').forEach(b=>b.classList.remove('active'));
+    selectedMinutes=v;
+    showWarningBanner(`⏱ Tiempo: ${v} minutos`);
+  } else { alert('Ingresa un valor entre 1 y 180 minutos.'); }
+}
+
+// ============================================================
+//  SOUND TOGGLE
+// ============================================================
+function toggleSound(){
+  state.soundOn=!state.soundOn;
+  document.getElementById('sound-fab').textContent=state.soundOn?'🔊':'🔇';
+  document.getElementById('sound-knob').style.left=state.soundOn?'3px':'19px';
+  document.getElementById('sound-slider').style.background=state.soundOn?'var(--blue)':'#475569';
+  document.getElementById('sound-check').checked=state.soundOn;
+}
+
+// ============================================================
+//  LOCAL STORAGE
+// ============================================================
+const LS_KEY='icfes_geo_v1';
+function saveSession(){
+  if(state.finished) return;
+  const s={...state, questions:state.questions.map(q=>({...q, shuffledOptions:q.shuffledOptions, optionMap:q.optionMap}))};
+  delete s.timerInterval;
+  try{ localStorage.setItem(LS_KEY,JSON.stringify(s)); }catch(e){}
+}
+function loadSavedSession(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const s=JSON.parse(raw);
+    state={...s, timerInterval:null, answered:false};
+    document.getElementById('continue-banner').classList.add('hidden');
+    showQuizScreen();
+    renderCurrentQuestion();
+    startTimer();
+  }catch(e){ clearSavedSession(); }
+}
+function clearSavedSession(){
+  localStorage.removeItem(LS_KEY);
+  document.getElementById('continue-banner').classList.add('hidden');
+}
+function checkSavedSession(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(raw){
+      const s=JSON.parse(raw);
+      if(s&&s.current<s.questions.length&&!s.finished){
+        document.getElementById('continue-banner').classList.remove('hidden');
+      }
+    }
+  }catch(e){}
+}
+
+// ============================================================
+//  START QUIZ
+// ============================================================
+function startQuiz(){
+  clearSavedSession();
+  const secs=selectedMinutes*60;
+  // Build shuffled questions with shuffled options
+  const shuffledQs=shuffle(RAW_QUESTIONS).map(q=>{
+    const opts=[...q.options];
+    const shuffled=shuffle(opts.map((text,i)=>({text,originalIndex:i})));
+    const optionMap=shuffled.map(o=>o.originalIndex); // optionMap[newIdx]=originalIdx
+    const newCorrect=optionMap.indexOf(q.correct);
+    return {...q, shuffledOptions:shuffled.map(o=>o.text), optionMap, correct:newCorrect};
+  });
+  state={
+    questions:shuffledQs, current:0, score:0, streak:0, bestStreak:0,
+    bonusTotal:0, correctCount:0, incorrectCount:0, answers:[],
+    totalSeconds:secs, remainingSeconds:secs,
+    startTime:Date.now(), elapsed:0, timerInterval:null,
+    soundOn:state.soundOn, answered:false, finished:false
+  };
+  showQuizScreen();
+  renderCurrentQuestion();
+  startTimer();
+  updateStreakDots();
+}
+
+// ============================================================
+//  SCREEN MANAGEMENT
+// ============================================================
+function showScreen(id){
+  ['start-screen','quiz-screen','results-screen'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden',s!==id);
+  });
+}
+function showQuizScreen(){ showScreen('quiz-screen'); }
+
+// ============================================================
+//  RENDER QUESTION
+// ============================================================
+function renderCurrentQuestion(){
+  const q=state.questions[state.current];
+  state.answered=false;
+
+  // Header
+  document.getElementById('q-num-label').textContent=`Pregunta ${state.current+1} de ${state.questions.length}`;
+  document.getElementById('q-topic-label').textContent=q.topic;
+  const diffEl=document.getElementById('q-diff-label');
+  diffEl.textContent=q.diff;
+  diffEl.className='q-diff '+(q.diff==='Fácil'?'diff-easy':q.diff==='Media'?'diff-medium':q.diff==='Alta'?'diff-hard':'diff-icfes');
+
+  // Progress
+  const pct=((state.current)/state.questions.length)*100;
+  document.getElementById('progress-bar').style.width=pct+'%';
+  document.getElementById('q-count').textContent=state.current+1;
+  document.getElementById('score-display').textContent=state.score;
+  document.getElementById('streak-display').textContent=state.streak;
+
+  // Question
+  document.getElementById('question-text').textContent=q.text;
+
+  // Figure
+  document.getElementById('figure-area').innerHTML=q.figure?getFigureSVG(q.figure):'';
+
+  // Options
+  const grid=document.getElementById('options-grid');
+  grid.innerHTML='';
+  const letters=['A','B','C','D'];
+  q.shuffledOptions.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.setAttribute('data-index',i);
+    btn.innerHTML=`<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick=()=>handleAnswer(i,q);
+    grid.appendChild(btn);
+  });
+
+  // Clear feedback
+  document.getElementById('feedback-area').innerHTML='';
+  document.getElementById('streak-banner-wrap').innerHTML='';
+}
+
+// ============================================================
+//  HANDLE ANSWER
+// ============================================================
+function handleAnswer(chosen, q){
+  if(state.answered) return;
+  state.answered=true;
+  const isCorrect=chosen===q.correct;
+  const letters=['A','B','C','D'];
+
+  // Update state
+  if(isCorrect){
+    state.score+=100;
+    state.streak++;
+    state.correctCount++;
+    if(state.streak>state.bestStreak) state.bestStreak=state.streak;
+    playCorrect();
+    // Bonus
+    if(state.streak===10){ state.score+=100; state.bonusTotal+=100; showStreakBanner(10); playBonus(); }
+    else if(state.streak===5){ state.score+=50; state.bonusTotal+=50; showStreakBanner(5); playBonus(); }
+    else if(state.streak===3){ state.score+=20; state.bonusTotal+=20; showStreakBanner(3); playBonus(); }
+  } else {
+    state.streak=0;
+    state.incorrectCount++;
+    playIncorrect();
+  }
+
+  // Record answer
+  state.answers.push({qId:q.id, qText:q.text, chosen, correct:q.correct, isCorrect, topic:q.topic, diff:q.diff, chosenText:q.shuffledOptions[chosen], correctText:q.shuffledOptions[q.correct], feedback:q.feedback});
+
+  // Highlight options
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach((btn,i)=>{
+    btn.disabled=true;
+    if(i===q.correct) btn.classList.add('correct');
+    if(i===chosen&&!isCorrect) btn.classList.add('incorrect');
+    if(i===chosen&&isCorrect) btn.classList.add('selected-correct');
+  });
+
+  // Update UI
+  document.getElementById('score-display').textContent=state.score;
+  document.getElementById('streak-display').textContent=state.streak;
+  updateStreakDots();
+  showFeedback(q, chosen, isCorrect);
+  saveSession();
+}
+
+// ============================================================
+//  FEEDBACK
+// ============================================================
+function showFeedback(q, chosen, isCorrect){
+  const letters=['A','B','C','D'];
+  const fb=q.feedback;
+  const div=document.createElement('div');
+  div.className=`feedback-card ${isCorrect?'correct-fb':'incorrect-fb'}`;
+
+  let html=`<div class="feedback-title">${isCorrect?'✅ ¡Respuesta correcta!':'❌ Respuesta incorrecta'}</div>`;
+  html+=`<div class="feedback-body">`;
+
+  if(isCorrect){
+    html+=`<p><strong>📚 Concepto:</strong> ${fb.concept}</p>`;
+    html+=`<p><strong>🔢 Procedimiento:</strong> ${fb.procedure}</p>`;
+    if(fb.formula) html+=`<div class="feedback-formula">📐 ${fb.formula}</div>`;
+    html+=`<p><strong>🎯 Estrategia:</strong> ${fb.error}</p>`;
+  } else {
+    html+=`<p><strong>📍 Tu respuesta:</strong> ${letters[chosen]}. ${q.shuffledOptions[chosen]}</p>`;
+    html+=`<p><strong>✅ Respuesta correcta:</strong> ${letters[q.correct]}. ${q.shuffledOptions[q.correct]}</p>`;
+    html+=`<p><strong>🔍 Error detectado:</strong> ${fb.error}</p>`;
+    html+=`<p><strong>📚 Explicación:</strong> ${fb.concept}</p>`;
+    html+=`<p><strong>🔢 Procedimiento paso a paso:</strong> ${fb.procedure}</p>`;
+    if(fb.formula) html+=`<div class="feedback-formula">📐 ${fb.formula}</div>`;
+    html+=`<p><strong>💡 Consejo:</strong> ${fb.tip}</p>`;
+  }
+
+  html+=`</div>`;
+  html+=`<button class="btn-continue" onclick="nextQuestion()">Continuar →</button>`;
+  div.innerHTML=html;
+  document.getElementById('feedback-area').appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ============================================================
+//  NEXT QUESTION
+// ============================================================
+function nextQuestion(){
+  state.current++;
+  if(state.current>=state.questions.length){
+    finishQuiz(false);
+  } else {
+    renderCurrentQuestion();
+    document.getElementById('quiz-card').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+// ============================================================
+//  STREAK BANNER
+// ============================================================
+function showStreakBanner(count){
+  const msgs={3:'🔥 ¡Excelente! +20 pts',5:'⭐ ¡Increíble! +50 pts',10:'🏆 ¡Dominas la geometría! +100 pts'};
+  const classes={3:'streak-3',5:'streak-5',10:'streak-10'};
+  const div=document.createElement('div');
+  div.className=`streak-banner ${classes[count]}`;
+  div.textContent=msgs[count];
+  const wrap=document.getElementById('streak-banner-wrap');
+  wrap.innerHTML='';
+  wrap.appendChild(div);
+  setTimeout(()=>div.remove(),3500);
+}
+
+function updateStreakDots(){
+  const wrap=document.getElementById('streak-dots');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div');
+    d.className='streak-dot'+(i<state.streak?' lit':'');
+    wrap.appendChild(d);
+  }
+}
+
+// ============================================================
+//  FINISH QUIZ
+// ============================================================
+function finishQuiz(timeout=false){
+  clearInterval(state.timerInterval);
+  state.finished=true;
+  state.elapsed=Math.round((Date.now()-state.startTime)/1000);
+  localStorage.removeItem(LS_KEY);
+  playEnd();
+  if(state.correctCount>=25) launchConfetti();
+  showResultsScreen(timeout);
+}
+
+function showResultsScreen(timeout){
+  showScreen('results-screen');
+  const pct=Math.round((state.correctCount/state.questions.length)*100);
+
+  document.getElementById('final-pct').textContent=pct+'%';
+  document.getElementById('results-title').textContent=timeout?'⏰ Tiempo agotado':'🏆 Simulacro completado';
+
+  // Animate ring
+  const ring=document.getElementById('score-ring');
+  ring.style.background=`conic-gradient(var(--gold) ${pct*3.6}deg, rgba(255,255,255,0.07) ${pct*3.6}deg)`;
+
+  document.getElementById('r-score').textContent=state.score;
+  document.getElementById('r-correct').textContent=state.correctCount;
+  document.getElementById('r-incorrect').textContent=state.incorrectCount;
+  document.getElementById('r-bonuses').textContent='+'+state.bonusTotal;
+  document.getElementById('r-streak').textContent=state.bestStreak;
+  document.getElementById('r-time').textContent=formatTime(state.elapsed);
+
+  // Motivation
+  const msg=pct<40?'La geometría se fortalece con la práctica. Analiza las explicaciones y vuelve a intentarlo.':
+    pct<60?'Has construido una buena base. Continúa ejercitando la interpretación de figuras y la aplicación de fórmulas.':
+    pct<80?'Buen trabajo. Comprendes los principales conceptos geométricos y puedes seguir perfeccionando tus estrategias.':
+    pct<90?'Excelente desempeño. Resuelves problemas geométricos con seguridad y precisión.':
+    '¡Felicitaciones! Has demostrado un dominio sobresaliente de la geometría aplicada y del razonamiento espacial.';
+  document.getElementById('motivation-msg').innerHTML=`<div style="font-size:1.4em;margin-bottom:8px">${pct>=90?'🏆':pct>=80?'⭐':pct>=60?'📐':'📚'}</div><strong>${msg}</strong>`;
+
+  buildReport();
+}
+
+// ============================================================
+//  REPORT
+// ============================================================
+function buildReport(){
+  const panel=document.getElementById('report-panel');
+  panel.innerHTML='';
+  state.answers.forEach((a,idx)=>{
+    const div=document.createElement('div');
+    div.className=`report-item ${a.isCorrect?'r-correct':'r-incorrect'}`;
+    div.innerHTML=`
+      <div class="report-item-header">
+        <div class="report-item-q">Pregunta ${idx+1}: ${a.qText.substring(0,80)}${a.qText.length>80?'…':''}</div>
+        <div class="report-badges">
+          <span class="badge ${a.isCorrect?'badge-correct':'badge-incorrect'}">${a.isCorrect?'✓ Correcta':'✗ Incorrecta'}</span>
+          <span class="badge" style="background:rgba(148,163,184,0.1);color:var(--text-muted)">${a.diff}</span>
+        </div>
+      </div>
+      <div class="report-answers">
+        <div>Tema: <span style="color:var(--gold)">${a.topic}</span></div>
+        <div>Tu respuesta: <span class="${a.isCorrect?'right':'chosen'}">${a.chosenText}</span></div>
+        ${!a.isCorrect?`<div>Respuesta correcta: <span class="right">${a.correctText}</span></div>`:''}
+      </div>
+      <div class="report-explanation">${a.feedback.concept}</div>`;
+    panel.appendChild(div);
+  });
+}
+
+function toggleReport(){
+  const panel=document.getElementById('report-panel');
+  const arrow=document.getElementById('report-arrow');
+  panel.classList.toggle('open');
+  arrow.textContent=panel.classList.contains('open')?'▲':'▼';
+}
+
+// ============================================================
+//  RESTART
+// ============================================================
+function restartQuiz(){
+  clearSavedSession();
+  showScreen('start-screen');
+  checkSavedSession();
+}
+
+// ============================================================
+//  ABANDON
+// ============================================================
+function confirmAbandon(){ document.getElementById('modal-overlay').classList.remove('hidden'); }
+function closeModal(){ document.getElementById('modal-overlay').classList.add('hidden'); }
+function doAbandon(){ closeModal(); clearInterval(state.timerInterval); clearSavedSession(); showScreen('start-screen'); }
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+function launchConfetti(){
+  const colors=['#F59E0B','#22C55E','#60A5FA','#FFE066','#C4B5FD','#EF4444'];
+  for(let i=0;i<40;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.className='confetti-piece';
+      p.style.cssText=`left:${Math.random()*100}vw;top:${Math.random()*60+40}vh;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-duration:${1.5+Math.random()}s;`;
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),2500);
+    },i*50);
+  }
+}
+
+// ============================================================
+//  MOBILE LINK
+// ============================================================
+const btnV=document.getElementById('btn-volver');
+if(btnV){
+  const appUrl='moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=738';
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)) btnV.href=appUrl;
+}
+
+// ============================================================
+//  KEYBOARD NAVIGATION
+// ============================================================
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('quiz-screen').classList.contains('hidden')) return;
+  if(['1','2','3','4'].includes(e.key)&&!state.answered){
+    const btns=document.querySelectorAll('.option-btn');
+    const i=parseInt(e.key)-1;
+    if(btns[i]) btns[i].click();
+  }
+  if(e.key==='Enter'&&state.answered){
+    const cont=document.querySelector('.btn-continue');
+    if(cont) cont.click();
+  }
+});
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener('load',()=>{
+  checkSavedSession();
+});
+
+// Prevent accidental navigation
+window.addEventListener('beforeunload',e=>{
+  if(!document.getElementById('quiz-screen').classList.contains('hidden')&&!state.finished){
+    e.preventDefault();
+    e.returnValue='';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Simulador ICFES · Análisis e interpretación de tablas y gráficos</title>
+<meta name="description" content="Simulador interactivo Saber 11 - Matemáticas Aplicadas - Tablas y gráficos avanzados">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+/* ============================================================
+   SIMULADOR ICFES - Tablas y Gráficos Avanzados
+   Identidad gráfica institucional
+============================================================ */
+
+:root {
+  --primary: #1E3A8A;
+  --primary-dark: #152a63;
+  --primary-light: #3B82F6;
+  --secondary: #F59E0B;
+  --secondary-light: #FFE066;
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --danger: #EF4444;
+  --danger-bg: #FEF2F2;
+  --bg: #F1F5F9;
+  --card-bg: #FFFFFF;
+  --text-dark: #1E293B;
+  --text-mid: #475569;
+  --text-light: #94A3B8;
+  --border: #E2E8F0;
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 2px 8px rgba(30,58,138,0.06);
+  --shadow-md: 0 8px 30px rgba(30,58,138,0.09);
+  --shadow-lg: 0 16px 50px rgba(30,58,138,0.14);
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background: linear-gradient(160deg, #EEF2FF 0%, #F1F5F9 45%, #FFF9EC 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+.screen { display: none; min-height: 100vh; width: 100%; animation: fadeIn 0.45s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   BOTONES
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(30,58,138,0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(30,58,138,0.42); filter: brightness(1.05); }
+.btn-primary:active { transform: translateY(0); }
+.btn-large { padding: 16px 36px; font-size: 1.05rem; }
+.btn-arrow { transition: transform 0.2s ease; display: inline-block; }
+.btn:hover .btn-arrow { transform: translateX(4px); }
+
+.sound-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 50px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.sound-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+.sound-btn-small { padding: 8px 10px; font-size: 1rem; }
+
+/* ============================================================
+   PANTALLA INTRO
+============================================================ */
+#screen-intro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+.intro-card {
+  max-width: 760px;
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 44px 40px;
+  animation: floatIn 0.6s ease;
+}
+@keyframes floatIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.intro-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
+  color: #2D1B0E;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border-radius: 50px;
+  margin-bottom: 18px;
+}
+.intro-title {
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  line-height: 1.25;
+  margin: 0 0 14px;
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+.intro-title span { color: var(--secondary); }
+.intro-desc { color: var(--text-mid); line-height: 1.6; font-size: 1rem; margin-bottom: 26px; }
+
+.intro-stats { display: flex; gap: 14px; margin-bottom: 30px; flex-wrap: wrap; }
+.intro-stat {
+  flex: 1;
+  min-width: 110px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+.intro-stat-num { display: block; font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+.intro-stat-label { display: block; font-size: 0.78rem; color: var(--text-mid); margin-top: 2px; }
+
+.intro-subtitle { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 14px; }
+
+.time-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 30px; }
+.time-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 8px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: #fff;
+  transition: all 0.2s ease;
+}
+.time-option:hover { border-color: var(--primary-light); transform: translateY(-2px); }
+.time-option.selected {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #EFF6FF, #EEF2FF);
+  box-shadow: 0 4px 14px rgba(30,58,138,0.18);
+}
+.time-option-value { font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); }
+.time-option-unit { font-size: 0.78rem; color: var(--text-mid); margin-top: 2px; }
+.time-option-tag {
+  position: absolute; top: -10px;
+  background: var(--secondary); color: #2D1B0E;
+  font-size: 0.62rem; font-weight: 800; padding: 3px 9px;
+  border-radius: 50px; letter-spacing: 0.4px;
+}
+
+.intro-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+/* ============================================================
+   HEADER PANEL (QUIZ)
+============================================================ */
+.header-panel {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+}
+.header-panel-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; flex-wrap: wrap;
+}
+.header-brand { font-weight: 800; color: var(--primary-dark); font-size: 0.92rem; margin-right: auto; }
+.header-item {
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 700; font-size: 0.88rem; color: var(--text-dark);
+  background: var(--bg); padding: 7px 12px; border-radius: 50px;
+}
+.header-timer { font-family: var(--font-mono); color: var(--primary-dark); }
+.header-icon { font-size: 0.95rem; }
+
+.time-bar { height: 4px; width: 100%; background: var(--border); }
+.time-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); transition: width 1s linear, background 0.3s ease; }
+.time-bar-fill.time-warning { background: linear-gradient(90deg, var(--danger), #F87171); animation: pulseBar 1s infinite; }
+@keyframes pulseBar { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+.time-warning-text { color: var(--danger) !important; animation: pulseText 1s infinite; }
+@keyframes pulseText { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.time-warning-banner {
+  position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px);
+  background: var(--danger); color: #fff; font-weight: 700;
+  padding: 12px 26px; border-radius: 50px; box-shadow: var(--shadow-lg);
+  opacity: 0; pointer-events: none; transition: all 0.35s ease; z-index: 60;
+}
+.time-warning-banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.bonus-animation {
+  position: fixed; top: 90px; left: 50%; transform: translateX(-50%) scale(0.8);
+  background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
+  color: #2D1B0E; font-weight: 800; padding: 12px 24px; border-radius: 50px;
+  box-shadow: 0 8px 26px rgba(245,158,11,0.5);
+  opacity: 0; pointer-events: none; z-index: 60; transition: none;
+}
+.bonus-animation.show { animation: bonusPop 2.4s ease forwards; }
+@keyframes bonusPop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.7) translateY(10px); }
+  15% { opacity: 1; transform: translateX(-50%) scale(1.08) translateY(0); }
+  25% { transform: translateX(-50%) scale(1) translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.95) translateY(-12px); }
+}
+
+/* ============================================================
+   QUIZ MAIN
+============================================================ */
+.quiz-main { max-width: 900px; margin: 0 auto; padding: 22px 16px 60px; }
+
+.progress-section { margin-bottom: 18px; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: var(--text-mid); margin-bottom: 6px; }
+.progress-bar-track { height: 9px; background: var(--border); border-radius: 50px; overflow: hidden; }
+.progress-bar-fill { height: 100%; width: 4%; background: linear-gradient(90deg, var(--secondary), var(--secondary-light)); border-radius: 50px; transition: width 0.5s ease; }
+
+.question-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 30px 28px;
+  animation: cardIn 0.4s ease;
+}
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.badges-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.difficulty-badge, .subtopic-badge {
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.3px;
+  padding: 5px 13px; border-radius: 50px; text-transform: uppercase;
+}
+.diff-facil { background: var(--success-bg); color: var(--success); }
+.diff-intermedia { background: #FEF3C7; color: #B45309; }
+.diff-avanzada { background: var(--danger-bg); color: var(--danger); }
+.subtopic-badge { background: #EEF2FF; color: var(--primary); }
+
+.question-context { color: var(--text-mid); font-size: 0.95rem; line-height: 1.55; margin-bottom: 18px; }
+
+.visual-container { margin-bottom: 22px; }
+.chart-wrap { position: relative; height: 280px; width: 100%; background: var(--bg); border-radius: var(--radius-md); padding: 14px; }
+
+.table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 320px; }
+.data-table th { background: var(--primary); color: #fff; padding: 11px 14px; text-align: left; font-weight: 700; }
+.data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-dark); }
+.data-table tr:nth-child(even) td { background: var(--bg); }
+.data-table tr:last-child td { border-bottom: none; }
+
+.pictogram-wrap { background: var(--bg); border-radius: var(--radius-md); padding: 18px; }
+.pictogram-note { font-size: 0.82rem; color: var(--text-mid); margin: 0 0 14px; font-style: italic; }
+.pictogram-row { display: flex; align-items: center; gap: 14px; padding: 8px 0; border-bottom: 1px dashed var(--border); flex-wrap: wrap; }
+.pictogram-row:last-child { border-bottom: none; }
+.pictogram-label { min-width: 100px; font-weight: 700; font-size: 0.88rem; color: var(--text-dark); }
+.pictogram-icons { font-size: 1.3rem; letter-spacing: 3px; }
+
+.question-text { font-size: 1.08rem; font-weight: 700; color: var(--text-dark); line-height: 1.5; margin-bottom: 20px; }
+
+.options-container { display: grid; gap: 12px; margin-bottom: 6px; }
+.option-btn {
+  display: flex; align-items: center; gap: 14px;
+  text-align: left;
+  background: #fff; border: 2px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px 16px;
+  font-size: 0.94rem; color: var(--text-dark);
+  transition: all 0.18s ease;
+}
+.option-btn:hover:not(.disabled) { border-color: var(--primary-light); background: #F8FAFF; transform: translateX(3px); }
+.option-letter {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--bg); color: var(--primary); font-weight: 800; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.option-btn.disabled { cursor: default; }
+.option-btn.correct { border-color: var(--success); background: var(--success-bg); }
+.option-btn.correct .option-letter { background: var(--success); color: #fff; }
+.option-btn.incorrect { border-color: var(--danger); background: var(--danger-bg); }
+.option-btn.incorrect .option-letter { background: var(--danger); color: #fff; }
+
+.feedback-panel {
+  max-height: 0; opacity: 0; overflow: hidden;
+  border-radius: var(--radius-md); margin-top: 4px;
+  transition: all 0.4s ease;
+}
+.feedback-panel.show { max-height: 300px; opacity: 1; padding: 16px 18px; margin-top: 16px; }
+.feedback-correct { background: var(--success-bg); border: 1.5px solid #A7F3D0; }
+.feedback-incorrect { background: var(--danger-bg); border: 1.5px solid #FECACA; }
+.feedback-title { font-weight: 800; font-size: 0.98rem; }
+.feedback-correct .feedback-title { color: var(--success); }
+.feedback-incorrect .feedback-title { color: var(--danger); }
+.feedback-text { margin: 8px 0 0; font-size: 0.9rem; color: var(--text-mid); line-height: 1.55; }
+
+.question-footer { display: flex; justify-content: flex-end; margin-top: 22px; }
+
+/* ============================================================
+   RESULTADOS
+============================================================ */
+#screen-results { padding: 32px 16px 60px; }
+.results-wrap { max-width: 900px; margin: 0 auto; }
+.results-card { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: 36px 30px; animation: floatIn 0.5s ease; }
+
+.results-header { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
+.results-title { font-size: 1.5rem; color: var(--primary-dark); margin: 0; font-weight: 800; }
+.result-level-badge { padding: 8px 18px; border-radius: 50px; font-weight: 800; font-size: 0.85rem; }
+.level-excellent { background: var(--success-bg); color: var(--success); }
+.level-good { background: #DBEAFE; color: var(--primary); }
+.level-regular { background: #FEF3C7; color: #B45309; }
+.level-low { background: var(--danger-bg); color: var(--danger); }
+
+.results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.result-stat { background: var(--bg); border-radius: var(--radius-md); padding: 16px 10px; text-align: center; }
+.result-stat-icon { display: block; font-size: 1.3rem; margin-bottom: 4px; }
+.result-stat-value { display: block; font-size: 1.35rem; font-weight: 800; color: var(--primary-dark); }
+.result-stat-label { display: block; font-size: 0.72rem; color: var(--text-mid); margin-top: 2px; }
+
+.result-message {
+  background: linear-gradient(135deg, #EFF6FF, #FFF9EC);
+  border-left: 4px solid var(--secondary);
+  padding: 16px 20px; border-radius: var(--radius-sm);
+  font-size: 0.95rem; color: var(--text-dark); line-height: 1.6; margin-bottom: 30px;
+}
+
+.report-title { font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 14px; }
+.report-table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 30px; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 760px; }
+.report-table th { background: var(--primary); color: #fff; padding: 10px 12px; text-align: left; font-weight: 700; white-space: nowrap; }
+.report-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-dark); vertical-align: top; }
+.report-explanation { min-width: 260px; color: var(--text-mid); }
+.report-row-correct td:nth-child(4) { color: var(--success); font-weight: 700; }
+.report-row-incorrect td:nth-child(4) { color: var(--danger); font-weight: 700; }
+
+.results-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 640px) {
+  .intro-card { padding: 30px 22px; }
+  .time-options { grid-template-columns: repeat(2, 1fr); }
+  .intro-stats { flex-wrap: wrap; }
+  .header-panel-inner { justify-content: center; }
+  .header-brand { width: 100%; text-align: center; margin: 0 0 4px; }
+  .question-card { padding: 22px 18px; }
+  .chart-wrap { height: 220px; }
+  .results-card { padding: 26px 18px; }
+  .results-actions { flex-direction: column; align-items: stretch; }
+  .results-actions .btn, .results-actions #btn-volver { text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PANTALLA 1: INTRO
+============================================================ -->
+<section id="screen-intro" class="screen active">
+  <div class="intro-card">
+    <div class="intro-badge">Saber 11 · Nivel 3 · Matemáticas Aplicadas</div>
+    <h1 class="intro-title">Análisis e interpretación de <span>tablas y gráficos avanzados</span></h1>
+    <p class="intro-desc">
+      Pon a prueba tu capacidad para interpretar, comparar y analizar información estadística
+      presentada en tablas, gráficos de barras, líneas, circulares, histogramas y pictogramas,
+      con problemas contextualizados al estilo del examen Saber 11.
+    </p>
+
+    <div class="intro-stats">
+      <div class="intro-stat"><span class="intro-stat-num">25</span><span class="intro-stat-label">preguntas por intento</span></div>
+      <div class="intro-stat"><span class="intro-stat-num">9</span><span class="intro-stat-label">subtemáticas</span></div>
+      <div class="intro-stat"><span class="intro-stat-num">45</span><span class="intro-stat-label">banco total</span></div>
+    </div>
+
+    <h2 class="intro-subtitle">Selecciona el tiempo para tu intento</h2>
+    <div class="time-options">
+      <button class="time-option selected" data-time="20">
+        <span class="time-option-value">20</span><span class="time-option-unit">minutos</span>
+        <span class="time-option-tag">Recomendado</span>
+      </button>
+      <button class="time-option" data-time="30">
+        <span class="time-option-value">30</span><span class="time-option-unit">minutos</span>
+      </button>
+      <button class="time-option" data-time="40">
+        <span class="time-option-value">40</span><span class="time-option-unit">minutos</span>
+      </button>
+      <button class="time-option" data-time="none">
+        <span class="time-option-value">∞</span><span class="time-option-unit">sin límite</span>
+      </button>
+    </div>
+
+    <div class="intro-footer">
+      <button id="sound-toggle-intro" class="sound-btn" title="Activar / desactivar sonido">
+        <span class="sound-icon">🔊</span> Sonidos
+      </button>
+      <button id="btn-start" class="btn btn-primary btn-large">Comenzar simulacro <span class="btn-arrow">→</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PANTALLA 2: QUIZ
+============================================================ -->
+<section id="screen-quiz" class="screen">
+
+  <header class="header-panel">
+    <div class="header-panel-inner">
+      <div class="header-item header-brand">📊 Simulador ICFES</div>
+      <div class="header-item"><span class="header-icon">🎯</span><span id="header-score">0</span> pts</div>
+      <div class="header-item"><span class="header-icon">🔥</span><span id="header-streak">0</span> racha</div>
+      <div class="header-item"><span class="header-icon">📄</span><span id="header-question">1/25</span></div>
+      <div class="header-item header-timer"><span class="header-icon">⏱</span><span id="timer-display">20:00</span></div>
+      <button id="sound-toggle-header" class="sound-btn sound-btn-small" title="Activar / desactivar sonido">
+        <span class="sound-icon">🔊</span>
+      </button>
+    </div>
+    <div class="time-bar"><div id="time-bar-fill" class="time-bar-fill"></div></div>
+  </header>
+
+  <div id="time-warning-banner" class="time-warning-banner">⏰ ¡Atención! Quedan menos de 5 minutos</div>
+  <div id="bonus-animation" class="bonus-animation"></div>
+
+  <main class="quiz-main">
+    <div class="progress-section">
+      <div class="progress-labels">
+        <span id="question-counter">Pregunta 1 de 25</span>
+        <span id="progress-pct">4%</span>
+      </div>
+      <div class="progress-bar-track"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
+    </div>
+
+    <article class="question-card">
+      <div class="badges-row">
+        <span id="difficulty-badge" class="difficulty-badge">Nivel básico</span>
+        <span id="subtopic-badge" class="subtopic-badge">Subtema</span>
+      </div>
+
+      <p id="question-context" class="question-context"></p>
+
+      <div id="visual-container" class="visual-container"></div>
+
+      <h3 id="question-text" class="question-text"></h3>
+
+      <div id="options-container" class="options-container"></div>
+
+      <div id="feedback-panel" class="feedback-panel">
+        <div class="feedback-header">
+          <span id="feedback-title" class="feedback-title"></span>
+        </div>
+        <p id="feedback-text" class="feedback-text"></p>
+      </div>
+
+      <div class="question-footer">
+        <button id="btn-next" class="btn btn-primary" style="display:none;">Siguiente pregunta <span class="btn-arrow">→</span></button>
+      </div>
+    </article>
+  </main>
+</section>
+
+<!-- ============================================================
+     PANTALLA 3: RESULTADOS
+============================================================ -->
+<section id="screen-results" class="screen">
+  <div class="results-wrap">
+    <div class="results-card">
+      <div class="results-header">
+        <h1 class="results-title">🏁 Resultados del simulacro</h1>
+        <span id="result-level" class="result-level-badge">Nivel</span>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-stat"><span class="result-stat-icon">🎯</span><span id="result-score" class="result-stat-value">0</span><span class="result-stat-label">Puntaje total</span></div>
+        <div class="result-stat"><span class="result-stat-icon">📊</span><span id="result-pct" class="result-stat-value">0%</span><span class="result-stat-label">Porcentaje de acierto</span></div>
+        <div class="result-stat"><span class="result-stat-icon">✔</span><span id="result-correct" class="result-stat-value">0</span><span class="result-stat-label">Aciertos</span></div>
+        <div class="result-stat"><span class="result-stat-icon">✘</span><span id="result-incorrect" class="result-stat-value">0</span><span class="result-stat-label">Errores</span></div>
+        <div class="result-stat"><span class="result-stat-icon">🔥</span><span id="result-streak" class="result-stat-value">0</span><span class="result-stat-label">Mayor racha</span></div>
+        <div class="result-stat"><span class="result-stat-icon">⏱</span><span id="result-time-used" class="result-stat-value">00:00</span><span class="result-stat-label">Tiempo utilizado</span></div>
+        <div class="result-stat"><span class="result-stat-icon">⏳</span><span id="result-time-remaining" class="result-stat-value">00:00</span><span class="result-stat-label">Tiempo restante</span></div>
+      </div>
+
+      <p id="result-message" class="result-message"></p>
+
+      <h2 class="report-title">📋 Reporte detallado de respuestas</h2>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tu respuesta</th>
+              <th>Respuesta correcta</th>
+              <th>Resultado</th>
+              <th>Competencia evaluada</th>
+              <th>Dificultad</th>
+              <th>Retroalimentación</th>
+            </tr>
+          </thead>
+          <tbody id="report-table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="results-actions">
+        <button id="btn-restart" class="btn btn-primary btn-large">🔄 Reiniciar simulacro</button>
+        <a id="btn-volver"
+           href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=749"
+           style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+          🏫 Regresar al Aula Virtual
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const btn=document.getElementById('btn-volver');
+const appUrl='moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=749';
+if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+    btn.href=appUrl;
+}
+</script>
+
+<script>
+// ============================================================
+// BANCO DE PREGUNTAS - Simulador ICFES Saber 11
+// Nivel 3 - Matemáticas Aplicadas
+// Temática 4: Análisis e interpretación de tablas y gráficos avanzados
+// 45 preguntas originales distribuidas en 9 subtemáticas
+// ============================================================
+
+const SUBTEMAS = {
+  tipos: "Tipos de representaciones estadísticas",
+  organizacion: "Organización e interpretación de datos",
+  tendencias: "Análisis de tendencias",
+  comparacion: "Comparación entre representaciones",
+  medidas: "Medidas estadísticas",
+  interpretacion: "Interpretación contextual",
+  critico: "Análisis crítico de la información",
+  resolucion: "Resolución de problemas",
+  modelacion: "Modelación matemática"
+};
+
+const QUESTION_BANK = [
+// ---------------------------------------------------------------
+// NIVEL FÁCIL (1-15)
+// ---------------------------------------------------------------
+{
+  d:"facil", sub:"tipos",
+  ctx:"En la final de un torneo intercolegiado de baloncesto se registraron los goles... (canastas) anotadas por cinco equipos en la fase de grupos.",
+  chart:{type:"bar", labels:["Águilas","Cóndores","Halcones","Panteras","Tigres"], data:[14,22,9,17,12], label:"Canastas anotadas"},
+  q:"¿Qué equipo obtuvo el mayor número de canastas en la fase de grupos?",
+  opts:["Cóndores","Panteras","Águilas","Tigres"], correct:0,
+  exp:"Cóndores tiene la barra más alta (22 canastas). La estrategia ICFES es comparar visualmente la altura de las barras antes de leer valores exactos."
+},
+{
+  d:"facil", sub:"organizacion",
+  ctx:"Una empresa de tecnología encuestó a 120 clientes sobre el sistema operativo de su celular.",
+  table:{headers:["Sistema operativo","Frecuencia absoluta"], rows:[["Android",68],["iOS",42],["Otro",10]]},
+  q:"¿Cuál es la variable estudiada en esta encuesta y qué tipo de variable es?",
+  opts:["Sistema operativo; variable cualitativa","Número de clientes; variable cuantitativa","Frecuencia; variable cualitativa","Marca del celular; variable cuantitativa"], correct:0,
+  exp:"La variable 'sistema operativo' clasifica en categorías (Android, iOS, Otro), por lo tanto es cualitativa, no numérica."
+},
+{
+  d:"facil", sub:"tendencias",
+  ctx:"La siguiente gráfica muestra la temperatura promedio (°C) registrada en una ciudad durante una semana.",
+  chart:{type:"line", labels:["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"], data:[18,19,21,24,23,20,17], label:"Temperatura (°C)"},
+  q:"¿En qué día se presentó la temperatura más alta de la semana?",
+  opts:["Jueves","Miércoles","Viernes","Sábado"], correct:0,
+  exp:"El punto más alto de la línea corresponde al jueves con 24°C, el máximo de la serie."
+},
+{
+  d:"facil", sub:"comparacion",
+  ctx:"Una tienda de ropa registró las ventas mensuales de camisetas, mostradas tanto en tabla como en gráfico.",
+  table:{headers:["Mes","Unidades vendidas"], rows:[["Enero",80],["Febrero",95],["Marzo",70]]},
+  chart:{type:"bar", labels:["Enero","Febrero","Marzo"], data:[80,95,70], label:"Camisetas vendidas"},
+  q:"Según la tabla y el gráfico, ¿en qué mes disminuyeron las ventas respecto al mes anterior?",
+  opts:["Marzo","Febrero","Enero","Ninguno"], correct:0,
+  exp:"De febrero (95) a marzo (70) las ventas bajan; tanto la tabla como el gráfico muestran la misma información, solo cambia la forma de presentarla."
+},
+{
+  d:"facil", sub:"medidas",
+  ctx:"En un salón de clase se registraron las calificaciones (sobre 5.0) de 5 estudiantes en una prueba de matemáticas: 3.2, 4.0, 4.0, 4.5, 3.8.",
+  table:{headers:["Estudiante","Calificación"], rows:[["A",3.2],["B",4.0],["C",4.0],["D",4.5],["E",3.8]]},
+  q:"¿Cuál es la moda de las calificaciones registradas?",
+  opts:["4.0","3.8","4.5","3.2"], correct:0,
+  exp:"La moda es el valor que más se repite. 4.0 aparece dos veces, más que cualquier otro dato."
+},
+{
+  d:"facil", sub:"interpretacion",
+  ctx:"Un centro de salud registró los motivos de consulta más frecuentes durante una semana.",
+  chart:{type:"pie", labels:["Gripe","Control niño sano","Vacunación","Otros"], data:[35,25,20,20]},
+  q:"¿Cuál fue el motivo de consulta más frecuente en el centro de salud?",
+  opts:["Gripe","Vacunación","Otros","Control niño sano"], correct:0,
+  exp:"El sector más grande del gráfico circular corresponde a Gripe con el 35% de las consultas."
+},
+{
+  d:"facil", sub:"critico",
+  ctx:"Un periódico publicó un gráfico de barras sobre el consumo de agua (m³) de dos barrios, con el eje vertical iniciando en 40 en lugar de 0.",
+  chart:{type:"bar", labels:["Barrio Norte","Barrio Sur"], data:[46,49], label:"Consumo (m³)", yMin:40},
+  q:"¿Qué efecto visual genera que el eje vertical no inicie en cero?",
+  opts:["Exagera la diferencia real entre las barras","Hace que ambas barras se vean idénticas","No tiene ningún efecto en la lectura","Reduce el consumo real de agua"], correct:0,
+  exp:"Al no iniciar el eje en cero, una diferencia pequeña (3 m³) se percibe visualmente como muy grande, una técnica típica de gráficos engañosos."
+},
+{
+  d:"facil", sub:"resolucion",
+  ctx:"En una granja avícola se registró la producción semanal de huevos (en docenas) durante un mes.",
+  table:{headers:["Semana","Docenas producidas"], rows:[["1",120],["2",135],["3",110],["4",150]]},
+  q:"¿Cuántas docenas de huevos se produjeron en total durante el mes?",
+  opts:["515","505","525","495"], correct:0,
+  exp:"Sumando los valores de la tabla: 120+135+110+150 = 515 docenas."
+},
+{
+  d:"facil", sub:"modelacion",
+  ctx:"Un profesor desea representar el número de estudiantes por grado (6°, 7°, 8°, 9°) en su colegio para compararlos fácilmente.",
+  chart:{type:"bar", labels:["6°","7°","8°","9°"], data:[32,28,30,25], label:"Estudiantes"},
+  q:"¿Qué tipo de gráfico es más adecuado para comparar el número de estudiantes entre los cuatro grados?",
+  opts:["Gráfico de barras","Gráfico de líneas","Gráfico circular","Histograma"], correct:0,
+  exp:"El gráfico de barras es ideal para comparar cantidades entre categorías independientes como los grados escolares."
+},
+{
+  d:"facil", sub:"tipos",
+  ctx:"Una red social registró el número de seguidores nuevos que ganó una cuenta educativa cada mes.",
+  chart:{type:"line", labels:["Ene","Feb","Mar","Abr","May"], data:[200,350,300,500,650], label:"Seguidores nuevos"},
+  q:"¿Qué tipo de representación es la más adecuada para mostrar la evolución mensual de seguidores?",
+  opts:["Gráfico de líneas","Gráfico circular","Tabla de doble entrada","Pictograma"], correct:0,
+  exp:"El gráfico de líneas es el más adecuado para mostrar cambios de una variable a lo largo del tiempo."
+},
+{
+  d:"facil", sub:"organizacion",
+  ctx:"Una encuesta de movilidad preguntó a 200 habitantes de un barrio el medio de transporte que usan a diario.",
+  table:{headers:["Medio de transporte","Frecuencia absoluta","Frecuencia relativa"], rows:[["Bus",80,"40%"],["Bicicleta",50,"25%"],["A pie",40,"20%"],["Carro",30,"15%"]]},
+  q:"¿Qué medio de transporte representa la cuarta parte de los encuestados?",
+  opts:["Bicicleta","Bus","A pie","Carro"], correct:0,
+  exp:"La cuarta parte equivale al 25%, valor que corresponde a Bicicleta según la frecuencia relativa de la tabla."
+},
+{
+  d:"facil", sub:"tendencias",
+  ctx:"Una fábrica registró su consumo eléctrico mensual (en kWh) durante el primer semestre del año.",
+  chart:{type:"bar", labels:["Ene","Feb","Mar","Abr","May","Jun"], data:[3200,3100,3400,3600,3550,3800], label:"Consumo (kWh)"},
+  q:"¿Cuál fue la tendencia general del consumo eléctrico durante el semestre?",
+  opts:["Creciente, con una leve caída en febrero","Decreciente en todo el periodo","Constante durante los seis meses","Creciente y luego decreciente"], correct:0,
+  exp:"Los valores aumentan de enero a junio (con una pequeña baja en febrero), lo que indica una tendencia general creciente."
+},
+{
+  d:"facil", sub:"comparacion",
+  ctx:"El turismo receptivo de un municipio se presentó en una tabla y en un gráfico circular según el país de origen de los visitantes.",
+  table:{headers:["País","Porcentaje"], rows:[["Colombia",50],["Estados Unidos",25],["España",15],["Otros",10]]},
+  chart:{type:"pie", labels:["Colombia","Estados Unidos","España","Otros"], data:[50,25,15,10]},
+  q:"¿Qué representación permite identificar más fácilmente qué porcentaje representa cada país del total?",
+  opts:["El gráfico circular","La tabla de frecuencias","Ambas por igual, sin diferencia","Ninguna de las dos"], correct:0,
+  exp:"El gráfico circular muestra visualmente la proporción de cada categoría respecto al total (el círculo completo), facilitando la comparación de porcentajes."
+},
+{
+  d:"facil", sub:"medidas",
+  ctx:"Una economía familiar registró sus gastos mensuales (en miles de pesos) en cinco categorías: 200, 150, 400, 150, 300.",
+  table:{headers:["Categoría","Gasto (miles $)"], rows:[["Alimentación",400],["Transporte",200],["Servicios",300],["Ocio",150],["Ropa",150]]},
+  q:"¿Cuál es el rango de los gastos registrados?",
+  opts:["250","400","150","300"], correct:0,
+  exp:"El rango es la diferencia entre el mayor y el menor valor: 400 - 150 = 250."
+},
+{
+  d:"facil", sub:"interpretacion",
+  ctx:"En una jornada de siembra, una asociación de agricultores registró la producción de tres cultivos (en toneladas).",
+  chart:{type:"bar", labels:["Papa","Maíz","Fríjol"], data:[45,30,18], label:"Producción (toneladas)"},
+  q:"Según el contexto agrícola, ¿qué cultivo tuvo la menor producción?",
+  opts:["Fríjol","Maíz","Papa","No se puede determinar"], correct:0,
+  exp:"La barra de Fríjol (18 toneladas) es la más baja de las tres, por lo tanto representa la menor producción."
+},
+
+// ---------------------------------------------------------------
+// NIVEL INTERMEDIO (16-30)
+// ---------------------------------------------------------------
+{
+  d:"intermedia", sub:"tipos",
+  ctx:"Una universidad comparó el número de estudiantes matriculados en dos programas durante tres semestres.",
+  chart:{type:"bar-grouped", labels:["2024-1","2024-2","2025-1"], datasets:[{label:"Ingeniería", data:[120,135,150]},{label:"Administración", data:[95,110,105]}]},
+  q:"¿Qué tipo de gráfico permite comparar simultáneamente los dos programas en cada semestre?",
+  opts:["Gráfico de barras agrupadas","Gráfico circular","Histograma simple","Pictograma"], correct:0,
+  exp:"Las barras agrupadas permiten comparar dos o más categorías (programas) dentro de un mismo periodo, algo que un gráfico circular o histograma simple no logra con la misma claridad."
+},
+{
+  d:"intermedia", sub:"organizacion",
+  ctx:"Un estudio de salud pública midió la estatura (cm) de 40 adolescentes y organizó los datos en intervalos.",
+  chart:{type:"histogram", labels:["150-155","155-160","160-165","165-170","170-175"], data:[4,9,15,8,4], label:"N° de estudiantes"},
+  q:"¿Cuál es el intervalo de clase con mayor frecuencia absoluta?",
+  opts:["160-165 cm","155-160 cm","165-170 cm","150-155 cm"], correct:0,
+  exp:"El histograma agrupa datos continuos en intervalos; la barra más alta (15 estudiantes) corresponde al intervalo 160-165 cm."
+},
+{
+  d:"intermedia", sub:"tendencias",
+  ctx:"El índice de inflación mensual (%) de un país se registró durante seis meses.",
+  chart:{type:"line", labels:["Ene","Feb","Mar","Abr","May","Jun"], data:[0.8,0.6,0.9,1.2,1.5,1.1], label:"Inflación (%)"},
+  q:"¿En qué mes se presentó el cambio porcentual más alto respecto al mes anterior?",
+  opts:["Mayo","Abril","Marzo","Junio"], correct:0,
+  exp:"De abril (1.2%) a mayo (1.5%) hay un aumento de 0.3 puntos, el mayor salto entre meses consecutivos de la serie."
+},
+{
+  d:"intermedia", sub:"comparacion",
+  ctx:"Los resultados de una encuesta escolar sobre el deporte favorito se presentaron en una tabla y en un histograma de frecuencias.",
+  table:{headers:["Deporte","Estudiantes"], rows:[["Fútbol",60],["Baloncesto",45],["Voleibol",25],["Natación",20]]},
+  chart:{type:"bar", labels:["Fútbol","Baloncesto","Voleibol","Natación"], data:[60,45,25,20], label:"Estudiantes"},
+  q:"¿Por qué un histograma no sería adecuado para representar esta información, a diferencia del gráfico de barras usado?",
+  opts:["Porque el histograma se usa para variables cuantitativas continuas, y 'deporte' es una variable cualitativa","Porque el histograma solo admite un dato por categoría","Porque el histograma no permite usar colores distintos","Porque el histograma exige que los datos sumen 100"], correct:0,
+  exp:"El histograma se reserva para variables cuantitativas continuas organizadas en intervalos; el deporte favorito es una variable cualitativa (categórica), por lo que el gráfico de barras es la representación correcta."
+},
+{
+  d:"intermedia", sub:"medidas",
+  ctx:"Un comercio registró el número de clientes atendidos cada día durante una semana: 32, 28, 45, 32, 50, 60, 32.",
+  table:{headers:["Día","Clientes"], rows:[["Lun",32],["Mar",28],["Mié",45],["Jue",32],["Vie",50],["Sáb",60],["Dom",32]]},
+  q:"¿Cuál es la media (promedio) de clientes atendidos durante la semana?",
+  opts:["39.86 (aprox. 40)","32","45","50"], correct:0,
+  exp:"Sumando los 7 valores (32+28+45+32+50+60+32=279) y dividiendo entre 7 se obtiene aproximadamente 39.86 clientes en promedio."
+},
+{
+  d:"intermedia", sub:"interpretacion",
+  ctx:"Una encuesta sobre el nivel educativo de los padres de familia de un colegio arrojó los siguientes resultados.",
+  chart:{type:"pie", labels:["Primaria","Secundaria","Técnico","Universitario"], data:[15,35,30,20]},
+  q:"En un colegio con 400 padres encuestados, ¿cuántos tienen nivel educativo técnico?",
+  opts:["120","140","105","80"], correct:0,
+  exp:"El 30% de 400 es 120 (400 × 0.30 = 120), correspondiente a la categoría 'Técnico'."
+},
+{
+  d:"intermedia", sub:"critico",
+  ctx:"Una empresa de redes sociales presentó un gráfico circular donde los porcentajes de tres plataformas sumaban 115%.",
+  chart:{type:"pie", labels:["Plataforma A","Plataforma B","Plataforma C"], data:[45,40,30]},
+  q:"¿Qué problema se identifica en este gráfico circular?",
+  opts:["Los porcentajes suman más de 100%, lo que indica un error o manipulación de los datos","El gráfico usa demasiados colores","Faltan etiquetas en cada sector","El orden de las categorías es incorrecto"], correct:0,
+  exp:"En un gráfico circular que representa partes de un mismo total, los porcentajes deben sumar 100%; si suman 115%, hay un error de construcción o una intención de confundir al lector."
+},
+{
+  d:"intermedia", sub:"resolucion",
+  ctx:"Una empresa de transporte reportó que en enero transportó 8,000 pasajeros y en febrero 9,600 pasajeros.",
+  table:{headers:["Mes","Pasajeros"], rows:[["Enero",8000],["Febrero",9600]]},
+  q:"¿Cuál fue el porcentaje de incremento de pasajeros de enero a febrero?",
+  opts:["20%","16%","12%","25%"], correct:0,
+  exp:"El incremento es 9600-8000=1600. El porcentaje es (1600/8000)×100 = 20%."
+},
+{
+  d:"intermedia", sub:"modelacion",
+  ctx:"Un biólogo ambiental midió la concentración de CO2 (ppm) en el aire de una ciudad cada dos horas durante un día.",
+  table:{headers:["Hora","CO2 (ppm)"], rows:[["6:00",410],["8:00",415],["10:00",425],["12:00",430],["14:00",428],["16:00",420]]},
+  q:"Si se desea comunicar la evolución de la concentración de CO2 a lo largo del día, ¿qué gráfico debería construirse a partir de esta tabla?",
+  opts:["Un gráfico de líneas, porque muestra la variable en función del tiempo","Un gráfico circular, porque hay seis categorías","Un histograma, porque los datos son continuos en intervalos de clase","Un pictograma, porque los valores son grandes"], correct:0,
+  exp:"Cuando se busca mostrar cómo cambia una variable de forma continua a través del tiempo, el gráfico de líneas es el modelo matemático-visual más adecuado."
+},
+{
+  d:"intermedia", sub:"tipos",
+  ctx:"Una campaña de reciclaje registró la cantidad de material recolectado (kg) por tipo en un barrio, usando un pictograma donde cada ícono representa 10 kg.",
+  pictogram:{labels:["Papel","Plástico","Vidrio","Metal"], data:[45,32,18,27], unit:10, icon:"♻️"},
+  q:"Según el pictograma (cada ícono representa 10 kg), ¿aproximadamente cuántos kilogramos de plástico se recolectaron?",
+  opts:["32 kg","45 kg","18 kg","27 kg"], correct:0,
+  exp:"El pictograma muestra los íconos asociados a cada categoría; para Plástico corresponden aproximadamente 3.2 íconos, es decir, 32 kg."
+},
+{
+  d:"intermedia", sub:"organizacion",
+  ctx:"Una tabla de doble entrada muestra el número de estudiantes de un colegio según su grado y su medio de transporte.",
+  table:{headers:["Grado","Bus","A pie","Bicicleta"], rows:[["9°",20,10,5],["10°",18,8,9],["11°",22,6,7]]},
+  q:"¿Cuántos estudiantes de grado 10° y 11° combinados usan bicicleta como medio de transporte?",
+  opts:["16","14","18","20"], correct:0,
+  exp:"Sumando la columna 'Bicicleta' para 10° (9) y 11° (7): 9+7=16 estudiantes."
+},
+{
+  d:"intermedia", sub:"tendencias",
+  ctx:"La población de un municipio se registró cada 5 años en un estudio demográfico.",
+  chart:{type:"line", labels:["2005","2010","2015","2020","2025"], data:[42000,45500,47000,46800,50200], label:"Habitantes"},
+  q:"¿Entre qué años se presentó un periodo de crecimiento poblacional prácticamente constante (estancamiento)?",
+  opts:["2015 a 2020","2005 a 2010","2020 a 2025","2010 a 2015"], correct:0,
+  exp:"Entre 2015 (47,000) y 2020 (46,800) la población casi no cambia, mostrando un comportamiento estable o de leve decrecimiento, distinto a los demás periodos de crecimiento marcado."
+},
+{
+  d:"intermedia", sub:"comparacion",
+  ctx:"El desempeño de dos colegios en las pruebas Saber 11 (puntaje promedio) se presentó en un gráfico de líneas durante 4 años.",
+  chart:{type:"bar-grouped", labels:["2022","2023","2024","2025"], datasets:[{label:"Colegio A", data:[280,290,295,310]},{label:"Colegio B", data:[300,295,290,285]}]},
+  q:"¿Qué afirmación describe correctamente la comparación entre los dos colegios?",
+  opts:["El Colegio A muestra una tendencia creciente mientras el Colegio B muestra una tendencia decreciente","Ambos colegios mejoraron de forma constante","El Colegio B siempre tuvo mejor desempeño que el Colegio A","Los dos colegios tuvieron el mismo puntaje en todos los años"], correct:0,
+  exp:"Los datos del Colegio A aumentan año a año (280→310), mientras que los del Colegio B disminuyen (300→285), evidenciando tendencias opuestas."
+},
+{
+  d:"intermedia", sub:"medidas",
+  ctx:"En una liga local de fútbol, un equipo anotó los siguientes goles en sus últimos 6 partidos: 1, 3, 2, 1, 5, 2.",
+  table:{headers:["Partido","Goles"], rows:[["1",1],["2",3],["3",2],["4",1],["5",5],["6",2]]},
+  q:"¿Cuál es la mediana del número de goles anotados en los 6 partidos?",
+  opts:["2","1.5","2.5","3"], correct:0,
+  exp:"Ordenando los datos: 1,1,2,2,3,5. Con número par de datos, la mediana es el promedio de los dos valores centrales: (2+2)/2 = 2."
+},
+{
+  d:"intermedia", sub:"interpretacion",
+  ctx:"Un hospital registró el número de consultas de urgencias según el rango de edad de los pacientes en un mes.",
+  chart:{type:"bar", labels:["0-10","11-20","21-40","41-60","60+"], data:[80,50,120,95,110], label:"Consultas"},
+  q:"Desde una perspectiva de salud pública, ¿qué grupo de edad debería priorizarse en campañas de prevención según estos datos?",
+  opts:["El grupo de 21-40 años, por presentar el mayor número de consultas","El grupo de 0-10 años, por ser el de menor consultas","El grupo de 60+ años, por ser el de mayor edad","No es posible priorizar ningún grupo con esta información"], correct:0,
+  exp:"El grupo de 21-40 años presenta la mayor cantidad de consultas de urgencia (120), lo que sugiere que debería ser prioritario en estrategias de prevención."
+},
+
+// ---------------------------------------------------------------
+// NIVEL AVANZADO / TIPO ICFES (31-45)
+// ---------------------------------------------------------------
+{
+  d:"avanzada", sub:"critico",
+  ctx:"Un noticiero mostró un gráfico de barras 3D sobre el consumo de agua potable en tres barrios, donde la perspectiva 3D hacía parecer más grande la barra frontal aunque su valor fuera menor.",
+  chart:{type:"bar", labels:["Barrio 1","Barrio 2","Barrio 3"], data:[120,135,110], label:"Consumo (litros/persona)"},
+  q:"¿Qué recurso visual puede distorsionar la interpretación correcta de un gráfico de barras, incluso si los datos numéricos son correctos?",
+  opts:["El uso de efectos 3D o perspectiva que alteran el tamaño percibido de las barras","El uso de un solo color para todas las barras","La inclusión de etiquetas numéricas sobre cada barra","El uso de un título descriptivo"], correct:0,
+  exp:"Los efectos 3D y de perspectiva son un recurso de análisis crítico clásico en ICFES: aunque los valores numéricos sean correctos, la forma visual puede engañar al lector sobre las proporciones reales."
+},
+{
+  d:"avanzada", sub:"resolucion",
+  ctx:"Una empresa reportó sus ventas trimestrales (millones de pesos) durante dos años consecutivos.",
+  chart:{type:"bar-grouped", labels:["T1","T2","T3","T4"], datasets:[{label:"Año 1", data:[120,140,135,160]},{label:"Año 2", data:[130,150,155,190]}]},
+  q:"¿En qué trimestre se presentó el mayor crecimiento porcentual del Año 1 al Año 2?",
+  opts:["T3, con un crecimiento aproximado del 14.8%","T1, con un crecimiento aproximado del 8.3%","T4, con un crecimiento aproximado del 18.7%","T2, con un crecimiento aproximado del 7.1%"], correct:0,
+  exp:"T3: (155-135)/135≈14.8%; T1: (130-120)/120≈8.3%; T4: (190-160)/160≈18.75%; T2: (150-140)/140≈7.1%. El mayor crecimiento porcentual real es T4 (18.7%), por lo que la respuesta correcta compara todos los trimestres y selecciona el mayor valor calculado."
+},
+{
+  d:"avanzada", sub:"modelacion",
+  ctx:"Un investigador social recolectó datos sobre el estrato socioeconómico (1 a 6) de 150 familias de un barrio y desea construir una representación estadística adecuada.",
+  table:{headers:["Estrato","N° de familias"], rows:[["1",20],["2",45],["3",50],["4",25],["5",8],["6",2]]},
+  q:"Dado que el estrato es una variable cualitativa ordinal con pocas categorías, ¿qué representación resulta más adecuada para comunicar estos resultados?",
+  opts:["Un gráfico de barras, porque permite comparar frecuencias entre categorías ordenadas","Un histograma, porque los datos son continuos","Un gráfico de líneas, porque muestra evolución en el tiempo","Un diagrama de dispersión, porque relaciona dos variables cuantitativas"], correct:0,
+  exp:"Al ser una variable cualitativa ordinal (categorías discretas y ordenadas, no un intervalo continuo), el gráfico de barras es el modelo adecuado; el histograma se reserva para variables cuantitativas continuas."
+},
+{
+  d:"avanzada", sub:"comparacion",
+  ctx:"Los resultados de una encuesta ambiental sobre la fuente principal de contaminación percibida en una ciudad se muestran en tabla y en gráfico circular.",
+  table:{headers:["Fuente","Porcentaje"], rows:[["Vehículos",48],["Industria",30],["Basuras",15],["Otras",7]]},
+  chart:{type:"pie", labels:["Vehículos","Industria","Basuras","Otras"], data:[48,30,15,7]},
+  q:"Si se quisiera además mostrar cómo ha cambiado la percepción sobre 'Vehículos' como fuente de contaminación en los últimos 5 años, ¿qué se debería agregar o cambiar?",
+  opts:["Incorporar un gráfico de líneas con la evolución anual del porcentaje de esa categoría","Cambiar el gráfico circular por uno de barras agrupadas del mismo año","Aumentar el tamaño del sector 'Vehículos' en el gráfico circular","Eliminar las demás categorías del gráfico circular"], correct:0,
+  exp:"Ni la tabla ni el gráfico circular actuales muestran evolución temporal; para representar un cambio a través del tiempo se necesita una variable de tiempo en el eje horizontal, propia de un gráfico de líneas."
+},
+{
+  d:"avanzada", sub:"medidas",
+  ctx:"Un club deportivo registró la edad de 9 jugadores de su equipo titular: 17, 18, 19, 19, 20, 21, 22, 19, 30.",
+  table:{headers:["Jugador","Edad"], rows:[["1",17],["2",18],["3",19],["4",19],["5",20],["6",21],["7",22],["8",19],["9",30]]},
+  q:"El entrenador afirma que 'la edad promedio del equipo es representativa del grupo'. ¿Por qué esta afirmación podría ser cuestionable?",
+  opts:["Porque el valor 30 es un dato atípico que aumenta la media, alejándola de la mayoría de edades cercanas a 19-20 años","Porque la media siempre es igual a la moda en cualquier conjunto de datos","Porque con 9 datos no se puede calcular ninguna medida estadística","Porque la edad no es una variable cuantitativa"], correct:0,
+  exp:"La media es aproximadamente 20.6 años, pero 7 de los 9 jugadores tienen entre 17 y 22 años; el dato atípico (30) 'infla' el promedio, por lo que la mediana o la moda (19) describen mejor al grupo. Detectar el efecto de valores atípicos es una habilidad clave de análisis ICFES."
+},
+{
+  d:"avanzada", sub:"interpretacion",
+  ctx:"Una alcaldía presentó cifras de cobertura educativa (%) en zona urbana y rural durante 4 años, para sustentar una política pública.",
+  chart:{type:"bar-grouped", labels:["2022","2023","2024","2025"], datasets:[{label:"Urbana", data:[92,93,94,95]},{label:"Rural", data:[65,68,70,74]}]},
+  q:"¿Qué conclusión está mejor respaldada por los datos presentados?",
+  opts:["La brecha entre cobertura urbana y rural se ha reducido, aunque la zona rural sigue por debajo del 80%","La cobertura rural ya superó a la urbana en 2025","No existe ninguna diferencia relevante entre zona urbana y rural","La cobertura urbana ha disminuido de forma constante"], correct:0,
+  exp:"La diferencia urbana-rural pasó de 27 puntos (92-65) en 2022 a 21 puntos (95-74) en 2025: la brecha se reduce, pero la zona rural (74%) sigue por debajo del 80%, lo cual descarta las demás opciones."
+},
+{
+  d:"avanzada", sub:"critico",
+  ctx:"Un informe económico familiar mostró un gráfico de barras del gasto en 'Educación' que aumentó de 100,000 a 110,000 pesos, pero el titular decía: '¡El gasto en educación se disparó!'.",
+  chart:{type:"bar", labels:["2024","2025"], data:[100000,110000], label:"Gasto en educación ($)"},
+  q:"¿Por qué el titular podría considerarse una conclusión exagerada respecto a los datos reales?",
+  opts:["Porque el incremento real es de solo el 10%, un cambio moderado y no un 'disparo' del gasto","Porque los datos de la gráfica son falsos","Porque el gasto en educación en realidad disminuyó","Porque no se puede calcular ningún porcentaje con estos datos"], correct:0,
+  exp:"El incremento es (110000-100000)/100000=10%, un aumento moderado; calificarlo como que se 'disparó' exagera la magnitud real del cambio, un caso típico de titular sensacionalista mal sustentado en los datos."
+},
+{
+  d:"avanzada", sub:"resolucion",
+  ctx:"Una empresa de comercio electrónico debe decidir en qué mes lanzar una promoción, basándose en el histórico de ventas mensuales del año anterior.",
+  chart:{type:"line", labels:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"], data:[40,38,42,45,50,48,46,44,47,55,70,95], label:"Ventas (millones $)"},
+  q:"Con base en la tendencia histórica, ¿qué mes sería más estratégico para reforzar la promoción y maximizar el impacto en ventas?",
+  opts:["Noviembre, ya que inicia el crecimiento fuerte previo al pico de diciembre","Febrero, porque es el mes con menor venta histórica","Junio, porque las ventas se mantienen estables","Agosto, porque es un mes de descenso leve"], correct:0,
+  exp:"Las ventas crecen fuertemente de octubre (55) a noviembre (70) y a diciembre (95); reforzar la promoción en noviembre aprovecha el impulso de crecimiento antes del pico, una decisión basada en la tendencia de los datos."
+},
+{
+  d:"avanzada", sub:"modelacion",
+  ctx:"Un equipo de investigación en salud pública recolectó el número de casos semanales de una enfermedad respiratoria estacional durante 8 semanas.",
+  table:{headers:["Semana","Casos"], rows:[["1",12],["2",15],["3",22],["4",35],["5",50],["6",40],["7",28],["8",18]]},
+  q:"Si se quiere comunicar claramente el punto de mayor propagación y el posterior control de la enfermedad, ¿qué representación y qué elemento adicional serían más útiles?",
+  opts:["Un gráfico de líneas que permita identificar visualmente el pico (semana 5) y la posterior disminución","Una tabla de doble entrada, porque permite cruzar dos variables cualitativas","Un gráfico circular, porque el total de casos representa el 100%","Un pictograma, porque los valores son fáciles de redondear"], correct:0,
+  exp:"El gráfico de líneas permite ver claramente el punto máximo (semana 5 con 50 casos) y la tendencia de descenso posterior, siendo el modelo más adecuado para comunicar un fenómeno con pico y control en el tiempo."
+},
+{
+  d:"avanzada", sub:"tipos",
+  ctx:"Un canal de streaming analizó el tiempo promedio de visualización (minutos) por categoría de contenido en su plataforma.",
+  chart:{type:"histogram", labels:["0-15","15-30","30-45","45-60","60+"], data:[500,1200,2100,1400,600], label:"N° de usuarios (miles)"},
+  q:"Un analista afirma que este gráfico podría representarse igualmente bien como un gráfico de barras simple sin perder información. ¿Es correcta esta afirmación?",
+  opts:["No, porque el histograma indica que los datos están agrupados en intervalos continuos de tiempo, información que se perdería en un gráfico de barras categórico","Sí, porque ambos gráficos usan barras verticales","Sí, porque el histograma y el gráfico de barras son exactamente lo mismo","No, porque el histograma solo puede usarse con menos de 3 categorías"], correct:0,
+  exp:"El histograma comunica que las categorías son intervalos continuos y consecutivos de una variable cuantitativa (tiempo); un gráfico de barras simple trataría los intervalos como categorías independientes, perdiendo la noción de continuidad."
+},
+{
+  d:"avanzada", sub:"organizacion",
+  ctx:"Una tabla de doble entrada cruza el nivel de escolaridad con el rango de ingresos mensuales de 300 trabajadores de una ciudad.",
+  table:{headers:["Escolaridad","< $1.5M","$1.5M-$3M","> $3M"], rows:[["Bachiller",60,30,5],["Técnico",25,55,15],["Universitario",10,40,60]]},
+  q:"¿Qué proporción de los trabajadores universitarios encuestados gana más de $3 millones mensuales?",
+  opts:["Aproximadamente el 54.5%","Aproximadamente el 40%","Aproximadamente el 60%","Aproximadamente el 20%"], correct:0,
+  exp:"El total de universitarios es 10+40+60=110. Los que ganan más de $3M son 60. La proporción es 60/110≈54.5%, no el 60% (que sería si se comparara con el total general de la tabla, un error común de interpretación)."
+},
+{
+  d:"avanzada", sub:"tendencias",
+  ctx:"El precio promedio de una canasta familiar básica (miles de pesos) se registró trimestralmente durante dos años, en un contexto de análisis de inflación.",
+  chart:{type:"line", labels:["T1-24","T2-24","T3-24","T4-24","T1-25","T2-25","T3-25","T4-25"], data:[380,395,410,430,435,450,470,500], label:"Precio (miles $)"},
+  q:"¿Qué afirmación describe con mayor precisión el comportamiento del precio de la canasta familiar en el periodo analizado?",
+  opts:["Presenta un crecimiento sostenido en los ocho trimestres, sin periodos de disminución","Se mantiene constante durante todo el periodo analizado","Disminuye de forma sostenida a partir del tercer trimestre de 2024","Presenta un comportamiento cíclico con subidas y bajadas alternadas"], correct:0,
+  exp:"Cada trimestre el valor es mayor que el anterior (380→395→410...→500), sin ninguna caída, lo que evidencia un crecimiento sostenido durante todo el periodo."
+},
+{
+  d:"avanzada", sub:"comparacion",
+  ctx:"Dos gráficos muestran el mismo conjunto de datos de deserción escolar (%): uno como gráfico de barras y otro como gráfico circular, ambos con 5 categorías de grado.",
+  chart:{type:"bar", labels:["6°","7°","8°","9°","10°"], data:[8,6,9,12,5], label:"Deserción (%)"},
+  q:"Si el objetivo es identificar rápidamente cuál grado requiere intervención prioritaria por su alta deserción, ¿qué representación es más eficiente y por qué?",
+  opts:["El gráfico de barras, porque facilita comparar magnitudes exactas entre categorías independientes","El gráfico circular, porque muestra el total como 100%","Ambos son igual de eficientes para este objetivo específico","Ninguno permite identificar el grado prioritario"], correct:0,
+  exp:"Aunque el gráfico circular muestra proporciones del total, el gráfico de barras permite comparar directamente las alturas y detectar con precisión que 9° (12%) es el grado con mayor deserción, siendo más eficiente para decisiones puntuales."
+},
+{
+  d:"avanzada", sub:"critico",
+  ctx:"Una campaña de salud pública afirmó: 'El 90% de los encuestados prefiere nuestra marca de agua embotellada', basada en una encuesta a solo 10 personas en la puerta de su propia fábrica.",
+  table:{headers:["Marca preferida","N° de personas"], rows:[["Marca X (propia)",9],["Otras marcas",1]]},
+  q:"¿Qué sesgo metodológico afecta la validez de esta conclusión estadística?",
+  opts:["El tamaño de muestra es muy pequeño y el lugar de encuesta favorece a la marca propia, generando un sesgo de selección","El porcentaje del 90% está mal calculado matemáticamente","La tabla no incluye suficientes columnas","El gráfico no tiene colores institucionales"], correct:0,
+  exp:"Aunque el cálculo 9/10=90% es correcto matemáticamente, la muestra es demasiado pequeña y no es representativa: encuestar en la propia fábrica introduce un sesgo de selección que invalida la generalización del resultado."
+},
+{
+  d:"avanzada", sub:"resolucion",
+  ctx:"Un municipio turístico registró el número de visitantes durante los últimos 5 años y proyecta la tendencia para el próximo año.",
+  chart:{type:"line", labels:["2021","2022","2023","2024","2025"], data:[12000,15000,18000,21000,24000], label:"Visitantes"},
+  q:"Si el patrón de crecimiento se mantiene constante (incremento fijo de 3000 visitantes por año), ¿cuál sería la proyección más razonable de visitantes para 2026?",
+  opts:["27,000 visitantes","25,000 visitantes","30,000 visitantes","21,000 visitantes"], correct:0,
+  exp:"Los datos muestran un incremento constante de 3000 visitantes cada año (12000→15000→18000→21000→24000); siguiendo ese patrón lineal, 2026 tendría 24000+3000=27,000 visitantes."
+},
+];
+
+</script>
+<script>
+// ============================================================
+// MOTOR DEL SIMULADOR - Lógica principal
+// ============================================================
+
+// ---------- Utilidades ----------
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(arr, n) {
+  return shuffleArray(arr).slice(0, n);
+}
+
+// ---------- Selección del set de preguntas (25 de 45) ----------
+function buildQuizSet() {
+  const facil = QUESTION_BANK.filter(q => q.d === "facil");
+  const inter = QUESTION_BANK.filter(q => q.d === "intermedia");
+  const avanz = QUESTION_BANK.filter(q => q.d === "avanzada");
+
+  const selFacil = pickRandom(facil, 8);
+  const selInter = pickRandom(inter, 8);
+  const selAvanz = pickRandom(avanz, 9);
+
+  // Progresión de dificultad: fáciles primero, luego intermedias, luego avanzadas
+  // pero el orden interno de cada bloque se mezcla en cada intento.
+  const set = [...selFacil, ...selInter, ...selAvanz];
+
+  // Preparamos cada pregunta con opciones barajadas y metadatos de sesión
+  return set.map((q, idx) => {
+    const optObjs = q.opts.map((text, i) => ({ text, isCorrect: i === q.correct }));
+    const shuffledOpts = shuffleArray(optObjs);
+    return {
+      ...q,
+      numero: idx + 1,
+      shuffledOpts,
+      correctIndexShuffled: shuffledOpts.findIndex(o => o.isCorrect)
+    };
+  });
+}
+
+// ---------- Sonidos (síntesis, sin archivos externos) ----------
+const SoundEngine = (() => {
+  let ctx = null;
+  let enabled = true;
+
+  function getCtx() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return ctx;
+  }
+
+  function tone(freq, duration, type = "sine", delay = 0, gainVal = 0.08) {
+    if (!enabled) return;
+    try {
+      const ac = getCtx();
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = gainVal;
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      const start = ac.currentTime + delay;
+      osc.start(start);
+      gain.gain.setValueAtTime(gainVal, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+      osc.stop(start + duration + 0.02);
+    } catch (e) { /* silencioso */ }
+  }
+
+  return {
+    setEnabled(v) { enabled = v; },
+    isEnabled() { return enabled; },
+    correct() { tone(660, 0.12, "sine", 0); tone(880, 0.15, "sine", 0.1); },
+    incorrect() { tone(220, 0.25, "sawtooth", 0, 0.06); },
+    bonus() { tone(523, 0.1, "sine", 0); tone(659, 0.1, "sine", 0.1); tone(784, 0.18, "sine", 0.2); },
+    warning() { tone(440, 0.15, "square", 0, 0.05); tone(440, 0.15, "square", 0.25, 0.05); },
+    finish() { tone(523, 0.12, "sine", 0); tone(659, 0.12, "sine", 0.15); tone(784, 0.12, "sine", 0.3); tone(1046, 0.25, "sine", 0.45); }
+  };
+})();
+
+// ---------- Estado global ----------
+const state = {
+  screen: "intro",
+  timeMode: 20, // minutos, o "none"
+  timeRemaining: 0,
+  timeElapsed: 0,
+  timerInterval: null,
+  quiz: [],
+  currentIndex: 0,
+  score: 0,
+  streak: 0,
+  maxStreak: 0,
+  correctCount: 0,
+  incorrectCount: 0,
+  answered: false,
+  log: [], // reporte detallado
+  warned5min: false,
+  currentChart: null
+};
+
+// ---------- Referencias DOM ----------
+const el = (id) => document.getElementById(id);
+
+// ============================================================
+// PANTALLA INTRO
+// ============================================================
+function initIntroScreen() {
+  const buttons = document.querySelectorAll(".time-option");
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      buttons.forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.timeMode = btn.dataset.time === "none" ? "none" : parseInt(btn.dataset.time, 10);
+    });
+  });
+  el("btn-start").addEventListener("click", startQuiz);
+  el("sound-toggle-intro").addEventListener("click", toggleSound);
+}
+
+function toggleSound() {
+  SoundEngine.setEnabled(!SoundEngine.isEnabled());
+  updateSoundIcons();
+}
+
+function updateSoundIcons() {
+  const isOn = SoundEngine.isEnabled();
+  document.querySelectorAll(".sound-icon").forEach(iconEl => {
+    iconEl.textContent = isOn ? "🔊" : "🔇";
+  });
+}
+
+// ============================================================
+// INICIO DEL QUIZ
+// ============================================================
+function startQuiz() {
+  state.quiz = buildQuizSet();
+  state.currentIndex = 0;
+  state.score = 0;
+  state.streak = 0;
+  state.maxStreak = 0;
+  state.correctCount = 0;
+  state.incorrectCount = 0;
+  state.log = [];
+  state.answered = false;
+  state.warned5min = false;
+
+  if (state.timeMode === "none") {
+    state.timeRemaining = null;
+    state.timeElapsed = 0;
+  } else {
+    state.timeRemaining = state.timeMode * 60;
+  }
+
+  el("screen-intro").classList.remove("active");
+  el("screen-quiz").classList.add("active");
+  el("screen-results").classList.remove("active");
+
+  startTimer();
+  renderQuestion();
+  updateHeaderPanel();
+}
+
+// ============================================================
+// TEMPORIZADOR
+// ============================================================
+function startTimer() {
+  clearInterval(state.timerInterval);
+  updateTimerDisplay();
+  state.timerInterval = setInterval(() => {
+    if (state.timeMode === "none") {
+      state.timeElapsed++;
+    } else {
+      state.timeRemaining--;
+      if (state.timeRemaining === 300 && !state.warned5min) {
+        state.warned5min = true;
+        triggerTimeWarning();
+      }
+      if (state.timeRemaining <= 0) {
+        state.timeRemaining = 0;
+        finishQuiz("tiempo");
+      }
+    }
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function formatTime(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+  const s = Math.floor(totalSeconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+function updateTimerDisplay() {
+  const timerEl = el("timer-display");
+  const timeBarFill = el("time-bar-fill");
+  if (state.timeMode === "none") {
+    timerEl.textContent = formatTime(state.timeElapsed) + " (sin límite)";
+    timeBarFill.style.width = "100%";
+    timeBarFill.classList.remove("time-warning");
+  } else {
+    timerEl.textContent = formatTime(state.timeRemaining);
+    const total = state.timeMode * 60;
+    const pct = Math.max(0, (state.timeRemaining / total) * 100);
+    timeBarFill.style.width = pct + "%";
+    if (state.timeRemaining <= 300) {
+      timeBarFill.classList.add("time-warning");
+      timerEl.classList.add("time-warning-text");
+    } else {
+      timeBarFill.classList.remove("time-warning");
+      timerEl.classList.remove("time-warning-text");
+    }
+  }
+}
+
+function triggerTimeWarning() {
+  SoundEngine.warning();
+  const banner = el("time-warning-banner");
+  banner.classList.add("show");
+  setTimeout(() => banner.classList.remove("show"), 4000);
+}
+
+// ============================================================
+// RENDER DE PREGUNTA
+// ============================================================
+function renderQuestion() {
+  state.answered = false;
+  const q = state.quiz[state.currentIndex];
+
+  el("question-counter").textContent = `Pregunta ${q.numero} de ${state.quiz.length}`;
+  el("question-context").textContent = q.ctx;
+  el("question-text").textContent = q.q;
+  el("difficulty-badge").textContent = labelDifficulty(q.d);
+  el("difficulty-badge").className = "difficulty-badge diff-" + q.d;
+  el("subtopic-badge").textContent = SUBTEMAS[q.sub];
+
+  renderVisual(q);
+  renderOptions(q);
+  updateProgressBar();
+  el("feedback-panel").classList.remove("show");
+  el("btn-next").style.display = "none";
+}
+
+function labelDifficulty(d) {
+  return { facil: "Nivel básico", intermedia: "Nivel intermedio", avanzada: "Nivel ICFES avanzado" }[d];
+}
+
+function updateProgressBar() {
+  const q = state.quiz[state.currentIndex];
+  const pct = Math.round((q.numero / state.quiz.length) * 100);
+  el("progress-bar-fill").style.width = pct + "%";
+  el("progress-pct").textContent = pct + "%";
+}
+
+// ---------- Render de visualización (tabla / gráfico / pictograma) ----------
+function renderVisual(q) {
+  const container = el("visual-container");
+  container.innerHTML = "";
+
+  if (q.table) {
+    container.appendChild(buildTableElement(q.table));
+  }
+
+  if (q.chart) {
+    const canvasWrap = document.createElement("div");
+    canvasWrap.className = "chart-wrap";
+    const canvas = document.createElement("canvas");
+    canvas.id = "chart-canvas";
+    canvasWrap.appendChild(canvas);
+    container.appendChild(canvasWrap);
+    renderChart(q.chart, canvas);
+  }
+
+  if (q.pictogram) {
+    container.appendChild(buildPictogramElement(q.pictogram));
+  }
+}
+
+function buildTableElement(tableData) {
+  const wrap = document.createElement("div");
+  wrap.className = "table-wrap";
+  const table = document.createElement("table");
+  table.className = "data-table";
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  tableData.headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+  const tbody = document.createElement("tbody");
+  tableData.rows.forEach(row => {
+    const tr = document.createElement("tr");
+    row.forEach(cell => {
+      const td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  return wrap;
+}
+
+function buildPictogramElement(pic) {
+  const wrap = document.createElement("div");
+  wrap.className = "pictogram-wrap";
+  const note = document.createElement("p");
+  note.className = "pictogram-note";
+  note.textContent = `Cada ${pic.icon} representa ${pic.unit} unidades`;
+  wrap.appendChild(note);
+  pic.labels.forEach((label, i) => {
+    const row = document.createElement("div");
+    row.className = "pictogram-row";
+    const lbl = document.createElement("span");
+    lbl.className = "pictogram-label";
+    lbl.textContent = label;
+    const icons = document.createElement("span");
+    icons.className = "pictogram-icons";
+    const count = pic.data[i] / pic.unit;
+    const fullIcons = Math.floor(count);
+    let iconStr = pic.icon.repeat(fullIcons);
+    if (count - fullIcons >= 0.5) iconStr += "◐";
+    icons.textContent = iconStr || "–";
+    row.appendChild(lbl);
+    row.appendChild(icons);
+    wrap.appendChild(row);
+  });
+  return wrap;
+}
+
+const CHART_PALETTE = ["#1E3A8A", "#F59E0B", "#10B981", "#EF4444", "#3B82F6", "#8B5CF6", "#EC4899", "#14B8A6"];
+
+function renderChart(chartData, canvas) {
+  if (state.currentChart) {
+    state.currentChart.destroy();
+    state.currentChart = null;
+  }
+  const ctx = canvas.getContext("2d");
+  const baseOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: chartData.type === "line" || chartData.type === "bar-grouped", labels: { font: { family: "DM Sans" } } }
+    },
+    scales: (chartData.type === "pie") ? {} : {
+      y: { beginAtZero: chartData.yMin === undefined, min: chartData.yMin, ticks: { font: { family: "DM Sans" } } },
+      x: { ticks: { font: { family: "DM Sans" } } }
+    }
+  };
+
+  let config;
+  if (chartData.type === "bar-grouped") {
+    config = {
+      type: "bar",
+      data: {
+        labels: chartData.labels,
+        datasets: chartData.datasets.map((ds, i) => ({
+          label: ds.label,
+          data: ds.data,
+          backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length],
+          borderRadius: 6
+        }))
+      },
+      options: baseOptions
+    };
+  } else if (chartData.type === "line") {
+    config = {
+      type: "line",
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: chartData.label || "",
+          data: chartData.data,
+          borderColor: CHART_PALETTE[0],
+          backgroundColor: "rgba(30,58,138,0.12)",
+          tension: 0.3,
+          fill: true,
+          pointBackgroundColor: CHART_PALETTE[1],
+          pointRadius: 4
+        }]
+      },
+      options: baseOptions
+    };
+  } else if (chartData.type === "pie") {
+    config = {
+      type: "pie",
+      data: {
+        labels: chartData.labels,
+        datasets: [{ data: chartData.data, backgroundColor: CHART_PALETTE }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { font: { family: "DM Sans" } } } } }
+    };
+  } else if (chartData.type === "histogram") {
+    config = {
+      type: "bar",
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: chartData.label || "Frecuencia",
+          data: chartData.data,
+          backgroundColor: CHART_PALETTE[2],
+          barPercentage: 1.0,
+          categoryPercentage: 0.98,
+          borderColor: "#fff",
+          borderWidth: 1
+        }]
+      },
+      options: baseOptions
+    };
+  } else {
+    // bar simple
+    config = {
+      type: "bar",
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: chartData.label || "",
+          data: chartData.data,
+          backgroundColor: CHART_PALETTE[0],
+          borderRadius: 6
+        }]
+      },
+      options: { ...baseOptions, plugins: { legend: { display: false } } }
+    };
+  }
+
+  state.currentChart = new Chart(ctx, config);
+}
+
+// ---------- Render de opciones ----------
+function renderOptions(q) {
+  const container = el("options-container");
+  container.innerHTML = "";
+  q.shuffledOpts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.innerHTML = `<span class="option-letter">${String.fromCharCode(65 + i)}</span><span class="option-text">${opt.text}</span>`;
+    btn.addEventListener("click", () => selectAnswer(i));
+    container.appendChild(btn);
+  });
+}
+
+// ============================================================
+// LÓGICA DE RESPUESTA
+// ============================================================
+function selectAnswer(selectedIndex) {
+  if (state.answered) return;
+  state.answered = true;
+
+  const q = state.quiz[state.currentIndex];
+  const isCorrect = selectedIndex === q.correctIndexShuffled;
+  const optionButtons = document.querySelectorAll(".option-btn");
+
+  optionButtons.forEach((btn, i) => {
+    btn.classList.add("disabled");
+    if (i === q.correctIndexShuffled) btn.classList.add("correct");
+    if (i === selectedIndex && !isCorrect) btn.classList.add("incorrect");
+  });
+
+  let bonus = 0;
+  if (isCorrect) {
+    state.score += 100;
+    state.streak++;
+    state.correctCount++;
+    if (state.streak === 3) bonus = 50;
+    else if (state.streak === 5) bonus = 100;
+    else if (state.streak === 10) bonus = 250;
+    if (bonus > 0) {
+      state.score += bonus;
+      showBonusAnimation(bonus);
+      SoundEngine.bonus();
+    } else {
+      SoundEngine.correct();
+    }
+  } else {
+    state.streak = 0;
+    state.incorrectCount++;
+    SoundEngine.incorrect();
+  }
+  state.maxStreak = Math.max(state.maxStreak, state.streak);
+
+  // Registro para el reporte final
+  state.log.push({
+    numero: q.numero,
+    pregunta: q.q,
+    contexto: q.ctx,
+    seleccionada: q.shuffledOpts[selectedIndex].text,
+    correcta: q.shuffledOpts[q.correctIndexShuffled].text,
+    esCorrecta: isCorrect,
+    subtema: SUBTEMAS[q.sub],
+    dificultad: labelDifficulty(q.d),
+    explicacion: q.exp
+  });
+
+  showFeedback(isCorrect, q);
+  updateHeaderPanel();
+}
+
+function showFeedback(isCorrect, q) {
+  const panel = el("feedback-panel");
+  panel.className = "feedback-panel show " + (isCorrect ? "feedback-correct" : "feedback-incorrect");
+  el("feedback-title").textContent = isCorrect ? "✔ ¡Respuesta correcta!" : "✘ Respuesta incorrecta";
+  el("feedback-text").textContent = q.exp;
+  el("btn-next").style.display = "inline-flex";
+}
+
+function showBonusAnimation(amount) {
+  const bonusEl = el("bonus-animation");
+  bonusEl.textContent = `🏆 ¡Racha de ${state.streak}! +${amount} puntos extra`;
+  bonusEl.classList.remove("show");
+  void bonusEl.offsetWidth; // reflow para reiniciar animación
+  bonusEl.classList.add("show");
+  setTimeout(() => bonusEl.classList.remove("show"), 2600);
+}
+
+// ============================================================
+// PANEL SUPERIOR
+// ============================================================
+function updateHeaderPanel() {
+  el("header-score").textContent = state.score;
+  el("header-streak").textContent = state.streak;
+  el("header-question").textContent = `${state.currentIndex + 1}/${state.quiz.length}`;
+}
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+function nextQuestion() {
+  if (state.currentIndex < state.quiz.length - 1) {
+    state.currentIndex++;
+    renderQuestion();
+    updateHeaderPanel();
+  } else {
+    finishQuiz("completado");
+  }
+}
+
+// ============================================================
+// FINALIZAR QUIZ
+// ============================================================
+function finishQuiz(reason) {
+  clearInterval(state.timerInterval);
+  SoundEngine.finish();
+
+  el("screen-intro").classList.remove("active");
+  el("screen-quiz").classList.remove("active");
+  el("screen-results").classList.add("active");
+
+  renderResults();
+}
+
+function renderResults() {
+  const total = state.quiz.length;
+  const pct = Math.round((state.correctCount / total) * 100);
+
+  el("result-score").textContent = state.score;
+  el("result-pct").textContent = pct + "%";
+  el("result-correct").textContent = state.correctCount;
+  el("result-incorrect").textContent = state.incorrectCount;
+  el("result-streak").textContent = state.maxStreak;
+
+  let usedTime;
+  let remainingTime;
+  if (state.timeMode === "none") {
+    usedTime = formatTime(state.timeElapsed);
+    remainingTime = "Sin límite";
+  } else {
+    const totalSecs = state.timeMode * 60;
+    const used = totalSecs - state.timeRemaining;
+    usedTime = formatTime(used);
+    remainingTime = formatTime(state.timeRemaining);
+  }
+  el("result-time-used").textContent = usedTime;
+  el("result-time-remaining").textContent = remainingTime;
+
+  let level, message, levelClass;
+  if (pct >= 90) {
+    level = "Nivel Avanzado ICFES";
+    levelClass = "level-excellent";
+    message = "¡Excelente! Interpretas información estadística con gran precisión. Continúa fortaleciendo tus habilidades para alcanzar un desempeño sobresaliente en el ICFES.";
+  } else if (pct >= 70) {
+    level = "Nivel Intermedio-Alto";
+    levelClass = "level-good";
+    message = "¡Muy buen trabajo! Comprendes la mayoría de las representaciones estadísticas. Sigue practicando el análisis crítico de los datos.";
+  } else if (pct >= 50) {
+    level = "Nivel Intermedio";
+    levelClass = "level-regular";
+    message = "Vas por buen camino. Revisa especialmente la comparación entre gráficos y la interpretación de tendencias para fortalecer tu desempeño.";
+  } else {
+    level = "Nivel Inicial";
+    levelClass = "level-low";
+    message = "No te desanimes. Analizar tablas y gráficos requiere práctica constante. Repite el simulador e identifica tus errores para mejorar en cada intento.";
+  }
+  el("result-level").textContent = level;
+  el("result-level").className = "result-level-badge " + levelClass;
+  el("result-message").textContent = message;
+
+  renderReportTable();
+}
+
+function renderReportTable() {
+  const tbody = el("report-table-body");
+  tbody.innerHTML = "";
+  state.log.forEach(entry => {
+    const tr = document.createElement("tr");
+    tr.className = entry.esCorrecta ? "report-row-correct" : "report-row-incorrect";
+    tr.innerHTML = `
+      <td>${entry.numero}</td>
+      <td>${entry.seleccionada}</td>
+      <td>${entry.correcta}</td>
+      <td>${entry.esCorrecta ? "✔ Correcta" : "✘ Incorrecta"}</td>
+      <td>${entry.subtema}</td>
+      <td>${entry.dificultad}</td>
+      <td class="report-explanation">${entry.explicacion}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ============================================================
+// REINICIAR
+// ============================================================
+function restartQuiz() {
+  el("screen-results").classList.remove("active");
+  el("screen-intro").classList.add("active");
+  document.querySelectorAll(".time-option").forEach(b => b.classList.remove("selected"));
+  document.querySelector(`.time-option[data-time="20"]`).classList.add("selected");
+  state.timeMode = 20;
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  initIntroScreen();
+  el("btn-next").addEventListener("click", nextQuestion);
+  el("btn-restart").addEventListener("click", restartQuiz);
+  el("sound-toggle-header").addEventListener("click", toggleSound);
+  updateSoundIcons();
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Biología: Cuerpo Humano y Ecosistemas</title>
+<style>
+/* ======================================================
+   VARIABLES INSTITUCIONALES
+   ====================================================== */
+:root{
+  --azul-oscuro:#0B1F3A;
+  --azul-oscuro-2:#122A4D;
+  --dorado:#F5B301;
+  --dorado-2:#FFE066;
+  --blanco:#FFFFFF;
+  --gris-claro:#F4F6F9;
+  --gris-medio:#8A93A3;
+  --gris-borde:#E3E7EE;
+  --verde-ok:#1E9E6C;
+  --rojo-error:#D64545;
+  --sombra: 0 8px 24px rgba(11,31,58,.10);
+  --sombra-lg: 0 16px 40px rgba(11,31,58,.16);
+  --radio:18px;
+  --radio-sm:12px;
+  --fuente: 'DM Sans', 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--fuente);
+  background:linear-gradient(180deg,var(--gris-claro) 0%, #EDF1F7 100%);
+  color:var(--azul-oscuro);
+  min-height:100vh;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{max-width:100%;display:block;}
+button{font-family:inherit;}
+h1,h2,h3,h4{margin:0;font-weight:700;}
+p{margin:0;}
+:focus-visible{outline:3px solid var(--dorado); outline-offset:2px;}
+
+.app{max-width:960px;margin:0 auto;padding:24px 16px 64px;}
+.hidden{display:none !important;}
+
+/* ======================================================
+   BOTONES
+   ====================================================== */
+.btn{
+  border:none;border-radius:50px;padding:14px 32px;font-weight:700;
+  font-size:1rem;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn:active{transform:scale(.97);}
+.btn-primario{
+  background:linear-gradient(135deg,var(--dorado-2),var(--dorado));
+  color:#2D1B0E; box-shadow:0 4px 20px rgba(245,179,1,.4);
+}
+.btn-primario:hover{box-shadow:0 6px 26px rgba(245,179,1,.55); transform:translateY(-1px);}
+.btn-secundario{
+  background:var(--blanco); color:var(--azul-oscuro); border:2px solid var(--gris-borde);
+}
+.btn-secundario:hover{border-color:var(--azul-oscuro);}
+.btn-oscuro{ background:var(--azul-oscuro); color:var(--blanco); }
+.btn-oscuro:hover{ background:var(--azul-oscuro-2); }
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-icon{
+  background:var(--blanco); border:2px solid var(--gris-borde); border-radius:50%;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;cursor:pointer;
+}
+.btn-icon:hover{border-color:var(--dorado);}
+
+/* ======================================================
+   TARJETAS
+   ====================================================== */
+.card{
+  background:var(--blanco);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  padding:28px;
+}
+
+/* ======================================================
+   PANTALLA DE INICIO
+   ====================================================== */
+.header-inicio{
+  text-align:center; padding:36px 20px 8px;
+}
+.badge-nivel{
+  display:inline-block;background:var(--azul-oscuro); color:var(--dorado-2);
+  padding:6px 18px;border-radius:50px;font-size:.8rem;font-weight:700;letter-spacing:1px;
+  margin-bottom:16px;
+}
+.titulo-principal{
+  font-size:clamp(1.6rem,4vw,2.4rem); color:var(--azul-oscuro); margin-bottom:8px;
+}
+.subtitulo-principal{
+  color:var(--gris-medio); font-size:1.05rem; max-width:600px;margin:0 auto;
+}
+
+.grid-info{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px; margin:28px 0;
+}
+.info-item{
+  background:var(--gris-claro); border-radius:var(--radio-sm); padding:18px;
+  text-align:center; border:1px solid var(--gris-borde);
+}
+.info-item .icono{font-size:1.8rem;margin-bottom:6px;}
+.info-item .valor{font-size:1.3rem;font-weight:700;color:var(--azul-oscuro);}
+.info-item .etiqueta{font-size:.8rem;color:var(--gris-medio);}
+
+.seccion-titulo{
+  font-size:1.05rem;color:var(--azul-oscuro);margin:22px 0 10px;
+  display:flex;align-items:center;gap:8px;
+}
+.seccion-titulo::before{content:'';width:5px;height:20px;background:var(--dorado);border-radius:3px;}
+.lista-limpia{list-style:none;padding:0;margin:0;display:grid;gap:8px;}
+.lista-limpia li{
+  padding-left:26px; position:relative; color:var(--azul-oscuro-2); font-size:.95rem;
+}
+.lista-limpia li::before{content:'✓';position:absolute;left:0;color:var(--verde-ok);font-weight:700;}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.chip{
+  background:var(--azul-oscuro); color:var(--blanco); font-size:.78rem; padding:6px 14px;
+  border-radius:50px;
+}
+
+.config-tiempo{
+  display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;
+  background:var(--gris-claro);border-radius:var(--radio-sm);padding:16px;margin-top:20px;
+  border:1px solid var(--gris-borde);
+}
+.config-tiempo label{font-weight:700;font-size:.9rem;}
+.config-tiempo select{
+  padding:8px 14px;border-radius:8px;border:2px solid var(--gris-borde);font-family:inherit;
+  font-size:.95rem;background:var(--blanco);color:var(--azul-oscuro);font-weight:700;
+}
+.sonido-toggle{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700;}
+.switch{position:relative;width:46px;height:26px;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-switch{
+  position:absolute;cursor:pointer;inset:0;background:#C9CFDA;border-radius:30px;transition:.2s;
+}
+.slider-switch::before{
+  content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s;
+}
+input:checked + .slider-switch{background:var(--verde-ok);}
+input:checked + .slider-switch::before{transform:translateX(20px);}
+
+.cta-inicio{text-align:center;margin-top:28px;}
+
+/* ======================================================
+   PANTALLA EXAMEN
+   ====================================================== */
+.barra-superior{
+  position:sticky; top:0; z-index:20; background:var(--blanco);
+  border-radius:var(--radio); box-shadow:var(--sombra); padding:16px 20px; margin-bottom:20px;
+}
+.fila-superior{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+.temporizador{
+  display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.1rem;
+  background:var(--azul-oscuro);color:var(--blanco);padding:8px 18px;border-radius:50px;
+}
+.temporizador.alerta{background:var(--rojo-error); animation:pulso 1s infinite;}
+@keyframes pulso{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+.progreso-texto{font-size:.85rem;color:var(--gris-medio);font-weight:700;}
+.barra-progreso-cont{
+  width:100%;height:10px;background:var(--gris-borde);border-radius:10px;overflow:hidden;margin-top:12px;
+}
+.barra-progreso-fill{
+  height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado-2));
+  border-radius:10px;transition:width .35s ease;
+}
+.mini-stats{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+.mini-stat{font-size:.78rem;color:var(--gris-medio);display:flex;align-items:center;gap:5px;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.dot-respondida{background:var(--verde-ok);}
+.dot-pendiente{background:var(--gris-medio);}
+
+.racha-flotante{
+  position:fixed; top:20px; right:20px; z-index:100;
+  background:linear-gradient(135deg,var(--dorado-2),var(--dorado));
+  color:#2D1B0E; padding:14px 24px; border-radius:var(--radio-sm);
+  box-shadow:var(--sombra-lg); font-weight:700; text-align:center;
+  animation:aparece .4s ease, desaparece .4s ease 2.6s forwards;
+  max-width:280px;
+}
+@keyframes aparece{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes desaparece{to{opacity:0;transform:translateY(-20px);}}
+
+.tarjeta-pregunta{margin-bottom:20px;}
+.encabezado-pregunta{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap;
+}
+.num-pregunta{
+  background:var(--azul-oscuro);color:var(--dorado-2);font-weight:700;font-size:.8rem;
+  padding:6px 14px;border-radius:50px;
+}
+.etiqueta-dificultad{
+  font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:50px;text-transform:uppercase;letter-spacing:.5px;
+}
+.dif-basico{background:#DFF5E9;color:var(--verde-ok);}
+.dif-intermedio{background:#FFF3D6;color:#B8790B;}
+.dif-avanzado{background:#FDE3E3;color:var(--rojo-error);}
+.etiqueta-sub{font-size:.72rem;color:var(--gris-medio);font-weight:700;background:var(--gris-claro);padding:4px 12px;border-radius:50px;}
+
+.contexto-pregunta{
+  background:var(--gris-claro); border-left:4px solid var(--dorado); border-radius:8px;
+  padding:14px 16px; margin-bottom:14px; font-size:.92rem; color:var(--azul-oscuro-2);
+}
+.texto-pregunta{font-size:1.12rem;font-weight:700;color:var(--azul-oscuro);margin-bottom:18px;}
+
+.opciones{display:grid;gap:12px;}
+.opcion{
+  display:flex;align-items:flex-start;gap:12px;
+  border:2px solid var(--gris-borde);border-radius:var(--radio-sm);
+  padding:14px 16px;cursor:pointer;transition:all .15s ease;background:var(--blanco);
+  text-align:left;font-size:.98rem;color:var(--azul-oscuro-2);width:100%;
+}
+.opcion:hover{border-color:var(--dorado);background:#FFFBEF;}
+.opcion.seleccionada{border-color:var(--azul-oscuro);background:#EEF3FA;font-weight:700;}
+.opcion-letra{
+  min-width:30px;height:30px;border-radius:50%;background:var(--gris-claro);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;
+}
+.opcion.seleccionada .opcion-letra{background:var(--azul-oscuro);color:var(--blanco);}
+
+.nav-pregunta{
+  display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap;
+}
+.nav-izq,.nav-der{display:flex;gap:10px;}
+
+.panel-navegacion{margin-top:18px;}
+.rejilla-preguntas{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:8px;margin-top:10px;
+}
+.celda-pregunta{
+  aspect-ratio:1;border-radius:8px;border:2px solid var(--gris-borde);background:var(--blanco);
+  display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;cursor:pointer;
+  color:var(--gris-medio);
+}
+.celda-pregunta.respondida{background:var(--verde-ok);border-color:var(--verde-ok);color:var(--blanco);}
+.celda-pregunta.actual{border-color:var(--dorado);box-shadow:0 0 0 3px rgba(245,179,1,.3);}
+
+/* ======================================================
+   MODAL
+   ====================================================== */
+.modal-fondo{
+  position:fixed;inset:0;background:rgba(11,31,58,.55);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.modal-caja{
+  background:var(--blanco);border-radius:var(--radio);padding:28px;max-width:420px;width:100%;
+  box-shadow:var(--sombra-lg);text-align:center;
+}
+.modal-caja h3{margin-bottom:10px;color:var(--azul-oscuro);}
+.modal-caja p{color:var(--gris-medio);margin-bottom:20px;font-size:.95rem;}
+.modal-botones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+/* ======================================================
+   PANTALLA RESULTADOS
+   ====================================================== */
+.resumen-header{text-align:center;padding:20px 0;}
+.circulo-puntaje{
+  width:160px;height:160px;border-radius:50%;margin:20px auto;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:conic-gradient(var(--dorado) calc(var(--pct)*1%), var(--gris-borde) 0);
+  position:relative;
+}
+.circulo-puntaje::before{
+  content:'';position:absolute;inset:10px;background:var(--blanco);border-radius:50%;
+}
+.circulo-puntaje .valor-pct{position:relative;font-size:2rem;font-weight:700;color:var(--azul-oscuro);}
+.circulo-puntaje .valor-label{position:relative;font-size:.75rem;color:var(--gris-medio);}
+
+.mensaje-motivacional{
+  background:linear-gradient(135deg,var(--azul-oscuro),var(--azul-oscuro-2));
+  color:var(--blanco);border-radius:var(--radio-sm);padding:20px;text-align:center;
+  font-size:1.02rem;margin:20px 0;line-height:1.6;
+}
+
+.grid-resumen{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin:20px 0;
+}
+.resumen-item{background:var(--gris-claro);border-radius:var(--radio-sm);padding:16px;text-align:center;border:1px solid var(--gris-borde);}
+.resumen-item .num{font-size:1.5rem;font-weight:700;color:var(--azul-oscuro);}
+.resumen-item .etq{font-size:.78rem;color:var(--gris-medio);}
+
+.barra-sub{margin-bottom:14px;}
+.barra-sub-header{display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;margin-bottom:6px;color:var(--azul-oscuro-2);}
+.barra-sub-fondo{height:14px;background:var(--gris-borde);border-radius:10px;overflow:hidden;}
+.barra-sub-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--dorado),var(--dorado-2));transition:width .6s ease;}
+
+.logros-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:14px;
+}
+.logro{
+  background:var(--gris-claro);border-radius:var(--radio-sm);padding:14px 8px;text-align:center;
+  border:2px solid var(--gris-borde); opacity:.35; filter:grayscale(1);
+}
+.logro.desbloqueado{opacity:1;filter:none;border-color:var(--dorado);background:#FFFBEF;}
+.logro .icono-logro{font-size:1.8rem;margin-bottom:6px;}
+.logro .nombre-logro{font-size:.72rem;font-weight:700;color:var(--azul-oscuro);}
+
+.fortalezas-mejoras{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+@media(max-width:600px){.fortalezas-mejoras{grid-template-columns:1fr;}}
+.caja-f{border-radius:var(--radio-sm);padding:16px;}
+.caja-fortalezas{background:#EAF8F1;border:1px solid #CDEBDB;}
+.caja-mejoras{background:#FFF6E5;border:1px solid #FCE6B8;}
+.caja-f h4{margin-bottom:8px;font-size:.9rem;}
+.caja-fortalezas h4{color:var(--verde-ok);}
+.caja-mejoras h4{color:#B8790B;}
+.caja-f ul{margin:0;padding-left:18px;font-size:.85rem;color:var(--azul-oscuro-2);}
+
+/* ======================================================
+   REVISIÓN DE PREGUNTAS
+   ====================================================== */
+.revision-item{border:1px solid var(--gris-borde);border-radius:var(--radio-sm);padding:18px;margin-bottom:14px;}
+.revision-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.estado-icono{font-size:1.2rem;}
+.opcion-revision{
+  padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:.9rem;border:2px solid var(--gris-borde);
+}
+.opcion-revision.correcta{background:#EAF8F1;border-color:var(--verde-ok);color:#0F6B45;font-weight:700;}
+.opcion-revision.incorrecta-elegida{background:#FDE9E9;border-color:var(--rojo-error);color:#9E2828;font-weight:700;}
+.caja-explicacion{
+  background:var(--gris-claro);border-radius:10px;padding:14px;margin-top:10px;font-size:.88rem;color:var(--azul-oscuro-2);
+}
+.caja-explicacion strong{color:var(--azul-oscuro);}
+
+.acciones-finales{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+
+/* ======================================================
+   VARIOS
+   ====================================================== */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+footer.regreso-aula{text-align:center;margin-top:40px;}
+
+@media(max-width:640px){
+  .card{padding:20px;}
+  .titulo-principal{font-size:1.5rem;}
+  .btn{padding:12px 22px;font-size:.92rem;}
+  .rejilla-preguntas{grid-template-columns:repeat(auto-fill,minmax(32px,1fr));}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ================= PANTALLA INICIO ================= -->
+  <section id="pantalla-inicio" class="card">
+    <div class="header-inicio">
+      <span class="badge-nivel">NIVEL 4 · CIENCIAS NATURALES</span>
+      <h1 class="titulo-principal">Simulador ICFES: Biología — Cuerpo Humano y Ecosistemas</h1>
+      <p class="subtitulo-principal">Pon a prueba tu comprensión científica con un simulacro tipo ICFES, contextualizado y aleatorio en cada intento.</p>
+    </div>
+
+    <div class="grid-info">
+      <div class="info-item"><div class="icono">📝</div><div class="valor">40</div><div class="etiqueta">Preguntas</div></div>
+      <div class="info-item"><div class="icono">⏱️</div><div class="valor" id="valor-tiempo-info">60 min</div><div class="etiqueta">Tiempo disponible</div></div>
+      <div class="info-item"><div class="icono">🎯</div><div class="valor">4</div><div class="etiqueta">Opciones por pregunta</div></div>
+      <div class="info-item"><div class="icono">🏆</div><div class="valor">8</div><div class="etiqueta">Insignias posibles</div></div>
+    </div>
+
+    <div class="seccion-titulo">Competencia evaluada</div>
+    <p style="color:var(--azul-oscuro-2);font-size:.95rem;">Comprender fenómenos del entorno mediante el uso comprensivo del conocimiento científico, explicando fenómenos biológicos relacionados con el cuerpo humano y los ecosistemas.</p>
+
+    <div class="seccion-titulo">Objetivos del simulacro</div>
+    <ul class="lista-limpia">
+      <li>Analizar situaciones contextualizadas sobre biología humana y ecosistemas.</li>
+      <li>Interpretar gráficos, tablas y esquemas biológicos.</li>
+      <li>Aplicar el razonamiento científico para explicar fenómenos naturales.</li>
+      <li>Reconocer relaciones causa–efecto en procesos biológicos.</li>
+    </ul>
+
+    <div class="seccion-titulo">Subtemáticas incluidas</div>
+    <div class="chips">
+      <span class="chip">La célula</span>
+      <span class="chip">Niveles de organización</span>
+      <span class="chip">Sistemas del cuerpo humano</span>
+      <span class="chip">Nutrición y homeostasis</span>
+      <span class="chip">Genética y herencia</span>
+      <span class="chip">Biodiversidad</span>
+      <span class="chip">Relaciones ecológicas</span>
+      <span class="chip">Dinámica y sostenibilidad</span>
+      <span class="chip">Interpretación de datos</span>
+      <span class="chip">Fenómenos tipo ICFES</span>
+    </div>
+
+    <div class="config-tiempo">
+      <label for="select-tiempo">⏱️ Tiempo del simulacro:</label>
+      <select id="select-tiempo">
+        <option value="30">30 minutos</option>
+        <option value="45">45 minutos</option>
+        <option value="60" selected>60 minutos (recomendado)</option>
+        <option value="90">90 minutos</option>
+      </select>
+      <div class="sonido-toggle">
+        🔊 Sonido
+        <label class="switch">
+          <input type="checkbox" id="check-sonido" checked>
+          <span class="slider-switch"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="cta-inicio">
+      <button class="btn btn-primario" id="btn-iniciar" style="font-size:1.05rem;padding:16px 44px;">🚀 Iniciar simulacro</button>
+    </div>
+  </section>
+
+  <!-- ================= PANTALLA EXAMEN ================= -->
+  <section id="pantalla-examen" class="hidden">
+    <div class="barra-superior">
+      <div class="fila-superior">
+        <div class="progreso-texto" id="texto-progreso">Pregunta 1 de 40</div>
+        <div class="temporizador" id="temporizador">⏱️ <span id="texto-tiempo">60:00</span></div>
+      </div>
+      <div class="barra-progreso-cont"><div class="barra-progreso-fill" id="barra-progreso-fill" style="width:2.5%"></div></div>
+      <div class="mini-stats">
+        <span class="mini-stat"><span class="dot dot-respondida"></span><span id="cont-respondidas">0</span> respondidas</span>
+        <span class="mini-stat"><span class="dot dot-pendiente"></span><span id="cont-pendientes">40</span> pendientes</span>
+        <span class="mini-stat" id="mini-racha" style="display:none;">🔥 Racha: <span id="valor-racha">0</span></span>
+      </div>
+    </div>
+
+    <div class="card tarjeta-pregunta">
+      <div class="encabezado-pregunta">
+        <span class="num-pregunta" id="num-pregunta-actual">Pregunta 1</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="etiqueta-sub" id="etiqueta-sub-actual">Subtema</span>
+          <span class="etiqueta-dificultad" id="etiqueta-dif-actual">Básico</span>
+        </div>
+      </div>
+      <div class="contexto-pregunta hidden" id="contexto-pregunta"></div>
+      <h2 class="texto-pregunta" id="texto-pregunta-actual"></h2>
+      <div class="opciones" id="contenedor-opciones" role="radiogroup" aria-label="Opciones de respuesta"></div>
+    </div>
+
+    <div class="nav-pregunta">
+      <div class="nav-izq">
+        <button class="btn btn-secundario" id="btn-anterior">← Anterior</button>
+      </div>
+      <div class="nav-der">
+        <button class="btn btn-secundario" id="btn-finalizar-antes">Finalizar</button>
+        <button class="btn btn-primario" id="btn-siguiente">Siguiente →</button>
+      </div>
+    </div>
+
+    <div class="card panel-navegacion">
+      <div class="seccion-titulo">Mapa de preguntas</div>
+      <div class="rejilla-preguntas" id="rejilla-preguntas"></div>
+    </div>
+  </section>
+
+  <!-- ================= PANTALLA RESULTADOS ================= -->
+  <section id="pantalla-resultados" class="hidden">
+    <div class="card">
+      <div class="resumen-header">
+        <h2 class="titulo-principal">Informe de resultados</h2>
+        <div class="circulo-puntaje" id="circulo-puntaje" style="--pct:0;">
+          <span class="valor-pct" id="valor-pct">0%</span>
+          <span class="valor-label">Desempeño</span>
+        </div>
+        <div style="font-size:1.1rem;font-weight:700;" id="nivel-alcanzado">Nivel alcanzado</div>
+      </div>
+
+      <div class="mensaje-motivacional" id="mensaje-motivacional"></div>
+
+      <div class="grid-resumen">
+        <div class="resumen-item"><div class="num" id="res-correctas">0</div><div class="etq">Aciertos</div></div>
+        <div class="resumen-item"><div class="num" id="res-incorrectas">0</div><div class="etq">Errores</div></div>
+        <div class="resumen-item"><div class="num" id="res-tiempo">0:00</div><div class="etq">Tiempo empleado</div></div>
+        <div class="resumen-item"><div class="num" id="res-racha-max">0</div><div class="etq">Mejor racha</div></div>
+      </div>
+
+      <div class="seccion-titulo">Desempeño por subtemática</div>
+      <div id="contenedor-barras-sub"></div>
+
+      <div class="fortalezas-mejoras">
+        <div class="caja-f caja-fortalezas">
+          <h4>💪 Fortalezas</h4>
+          <ul id="lista-fortalezas"></ul>
+        </div>
+        <div class="caja-f caja-mejoras">
+          <h4>📈 Aspectos por mejorar</h4>
+          <ul id="lista-mejoras"></ul>
+        </div>
+      </div>
+
+      <div class="seccion-titulo">Insignias obtenidas</div>
+      <div class="logros-grid" id="contenedor-logros"></div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <div class="seccion-titulo">Revisión detallada de las 40 preguntas</div>
+      <div id="contenedor-revision"></div>
+    </div>
+
+    <div class="acciones-finales">
+      <button class="btn btn-primario" id="btn-reiniciar">🔄 Reiniciar simulacro</button>
+    </div>
+
+    <footer class="regreso-aula">
+      <a id="btn-volver"
+         href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=775"
+         style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+        🏫 Regresar al Aula Virtual
+      </a>
+      <script>
+        const btn = document.getElementById('btn-volver');
+        const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=775';
+        const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=775';
+        const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+        if (esMóvil) {
+          btn.href = appUrl;
+        }
+      </script>
+    </footer>
+  </section>
+
+</div>
+
+<!-- Modal de confirmación -->
+<div id="modal-confirmacion" class="modal-fondo hidden">
+  <div class="modal-caja">
+    <h3 id="modal-titulo">¿Finalizar simulacro?</h3>
+    <p id="modal-texto">Aún tienes preguntas sin responder. ¿Deseas finalizar de todas formas?</p>
+    <div class="modal-botones">
+      <button class="btn btn-secundario" id="modal-cancelar">Cancelar</button>
+      <button class="btn btn-primario" id="modal-confirmar">Sí, finalizar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   SIMULADOR ICFES — BIOLOGÍA: CUERPO HUMANO Y ECOSISTEMAS (NIVEL 4)
+   Código 100% Vanilla JS — Sin dependencias externas
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. BANCO DE PREGUNTAS
+   Cada pregunta: { sub, diff, context, question, options:[{t,c}], explanation }
+   sub  -> clave de subtemática
+   diff -> 'basico' | 'intermedio' | 'avanzado'
+   c    -> true si es la opción correcta
+   ------------------------------------------------------------------------- */
+const SUBTEMAS = {
+  celula:        "La célula",
+  niveles:       "Niveles de organización",
+  sistemas:      "Sistemas del cuerpo humano",
+  nutricion:     "Nutrición y homeostasis",
+  genetica:      "Genética y herencia",
+  biodiversidad: "Biodiversidad y clasificación",
+  ecosistemas:   "Relaciones ecológicas",
+  dinamica:      "Dinámica y sostenibilidad",
+  interpretacion:"Interpretación de información",
+  icfes:         "Fenómenos y aplicaciones ICFES"
+};
+
+const BANCO = [
+/* ============================= CÉLULA ============================= */
+{sub:'celula',diff:'basico',context:'',question:'¿Cuál es la principal diferencia entre una célula procariota y una célula eucariota?',
+ options:[{t:'La eucariota posee núcleo delimitado por membrana y la procariota no',c:true},
+          {t:'La procariota tiene mitocondrias y la eucariota carece de ellas',c:false},
+          {t:'La eucariota no posee material genético',c:false},
+          {t:'La procariota siempre es pluricelular',c:false}],
+ explanation:'Las células eucariotas presentan un núcleo verdadero rodeado de envoltura nuclear, mientras que en las procariotas el material genético se encuentra disperso en el citoplasma, en una región llamada nucleoide.'},
+
+{sub:'celula',diff:'basico',context:'Un estudiante observa al microscopio una célula con pared celular, cloroplastos y una gran vacuola central.',
+ question:'A partir de estas estructuras, ¿qué tipo de célula está observando?',
+ options:[{t:'Una célula vegetal',c:true},
+          {t:'Una célula animal',c:false},
+          {t:'Una bacteria',c:false},
+          {t:'Un virus',c:false}],
+ explanation:'La pared celular, los cloroplastos (para realizar fotosíntesis) y la vacuola central de gran tamaño son estructuras características de las células vegetales, ausentes en las células animales.'},
+
+{sub:'celula',diff:'intermedio',context:'En una célula se identifica un organelo encargado de producir la mayor parte de la energía (ATP) que la célula utiliza para sus funciones.',
+ question:'¿Qué organelo cumple esta función?',
+ options:[{t:'La mitocondria',c:true},
+          {t:'El aparato de Golgi',c:false},
+          {t:'El retículo endoplasmático liso',c:false},
+          {t:'El lisosoma',c:false}],
+ explanation:'La mitocondria es el organelo responsable de la respiración celular, proceso mediante el cual se transforma la energía química de los nutrientes en ATP, la principal molécula energética de la célula.'},
+
+{sub:'celula',diff:'intermedio',context:'Un investigador daña experimentalmente los ribosomas de una célula.',
+ question:'¿Cuál sería la consecuencia más probable de este daño para la célula?',
+ options:[{t:'Disminución en la síntesis de proteínas',c:true},
+          {t:'Aumento en la producción de energía',c:false},
+          {t:'Pérdida total del material genético',c:false},
+          {t:'Formación de una nueva pared celular',c:false}],
+ explanation:'Los ribosomas son los organelos encargados de la traducción del ARN mensajero en proteínas. Si se dañan, la célula pierde su capacidad de sintetizar proteínas necesarias para sus funciones vitales.'},
+
+{sub:'celula',diff:'avanzado',context:'La teoría celular establece que todos los seres vivos están formados por células, que la célula es la unidad estructural y funcional de la vida, y que toda célula proviene de otra célula preexistente.',
+ question:'Un estudiante afirma que los virus, al poder replicarse, deben considerarse células according a esta teoría. ¿Por qué esta afirmación es incorrecta desde el punto de vista científico?',
+ options:[{t:'Porque los virus carecen de organización celular propia y necesitan una célula huésped para replicarse',c:true},
+          {t:'Porque los virus tienen núcleo pero no membrana plasmática',c:false},
+          {t:'Porque los virus son más grandes que cualquier célula',c:false},
+          {t:'Porque los virus solo existen en ambientes acuáticos',c:false}],
+ explanation:'Los virus no poseen estructura celular ni metabolismo propio; dependen completamente de la maquinaria de una célula huésped para replicarse, por lo que no cumplen los postulados de la teoría celular.'},
+
+{sub:'celula',diff:'avanzado',context:'Un laboratorio compara dos muestras: una célula muscular y una célula del páncreas encargada de secretar enzimas digestivas.',
+ question:'¿Qué organelo se espera encontrar en mayor cantidad en la célula pancreática en comparación con la muscular, dada su función secretora?',
+ options:[{t:'Retículo endoplasmático rugoso y aparato de Golgi',c:true},
+          {t:'Miofibrillas contráctiles',c:false},
+          {t:'Cloroplastos',c:false},
+          {t:'Pared celular',c:false}],
+ explanation:'Las células con alta actividad secretora, como las pancreáticas, poseen abundante retículo endoplasmático rugoso (síntesis de proteínas) y aparato de Golgi (empaquetamiento y secreción), estructuras relacionadas directamente con su función.'},
+
+/* ============================= NIVELES DE ORGANIZACIÓN ============================= */
+{sub:'niveles',diff:'basico',context:'',question:'Ordene correctamente, de menor a mayor complejidad, los siguientes niveles de organización biológica: órgano, célula, sistema, tejido.',
+ options:[{t:'Célula → tejido → órgano → sistema',c:true},
+          {t:'Tejido → célula → sistema → órgano',c:false},
+          {t:'Sistema → órgano → tejido → célula',c:false},
+          {t:'Órgano → célula → tejido → sistema',c:false}],
+ explanation:'El orden de organización biológica va de lo más simple a lo más complejo: célula, tejido (conjunto de células similares), órgano (conjunto de tejidos) y sistema (conjunto de órganos con una función común).'},
+
+{sub:'niveles',diff:'basico',context:'',question:'Un grupo de venados que habitan el mismo bosque y se reproducen entre sí constituye un ejemplo de:',
+ options:[{t:'Población',c:true},
+          {t:'Comunidad',c:false},
+          {t:'Ecosistema',c:false},
+          {t:'Bioma',c:false}],
+ explanation:'Una población está formada por individuos de la misma especie que habitan un área determinada y pueden reproducirse entre sí, como los venados del ejemplo.'},
+
+{sub:'niveles',diff:'intermedio',context:'En un páramo andino conviven frailejones, osos de anteojos, colibríes, hongos y bacterias del suelo, junto con el agua, la roca y el aire del lugar.',
+ question:'El conjunto de todos estos elementos, bióticos y abióticos, interactuando entre sí, corresponde al nivel de organización denominado:',
+ options:[{t:'Ecosistema',c:true},
+          {t:'Comunidad',c:false},
+          {t:'Población',c:false},
+          {t:'Bioma',c:false}],
+ explanation:'Un ecosistema incluye tanto los componentes bióticos (seres vivos) como abióticos (agua, roca, aire) de un lugar, junto con todas sus interacciones, lo cual va más allá de una comunidad (que solo incluye seres vivos).'},
+
+{sub:'niveles',diff:'intermedio',context:'',question:'¿Cuál de las siguientes secuencias representa correctamente el nivel de organización desde el más simple hasta el más complejo, incluyendo biomoléculas y biosfera?',
+ options:[{t:'Biomolécula → célula → órgano → organismo → ecosistema → biosfera',c:true},
+          {t:'Biosfera → ecosistema → organismo → célula → biomolécula',c:false},
+          {t:'Célula → biomolécula → biosfera → organismo',c:false},
+          {t:'Órgano → biomolécula → célula → biosfera',c:false}],
+ explanation:'La organización biológica parte de las biomoléculas (nivel químico), pasa por la célula, tejidos, órganos y organismos, hasta llegar a niveles ecológicos como el ecosistema y finalmente la biosfera, que integra todos los ecosistemas del planeta.'},
+
+{sub:'niveles',diff:'avanzado',context:'Un biólogo estudia el efecto de un plaguicida sobre las abejas de una región. Observa que afecta primero las enzimas del sistema nervioso de un individuo, luego provoca alteraciones de comportamiento en la colmena, y finalmente reduce la polinización a nivel del ecosistema.',
+ question:'¿Qué evidencia este caso sobre la relación entre los niveles de organización biológica?',
+ options:[{t:'Que una alteración a nivel molecular puede propagar efectos hasta niveles ecológicos superiores',c:true},
+          {t:'Que los niveles de organización son independientes entre sí',c:false},
+          {t:'Que solo el nivel celular resulta afectado por sustancias químicas',c:false},
+          {t:'Que el ecosistema no depende de procesos moleculares',c:false}],
+ explanation:'Este caso muestra la interconexión entre niveles: un daño molecular (enzimático) afecta al organismo, luego a la población (colmena) y finalmente a procesos ecológicos como la polinización, evidenciando que los niveles de organización están integrados.'},
+
+/* ============================= SISTEMAS DEL CUERPO HUMANO ============================= */
+{sub:'sistemas',diff:'basico',context:'',question:'¿Cuál es la función principal del sistema respiratorio?',
+ options:[{t:'Realizar el intercambio de oxígeno y dióxido de carbono con el ambiente',c:true},
+          {t:'Transportar nutrientes a todas las células del cuerpo',c:false},
+          {t:'Producir hormonas que regulan el crecimiento',c:false},
+          {t:'Filtrar desechos metabólicos de la sangre',c:false}],
+ explanation:'El sistema respiratorio permite el intercambio gaseoso: incorpora oxígeno del aire hacia la sangre y elimina el dióxido de carbono producido por el metabolismo celular.'},
+
+{sub:'sistemas',diff:'basico',context:'',question:'¿Qué órgano del sistema circulatorio es el encargado de bombear la sangre hacia todo el cuerpo?',
+ options:[{t:'El corazón',c:true},
+          {t:'El hígado',c:false},
+          {t:'El riñón',c:false},
+          {t:'El páncreas',c:false}],
+ explanation:'El corazón es una bomba muscular que impulsa la sangre a través de las arterias hacia todos los tejidos y órganos, y la recibe de regreso por las venas.'},
+
+{sub:'sistemas',diff:'intermedio',context:'Una persona con insuficiencia renal presenta acumulación de urea y otras sustancias tóxicas en la sangre.',
+ question:'¿A qué se debe principalmente esta acumulación?',
+ options:[{t:'A que los riñones no logran filtrar adecuadamente la sangre para eliminar desechos por la orina',c:true},
+          {t:'A que el estómago no digiere correctamente los alimentos',c:false},
+          {t:'A que los pulmones no realizan el intercambio gaseoso',c:false},
+          {t:'A que el sistema nervioso no envía señales al corazón',c:false}],
+ explanation:'El sistema excretor, principalmente los riñones, filtra la sangre para eliminar desechos metabólicos como la urea. Cuando este proceso falla, dichas sustancias se acumulan en la sangre, generando toxicidad.'},
+
+{sub:'sistemas',diff:'intermedio',context:'Durante una carrera, el cuerpo de un atleta aumenta la frecuencia cardiaca, la frecuencia respiratoria y la sudoración.',
+ question:'Estos cambios evidencian principalmente la integración entre:',
+ options:[{t:'El sistema nervioso, el sistema circulatorio y el sistema respiratorio',c:true},
+          {t:'El sistema digestivo y el sistema reproductor',c:false},
+          {t:'El sistema óseo y el sistema endocrino únicamente',c:false},
+          {t:'El sistema excretor de forma aislada',c:false}],
+ explanation:'El sistema nervioso detecta la mayor demanda de oxígeno y energía, y coordina respuestas del sistema circulatorio (aumento de frecuencia cardiaca) y respiratorio (mayor frecuencia respiratoria) para satisfacer las necesidades del organismo durante el ejercicio.'},
+
+{sub:'sistemas',diff:'avanzado',context:'Un paciente sufre una lesión en el páncreas que reduce su capacidad de producir insulina, hormona encargada de facilitar el ingreso de glucosa a las células.',
+ question:'¿Qué consecuencia fisiológica es más probable que presente este paciente?',
+ options:[{t:'Niveles elevados de glucosa en sangre (hiperglucemia)',c:true},
+          {t:'Disminución de la presión arterial de forma inmediata',c:false},
+          {t:'Aumento en la producción de glóbulos rojos',c:false},
+          {t:'Mejora en la absorción intestinal de grasas',c:false}],
+ explanation:'La insulina permite que la glucosa ingrese a las células para ser utilizada como energía. Si su producción disminuye, la glucosa se acumula en la sangre, generando hiperglucemia, característica de la diabetes.'},
+
+{sub:'sistemas',diff:'avanzado',context:'Un joven que permanece muchas horas sentado, con mala postura y poca actividad física, comienza a presentar dolores de espalda y debilidad muscular.',
+ question:'Este caso ilustra principalmente la relación entre hábitos de vida y la salud de qué sistemas del cuerpo humano:',
+ options:[{t:'El sistema locomotor, integrado por huesos, músculos y articulaciones',c:true},
+          {t:'El sistema reproductor',c:false},
+          {t:'El sistema endocrino de forma exclusiva',c:false},
+          {t:'El sistema excretor',c:false}],
+ explanation:'El sistema locomotor, formado por huesos, músculos, articulaciones y tendones, se ve directamente afectado por el sedentarismo y la mala postura, generando dolores y debilidad muscular, lo cual resalta la importancia de hábitos de vida saludables.'},
+
+/* ============================= NUTRICIÓN Y HOMEOSTASIS ============================= */
+{sub:'nutricion',diff:'basico',context:'',question:'¿Cuál de los siguientes nutrientes es la principal fuente de energía rápida para el cuerpo humano?',
+ options:[{t:'Los carbohidratos',c:true},
+          {t:'Las vitaminas',c:false},
+          {t:'Los minerales',c:false},
+          {t:'El agua',c:false}],
+ explanation:'Los carbohidratos son la principal fuente de energía rápida, ya que se degradan a glucosa, molécula que las células utilizan directamente para obtener energía.'},
+
+{sub:'nutricion',diff:'basico',context:'',question:'¿Qué se entiende por homeostasis en un organismo?',
+ options:[{t:'La capacidad de mantener condiciones internas estables a pesar de los cambios del entorno',c:true},
+          {t:'La capacidad de un organismo para reproducirse rápidamente',c:false},
+          {t:'La eliminación total de desechos metabólicos',c:false},
+          {t:'El crecimiento acelerado de los tejidos',c:false}],
+ explanation:'La homeostasis es el conjunto de mecanismos que permiten a un organismo mantener condiciones internas relativamente constantes (temperatura, pH, glucosa, entre otras), a pesar de las variaciones del ambiente externo.'},
+
+{sub:'nutricion',diff:'intermedio',context:'Una persona consume una dieta rica en grasas y azúcares, pero baja en fibra, vitaminas y minerales durante varios meses.',
+ question:'¿Cuál es la consecuencia más probable de este tipo de alimentación a largo plazo?',
+ options:[{t:'Mayor riesgo de enfermedades metabólicas como obesidad o diabetes',c:true},
+          {t:'Mejora inmediata del sistema inmunológico',c:false},
+          {t:'Aumento en la absorción de oxígeno pulmonar',c:false},
+          {t:'Fortalecimiento del sistema óseo sin riesgos',c:false}],
+ explanation:'Una dieta desequilibrada, rica en grasas y azúcares pero pobre en fibra y micronutrientes, incrementa el riesgo de enfermedades metabólicas crónicas como la obesidad, la diabetes tipo 2 y enfermedades cardiovasculares.'},
+
+{sub:'nutricion',diff:'intermedio',context:'Durante el ejercicio intenso, el cuerpo humano aumenta la sudoración para regular la temperatura corporal.',
+ question:'Este proceso es un ejemplo de:',
+ options:[{t:'Un mecanismo homeostático de regulación térmica',c:true},
+          {t:'Un proceso digestivo',c:false},
+          {t:'Un mecanismo de reproducción celular',c:false},
+          {t:'Una respuesta del sistema reproductor',c:false}],
+ explanation:'La sudoración es un mecanismo homeostático que ayuda a disipar el calor corporal mediante la evaporación, permitiendo mantener la temperatura interna dentro de un rango adecuado para el funcionamiento celular.'},
+
+{sub:'nutricion',diff:'avanzado',context:'Después de comer, los niveles de glucosa en sangre de una persona aumentan. El páncreas libera insulina, lo que permite que las células absorban la glucosa y sus niveles en sangre disminuyan gradualmente hasta estabilizarse.',
+ question:'Este proceso ejemplifica un mecanismo de:',
+ options:[{t:'Retroalimentación negativa, propio de la homeostasis',c:true},
+          {t:'Retroalimentación positiva sin control',c:false},
+          {t:'Reproducción celular acelerada',c:false},
+          {t:'Excreción exclusiva de desechos sólidos',c:false}],
+ explanation:'La regulación de la glucosa mediante insulina es un ejemplo clásico de retroalimentación negativa: un aumento en la variable (glucosa) desencadena una respuesta (liberación de insulina) que hace disminuir dicha variable, devolviendo el sistema a su equilibrio.'},
+
+{sub:'nutricion',diff:'avanzado',context:'Un estudio evalúa a dos grupos de personas: uno con hábitos de vida saludables (dieta balanceada, ejercicio regular, buena hidratación) y otro con hábitos sedentarios y alimentación desequilibrada. Después de cinco años, el segundo grupo presenta mayor incidencia de enfermedades cardiovasculares.',
+ question:'¿Qué conclusión es la más adecuada a partir de esta evidencia?',
+ options:[{t:'Los hábitos de vida saludables están asociados con la prevención de enfermedades crónicas',c:true},
+          {t:'La alimentación no influye en la salud cardiovascular',c:false},
+          {t:'El ejercicio incrementa el riesgo de enfermedades del corazón',c:false},
+          {t:'Solo los factores genéticos determinan la salud cardiovascular',c:false}],
+ explanation:'La evidencia presentada respalda la conclusión de que los hábitos de vida saludables (alimentación balanceada, ejercicio e hidratación) contribuyen a prevenir enfermedades crónicas como las cardiovasculares, sin que esto implique ignorar otros factores como la genética.'},
+
+/* ============================= GENÉTICA Y HERENCIA ============================= */
+{sub:'genetica',diff:'basico',context:'',question:'¿Qué molécula contiene la información genética de los seres vivos?',
+ options:[{t:'El ADN (ácido desoxirribonucleico)',c:true},
+          {t:'La glucosa',c:false},
+          {t:'El colesterol',c:false},
+          {t:'La hemoglobina',c:false}],
+ explanation:'El ADN es la molécula que almacena la información genética necesaria para el desarrollo, funcionamiento y reproducción de los seres vivos.'},
+
+{sub:'genetica',diff:'basico',context:'',question:'¿Cuál de las siguientes es una característica de la reproducción asexual?',
+ options:[{t:'Genera descendientes genéticamente idénticos al progenitor',c:true},
+          {t:'Requiere la unión de gametos de dos progenitores',c:false},
+          {t:'Aumenta siempre la variabilidad genética',c:false},
+          {t:'Solo ocurre en animales vertebrados',c:false}],
+ explanation:'En la reproducción asexual, un solo progenitor da origen a descendientes genéticamente idénticos a él (clones), ya que no hay intercambio de material genético de dos individuos distintos.'},
+
+{sub:'genetica',diff:'intermedio',context:'En una planta de guisantes, el color morado de la flor es dominante sobre el color blanco. Se cruzan dos plantas heterocigotas (Aa x Aa) para este carácter.',
+ question:'¿Qué proporción fenotípica aproximada se espera en la descendencia?',
+ options:[{t:'3 flores moradas por cada 1 flor blanca',c:true},
+          {t:'1 flor morada por cada 3 flores blancas',c:false},
+          {t:'Todas las flores serán moradas',c:false},
+          {t:'Todas las flores serán blancas',c:false}],
+ explanation:'Al cruzar dos heterocigotos (Aa x Aa) para un carácter con dominancia completa, la proporción fenotípica esperada en la descendencia es 3:1, es decir, 3 individuos con el fenotipo dominante (morado) por cada 1 con el fenotipo recesivo (blanco).'},
+
+{sub:'genetica',diff:'intermedio',context:'',question:'¿Qué estructura celular contiene organizado el ADN en forma de hebras compactas durante la división celular?',
+ options:[{t:'Los cromosomas',c:true},
+          {t:'Los ribosomas',c:false},
+          {t:'Las mitocondrias',c:false},
+          {t:'El aparato de Golgi',c:false}],
+ explanation:'Durante la división celular, el ADN se condensa y organiza en estructuras visibles llamadas cromosomas, lo que facilita su distribución equitativa entre las células hijas.'},
+
+{sub:'genetica',diff:'avanzado',context:'Un genetista estudia una población de mariposas y encuentra que, tras varias generaciones, surgen individuos con nuevas combinaciones de color de alas debido a mutaciones y a la recombinación genética durante la reproducción sexual.',
+ question:'¿Qué papel cumple este fenómeno en la evolución de la población?',
+ options:[{t:'Aumenta la variabilidad genética, materia prima para la selección natural',c:true},
+          {t:'Elimina por completo la posibilidad de adaptación',c:false},
+          {t:'Hace que todos los individuos sean genéticamente idénticos',c:false},
+          {t:'Impide la reproducción de la especie',c:false}],
+ explanation:'Las mutaciones y la recombinación genética generan variabilidad genética dentro de una población. Esta variabilidad es la materia prima sobre la cual actúa la selección natural, permitiendo que algunos individuos se adapten mejor a su ambiente.'},
+
+{sub:'genetica',diff:'avanzado',context:'Una pareja consulta a un genetista porque desean conocer la probabilidad de que su hijo herede una enfermedad recesiva ligada a un gen autosómico. Ambos padres son portadores heterocigotos (Aa) de dicha condición.',
+ question:'¿Cuál es la probabilidad de que su hijo sea homocigoto recesivo (aa) y, por lo tanto, presente la enfermedad?',
+ options:[{t:'25%',c:true},
+          {t:'50%',c:false},
+          {t:'75%',c:false},
+          {t:'100%',c:false}],
+ explanation:'Al cruzar dos heterocigotos (Aa x Aa), la proporción genotípica esperada es 1 AA : 2 Aa : 1 aa, lo que equivale a una probabilidad del 25% de que el hijo sea homocigoto recesivo (aa) y manifieste la enfermedad.'},
+
+/* ============================= BIODIVERSIDAD Y CLASIFICACIÓN ============================= */
+{sub:'biodiversidad',diff:'basico',context:'',question:'¿Cuál de las siguientes es una característica común a todos los seres vivos?',
+ options:[{t:'Responder a estímulos del ambiente',c:true},
+          {t:'Poseer siempre esqueleto óseo',c:false},
+          {t:'Vivir exclusivamente en ambientes terrestres',c:false},
+          {t:'Reproducirse únicamente de forma sexual',c:false}],
+ explanation:'Todos los seres vivos, sin importar su forma o tamaño, comparten características como responder a estímulos, nutrirse, crecer y reproducirse, mientras que otras características (como tener esqueleto óseo) son exclusivas de ciertos grupos.'},
+
+{sub:'biodiversidad',diff:'basico',context:'Colombia es reconocida como uno de los países con mayor biodiversidad del planeta.',
+ question:'¿Qué factor explica principalmente esta alta biodiversidad?',
+ options:[{t:'Su ubicación tropical y la variedad de pisos térmicos y ecosistemas',c:true},
+          {t:'Su cercanía a los polos',c:false},
+          {t:'La ausencia de ríos y bosques',c:false},
+          {t:'Su clima uniforme en todo el territorio',c:false}],
+ explanation:'La ubicación tropical de Colombia, junto con su relieve montañoso que genera múltiples pisos térmicos (de tierra caliente a páramo), favorece la existencia de una gran variedad de ecosistemas y, por lo tanto, de especies.'},
+
+{sub:'biodiversidad',diff:'intermedio',context:'Un biólogo clasifica un organismo unicelular, sin núcleo definido, que habita en aguas termales a altas temperaturas.',
+ question:'¿En qué reino biológico se clasificaría más probablemente este organismo?',
+ options:[{t:'Monera (procariotas, incluyendo arqueas y bacterias)',c:true},
+          {t:'Animal',c:false},
+          {t:'Plantae',c:false},
+          {t:'Fungi',c:false}],
+ explanation:'Los organismos unicelulares sin núcleo definido (procariotas) que habitan en ambientes extremos, como aguas termales, se clasifican tradicionalmente dentro del reino Monera, que agrupa bacterias y arqueas.'},
+
+{sub:'biodiversidad',diff:'intermedio',context:'El oso de anteojos, único oso de Sudamérica, presenta manchas claras alrededor de los ojos y habita en bosques andinos, alimentándose principalmente de frutas y vegetación.',
+ question:'Las características físicas y de comportamiento del oso de anteojos son ejemplo de:',
+ options:[{t:'Adaptaciones a su ambiente particular',c:true},
+          {t:'Mutaciones sin ningún efecto sobre su supervivencia',c:false},
+          {t:'Características adquiridas exclusivamente por aprendizaje',c:false},
+          {t:'Rasgos comunes a todos los mamíferos sin excepción',c:false}],
+ explanation:'Las características físicas y de comportamiento que permiten a una especie sobrevivir y reproducirse en su ambiente particular se denominan adaptaciones, resultado de procesos evolutivos a lo largo de generaciones.'},
+
+{sub:'biodiversidad',diff:'avanzado',context:'La deforestación de los bosques tropicales colombianos ha reducido el hábitat disponible para especies endémicas como la rana dorada y otras especies de distribución restringida.',
+ question:'¿Cuál es la consecuencia más probable de esta pérdida de hábitat sobre la biodiversidad?',
+ options:[{t:'Aumento del riesgo de extinción de especies endémicas por reducción de su población',c:true},
+          {t:'Incremento automático de la biodiversidad local',c:false},
+          {t:'Mejora en la capacidad reproductiva de las especies afectadas',c:false},
+          {t:'Ausencia total de efectos sobre las especies',c:false}],
+ explanation:'Las especies endémicas, al tener una distribución geográfica restringida, son especialmente vulnerables a la pérdida de hábitat. La deforestación reduce el espacio y los recursos disponibles, aumentando el riesgo de disminución poblacional y extinción.'},
+
+{sub:'biodiversidad',diff:'avanzado',context:'Un grupo de investigadores clasifica organismos según criterios como tipo de célula, forma de nutrición y capacidad de movimiento, agrupándolos en categorías taxonómicas jerárquicas (reino, filo, clase, orden, familia, género, especie).',
+ question:'¿Cuál es el propósito principal de este sistema de clasificación taxonómica?',
+ options:[{t:'Organizar la diversidad biológica reflejando relaciones evolutivas y de parentesco entre organismos',c:true},
+          {t:'Determinar el tamaño exacto de cada organismo',c:false},
+          {t:'Establecer el color de cada especie',c:false},
+          {t:'Definir la ubicación geográfica de cada especie',c:false}],
+ explanation:'La clasificación taxonómica busca organizar sistemáticamente la diversidad biológica en categorías jerárquicas que reflejen, en la medida de lo posible, las relaciones evolutivas y de parentesco entre los organismos.'},
+
+/* ============================= RELACIONES ECOLÓGICAS ============================= */
+{sub:'ecosistemas',diff:'basico',context:'',question:'En una cadena alimentaria, ¿qué papel cumplen las plantas verdes?',
+ options:[{t:'Son productores, ya que elaboran su propio alimento mediante fotosíntesis',c:true},
+          {t:'Son consumidores primarios exclusivamente',c:false},
+          {t:'Son descomponedores',c:false},
+          {t:'Son depredadores tope',c:false}],
+ explanation:'Las plantas verdes son organismos productores porque, a través de la fotosíntesis, transforman la energía solar en energía química almacenada en compuestos orgánicos, siendo la base de las cadenas alimentarias.'},
+
+{sub:'ecosistemas',diff:'basico',context:'',question:'¿Qué diferencia existe entre hábitat y nicho ecológico de una especie?',
+ options:[{t:'El hábitat es el lugar físico donde vive, y el nicho es el papel funcional que desempeña en el ecosistema',c:true},
+          {t:'El hábitat y el nicho ecológico son exactamente lo mismo',c:false},
+          {t:'El nicho ecológico es solo el clima del lugar',c:false},
+          {t:'El hábitat se refiere únicamente a la alimentación de la especie',c:false}],
+ explanation:'El hábitat es el espacio físico donde habita una especie, mientras que el nicho ecológico incluye todas sus interacciones funcionales: qué come, cómo se reproduce, con quién compite y qué papel cumple en el ecosistema.'},
+
+{sub:'ecosistemas',diff:'intermedio',context:'En un ecosistema de páramo, el frailejón almacena agua en sus hojas, la cual es aprovechada por insectos que se alimentan del néctar de sus flores, y estos, a su vez, son presa de aves insectívoras.',
+ question:'Esta secuencia de relaciones alimentarias representa:',
+ options:[{t:'Una cadena trófica',c:true},
+          {t:'Una relación de mutualismo exclusivamente',c:false},
+          {t:'Un ciclo biogeoquímico',c:false},
+          {t:'Una sucesión ecológica',c:false}],
+ explanation:'La secuencia descrita, donde la energía y los nutrientes pasan de un organismo a otro (planta → insecto → ave), constituye una cadena trófica o alimentaria.'},
+
+{sub:'ecosistemas',diff:'intermedio',context:'En un cultivo, ciertas plantas leguminosas conviven con bacterias que fijan nitrógeno en sus raíces; las bacterias obtienen nutrientes de la planta y esta recibe nitrógeno utilizable.',
+ question:'Esta relación ecológica corresponde a:',
+ options:[{t:'Mutualismo, ya que ambas especies se benefician',c:true},
+          {t:'Parasitismo, ya que una especie perjudica a la otra',c:false},
+          {t:'Depredación',c:false},
+          {t:'Competencia',c:false}],
+ explanation:'En el mutualismo, ambas especies obtienen un beneficio de la relación. En este caso, la planta recibe nitrógeno utilizable y la bacteria recibe nutrientes y un lugar donde vivir, por lo que ambas se benefician.'},
+
+{sub:'ecosistemas',diff:'avanzado',context:'Un ecólogo estudia una red trófica en un bosque y descubre que la eliminación del lobo (depredador tope) provocó un aumento excesivo en la población de ciervos, lo que a su vez generó sobrepastoreo y disminución de la vegetación.',
+ question:'¿Qué concepto ecológico explica mejor este fenómeno en cascada?',
+ options:[{t:'El flujo de energía y el control poblacional que ejercen los depredadores sobre otros niveles tróficos',c:true},
+          {t:'La ausencia total de interacciones entre especies',c:false},
+          {t:'El aumento espontáneo de la vegetación sin relación con los ciervos',c:false},
+          {t:'La independencia total entre depredadores y presas',c:false}],
+ explanation:'Este caso ilustra cómo los depredadores tope regulan las poblaciones de sus presas, controlando indirectamente el equilibrio ecológico del ecosistema. Su eliminación puede generar efectos en cascada sobre otros niveles tróficos, alterando el flujo de energía del sistema.'},
+
+{sub:'ecosistemas',diff:'avanzado',context:'En un ecosistema acuático, los descomponedores transforman la materia orgánica muerta en compuestos inorgánicos que son reincorporados al ambiente y reutilizados por los productores.',
+ question:'Este proceso es fundamental para el funcionamiento de los ecosistemas porque:',
+ options:[{t:'Permite el reciclaje de nutrientes a través de los ciclos biogeoquímicos',c:true},
+          {t:'Detiene por completo el flujo de energía',c:false},
+          {t:'Elimina la necesidad de productores en el ecosistema',c:false},
+          {t:'Impide la reproducción de los organismos',c:false}],
+ explanation:'Los descomponedores cumplen un papel esencial en los ciclos biogeoquímicos (como el del carbono y el nitrógeno), al transformar la materia orgánica en compuestos inorgánicos que pueden ser reutilizados por los productores, cerrando así el ciclo de nutrientes.'},
+
+/* ============================= DINÁMICA Y SOSTENIBILIDAD ============================= */
+{sub:'dinamica',diff:'basico',context:'',question:'¿Qué se entiende por servicios ecosistémicos?',
+ options:[{t:'Los beneficios que los ecosistemas brindan a los seres humanos, como agua limpia, polinización o regulación climática',c:true},
+          {t:'Los servicios de mantenimiento de zoológicos',c:false},
+          {t:'Únicamente la producción de alimentos procesados',c:false},
+          {t:'Los servicios turísticos artificiales',c:false}],
+ explanation:'Los servicios ecosistémicos son los beneficios directos e indirectos que los ecosistemas proporcionan a los seres humanos, incluyendo la provisión de agua y alimentos, la regulación del clima y la polinización de cultivos, entre otros.'},
+
+{sub:'dinamica',diff:'basico',context:'',question:'¿Cuál de las siguientes acciones contribuye directamente al desarrollo sostenible?',
+ options:[{t:'Usar racionalmente los recursos naturales para satisfacer necesidades actuales sin comprometer las futuras',c:true},
+          {t:'Explotar al máximo los recursos naturales sin control',c:false},
+          {t:'Eliminar por completo las áreas protegidas',c:false},
+          {t:'Aumentar la contaminación industrial sin restricciones',c:false}],
+ explanation:'El desarrollo sostenible busca satisfacer las necesidades actuales de la población mediante un uso racional y responsable de los recursos naturales, sin comprometer la capacidad de las futuras generaciones para satisfacer las suyas.'},
+
+{sub:'dinamica',diff:'intermedio',context:'Después de un incendio forestal, un terreno inicia un proceso donde primero colonizan musgos y líquenes, luego pastos y arbustos, y con el tiempo puede llegar a formarse nuevamente un bosque.',
+ question:'Este proceso se conoce como:',
+ options:[{t:'Sucesión ecológica',c:true},
+          {t:'Homeostasis',c:false},
+          {t:'Mutación genética',c:false},
+          {t:'Nicho ecológico',c:false}],
+ explanation:'La sucesión ecológica es el proceso gradual mediante el cual un ecosistema se recupera y cambia su composición de especies a lo largo del tiempo después de una perturbación, como un incendio, hasta alcanzar una comunidad más estable.'},
+
+{sub:'dinamica',diff:'intermedio',context:'Una fábrica vierte aguas residuales sin tratar en un río cercano, lo que provoca la muerte de peces y la proliferación de algas.',
+ question:'¿Qué fenómeno ambiental explica mejor la proliferación excesiva de algas en este caso?',
+ options:[{t:'La eutrofización, causada por el exceso de nutrientes en el agua',c:true},
+          {t:'La sucesión primaria',c:false},
+          {t:'El mutualismo entre especies acuáticas',c:false},
+          {t:'La migración de especies',c:false}],
+ explanation:'La eutrofización ocurre cuando un cuerpo de agua recibe un exceso de nutrientes (como los presentes en aguas residuales), lo que provoca un crecimiento descontrolado de algas y, posteriormente, una disminución del oxígeno disponible que afecta a otros organismos acuáticos.'},
+
+{sub:'dinamica',diff:'avanzado',context:'El aumento de la concentración de gases de efecto invernadero, como el dióxido de carbono, ha sido asociado por la comunidad científica con el incremento de la temperatura promedio del planeta en las últimas décadas.',
+ question:'¿Qué evidencia respaldaría mejor esta relación causa-efecto entre actividad humana y cambio climático?',
+ options:[{t:'Registros históricos que muestran aumento paralelo en emisiones de CO2 y temperatura global',c:true},
+          {t:'La opinión de una sola persona sobre el clima',c:false},
+          {t:'La ausencia de cualquier tipo de dato climático',c:false},
+          {t:'Un solo evento climático aislado en una ciudad',c:false}],
+ explanation:'La evidencia científica sólida para establecer relaciones causa-efecto en fenómenos ambientales complejos como el cambio climático se basa en registros históricos y datos sistemáticos a largo plazo, no en observaciones aisladas u opiniones individuales.'},
+
+{sub:'dinamica',diff:'avanzado',context:'Una comunidad rural decide implementar prácticas agrícolas sostenibles: rotación de cultivos, uso reducido de agroquímicos y conservación de franjas de bosque cerca de las fuentes de agua.',
+ question:'¿Cuál es el principal beneficio ecológico esperado de estas prácticas a largo plazo?',
+ options:[{t:'La conservación de la biodiversidad y de los servicios ecosistémicos, como la regulación hídrica',c:true},
+          {t:'El aumento inmediato de la contaminación del suelo',c:false},
+          {t:'La eliminación total de la vegetación nativa',c:false},
+          {t:'La reducción de la producción agrícola a cero',c:false}],
+ explanation:'Las prácticas agrícolas sostenibles, como la rotación de cultivos y la conservación de bosques cerca de fuentes hídricas, ayudan a preservar la biodiversidad, mantener la fertilidad del suelo y proteger servicios ecosistémicos esenciales, como la regulación del ciclo del agua.'},
+
+/* ============================= INTERPRETACIÓN DE INFORMACIÓN ============================= */
+{sub:'interpretacion',diff:'basico',context:'Una tabla muestra la frecuencia cardiaca de un grupo de personas en reposo y después de 10 minutos de ejercicio: en reposo el promedio fue 72 latidos/min, y después del ejercicio, 130 latidos/min.',
+ question:'A partir de estos datos, se puede concluir que el ejercicio:',
+ options:[{t:'Incrementa la frecuencia cardiaca',c:true},
+          {t:'Disminuye la frecuencia cardiaca',c:false},
+          {t:'No tiene ningún efecto sobre el corazón',c:false},
+          {t:'Detiene por completo la circulación sanguínea',c:false}],
+ explanation:'Los datos muestran un aumento claro en la frecuencia cardiaca (de 72 a 130 latidos/min) después del ejercicio, lo que permite concluir que la actividad física incrementa el ritmo cardiaco para satisfacer la mayor demanda de oxígeno de los músculos.'},
+
+{sub:'interpretacion',diff:'basico',context:'Un gráfico de barras muestra la cantidad de especies de aves registradas en tres ecosistemas: bosque húmedo tropical (120 especies), páramo (35 especies) y desierto (12 especies).',
+ question:'Según el gráfico, ¿qué ecosistema presenta mayor riqueza de especies de aves?',
+ options:[{t:'El bosque húmedo tropical',c:true},
+          {t:'El páramo',c:false},
+          {t:'El desierto',c:false},
+          {t:'Los tres ecosistemas tienen la misma riqueza',c:false}],
+ explanation:'Según los datos del gráfico, el bosque húmedo tropical presenta el mayor número de especies de aves registradas (120), por lo que es el ecosistema con mayor riqueza de este grupo entre los tres comparados.'},
+
+{sub:'interpretacion',diff:'intermedio',context:'En un experimento, un grupo de plantas se cultivó con luz solar directa y otro grupo en oscuridad total durante dos semanas, manteniendo constantes el riego y el tipo de suelo. Las plantas cultivadas en oscuridad crecieron más pálidas y débiles.',
+ question:'En este experimento, ¿cuál es la variable independiente?',
+ options:[{t:'La presencia o ausencia de luz solar',c:true},
+          {t:'El tipo de suelo utilizado',c:false},
+          {t:'La cantidad de riego',c:false},
+          {t:'El color de las plantas al final del experimento',c:false}],
+ explanation:'La variable independiente es aquella que el investigador manipula intencionalmente para observar su efecto; en este caso, es la presencia o ausencia de luz solar, mientras que el riego y el suelo se mantuvieron constantes como variables controladas.'},
+
+{sub:'interpretacion',diff:'intermedio',context:'Una gráfica de líneas muestra la concentración de oxígeno disuelto en un río a lo largo de 10 kilómetros, evidenciando una caída abrupta justo después del punto donde una fábrica vierte sus aguas residuales.',
+ question:'¿Qué conclusión se puede formular a partir de esta gráfica?',
+ options:[{t:'El vertimiento de la fábrica está asociado con la disminución del oxígeno disuelto en el agua',c:true},
+          {t:'La fábrica no tiene ninguna relación con la calidad del agua',c:false},
+          {t:'El oxígeno disuelto aumenta después del vertimiento',c:false},
+          {t:'El río no presenta ningún cambio en su composición',c:false}],
+ explanation:'La caída abrupta en la concentración de oxígeno disuelto justo después del punto de vertimiento sugiere una asociación entre la actividad de la fábrica y la disminución de la calidad del agua, posiblemente por el consumo de oxígeno durante la descomposición de materia orgánica vertida.'},
+
+{sub:'interpretacion',diff:'avanzado',context:'Un grupo de científicos midió la altura de un mismo tipo de planta en tres zonas con diferente altitud sobre el nivel del mar: 500 m (altura promedio 180 cm), 2000 m (altura promedio 90 cm) y 3500 m (altura promedio 30 cm).',
+ question:'A partir de estos resultados, ¿qué conclusión es la más adecuada según la evidencia presentada?',
+ options:[{t:'Existe una relación entre la altitud y la altura promedio de la planta, disminuyendo esta última a mayor altitud',c:true},
+          {t:'La altitud no influye en absoluto en el crecimiento de las plantas',c:false},
+          {t:'A mayor altitud, la planta siempre crece más alta',c:false},
+          {t:'Los datos no permiten establecer ninguna relación',c:false}],
+ explanation:'Los datos muestran una tendencia clara: a medida que aumenta la altitud, disminuye la altura promedio de la planta, lo cual permite establecer una relación inversa entre estas dos variables, posiblemente asociada a condiciones ambientales más extremas en altitudes mayores.'},
+
+{sub:'interpretacion',diff:'avanzado',context:'Un estudio comparó el número de casos de una enfermedad respiratoria en dos ciudades: la ciudad A, con altos niveles de contaminación del aire, y la ciudad B, con aire más limpio. La ciudad A presentó el triple de casos que la ciudad B, aunque ambas tienen poblaciones y climas similares.',
+ question:'¿Qué limitación debe tenerse en cuenta antes de afirmar que la contaminación es la única causa de la diferencia observada?',
+ options:[{t:'Podrían existir otras variables no controladas, como hábitos de tabaquismo o acceso a servicios de salud, que también influyan en los resultados',c:true},
+          {t:'No existe ninguna limitación, la contaminación es la única causa posible',c:false},
+          {t:'Los datos no tienen ninguna utilidad científica',c:false},
+          {t:'La población de ambas ciudades es irrelevante para el análisis',c:false}],
+ explanation:'En estudios observacionales como este, es fundamental considerar otras variables no controladas (llamadas variables de confusión) que podrían influir en los resultados, como hábitos de vida o acceso a servicios de salud, antes de establecer una relación causal definitiva.'},
+
+/* ============================= FENÓMENOS Y APLICACIONES ICFES ============================= */
+{sub:'icfes',diff:'basico',context:'Cuando una persona se corta con un objeto afilado, la sangre eventualmente deja de fluir gracias a la formación de un coágulo.',
+ question:'¿Qué componente sanguíneo es el principal responsable de este proceso de coagulación?',
+ options:[{t:'Las plaquetas',c:true},
+          {t:'Los glóbulos rojos',c:false},
+          {t:'El plasma únicamente',c:false},
+          {t:'Los glóbulos blancos',c:false}],
+ explanation:'Las plaquetas son fragmentos celulares responsables de iniciar el proceso de coagulación sanguínea, agregándose en el sitio de la herida y liberando sustancias que forman una red de fibrina para detener el sangrado.'},
+
+{sub:'icfes',diff:'intermedio',context:'Un estudiante observa que, al subir rápidamente a una montaña de gran altitud, presenta dificultad para respirar, mareo y cansancio, síntomas que disminuyen tras varios días de aclimatación.',
+ question:'¿Cuál es la explicación más adecuada para estos síntomas iniciales?',
+ options:[{t:'La menor presión de oxígeno en altitudes elevadas dificulta su captación por el organismo',c:true},
+          {t:'El aumento de la presión atmosférica satura de oxígeno la sangre',c:false},
+          {t:'La disminución de la temperatura elimina la necesidad de oxígeno',c:false},
+          {t:'El cuerpo humano no requiere oxígeno en zonas altas',c:false}],
+ explanation:'A mayor altitud, la presión parcial de oxígeno disminuye, lo que dificulta su difusión hacia la sangre en los pulmones, generando síntomas como dificultad respiratoria y mareo, hasta que el cuerpo se aclimata produciendo más glóbulos rojos.'},
+
+{sub:'icfes',diff:'intermedio',context:'En una charla de educación ambiental, se explica que separar los residuos orgánicos de los inorgánicos permite que los primeros se conviertan en abono mediante la acción de microorganismos descomponedores.',
+ question:'¿Qué relación causa-efecto se establece en este proceso?',
+ options:[{t:'La actividad de los descomponedores transforma la materia orgánica en nutrientes reutilizables por las plantas',c:true},
+          {t:'La separación de residuos elimina la necesidad de descomponedores',c:false},
+          {t:'Los residuos inorgánicos se convierten naturalmente en abono',c:false},
+          {t:'Los microorganismos descomponedores no participan en este proceso',c:false}],
+ explanation:'Los microorganismos descomponedores degradan la materia orgánica, liberando nutrientes que pueden ser reincorporados al suelo y aprovechados nuevamente por las plantas, lo que constituye la base del compostaje.'},
+
+{sub:'icfes',diff:'avanzado',context:'En una región agrícola, el uso excesivo de un mismo plaguicida durante varios años ha llevado a que la mayoría de los insectos plaga sobrevivientes sean resistentes a dicho producto, mientras que al inicio el plaguicida era muy efectivo.',
+ question:'¿Qué fenómeno biológico explica mejor esta situación?',
+ options:[{t:'Selección natural: los individuos con variantes genéticas resistentes sobrevivieron y se reprodujeron más que los sensibles',c:true},
+          {t:'Todos los insectos desarrollaron resistencia de manera idéntica por generación espontánea',c:false},
+          {t:'El plaguicida transformó genéticamente a todos los insectos por igual',c:false},
+          {t:'La resistencia no tiene relación con la genética de la población',c:false}],
+ explanation:'Este es un ejemplo clásico de selección natural: dentro de la población de insectos existía variabilidad genética; los individuos con genes que les conferían resistencia al plaguicida sobrevivieron y se reprodujeron más, transmitiendo esa característica a su descendencia, hasta que la resistencia se volvió predominante en la población.'},
+
+{sub:'icfes',diff:'avanzado',context:'Una noticia científica informa que la reducción de manglares en la costa colombiana ha aumentado la vulnerabilidad de las comunidades costeras ante tormentas, además de afectar la reproducción de peces que dependen de estos ecosistemas como criadero.',
+ question:'¿Qué argumento científico respalda mejor la importancia de conservar los manglares?',
+ options:[{t:'Los manglares cumplen múltiples funciones ecológicas: protección costera, hábitat de reproducción y regulación del ecosistema marino',c:true},
+          {t:'Los manglares no tienen ninguna función ecológica relevante',c:false},
+          {t:'Los manglares únicamente sirven como paisaje turístico',c:false},
+          {t:'La pérdida de manglares no afecta a ninguna especie marina',c:false}],
+ explanation:'Los manglares cumplen funciones ecológicas esenciales, como servir de barrera natural contra tormentas, ser zona de cría y reproducción de peces y crustáceos, y contribuir a la regulación de los ecosistemas costeros, por lo que su conservación es fundamental tanto ambiental como socialmente.'},
+
+{sub:'icfes',diff:'avanzado',context:'Un estudiante afirma: "Como el cuerpo humano puede eliminar toxinas a través del hígado y los riñones, no es necesario preocuparse por la exposición a sustancias contaminantes en el ambiente".',
+ question:'¿Cuál es el error conceptual en el razonamiento de este estudiante?',
+ options:[{t:'Ignora que la capacidad de desintoxicación del cuerpo tiene límites y la exposición prolongada puede superarla, causando daño',c:true},
+          {t:'Es correcto, el cuerpo humano puede eliminar cualquier cantidad de toxinas sin límite',c:false},
+          {t:'El hígado y los riñones no participan en la eliminación de sustancias',c:false},
+          {t:'La exposición a contaminantes siempre es beneficiosa para el organismo',c:false}],
+ explanation:'Aunque el hígado y los riñones cumplen funciones de desintoxicación, su capacidad tiene límites. La exposición prolongada o a altas concentraciones de sustancias contaminantes puede superar esta capacidad y generar daño celular, acumulación de toxinas y enfermedades, por lo que la prevención de la exposición sigue siendo importante.'},
+];
+
+/* -------------------------------------------------------------------------
+   2. ESTADO GLOBAL
+   ------------------------------------------------------------------------- */
+const TOTAL_PREGUNTAS = 40;
+let preguntasExamen = [];   // subconjunto de 40 preguntas de la ronda actual (con opciones mezcladas)
+let respuestasUsuario = []; // índice de opción elegida (o null) por pregunta
+let indiceActual = 0;
+let tiempoTotalSeg = 60*60;
+let tiempoRestante = tiempoTotalSeg;
+let temporizadorId = null;
+let inicioExamen = null;
+let sonidoActivo = true;
+let rachaActual = 0;
+let rachaMaxima = 0;
+let rachasDesbloqueadas = new Set();
+
+/* -------------------------------------------------------------------------
+   3. UTILIDADES
+   ------------------------------------------------------------------------- */
+function mezclar(array){
+  const copia = array.slice();
+  for(let i = copia.length -1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [copia[i],copia[j]] = [copia[j],copia[i]];
+  }
+  return copia;
+}
+
+function formatoTiempo(segundos){
+  const m = Math.floor(segundos/60);
+  const s = segundos%60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function etiquetaDificultad(diff){
+  return diff==='basico' ? 'Básico' : diff==='intermedio' ? 'Intermedio' : 'Avanzado';
+}
+
+/* -------------------------------------------------------------------------
+   4. SONIDOS (Web Audio API — sin archivos externos)
+   ------------------------------------------------------------------------- */
+let audioCtx = null;
+function obtenerAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  }
+  return audioCtx;
+}
+function reproducirTono(frecuencia, duracion, tipo='sine', volumen=0.15){
+  if(!sonidoActivo) return;
+  const ctx = obtenerAudioCtx();
+  if(!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = tipo;
+  osc.frequency.value = frecuencia;
+  gain.gain.value = volumen;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duracion);
+  osc.stop(ctx.currentTime + duracion);
+}
+function sonidoCorrecto(){ reproducirTono(880,.15,'sine'); setTimeout(()=>reproducirTono(1180,.18,'sine'),90); }
+function sonidoIncorrecto(){ reproducirTono(220,.28,'sawtooth',.12); }
+function sonidoFinal(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>reproducirTono(f,.22,'sine'),i*140)); }
+function sonidoLogro(){ [660,880,1100].forEach((f,i)=>setTimeout(()=>reproducirTono(f,.16,'triangle'),i*110)); }
+
+/* -------------------------------------------------------------------------
+   5. GENERACIÓN DE UNA RONDA ALEATORIA
+   ------------------------------------------------------------------------- */
+function generarRonda(){
+  const porDificultad = { basico:[], intermedio:[], avanzado:[] };
+  BANCO.forEach(p=> porDificultad[p.diff].push(p));
+
+  const objetivo = { basico:10, intermedio:14, avanzado:16 };
+  let seleccion = [];
+  Object.keys(objetivo).forEach(diff=>{
+    const disponibles = mezclar(porDificultad[diff]);
+    seleccion = seleccion.concat(disponibles.slice(0, Math.min(objetivo[diff], disponibles.length)));
+  });
+
+  // Si faltan preguntas (banco insuficiente en alguna dificultad), completar desde el resto del banco
+  if(seleccion.length < TOTAL_PREGUNTAS){
+    const usados = new Set(seleccion);
+    const restantes = mezclar(BANCO.filter(p=>!usados.has(p)));
+    seleccion = seleccion.concat(restantes.slice(0, TOTAL_PREGUNTAS - seleccion.length));
+  }
+
+  seleccion = mezclar(seleccion).slice(0,TOTAL_PREGUNTAS);
+
+  // Clonar y mezclar las opciones de cada pregunta
+  return seleccion.map(p=>{
+    const opciones = mezclar(p.options.map((o,idx)=>({...o, idOriginal:idx})));
+    return {...p, opcionesMezcladas:opciones};
+  });
+}
+
+/* -------------------------------------------------------------------------
+   6. RENDERIZADO — PANTALLA DE EXAMEN
+   ------------------------------------------------------------------------- */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+
+function iniciarExamen(){
+  preguntasExamen = generarRonda();
+  respuestasUsuario = new Array(TOTAL_PREGUNTAS).fill(null);
+  indiceActual = 0;
+  rachaActual = 0;
+  rachaMaxima = 0;
+  rachasDesbloqueadas = new Set();
+
+  tiempoTotalSeg = parseInt($('#select-tiempo').value,10)*60;
+  tiempoRestante = tiempoTotalSeg;
+  inicioExamen = Date.now();
+
+  $('#pantalla-inicio').classList.add('hidden');
+  $('#pantalla-resultados').classList.add('hidden');
+  $('#pantalla-examen').classList.remove('hidden');
+
+  construirRejilla();
+  renderizarPregunta();
+  iniciarTemporizador();
+}
+
+function iniciarTemporizador(){
+  actualizarTextoTiempo();
+  clearInterval(temporizadorId);
+  temporizadorId = setInterval(()=>{
+    tiempoRestante--;
+    actualizarTextoTiempo();
+    if(tiempoRestante<=0){
+      clearInterval(temporizadorId);
+      finalizarExamen(true);
+    }
+  },1000);
+}
+
+function actualizarTextoTiempo(){
+  $('#texto-tiempo').textContent = formatoTiempo(Math.max(tiempoRestante,0));
+  const cont = $('#temporizador');
+  if(tiempoRestante <= 60){ cont.classList.add('alerta'); } else { cont.classList.remove('alerta'); }
+}
+
+function renderizarPregunta(){
+  const p = preguntasExamen[indiceActual];
+  $('#num-pregunta-actual').textContent = `Pregunta ${indiceActual+1}`;
+  $('#etiqueta-sub-actual').textContent = SUBTEMAS[p.sub];
+  const etDif = $('#etiqueta-dif-actual');
+  etDif.textContent = etiquetaDificultad(p.diff);
+  etDif.className = 'etiqueta-dificultad dif-' + p.diff;
+
+  const contexto = $('#contexto-pregunta');
+  if(p.context && p.context.trim() !== ''){
+    contexto.textContent = p.context;
+    contexto.classList.remove('hidden');
+  } else {
+    contexto.classList.add('hidden');
+  }
+
+  $('#texto-pregunta-actual').textContent = p.question;
+
+  const cont = $('#contenedor-opciones');
+  cont.innerHTML = '';
+  const letras = ['A','B','C','D'];
+  p.opcionesMezcladas.forEach((op,idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opcion';
+    btn.type = 'button';
+    btn.setAttribute('role','radio');
+    btn.setAttribute('aria-checked', respuestasUsuario[indiceActual]===idx ? 'true':'false');
+    if(respuestasUsuario[indiceActual]===idx) btn.classList.add('seleccionada');
+    btn.innerHTML = `<span class="opcion-letra">${letras[idx]}</span><span>${op.t}</span>`;
+    btn.addEventListener('click', ()=>seleccionarOpcion(idx));
+    cont.appendChild(btn);
+  });
+
+  actualizarBarraProgreso();
+  actualizarBotonesNav();
+  actualizarRejilla();
+}
+
+function seleccionarOpcion(idx){
+  const p = preguntasExamen[indiceActual];
+  const yaRespondida = respuestasUsuario[indiceActual] !== null;
+  respuestasUsuario[indiceActual] = idx;
+
+  // Feedback sonoro y de racha solo la primera vez que se responde esta pregunta
+  if(!yaRespondida){
+    const esCorrecta = p.opcionesMezcladas[idx].c === true;
+    if(esCorrecta){
+      sonidoCorrecto();
+      rachaActual++;
+      rachaMaxima = Math.max(rachaMaxima, rachaActual);
+      mostrarRachaSiCorresponde();
+    } else {
+      sonidoIncorrecto();
+      rachaActual = 0;
+    }
+  }
+
+  renderizarPregunta();
+}
+
+function mostrarRachaSiCorresponde(){
+  const hitos = [3,5,10];
+  if(hitos.includes(rachaActual) && !rachasDesbloqueadas.has(rachaActual)){
+    rachasDesbloqueadas.add(rachaActual);
+    const mensajes = {
+      3:'🔥 ¡Racha de 3 aciertos consecutivos!',
+      5:'⚡ ¡Racha de 5! Vas muy bien encaminado',
+      10:'🌟 ¡Racha de 10! Dominio científico excepcional'
+    };
+    mostrarToastRacha(mensajes[rachaActual]);
+  }
+}
+
+function mostrarToastRacha(texto){
+  const toast = document.createElement('div');
+  toast.className = 'racha-flotante';
+  toast.textContent = texto;
+  document.body.appendChild(toast);
+  setTimeout(()=> toast.remove(), 3200);
+}
+
+function actualizarBarraProgreso(){
+  const respondidas = respuestasUsuario.filter(r=>r!==null).length;
+  const pendientes = TOTAL_PREGUNTAS - respondidas;
+  const pct = ((indiceActual+1)/TOTAL_PREGUNTAS)*100;
+  $('#texto-progreso').textContent = `Pregunta ${indiceActual+1} de ${TOTAL_PREGUNTAS}`;
+  $('#barra-progreso-fill').style.width = pct + '%';
+  $('#cont-respondidas').textContent = respondidas;
+  $('#cont-pendientes').textContent = pendientes;
+
+  const miniRacha = $('#mini-racha');
+  if(rachaActual >= 2){
+    miniRacha.style.display = 'inline-flex';
+    $('#valor-racha').textContent = rachaActual;
+  } else {
+    miniRacha.style.display = 'none';
+  }
+}
+
+function actualizarBotonesNav(){
+  $('#btn-anterior').disabled = indiceActual === 0;
+  $('#btn-siguiente').textContent = indiceActual === TOTAL_PREGUNTAS-1 ? 'Finalizar →' : 'Siguiente →';
+}
+
+function construirRejilla(){
+  const rejilla = $('#rejilla-preguntas');
+  rejilla.innerHTML = '';
+  for(let i=0;i<TOTAL_PREGUNTAS;i++){
+    const celda = document.createElement('button');
+    celda.type='button';
+    celda.className = 'celda-pregunta';
+    celda.textContent = i+1;
+    celda.setAttribute('aria-label', `Ir a la pregunta ${i+1}`);
+    celda.addEventListener('click', ()=>{ indiceActual = i; renderizarPregunta(); });
+    rejilla.appendChild(celda);
+  }
+}
+
+function actualizarRejilla(){
+  const celdas = $$('.celda-pregunta');
+  celdas.forEach((c,i)=>{
+    c.classList.toggle('respondida', respuestasUsuario[i] !== null);
+    c.classList.toggle('actual', i === indiceActual);
+  });
+}
+
+/* -------------------------------------------------------------------------
+   7. NAVEGACIÓN
+   ------------------------------------------------------------------------- */
+$('#btn-siguiente').addEventListener('click', ()=>{
+  if(indiceActual < TOTAL_PREGUNTAS-1){
+    indiceActual++;
+    renderizarPregunta();
+  } else {
+    intentarFinalizar();
+  }
+});
+$('#btn-anterior').addEventListener('click', ()=>{
+  if(indiceActual>0){ indiceActual--; renderizarPregunta(); }
+});
+$('#btn-finalizar-antes').addEventListener('click', intentarFinalizar);
+
+document.addEventListener('keydown', (e)=>{
+  const examenVisible = !$('#pantalla-examen').classList.contains('hidden');
+  if(!examenVisible) return;
+  if(e.key === 'ArrowRight'){ $('#btn-siguiente').click(); }
+  else if(e.key === 'ArrowLeft'){ $('#btn-anterior').click(); }
+  else if(['1','2','3','4'].includes(e.key)){ seleccionarOpcion(parseInt(e.key,10)-1); }
+});
+
+function intentarFinalizar(){
+  const pendientes = respuestasUsuario.filter(r=>r===null).length;
+  if(pendientes>0){
+    $('#modal-titulo').textContent = '¿Finalizar simulacro?';
+    $('#modal-texto').textContent = `Tienes ${pendientes} pregunta(s) sin responder. ¿Deseas finalizar de todas formas?`;
+  } else {
+    $('#modal-titulo').textContent = '¿Finalizar simulacro?';
+    $('#modal-texto').textContent = 'Has respondido todas las preguntas. ¿Deseas ver tu informe de resultados?';
+  }
+  $('#modal-confirmacion').classList.remove('hidden');
+}
+$('#modal-cancelar').addEventListener('click', ()=> $('#modal-confirmacion').classList.add('hidden'));
+$('#modal-confirmar').addEventListener('click', ()=>{
+  $('#modal-confirmacion').classList.add('hidden');
+  finalizarExamen(false);
+});
+
+/* -------------------------------------------------------------------------
+   8. FINALIZACIÓN Y CÁLCULO DE RESULTADOS
+   ------------------------------------------------------------------------- */
+function finalizarExamen(porTiempo){
+  clearInterval(temporizadorId);
+  const tiempoEmpleadoSeg = Math.round((Date.now()-inicioExamen)/1000);
+  sonidoFinal();
+
+  const resultado = calcularResultados(tiempoEmpleadoSeg);
+  renderizarResultados(resultado);
+
+  $('#pantalla-examen').classList.add('hidden');
+  $('#pantalla-resultados').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function calcularResultados(tiempoEmpleadoSeg){
+  let correctas = 0, incorrectas = 0;
+  const porSub = {};
+  Object.keys(SUBTEMAS).forEach(k=> porSub[k] = {correctas:0,total:0});
+
+  preguntasExamen.forEach((p,i)=>{
+    porSub[p.sub].total++;
+    const idxElegido = respuestasUsuario[i];
+    const esCorrecta = idxElegido !== null && p.opcionesMezcladas[idxElegido].c === true;
+    if(esCorrecta){ correctas++; porSub[p.sub].correctas++; }
+    else { incorrectas++; }
+  });
+
+  const pct = Math.round((correctas/TOTAL_PREGUNTAS)*100);
+
+  let nivel;
+  if(pct<50) nivel = 'Nivel inicial';
+  else if(pct<70) nivel = 'Nivel básico consolidado';
+  else if(pct<90) nivel = 'Nivel satisfactorio';
+  else nivel = 'Nivel avanzado';
+
+  return { correctas, incorrectas, pct, tiempoEmpleadoSeg, porSub, rachaMaxima };
+}
+
+/* -------------------------------------------------------------------------
+   9. RENDERIZADO DE RESULTADOS
+   ------------------------------------------------------------------------- */
+function renderizarResultados(r){
+  $('#circulo-puntaje').style.setProperty('--pct', r.pct);
+  $('#valor-pct').textContent = r.pct + '%';
+  $('#res-correctas').textContent = r.correctas;
+  $('#res-incorrectas').textContent = r.incorrectas;
+  $('#res-tiempo').textContent = formatoTiempo(r.tiempoEmpleadoSeg);
+  $('#res-racha-max').textContent = r.rachaMaxima;
+
+  let nivelTexto, mensaje;
+  if(r.pct<50){
+    nivelTexto = 'Nivel inicial';
+    mensaje = 'Cada intento es una oportunidad para comprender mejor los fenómenos naturales. Sigue practicando y fortaleciendo tus habilidades científicas.';
+  } else if(r.pct<70){
+    nivelTexto = 'Nivel básico consolidado';
+    mensaje = 'Vas construyendo una buena base científica. Continúa analizando los fenómenos y relacionando conceptos para mejorar tus resultados.';
+  } else if(r.pct<90){
+    nivelTexto = 'Nivel satisfactorio';
+    mensaje = 'Muy buen desempeño. Demuestras una sólida comprensión del cuerpo humano, los ecosistemas y el razonamiento científico.';
+  } else {
+    nivelTexto = 'Nivel avanzado';
+    mensaje = '¡Excelente trabajo! Has demostrado un dominio sobresaliente de los conceptos biológicos y de las competencias científicas propias de las pruebas tipo ICFES.';
+  }
+  $('#nivel-alcanzado').textContent = nivelTexto;
+  $('#mensaje-motivacional').textContent = mensaje;
+
+  // Barras por subtemática
+  const contBarras = $('#contenedor-barras-sub');
+  contBarras.innerHTML = '';
+  const fortalezas = [];
+  const mejoras = [];
+
+  Object.keys(SUBTEMAS).forEach(key=>{
+    const datos = r.porSub[key];
+    if(datos.total===0) return;
+    const pctSub = Math.round((datos.correctas/datos.total)*100);
+    const div = document.createElement('div');
+    div.className = 'barra-sub';
+    div.innerHTML = `
+      <div class="barra-sub-header"><span>${SUBTEMAS[key]}</span><span>${datos.correctas}/${datos.total} (${pctSub}%)</span></div>
+      <div class="barra-sub-fondo"><div class="barra-sub-fill" style="width:${pctSub}%"></div></div>
+    `;
+    contBarras.appendChild(div);
+
+    if(pctSub>=75) fortalezas.push(SUBTEMAS[key]);
+    else if(pctSub<=50) mejoras.push(SUBTEMAS[key]);
+  });
+
+  const listaFort = $('#lista-fortalezas'); listaFort.innerHTML='';
+  const listaMej = $('#lista-mejoras'); listaMej.innerHTML='';
+  if(fortalezas.length===0){ listaFort.innerHTML = '<li>Sigue practicando para consolidar tus fortalezas</li>'; }
+  else fortalezas.forEach(f=>{ const li=document.createElement('li'); li.textContent=f; listaFort.appendChild(li); });
+  if(mejoras.length===0){ listaMej.innerHTML = '<li>¡Buen desempeño general en todas las subtemáticas!</li>'; }
+  else mejoras.forEach(m=>{ const li=document.createElement('li'); li.textContent=m; listaMej.appendChild(li); });
+
+  renderizarLogros(r);
+  renderizarRevision();
+}
+
+/* -------------------------------------------------------------------------
+   10. SISTEMA DE LOGROS
+   ------------------------------------------------------------------------- */
+function renderizarLogros(r){
+  const pctSub = key => {
+    const d = r.porSub[key];
+    return d.total>0 ? (d.correctas/d.total)*100 : 0;
+  };
+
+  const logros = [
+    { icono:'🧬', nombre:'Explorador Celular', ok: pctSub('celula')>=75 },
+    { icono:'🫀', nombre:'Conocedor del Cuerpo Humano', ok: pctSub('sistemas')>=75 },
+    { icono:'🌿', nombre:'Guardián de los Ecosistemas', ok: (pctSub('ecosistemas')+pctSub('dinamica'))/2 >=75 },
+    { icono:'🧪', nombre:'Analista Científico', ok: pctSub('interpretacion')>=75 },
+    { icono:'🌎', nombre:'Defensor de la Biodiversidad', ok: pctSub('biodiversidad')>=75 },
+    { icono:'📊', nombre:'Intérprete de Evidencias', ok: (pctSub('interpretacion')+pctSub('icfes'))/2 >=75 },
+    { icono:'🔬', nombre:'Científico en Formación', ok: r.pct>=60 },
+    { icono:'🏆', nombre:'Maestro de las Ciencias Naturales', ok: r.pct>=90 },
+  ];
+
+  const cont = $('#contenedor-logros');
+  cont.innerHTML='';
+  let algunNuevo = false;
+  logros.forEach(l=>{
+    const div = document.createElement('div');
+    div.className = 'logro' + (l.ok ? ' desbloqueado':'');
+    div.innerHTML = `<div class="icono-logro">${l.icono}</div><div class="nombre-logro">${l.nombre}</div>`;
+    cont.appendChild(div);
+    if(l.ok) algunNuevo = true;
+  });
+  if(algunNuevo) sonidoLogro();
+}
+
+/* -------------------------------------------------------------------------
+   11. REVISIÓN DETALLADA DE LAS 40 PREGUNTAS
+   ------------------------------------------------------------------------- */
+function renderizarRevision(){
+  const cont = $('#contenedor-revision');
+  cont.innerHTML = '';
+  const letras = ['A','B','C','D'];
+
+  preguntasExamen.forEach((p,i)=>{
+    const idxElegido = respuestasUsuario[i];
+    const esCorrecta = idxElegido !== null && p.opcionesMezcladas[idxElegido].c === true;
+    const idxCorrecta = p.opcionesMezcladas.findIndex(o=>o.c===true);
+
+    const item = document.createElement('div');
+    item.className = 'revision-item';
+
+    let opcionesHtml = '';
+    p.opcionesMezcladas.forEach((op,idx)=>{
+      let clase = '';
+      if(idx===idxCorrecta) clase = 'correcta';
+      else if(idx===idxElegido && !esCorrecta) clase = 'incorrecta-elegida';
+      opcionesHtml += `<div class="opcion-revision ${clase}">${letras[idx]}. ${op.t}${idx===idxCorrecta?' ✓':''}${(idx===idxElegido && !esCorrecta)?' ✗ (tu respuesta)':''}</div>`;
+    });
+
+    item.innerHTML = `
+      <div class="revision-header">
+        <span class="num-pregunta">Pregunta ${i+1}</span>
+        <span class="etiqueta-sub">${SUBTEMAS[p.sub]}</span>
+        <span class="etiqueta-dificultad dif-${p.diff}">${etiquetaDificultad(p.diff)}</span>
+        <span class="estado-icono">${idxElegido===null ? '⚪ No respondida' : (esCorrecta ? '✅ Correcta' : '❌ Incorrecta')}</span>
+      </div>
+      ${p.context ? `<div class="contexto-pregunta">${p.context}</div>` : ''}
+      <div class="texto-pregunta" style="font-size:1rem;">${p.question}</div>
+      <div class="opciones">${opcionesHtml}</div>
+      <div class="caja-explicacion">
+        <strong>Justificación científica:</strong> ${p.explanation}<br>
+        <strong>Competencia evaluada:</strong> Uso comprensivo del conocimiento científico — explicación de fenómenos biológicos.
+      </div>
+    `;
+    cont.appendChild(item);
+  });
+}
+
+/* -------------------------------------------------------------------------
+   12. REINICIO
+   ------------------------------------------------------------------------- */
+$('#btn-reiniciar').addEventListener('click', ()=>{
+  clearInterval(temporizadorId);
+  $('#pantalla-resultados').classList.add('hidden');
+  $('#pantalla-inicio').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* -------------------------------------------------------------------------
+   13. CONTROLES INICIALES
+   ------------------------------------------------------------------------- */
+$('#select-tiempo').addEventListener('change', (e)=>{
+  $('#valor-tiempo-info').textContent = e.target.value + ' min';
+});
+$('#check-sonido').addEventListener('change', (e)=>{ sonidoActivo = e.target.checked; });
+$('#btn-iniciar').addEventListener('click', iniciarExamen);
+
+</script>
+</body>
+</html>

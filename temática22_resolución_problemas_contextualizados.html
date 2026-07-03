@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Resolución de Problemas Contextualizados · Nivel 3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root{
+  --azul-950:#0A1B33;
+  --azul-900:#0E2A4D;
+  --azul-800:#153B66;
+  --azul-700:#1E4E85;
+  --dorado:#F5B301;
+  --dorado-claro:#FFD447;
+  --blanco:#FFFFFF;
+  --gris-50:#F5F7FA;
+  --gris-100:#EBEEF2;
+  --gris-300:#C9D1DA;
+  --gris-500:#7C8798;
+  --gris-700:#3E4757;
+  --verde:#1F9D55;
+  --rojo:#D64545;
+  --radio:14px;
+  --sombra: 0 8px 30px rgba(10,27,51,0.12);
+  --ff-titulo: 'Poppins', 'Segoe UI', sans-serif;
+  --ff-texto: 'DM Sans', 'Segoe UI', sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--ff-texto);
+  background:linear-gradient(160deg,var(--gris-50) 0%, #EEF2F7 100%);
+  color:var(--azul-950);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+h1,h2,h3,h4{font-family:var(--ff-titulo); margin:0 0 8px 0; color:var(--azul-900);}
+p{margin:0 0 10px 0;}
+button{font-family:var(--ff-texto); cursor:pointer;}
+.oculto{display:none !important;}
+a{color:inherit;}
+
+/* ===== Layout general ===== */
+.app-shell{
+  max-width:1100px;
+  margin:0 auto;
+  padding:20px 18px 60px;
+}
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:var(--azul-900);
+  color:var(--blanco);
+  padding:14px 22px;
+  border-radius:16px;
+  box-shadow:var(--sombra);
+  margin-bottom:22px;
+  flex-wrap:wrap;
+}
+.topbar .marca{display:flex; align-items:center; gap:12px;}
+.topbar .marca .icono{
+  width:42px; height:42px; border-radius:50%;
+  background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; box-shadow:0 3px 10px rgba(245,179,1,0.5);
+  flex-shrink:0;
+}
+.topbar .marca strong{font-family:var(--ff-titulo); font-size:1.02em; letter-spacing:.3px;}
+.topbar .marca span{display:block; font-size:.78em; color:var(--gris-300);}
+.sonido-toggle{
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.18);
+  color:var(--blanco);
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:.85em;
+  transition:background .2s ease;
+}
+.sonido-toggle:hover{background:rgba(255,255,255,0.18);}
+.sonido-toggle .punto{
+  width:10px;height:10px;border-radius:50%;background:var(--verde);
+  box-shadow:0 0 0 3px rgba(31,157,85,0.25);
+}
+.sonido-toggle.apagado .punto{background:var(--gris-500); box-shadow:none;}
+
+.tarjeta{
+  background:var(--blanco);
+  border-radius:20px;
+  box-shadow:var(--sombra);
+  padding:30px;
+  border:1px solid var(--gris-100);
+}
+
+/* ===== Pantalla inicial ===== */
+#pantalla-inicio .encabezado-inicio{
+  text-align:center;
+  padding:6px 6px 22px;
+}
+#pantalla-inicio .badge{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  color:var(--azul-950);
+  font-weight:700;
+  font-size:.78em;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  padding:6px 16px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+#pantalla-inicio h1{font-size:1.7em; max-width:780px; margin:0 auto 10px;}
+#pantalla-inicio .subtitulo{color:var(--gris-700); max-width:680px; margin:0 auto; font-size:1.02em;}
+
+.grid-info{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+  gap:16px;
+  margin:26px 0;
+}
+.info-box{
+  background:var(--gris-50);
+  border:1px solid var(--gris-100);
+  border-radius:var(--radio);
+  padding:18px;
+  border-left:4px solid var(--dorado);
+}
+.info-box h4{font-size:.95em; color:var(--azul-800); display:flex; align-items:center; gap:8px;}
+.info-box p{font-size:.88em; color:var(--gris-700); margin:0;}
+
+.lista-temas{
+  columns:2;
+  column-gap:24px;
+  font-size:.9em;
+  color:var(--gris-700);
+  padding:0 0 0 20px;
+  margin:0;
+}
+.lista-temas li{margin-bottom:6px; break-inside:avoid;}
+
+.config-tiempo{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  background:var(--azul-900); color:var(--blanco);
+  padding:16px 20px; border-radius:var(--radio); margin:22px 0;
+}
+.config-tiempo label{font-size:.88em; color:var(--gris-300);}
+.config-tiempo input{
+  width:80px; padding:8px 10px; border-radius:8px; border:none;
+  font-size:1em; text-align:center; font-weight:700;
+}
+.config-tiempo .nota{font-size:.78em; color:var(--gris-300);}
+
+.btn-primario{
+  display:inline-flex; align-items:center; gap:10px; justify-content:center;
+  background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  color:var(--azul-950);
+  font-weight:700;
+  font-size:1.05em;
+  padding:16px 40px;
+  border:none;
+  border-radius:999px;
+  box-shadow:0 6px 20px rgba(245,179,1,0.4);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn-primario:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(245,179,1,0.5);}
+.btn-primario:active{transform:translateY(0px);}
+.btn-primario:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible{
+  outline:3px solid var(--azul-700); outline-offset:2px;
+}
+.contenedor-boton{text-align:center; margin-top:10px;}
+
+.btn-secundario{
+  background:var(--blanco);
+  border:2px solid var(--azul-800);
+  color:var(--azul-800);
+  font-weight:700;
+  padding:12px 26px;
+  border-radius:999px;
+  transition:all .15s ease;
+}
+.btn-secundario:hover{background:var(--azul-800); color:var(--blanco);}
+
+.btn-fantasma{
+  background:transparent; border:1px solid var(--gris-300); color:var(--gris-700);
+  padding:10px 18px; border-radius:999px; font-size:.88em; font-weight:500;
+}
+.btn-fantasma:hover{border-color:var(--azul-700); color:var(--azul-800);}
+
+/* ===== Pantalla del examen ===== */
+#pantalla-examen{padding:0;}
+.barra-superior-examen{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+.temporizador{
+  display:flex; align-items:center; gap:10px;
+  background:var(--azul-900); color:var(--blanco);
+  padding:10px 20px; border-radius:999px;
+  font-family:var(--ff-titulo); font-weight:700; font-size:1.15em;
+  letter-spacing:.5px;
+  box-shadow:var(--sombra);
+}
+.temporizador.alerta{background:var(--rojo); animation:pulso 1s infinite;}
+@keyframes pulso{0%,100%{box-shadow:0 0 0 0 rgba(214,69,69,.5);} 50%{box-shadow:0 0 0 8px rgba(214,69,69,0);}}
+
+.racha-indicador{
+  display:flex; align-items:center; gap:8px;
+  background:var(--gris-50); border:1px solid var(--gris-100);
+  padding:8px 16px; border-radius:999px; font-size:.88em; color:var(--azul-800); font-weight:700;
+}
+
+.progreso-wrap{margin-bottom:20px;}
+.progreso-texto{
+  display:flex; justify-content:space-between; font-size:.82em; color:var(--gris-700); margin-bottom:6px;
+}
+.progreso-barra-fondo{
+  width:100%; height:12px; background:var(--gris-100); border-radius:999px; overflow:hidden;
+}
+.progreso-barra-relleno{
+  height:100%; background:linear-gradient(90deg,var(--dorado),var(--dorado-claro));
+  border-radius:999px; transition:width .35s ease;
+}
+
+.layout-examen{
+  display:grid;
+  grid-template-columns: 1fr 240px;
+  gap:20px;
+  align-items:start;
+}
+@media (max-width:820px){
+  .layout-examen{grid-template-columns:1fr;}
+  .panel-navegador{order:2;}
+}
+
+.panel-pregunta{
+  background:var(--blanco); border-radius:20px; box-shadow:var(--sombra);
+  padding:28px; border:1px solid var(--gris-100);
+  min-height:420px;
+  display:flex; flex-direction:column;
+}
+.etiquetas-pregunta{
+  display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;
+}
+.etiqueta{
+  font-size:.72em; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+  padding:5px 12px; border-radius:999px;
+}
+.etiqueta.subtema{background:var(--azul-900); color:var(--blanco);}
+.etiqueta.dificultad-basica{background:#DCF3E3; color:#146C33;}
+.etiqueta.dificultad-intermedia{background:#FFEFCB; color:#8A5A00;}
+.etiqueta.dificultad-avanzada{background:#FBE1E1; color:#A32A2A;}
+
+.numero-pregunta{font-size:.88em; color:var(--gris-500); font-weight:700; margin-bottom:4px;}
+.texto-pregunta{
+  font-size:1.12em; color:var(--azul-950); margin-bottom:18px; font-weight:500;
+}
+.texto-pregunta table{border-collapse:collapse; margin:12px 0; font-size:.88em;}
+.texto-pregunta table th, .texto-pregunta table td{
+  border:1px solid var(--gris-300); padding:6px 12px; text-align:center;
+}
+.texto-pregunta table th{background:var(--gris-100); color:var(--azul-900);}
+
+.opciones{
+  display:flex; flex-direction:column; gap:12px; margin-top:auto;
+}
+.opcion{
+  display:flex; align-items:flex-start; gap:14px;
+  background:var(--gris-50);
+  border:2px solid var(--gris-100);
+  border-radius:14px;
+  padding:14px 18px;
+  text-align:left;
+  font-size:.98em;
+  color:var(--azul-950);
+  transition:border-color .15s ease, background .15s ease, transform .1s ease;
+}
+.opcion:hover{border-color:var(--dorado); background:#FFF9EA;}
+.opcion:active{transform:scale(0.995);}
+.opcion .letra{
+  flex-shrink:0; width:30px; height:30px; border-radius:50%;
+  background:var(--azul-900); color:var(--blanco);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:.86em;
+}
+.opcion.seleccionada{border-color:var(--azul-800); background:#EAF1FA;}
+.opcion.seleccionada .letra{background:var(--dorado); color:var(--azul-950);}
+
+.botonera-examen{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  margin-top:22px; flex-wrap:wrap;
+}
+.botonera-examen .grupo{display:flex; gap:10px; flex-wrap:wrap;}
+
+.panel-navegador{
+  background:var(--blanco); border-radius:20px; box-shadow:var(--sombra);
+  padding:20px; border:1px solid var(--gris-100);
+  position:sticky; top:14px;
+}
+.panel-navegador h4{font-size:.85em; color:var(--gris-700); text-transform:uppercase; letter-spacing:.4px;}
+.grid-preguntas{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:7px; margin-top:10px;
+}
+.mini-pregunta{
+  aspect-ratio:1/1; border-radius:8px; border:1px solid var(--gris-300);
+  background:var(--gris-50); color:var(--gris-700);
+  font-size:.78em; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.mini-pregunta.respondida{background:var(--azul-700); color:var(--blanco); border-color:var(--azul-700);}
+.mini-pregunta.actual{outline:3px solid var(--dorado); outline-offset:1px;}
+.leyenda{display:flex; flex-direction:column; gap:6px; margin-top:14px; font-size:.78em; color:var(--gris-700);}
+.leyenda span{display:flex; align-items:center; gap:6px;}
+.leyenda i{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.leyenda .c1{background:var(--gris-50); border:1px solid var(--gris-300);}
+.leyenda .c2{background:var(--azul-700);}
+
+/* ===== Toast racha/logro ===== */
+#capa-toast{
+  position:fixed; top:18px; left:50%; transform:translateX(-50%);
+  z-index:999; display:flex; flex-direction:column; gap:10px; align-items:center;
+  pointer-events:none;
+}
+.toast{
+  background:var(--azul-950); color:var(--blanco);
+  padding:12px 26px; border-radius:999px;
+  font-weight:700; font-size:.92em;
+  box-shadow:0 10px 26px rgba(0,0,0,.25);
+  display:flex; align-items:center; gap:10px;
+  animation:toast-in .35s ease, toast-out .4s ease 2.2s forwards;
+  border:1px solid rgba(255,255,255,.15);
+}
+.toast.logro{background:linear-gradient(135deg,var(--dorado),var(--dorado-claro)); color:var(--azul-950);}
+@keyframes toast-in{from{opacity:0; transform:translateY(-14px);} to{opacity:1; transform:translateY(0);}}
+@keyframes toast-out{from{opacity:1;} to{opacity:0; transform:translateY(-10px);}}
+
+/* ===== Modal confirmación ===== */
+.modal-fondo{
+  position:fixed; inset:0; background:rgba(10,27,51,0.55);
+  display:flex; align-items:center; justify-content:center; z-index:1000;
+  padding:20px;
+}
+.modal-caja{
+  background:var(--blanco); border-radius:18px; padding:28px; max-width:420px; width:100%;
+  box-shadow:0 20px 50px rgba(0,0,0,.3); text-align:center;
+}
+.modal-caja h3{margin-bottom:10px;}
+.modal-caja p{color:var(--gris-700); font-size:.92em;}
+.modal-acciones{display:flex; gap:12px; justify-content:center; margin-top:20px; flex-wrap:wrap;}
+
+/* ===== Resultados ===== */
+#pantalla-resultados .resumen-header{
+  text-align:center; padding-bottom:10px;
+}
+.mensaje-motivacional{
+  background:linear-gradient(135deg,var(--azul-900),var(--azul-700));
+  color:var(--blanco); border-radius:16px; padding:20px 26px; margin:18px 0 26px;
+  font-size:1.05em; text-align:center; font-weight:500;
+}
+.stats-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; margin-bottom:26px;
+}
+.stat-card{
+  background:var(--gris-50); border:1px solid var(--gris-100); border-radius:14px;
+  padding:16px; text-align:center;
+}
+.stat-card .valor{font-family:var(--ff-titulo); font-size:1.6em; font-weight:800; color:var(--azul-900);}
+.stat-card .etiqueta{font-size:.78em; color:var(--gris-700); text-transform:uppercase; letter-spacing:.4px;}
+
+.seccion-resultados{margin:30px 0;}
+.seccion-resultados h3{font-size:1.1em; border-left:4px solid var(--dorado); padding-left:12px;}
+
+.fortalezas-mejoras{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media (max-width:640px){.fortalezas-mejoras{grid-template-columns:1fr;}}
+.fm-box{border-radius:14px; padding:16px 18px; font-size:.9em;}
+.fm-box.fortaleza{background:#E9F8EE; border:1px solid #BFE8CB; color:#146C33;}
+.fm-box.mejora{background:#FFF3E0; border:1px solid #FADDA8; color:#8A5A00;}
+.fm-box ul{margin:8px 0 0 18px; padding:0;}
+
+#lienzo-grafico{width:100%; height:340px; display:block;}
+
+.logros-grid{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px;
+}
+.logro-card{
+  border-radius:14px; padding:16px; text-align:center; border:1px solid var(--gris-100);
+  background:var(--gris-50); opacity:.4; filter:grayscale(1);
+}
+.logro-card.obtenido{opacity:1; filter:none; background:linear-gradient(135deg,#FFF7E0,#FFF1C7); border-color:var(--dorado);}
+.logro-card .emoji{font-size:2em; display:block; margin-bottom:6px;}
+.logro-card .nombre{font-weight:700; font-size:.85em; color:var(--azul-900);}
+
+.revision-item{
+  border:1px solid var(--gris-100); border-radius:14px; padding:18px 20px; margin-bottom:14px;
+}
+.revision-item.correcta{border-left:5px solid var(--verde);}
+.revision-item.incorrecta{border-left:5px solid var(--rojo);}
+.revision-header{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:8px;}
+.revision-header .num{font-weight:700; color:var(--azul-900);}
+.resp-linea{font-size:.9em; margin:4px 0;}
+.resp-linea b{color:var(--azul-900);}
+.caja-explicacion{
+  background:var(--gris-50); border-radius:10px; padding:12px 16px; margin-top:10px; font-size:.88em; color:var(--gris-700);
+}
+.caja-explicacion b{color:var(--azul-800);}
+
+.acciones-finales{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:32px;}
+
+footer.pie{text-align:center; margin-top:40px;}
+
+@media (max-width:600px){
+  .tarjeta{padding:20px;}
+  #pantalla-inicio h1{font-size:1.35em;}
+  .lista-temas{columns:1;}
+  .grid-preguntas{grid-template-columns:repeat(6,1fr);}
+}
+</style>
+</head>
+<body>
+
+<div id="capa-toast" aria-live="polite"></div>
+
+<div class="app-shell">
+  <div class="topbar">
+    <div class="marca">
+      <div class="icono">📐</div>
+      <div>
+        <strong>Simulador ICFES · Matemáticas Aplicadas</strong>
+        <span>Nivel 3 · Resolución de Problemas Contextualizados</span>
+      </div>
+    </div>
+    <button class="sonido-toggle" id="btnSonido" aria-pressed="true">
+      <span class="punto"></span> <span id="txtSonido">Sonido activado</span>
+    </button>
+  </div>
+
+  <!-- ===================== PANTALLA DE INICIO ===================== -->
+  <section id="pantalla-inicio" class="tarjeta">
+    <div class="encabezado-inicio">
+      <span class="badge">Simulacro tipo ICFES</span>
+      <h1>Resolución de Problemas Contextualizados</h1>
+      <p class="subtitulo">Evalúa tu capacidad para comprender, modelar y resolver situaciones matemáticas reales de la vida cotidiana, financiera, científica y social, aplicando estrategias de razonamiento propias de las Pruebas Saber / ICFES.</p>
+    </div>
+
+    <div class="grid-info">
+      <div class="info-box">
+        <h4>🎯 Competencia evaluada</h4>
+        <p>Aplicar conceptos matemáticos para resolver situaciones reales y preguntas tipo ICFES, mediante la comprensión, modelación, resolución e interpretación de resultados.</p>
+      </div>
+      <div class="info-box">
+        <h4>📝 Preguntas</h4>
+        <p>40 preguntas de selección múltiple con única respuesta, seleccionadas aleatoriamente de un banco amplio en cada intento.</p>
+      </div>
+      <div class="info-box">
+        <h4>📊 Dificultad</h4>
+        <p>Progresión gradual: 25% básicas, 35% intermedias y 40% avanzadas tipo ICFES de alta complejidad.</p>
+      </div>
+      <div class="info-box">
+        <h4>🏅 Bonos</h4>
+        <p>Sistema de rachas de aciertos consecutivos y logros desbloqueables según tu desempeño por subtemática.</p>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--azul-700);">
+      <h4>📚 Subtemáticas incluidas en cada intento</h4>
+      <ul class="lista-temas">
+        <li>Comprensión y análisis del problema</li>
+        <li>Modelación matemática</li>
+        <li>Problemas financieros cotidianos</li>
+        <li>Problemas de movimiento y variación</li>
+        <li>Problemas geométricos aplicados</li>
+        <li>Interpretación de información estadística</li>
+        <li>Resolución de problemas de varios pasos</li>
+        <li>Validación e interpretación de resultados</li>
+        <li>Problemas tipo ICFES de alta complejidad</li>
+      </ul>
+    </div>
+
+    <div class="config-tiempo">
+      <label for="inputMinutos">⏱ Tiempo disponible (minutos)</label>
+      <input type="number" id="inputMinutos" min="10" max="180" value="60">
+      <span class="nota">Valor por defecto: 60 minutos. Puedes ajustarlo antes de iniciar.</span>
+    </div>
+
+    <div class="contenedor-boton">
+      <button class="btn-primario" id="btnIniciar">🚀 Iniciar simulacro</button>
+    </div>
+  </section>
+
+  <!-- ===================== PANTALLA DE EXAMEN ===================== -->
+  <section id="pantalla-examen" class="oculto">
+    <div class="barra-superior-examen">
+      <div class="temporizador" id="cajaTemporizador">⏱ <span id="textoTiempo">60:00</span></div>
+      <div class="racha-indicador" id="cajaRacha">🔥 Racha: <span id="valorRacha">0</span></div>
+      <button class="btn-fantasma" id="btnFinalizarAntes">Finalizar antes de tiempo</button>
+    </div>
+
+    <div class="progreso-wrap">
+      <div class="progreso-texto">
+        <span id="txtPreguntaActual">Pregunta 1 de 40</span>
+        <span id="txtProgresoPorc">0% completado · 0 respondidas · 40 restantes</span>
+      </div>
+      <div class="progreso-barra-fondo"><div class="progreso-barra-relleno" id="progresoRelleno" style="width:0%"></div></div>
+    </div>
+
+    <div class="layout-examen">
+      <div class="panel-pregunta" id="panelPregunta" tabindex="-1">
+        <div class="etiquetas-pregunta">
+          <span class="etiqueta subtema" id="etiquetaSubtema">Subtema</span>
+          <span class="etiqueta" id="etiquetaDificultad">Dificultad</span>
+        </div>
+        <div class="numero-pregunta" id="numeroPreguntaTxt">Pregunta 1 de 40</div>
+        <div class="texto-pregunta" id="textoPregunta">Cargando...</div>
+        <div class="opciones" id="contenedorOpciones"></div>
+      </div>
+
+      <aside class="panel-navegador">
+        <h4>Mapa de preguntas</h4>
+        <div class="grid-preguntas" id="gridPreguntas"></div>
+        <div class="leyenda">
+          <span><i class="c1"></i> Sin responder</span>
+          <span><i class="c2"></i> Respondida</span>
+        </div>
+      </aside>
+    </div>
+
+    <div class="botonera-examen">
+      <div class="grupo">
+        <button class="btn-secundario" id="btnAnterior">← Anterior</button>
+        <button class="btn-secundario" id="btnSiguiente">Siguiente →</button>
+      </div>
+      <button class="btn-primario" id="btnFinalizar" style="display:none;">Finalizar simulacro ✔</button>
+    </div>
+  </section>
+
+  <!-- ===================== PANTALLA DE RESULTADOS ===================== -->
+  <section id="pantalla-resultados" class="tarjeta oculto">
+    <div class="resumen-header">
+      <span class="badge">Informe de resultados</span>
+      <h1>Tu desempeño en el simulacro</h1>
+    </div>
+
+    <div class="mensaje-motivacional" id="mensajeMotivacional"></div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="seccion-resultados">
+      <h3>📊 Desempeño por subtemática</h3>
+      <canvas id="lienzoGrafico"></canvas>
+    </div>
+
+    <div class="seccion-resultados">
+      <h3>🧭 Fortalezas y aspectos por mejorar</h3>
+      <div class="fortalezas-mejoras">
+        <div class="fm-box fortaleza">
+          <strong>✅ Fortalezas</strong>
+          <ul id="listaFortalezas"></ul>
+        </div>
+        <div class="fm-box mejora">
+          <strong>🛠 Aspectos por mejorar</strong>
+          <ul id="listaMejoras"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="seccion-resultados">
+      <h3>🏅 Insignias obtenidas</h3>
+      <div class="logros-grid" id="logrosGrid"></div>
+    </div>
+
+    <div class="seccion-resultados">
+      <h3>📋 Revisión completa de las 40 preguntas</h3>
+      <div id="listaRevision"></div>
+    </div>
+
+    <div class="acciones-finales">
+      <button class="btn-primario" id="btnReiniciar">🔄 Reiniciar simulacro</button>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=759"
+       style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+      🏫 Regresar al Aula Virtual
+    </a>
+    <script>
+      const btn = document.getElementById('btn-volver');
+      const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=759';
+      const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=759';
+      const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (esMóvil) {
+        btn.href = appUrl;
+      }
+    </script>
+  </footer>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal-fondo oculto" id="modalConfirmar">
+  <div class="modal-caja">
+    <h3 id="modalTitulo">¿Finalizar el simulacro?</h3>
+    <p id="modalTexto">Aún tienes preguntas sin responder. Una vez finalices no podrás modificar tus respuestas.</p>
+    <div class="modal-acciones">
+      <button class="btn-secundario" id="modalCancelar">Volver al examen</button>
+      <button class="btn-primario" id="modalConfirmarBtn">Sí, finalizar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   SIMULADOR ICFES — Resolución de Problemas Contextualizados (Nivel 3)
+   Código modular, vanilla JS, sin dependencias externas.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1) BANCO DE PREGUNTAS
+   Cada pregunta: sub (clave subtema), diff (basica/intermedia/avanzada),
+   competencia (texto), question (HTML permitido), options[0] = correcta,
+   explanation (por qué), procedure (pasos para resolver).
+   ------------------------------------------------------------------------- */
+const SUBTEMAS = {
+  comprension:   {nombre:"Comprensión y análisis del problema", emoji:"🔎"},
+  modelacion:    {nombre:"Modelación matemática", emoji:"🧮"},
+  financiero:    {nombre:"Problemas financieros cotidianos", emoji:"💰"},
+  movimiento:    {nombre:"Problemas de movimiento y variación", emoji:"🚗"},
+  geometria:     {nombre:"Problemas geométricos aplicados", emoji:"📐"},
+  estadistica:   {nombre:"Interpretación de información estadística", emoji:"📈"},
+  variosPasos:   {nombre:"Resolución de problemas de varios pasos", emoji:"🧩"},
+  validacion:    {nombre:"Validación e interpretación de resultados", emoji:"✅"},
+  icfesAvanzado: {nombre:"Problemas tipo ICFES de alta complejidad", emoji:"🏆"}
+};
+
+const QUESTION_BANK = [
+/* ---------- COMPRENSIÓN (6) ---------- */
+{sub:"comprension", diff:"basica", competencia:"Comprender situaciones matemáticas reales.",
+ question:"Un vendedor de frutas tiene 120 mangos. Vende 45 en la mañana y compra 30 más en la tarde. ¿Qué pregunta corresponde exactamente a la situación, si se quiere saber cuántos mangos tiene disponibles al finalizar el día?",
+ options:["¿Cuántos mangos tiene disponibles al finalizar el día?","¿Cuántos mangos vendió en total durante el día?","¿Cuántos mangos compró en la tarde?","¿Cuál fue la ganancia total del vendedor?"],
+ explanation:"La pregunta debe corresponder a la incógnita real (mangos disponibles al final), no a datos auxiliares como ventas o compras por separado.",
+ procedure:"1) Identifica todos los eventos: 120 iniciales, −45 vendidos, +30 comprados.\n2) Reconoce que la pregunta pide el resultado final, no un evento parcial.\n3) Plantea: 120 − 45 + 30 = 105 mangos."},
+
+{sub:"comprension", diff:"basica", competencia:"Comprender situaciones matemáticas reales.",
+ question:"Camila debe entregar un informe de 24 páginas. Ya escribió 9 páginas el lunes y 6 el martes. ¿Qué operación permite saber cuántas páginas le faltan por escribir?",
+ options:["24 − (9 + 6)","24 + 9 + 6","(9 + 6) − 24","24 − 9 − (−6)"],
+ explanation:"Se debe restar al total lo ya avanzado, sumando primero las páginas escritas en ambos días.",
+ procedure:"1) Suma lo escrito: 9 + 6 = 15.\n2) Resta al total: 24 − 15 = 9 páginas faltantes."},
+
+{sub:"comprension", diff:"intermedia", competencia:"Comprender situaciones matemáticas reales.",
+ question:"Un taller mecánico cobra $45.000 por revisión más $12.000 por cada hora de mano de obra. Un cliente pagó $93.000 en total. El taller atiende de 8:00 a.m. a 6:00 p.m. ¿Qué dato del enunciado NO es necesario para calcular las horas de mano de obra?",
+ options:["El horario de atención del taller","El costo de la revisión","El costo por hora de mano de obra","El total pagado por el cliente"],
+ explanation:"El horario de atención no interviene en la ecuación 45.000 + 12.000h = 93.000; es información irrelevante para el cálculo.",
+ procedure:"1) Identifica la ecuación necesaria: 45.000 + 12.000h = 93.000.\n2) Nota que solo se requieren el costo fijo, el costo por hora y el total pagado.\n3) Descarta el horario, que no aporta al cálculo."},
+
+{sub:"comprension", diff:"intermedia", competencia:"Comprender situaciones matemáticas reales.",
+ question:"Andrés tiene el triple de dinero que su hermano Luis. Entre los dos tienen $180.000. Si x representa el dinero de Luis, ¿cuál planteamiento representa correctamente la situación?",
+ options:["x + 3x = 180.000","3x + x = 3(180.000)","x − 3x = 180.000","3x = 180.000 + x"],
+ explanation:"El dinero de Andrés es 3x y el de Luis es x; su suma debe igualar el total dado.",
+ procedure:"1) Define x = dinero de Luis.\n2) El dinero de Andrés es 3x (el triple).\n3) Plantea la suma: x + 3x = 180.000."},
+
+{sub:"comprension", diff:"avanzada", competencia:"Comprender situaciones matemáticas reales.",
+ question:"En una encuesta a 200 estudiantes sobre su medio de transporte se sabe que 80 usan bus y 54 usan bicicleta. El resto camina o usa carro particular, y quienes caminan son el doble de quienes usan carro. ¿Cuál de las siguientes preguntas NO se puede responder con la información dada?",
+ options:["¿Cuántos estudiantes cambiarán de medio de transporte el próximo año?","¿Cuántos estudiantes usan un medio distinto al bus?","¿Cuántos estudiantes usan carro particular?","¿Cuántos estudiantes caminan?"],
+ explanation:"Los datos permiten calcular caminan/carro (66 estudiantes repartidos en razón 2:1), pero no existe información sobre decisiones futuras.",
+ procedure:"1) Verifica qué se puede calcular: 200 − 80 − 54 = 66 (caminan + carro).\n2) Con caminan = 2·carro se obtiene carro = 22, caminan = 44.\n3) La pregunta sobre el futuro no tiene sustento en los datos: es la única no respondible."},
+
+{sub:"comprension", diff:"avanzada", competencia:"Comprender situaciones matemáticas reales.",
+ question:"Un restaurante ofrece un menú ejecutivo a $18.000 y uno especial a $25.000. Un grupo de 15 personas pagó en total $328.000 combinando ambos menús. Se sabe además que 3 personas del grupo no comieron. ¿Cuál es la incógnita correcta que debe plantearse para resolver el problema?",
+ options:["El número de personas que pidieron cada tipo de menú","El número de personas que no comieron","El precio total pagado por el grupo","El número total de personas del grupo"],
+ explanation:"El dato de las 3 personas que no comieron es información que ajusta el número de comensales (12), pero la incógnita del problema sigue siendo cuántos pidieron cada menú.",
+ procedure:"1) Reconoce que solo 12 personas comieron (15 − 3).\n2) La incógnita real es la distribución entre menú ejecutivo y especial.\n3) Se plantea un sistema con esas dos variables usando los 12 comensales y el total pagado."},
+
+/* ---------- MODELACIÓN (6) ---------- */
+{sub:"modelacion", diff:"basica", competencia:"Modelar situaciones mediante expresiones matemáticas.",
+ question:"Un parqueadero cobra $2.000 por la primera hora y $1.500 por cada hora adicional. ¿Cuál expresión representa el costo total C para h horas completas (h ≥ 1)?",
+ options:["C = 2.000 + 1.500(h − 1)","C = 2.000 + 1.500h","C = 1.500 + 2.000(h − 1)","C = 2.000h + 1.500"],
+ explanation:"La primera hora tiene tarifa fija y solo las horas adicionales (h−1) se cobran a $1.500.",
+ procedure:"1) Aísla el cargo fijo de la primera hora: $2.000.\n2) Cuenta las horas adicionales: (h − 1).\n3) Multiplica por la tarifa adicional y suma: C = 2.000 + 1.500(h−1)."},
+
+{sub:"modelacion", diff:"intermedia", competencia:"Modelar situaciones mediante expresiones matemáticas.",
+ question:"Una fábrica produce 350 unidades diarias y planea aumentar la producción en 25 unidades cada semana. ¿Cuál expresión modela la producción diaria P después de s semanas?",
+ options:["P = 350 + 25s","P = 350s + 25","P = 25(350 + s)","P = 350 − 25s"],
+ explanation:"El aumento es constante y acumulativo por semana, por lo que se suma un término lineal en s.",
+ procedure:"1) Identifica el valor inicial: 350.\n2) Identifica la razón de cambio: +25 por semana.\n3) Modela linealmente: P = 350 + 25s."},
+
+{sub:"modelacion", diff:"intermedia", competencia:"Modelar situaciones mediante expresiones matemáticas.",
+ question:"El área de un jardín rectangular es A = x² + 5x, donde x es el ancho en metros. ¿Cuál expresión representa el largo del jardín?",
+ options:["x + 5","x − 5","5x","x²"],
+ explanation:"Factorizando A = x(x + 5), el ancho es x y el largo es el otro factor, x + 5.",
+ procedure:"1) Factoriza sacando x como factor común: A = x(x + 5).\n2) Compara con A = ancho × largo.\n3) Concluye que el largo es (x + 5)."},
+
+{sub:"modelacion", diff:"avanzada", competencia:"Modelar situaciones mediante expresiones matemáticas.",
+ question:"Una empresa de telefonía cobra una tarifa fija de $35.000 más $150 por cada minuto que exceda los primeros 100 minutos incluidos. Si m representa los minutos usados (m > 100), ¿cuál expresión representa el costo total C?",
+ options:["C = 35.000 + 150(m − 100)","C = 35.000 + 150m","C = 35.000(m − 100) + 150","C = (35.000 + 150)m − 100"],
+ explanation:"Solo los minutos que exceden el paquete (m − 100) se cobran adicionalmente a $150 cada uno.",
+ procedure:"1) Separa la tarifa fija del cargo variable.\n2) Cuenta solo los minutos excedentes: (m − 100).\n3) Modela: C = 35.000 + 150(m − 100)."},
+
+{sub:"modelacion", diff:"avanzada", competencia:"Modelar situaciones mediante expresiones matemáticas.",
+ question:"La altura h (en metros) de un proyectil lanzado desde el suelo está dada por h(t) = 20t − 5t², con t en segundos. ¿Cuál es la altura máxima que alcanza el proyectil?",
+ options:["20 metros","40 metros","10 metros","25 metros"],
+ explanation:"El vértice de la parábola ocurre en t = −b/2a = 20/10 = 2 s, y allí h(2) = 40 − 20 = 20 m.",
+ procedure:"1) Identifica a = −5, b = 20.\n2) Calcula el tiempo del vértice: t = −b/(2a) = 2 s.\n3) Evalúa h(2) = 20(2) − 5(2²) = 40 − 20 = 20 m."},
+
+{sub:"modelacion", diff:"avanzada", competencia:"Modelar situaciones mediante expresiones matemáticas.",
+ question:"Un tanque se llena según la expresión V(t) = 8t + 3, donde V está en litros y t en minutos. Si se necesita que el tanque tenga al menos 75 litros, ¿cuál inecuación permite hallar el tiempo mínimo requerido?",
+ options:["8t + 3 ≥ 75","8t + 3 ≤ 75","8t − 3 ≥ 75","3t + 8 ≥ 75"],
+ explanation:"Se debe plantear que el volumen sea mayor o igual al valor requerido, respetando la expresión original de V(t).",
+ procedure:"1) Escribe la condición 'al menos 75 litros' como V(t) ≥ 75.\n2) Sustituye V(t) = 8t + 3.\n3) Obtén: 8t + 3 ≥ 75."},
+
+/* ---------- FINANCIERO (6) ---------- */
+{sub:"financiero", diff:"basica", competencia:"Aplicar el razonamiento matemático en contextos económicos.",
+ question:"Un pantalón cuesta $80.000 y tiene un descuento del 15%. ¿Cuánto se paga finalmente por el pantalón?",
+ options:["$68.000","$65.000","$92.000","$12.000"],
+ explanation:"Se paga el 85% del precio original, ya que se descuenta el 15%.",
+ procedure:"1) Calcula el descuento: 80.000 × 0,15 = 12.000.\n2) Resta al precio original: 80.000 − 12.000 = 68.000."},
+
+{sub:"financiero", diff:"basica", competencia:"Aplicar el razonamiento matemático en contextos económicos.",
+ question:"Laura ahorra $25.000 cada semana. ¿Cuánto habrá ahorrado después de 8 semanas?",
+ options:["$200.000","$175.000","$33.000","$160.000"],
+ explanation:"El ahorro total es el producto del ahorro semanal por el número de semanas.",
+ procedure:"1) Multiplica: 25.000 × 8 = 200.000."},
+
+{sub:"financiero", diff:"intermedia", competencia:"Aplicar el razonamiento matemático en contextos económicos.",
+ question:"Un artículo cuesta $150.000. Primero se aplica un descuento del 10% y luego, sobre el nuevo precio, un descuento adicional del 5%. ¿Cuál es el precio final?",
+ options:["$128.250","$127.500","$130.000","$120.000"],
+ explanation:"Los descuentos sucesivos no se suman directamente; el segundo se aplica sobre el precio ya rebajado.",
+ procedure:"1) Aplica el primer descuento: 150.000 × 0,90 = 135.000.\n2) Aplica el segundo sobre ese valor: 135.000 × 0,95 = 128.250."},
+
+{sub:"financiero", diff:"intermedia", competencia:"Aplicar el razonamiento matemático en contextos económicos.",
+ question:"Un banco ofrece un CDT con interés simple del 1,2% mensual. Si una persona invierte $2.000.000 durante 6 meses, ¿cuánto interés total ganará?",
+ options:["$144.000","$24.000","$240.000","$120.000"],
+ explanation:"El interés simple se calcula multiplicando capital, tasa y tiempo.",
+ procedure:"1) Aplica I = P·r·t.\n2) I = 2.000.000 × 0,012 × 6 = 144.000."},
+
+{sub:"financiero", diff:"avanzada", competencia:"Aplicar el razonamiento matemático en contextos económicos.",
+ question:"Una familia destina el 35% de sus ingresos mensuales de $3.200.000 a vivienda, el 20% a alimentación, y el resto se reparte en partes iguales entre ahorro, transporte y salud. ¿Cuánto dinero destina la familia a transporte?",
+ options:["$480.000","$1.440.000","$640.000","$360.000"],
+ explanation:"El resto del ingreso, tras vivienda y alimentación, debe repartirse en tres partes iguales.",
+ procedure:"1) Vivienda: 3.200.000 × 0,35 = 1.120.000.\n2) Alimentación: 3.200.000 × 0,20 = 640.000.\n3) Resto: 3.200.000 − 1.120.000 − 640.000 = 1.440.000.\n4) Divide entre 3: 1.440.000 / 3 = 480.000."},
+
+{sub:"financiero", diff:"avanzada", competencia:"Aplicar el razonamiento matemático en contextos económicos.",
+ question:"Un emprendedor pide un préstamo de $5.000.000 a un interés simple anual del 18%, para pagarlo en 18 meses. Además debe pagar una cuota de manejo única de $150.000. ¿Cuánto pagará en total al finalizar el préstamo?",
+ options:["$6.500.000","$6.350.000","$5.900.000","$6.150.000"],
+ explanation:"Se debe convertir el plazo a años para aplicar la tasa anual, y sumar capital, interés y cuota de manejo.",
+ procedure:"1) Convierte 18 meses a 1,5 años.\n2) Calcula el interés: I = 5.000.000 × 0,18 × 1,5 = 1.350.000.\n3) Suma capital + interés + cuota: 5.000.000 + 1.350.000 + 150.000 = 6.500.000."},
+
+/* ---------- MOVIMIENTO (6) ---------- */
+{sub:"movimiento", diff:"basica", competencia:"Analizar información y resolver problemas de variación.",
+ question:"Un ciclista recorre 45 km en 3 horas a velocidad constante. ¿Cuál es su velocidad?",
+ options:["15 km/h","45 km/h","135 km/h","3 km/h"],
+ explanation:"La velocidad se obtiene dividiendo la distancia recorrida entre el tiempo empleado.",
+ procedure:"1) Aplica v = d/t.\n2) v = 45 / 3 = 15 km/h."},
+
+{sub:"movimiento", diff:"intermedia", competencia:"Analizar información y resolver problemas de variación.",
+ question:"Un carro viaja de Medellín a Cartagena, 620 km, con velocidad promedio de 80 km/h, incluyendo una parada de 40 minutos. ¿Cuánto tiempo total dura aproximadamente el viaje?",
+ options:["8 horas con 25 minutos","7 horas con 45 minutos","8 horas con 40 minutos","9 horas"],
+ explanation:"Al tiempo de desplazamiento calculado con v = d/t se le debe sumar el tiempo de la parada.",
+ procedure:"1) Calcula el tiempo en movimiento: 620/80 = 7,75 h = 7 h 45 min.\n2) Suma la parada: 7 h 45 min + 40 min = 8 h 25 min."},
+
+{sub:"movimiento", diff:"intermedia", competencia:"Analizar información y resolver problemas de variación.",
+ question:"Dos amigos parten al mismo tiempo desde el mismo punto en direcciones opuestas: uno a 60 km/h y el otro a 45 km/h. ¿Después de cuánto tiempo estarán separados 210 km?",
+ options:["2 horas","3 horas","1,5 horas","4,6 horas"],
+ explanation:"Al alejarse en direcciones opuestas, las velocidades se suman para obtener la rapidez de separación.",
+ procedure:"1) Suma las velocidades: 60 + 45 = 105 km/h.\n2) Divide la distancia entre esa velocidad: 210 / 105 = 2 h."},
+
+{sub:"movimiento", diff:"avanzada", competencia:"Analizar información y resolver problemas de variación.",
+ question:"Un tren sale de la estación A hacia B (300 km) a 90 km/h. Media hora después sale otro tren de A hacia B a 120 km/h. ¿A qué distancia de A se encuentran?",
+ options:["180 km","135 km","150 km","210 km"],
+ explanation:"El primer tren ya lleva ventaja al partir el segundo; se debe hallar cuándo el segundo alcanza al primero.",
+ procedure:"1) Ventaja del primer tren en 0,5 h: 90 × 0,5 = 45 km.\n2) Velocidad de aproximación: 120 − 90 = 30 km/h.\n3) Tiempo para alcanzarlo: 45/30 = 1,5 h.\n4) Distancia recorrida por el segundo tren: 120 × 1,5 = 180 km."},
+
+{sub:"movimiento", diff:"avanzada", competencia:"Analizar información y resolver problemas de variación.",
+ question:"La posición de un objeto está dada por x(t) = 4t² + 2t (metros, segundos). ¿Cuál es la velocidad promedio del objeto entre t = 1 s y t = 3 s?",
+ options:["18 m/s","12 m/s","21 m/s","36 m/s"],
+ explanation:"La velocidad promedio es el cambio de posición dividido entre el cambio de tiempo.",
+ procedure:"1) Calcula x(1) = 4(1)+2(1) = 6.\n2) Calcula x(3) = 4(9)+2(3) = 42.\n3) Divide: (42−6)/(3−1) = 36/2 = 18 m/s."},
+
+{sub:"movimiento", diff:"avanzada", competencia:"Analizar información y resolver problemas de variación.",
+ question:"Un avión vuela de Bogotá a Medellín (250 km) con el viento a favor: 500 km/h respecto al aire y 40 km/h de viento a favor. En el regreso el viento sopla en contra. ¿Cuál es la diferencia aproximada en minutos entre el tiempo de ida y el de regreso?",
+ options:["Aproximadamente 5 minutos","Aproximadamente 15 minutos","Aproximadamente 30 minutos","Aproximadamente 1 minuto"],
+ explanation:"La velocidad efectiva cambia al sumar o restar el viento, lo que modifica el tiempo de cada trayecto.",
+ procedure:"1) Ida: 500+40=540 km/h; t=250/540≈0,463 h ≈ 27,8 min.\n2) Regreso: 500−40=460 km/h; t=250/460≈0,543 h ≈ 32,6 min.\n3) Diferencia: 32,6 − 27,8 ≈ 5 minutos."},
+
+/* ---------- GEOMETRÍA (6) ---------- */
+{sub:"geometria", diff:"basica", competencia:"Seleccionar estrategias de resolución en contextos geométricos.",
+ question:"Un terreno rectangular mide 12 m de largo por 8 m de ancho. ¿Cuál es su área?",
+ options:["96 m²","40 m²","20 m²","104 m²"],
+ explanation:"El área de un rectángulo es el producto de largo por ancho.",
+ procedure:"1) Multiplica: 12 × 8 = 96 m²."},
+
+{sub:"geometria", diff:"intermedia", competencia:"Seleccionar estrategias de resolución en contextos geométricos.",
+ question:"Se desea cercar con malla los 4 lados de un lote rectangular de 15 m de largo y 9 m de ancho, dejando una abertura de 2 m para la puerta. ¿Cuántos metros de malla se necesitan?",
+ options:["46 m","48 m","44 m","50 m"],
+ explanation:"Se calcula el perímetro completo y luego se descuenta la abertura de la puerta.",
+ procedure:"1) Calcula el perímetro: 2×(15+9) = 48 m.\n2) Resta la abertura: 48 − 2 = 46 m."},
+
+{sub:"geometria", diff:"intermedia", competencia:"Seleccionar estrategias de resolución en contextos geométricos.",
+ question:"Un tanque cilíndrico tiene un radio de 1,4 m y una altura de 2 m. Usando π ≈ 3,14, ¿cuál es aproximadamente su volumen?",
+ options:["12,31 m³","8,79 m³","24,63 m³","6,15 m³"],
+ explanation:"El volumen de un cilindro se calcula con πr²h.",
+ procedure:"1) Calcula r²: 1,4² = 1,96.\n2) Multiplica: 3,14 × 1,96 × 2 ≈ 12,31 m³."},
+
+{sub:"geometria", diff:"avanzada", competencia:"Seleccionar estrategias de resolución en contextos geométricos.",
+ question:"Se deben pintar las 4 paredes de una habitación rectangular de 6 m de largo, 4 m de ancho y 2,5 m de altura, sin descontar puertas ni ventanas. Si un galón cubre 10 m², ¿cuántos galones completos se necesitan?",
+ options:["5 galones","6 galones","4 galones","10 galones"],
+ explanation:"El área de las paredes es el perímetro de la base multiplicado por la altura; luego se divide entre el rendimiento del galón.",
+ procedure:"1) Perímetro de la base: 2×(6+4) = 20 m.\n2) Área de paredes: 20 × 2,5 = 50 m².\n3) Galones necesarios: 50/10 = 5."},
+
+{sub:"geometria", diff:"avanzada", competencia:"Seleccionar estrategias de resolución en contextos geométricos.",
+ question:"Un terreno con forma de trapecio tiene bases de 20 m y 32 m, y una altura de 15 m. Se dividirá en dos lotes de igual área mediante una línea paralela a las bases. ¿Cuál es el área de cada lote?",
+ options:["195 m²","390 m²","130 m²","260 m²"],
+ explanation:"Primero se halla el área total del trapecio y luego se reparte en dos partes iguales.",
+ procedure:"1) Área total: ((20+32)/2) × 15 = 390 m².\n2) Divide entre 2: 390/2 = 195 m²."},
+
+{sub:"geometria", diff:"avanzada", competencia:"Seleccionar estrategias de resolución en contextos geométricos.",
+ question:"Una piscina tiene 10 m de largo, 5 m de ancho, y profundidad que varía uniformemente de 1 m en un extremo a 3 m en el otro. ¿Cuál es el volumen de agua que puede contener llena?",
+ options:["100 m³","150 m³","50 m³","200 m³"],
+ explanation:"Con profundidad variable de forma uniforme, se debe usar la profundidad promedio.",
+ procedure:"1) Calcula la profundidad promedio: (1+3)/2 = 2 m.\n2) Multiplica por largo y ancho: 10 × 5 × 2 = 100 m³."},
+
+/* ---------- ESTADÍSTICA (6) ---------- */
+{sub:"estadistica", diff:"basica", competencia:"Analizar información en diferentes formatos (tablas y gráficos).",
+ question:"En una tienda se registraron las ventas semanales: Lunes 12, Martes 18, Miércoles 9, Jueves 15, Viernes 26. ¿Cuál fue el promedio de ventas diarias?",
+ options:["16","18","15","20"],
+ explanation:"El promedio se obtiene sumando todos los valores y dividiendo entre el número de datos.",
+ procedure:"1) Suma: 12+18+9+15+26 = 80.\n2) Divide entre 5 días: 80/5 = 16."},
+
+{sub:"estadistica", diff:"basica", competencia:"Analizar información en diferentes formatos (tablas y gráficos).",
+ question:"La tabla muestra calificaciones de un grupo: 3 estudiantes obtuvieron 2,0; 5 obtuvieron 3,5; 7 obtuvieron 4,0; 5 obtuvieron 4,5. ¿Cuántos estudiantes presentaron la prueba en total?",
+ options:["20","15","25","18"],
+ explanation:"El total de estudiantes es la suma de las frecuencias de cada calificación.",
+ procedure:"1) Suma las frecuencias: 3+5+7+5 = 20."},
+
+{sub:"estadistica", diff:"intermedia", competencia:"Analizar información en diferentes formatos (tablas y gráficos).",
+ question:"En una encuesta a 240 personas sobre su bebida favorita: 96 prefieren café, 72 prefieren té, y el resto prefiere chocolate. ¿Qué porcentaje de las personas prefiere chocolate?",
+ options:["30%","40%","25%","20%"],
+ explanation:"Se debe hallar primero el número de personas que prefieren chocolate y luego convertirlo a porcentaje del total.",
+ procedure:"1) Resta: 240 − 96 − 72 = 72 personas.\n2) Calcula el porcentaje: 72/240 × 100 = 30%."},
+
+{sub:"estadistica", diff:"intermedia", competencia:"Analizar información en diferentes formatos (tablas y gráficos).",
+ question:"Un gráfico de barras muestra la producción mensual de una fábrica (en toneladas): Enero 40, Febrero 55, Marzo 35, Abril 70. ¿Entre qué dos meses consecutivos se presentó el mayor aumento en la producción?",
+ options:["Marzo y abril","Enero y febrero","Febrero y marzo","Todos los aumentos fueron iguales"],
+ explanation:"Se deben comparar las diferencias entre meses consecutivos y elegir la mayor variación positiva.",
+ procedure:"1) Calcula las diferencias: Feb−Ene=15; Mar−Feb=−20; Abr−Mar=35.\n2) El mayor aumento (35) ocurre entre marzo y abril."},
+
+{sub:"estadistica", diff:"avanzada", competencia:"Analizar información en diferentes formatos (tablas y gráficos).",
+ question:"La mediana de las edades de 9 estudiantes de un club de matemáticas es 14 años. Se conocen 8 edades: 12, 13, 13, 14, 15, 15, 16, 17, y falta la del noveno estudiante. ¿Cuál debe ser su edad para que la mediana se mantenga en 14?",
+ options:["14 años","15 años","13 años","16 años"],
+ explanation:"Con 9 datos, la mediana es el valor central (posición 5) al ordenarlos de menor a mayor.",
+ procedure:"1) Ordena los 8 datos conocidos: 12,13,13,14,15,15,16,17.\n2) Inserta un valor de 14 años: 12,13,13,14,14,15,15,16,17.\n3) El quinto valor (posición central) es 14, por lo que la mediana se mantiene."},
+
+{sub:"estadistica", diff:"avanzada", competencia:"Analizar información en diferentes formatos (tablas y gráficos).",
+ question:"Una tabla registra accidentes de tránsito por franja horaria en un mes: 6:00-10:00: 45; 10:00-14:00: 30; 14:00-18:00: 38; 18:00-22:00: 62. Si el total del mes fue 210, ¿cuántos ocurrieron fuera de estas franjas (22:00-6:00)?",
+ options:["35","45","25","50"],
+ explanation:"Se debe restar al total la suma de los accidentes reportados en las franjas conocidas.",
+ procedure:"1) Suma las franjas dadas: 45+30+38+62 = 175.\n2) Resta al total: 210 − 175 = 35."},
+
+/* ---------- VARIOS PASOS (6) ---------- */
+{sub:"variosPasos", diff:"basica", competencia:"Resolver problemas de varios pasos.",
+ question:"Un supermercado vende una gaseosa a $2.500 con la promoción 'lleve 3 pague 2'. Si un cliente compra 9 gaseosas, ¿cuánto paga en total?",
+ options:["$15.000","$22.500","$17.500","$20.000"],
+ explanation:"Se deben agrupar las gaseosas de a 3 y pagar solo por 2 de cada grupo.",
+ procedure:"1) Divide 9 entre 3: 3 grupos completos.\n2) En cada grupo se pagan 2: 3 × 2 = 6 gaseosas pagadas.\n3) Multiplica: 6 × 2.500 = 15.000."},
+
+{sub:"variosPasos", diff:"intermedia", competencia:"Resolver problemas de varios pasos.",
+ question:"Un agricultor cosecha 480 kg de papa. Vende el 40% en el mercado local a $1.200 por kg y el resto a una comercializadora a $950 por kg. ¿Cuánto dinero obtiene en total?",
+ options:["$504.000","$576.000","$460.800","$500.000"],
+ explanation:"Se debe calcular por separado el ingreso de cada venta y luego sumarlos.",
+ procedure:"1) Kg vendidos localmente: 480×0,40=192; ingreso: 192×1.200=230.400.\n2) Kg restantes: 480−192=288; ingreso: 288×950=273.600.\n3) Suma total: 230.400+273.600=504.000."},
+
+{sub:"variosPasos", diff:"intermedia", competencia:"Resolver problemas de varios pasos.",
+ question:"Una familia consume 18 m³ de agua al mes. El acueducto cobra $2.100 por cada uno de los primeros 10 m³ y $3.400 por cada m³ adicional, más un cargo fijo de $8.500. ¿Cuál es el valor total de la factura?",
+ options:["$56.700","$61.200","$48.200","$52.900"],
+ explanation:"Se deben calcular por separado los primeros 10 m³, los adicionales, y sumar el cargo fijo.",
+ procedure:"1) Primeros 10 m³: 10×2.100=21.000.\n2) Adicionales (8 m³): 8×3.400=27.200.\n3) Suma con el cargo fijo: 21.000+27.200+8.500=56.700."},
+
+{sub:"variosPasos", diff:"avanzada", competencia:"Resolver problemas de varios pasos.",
+ question:"Un estudiante debe leer un libro de 380 páginas en 12 días. Los primeros 5 días leyó 20 páginas diarias. ¿Cuántas páginas debe leer diariamente durante los 7 días restantes para terminar a tiempo?",
+ options:["40 páginas diarias","36 páginas diarias","45 páginas diarias","30 páginas diarias"],
+ explanation:"Se debe descontar lo ya leído y repartir lo restante entre los días que quedan.",
+ procedure:"1) Páginas leídas: 5×20=100.\n2) Páginas restantes: 380−100=280.\n3) Divide entre los días restantes: 280/7=40."},
+
+{sub:"variosPasos", diff:"avanzada", competencia:"Resolver problemas de varios pasos.",
+ question:"Una empresa de transporte tiene 3 rutas: A transporta 120 pasajeros diarios a $2.800; B transporta 95 pasajeros a $3.200; C transporta 150 pasajeros a $2.500. Si los costos operativos diarios son $650.000, ¿cuál es la utilidad diaria?",
+ options:["$365.000","$1.015.000","$650.000","$315.000"],
+ explanation:"Se debe calcular el ingreso total de las tres rutas y restar los costos operativos.",
+ procedure:"1) Ingreso A: 120×2.800=336.000.\n2) Ingreso B: 95×3.200=304.000.\n3) Ingreso C: 150×2.500=375.000.\n4) Ingreso total: 1.015.000. Utilidad: 1.015.000−650.000=365.000."},
+
+{sub:"variosPasos", diff:"avanzada", competencia:"Resolver problemas de varios pasos.",
+ question:"Un proyecto requiere 3 obreros trabajando 8 horas diarias durante 15 días. Si se contratan 2 obreros adicionales y se reduce la jornada a 6 horas diarias, ¿en cuántos días se completará el mismo proyecto?",
+ options:["12 días","9 días","18 días","10 días"],
+ explanation:"El trabajo total (obrero-horas) permanece constante; se debe repartir entre la nueva capacidad diaria.",
+ procedure:"1) Trabajo total: 3×8×15=360 obrero-horas.\n2) Nueva capacidad diaria: 5 obreros×6h=30 obrero-horas/día.\n3) Días necesarios: 360/30=12."},
+
+/* ---------- VALIDACIÓN (6) ---------- */
+{sub:"validacion", diff:"basica", competencia:"Interpretar y validar resultados.",
+ question:"Un estudiante calculó que el 25% de 160 es 640, multiplicando 160 × 4. ¿Cuál es el error y cuál el resultado correcto?",
+ options:["Multiplicó en lugar de dividir; el resultado correcto es 40","El resultado 640 sí es correcto","Debió sumar 25+160; el resultado es 185","Debió restar 160−25; el resultado es 135"],
+ explanation:"Calcular un porcentaje requiere multiplicar por la fracción decimal (0,25), no por un número entero arbitrario.",
+ procedure:"1) Convierte el porcentaje a decimal: 25% = 0,25.\n2) Multiplica: 160 × 0,25 = 40.\n3) Compara con el resultado del estudiante para identificar el error conceptual."},
+
+{sub:"validacion", diff:"basica", competencia:"Interpretar y validar resultados.",
+ question:"Al calcular el área de un cuadrado de lado 9 cm, un estudiante obtuvo 36 cm² (sumando 9+9+9+9). ¿Es correcto este resultado?",
+ options:["No, calculó el perímetro en lugar del área; el área correcta es 81 cm²","Sí, es correcto","No, el área correcta es 18 cm²","No, el área correcta es 45 cm²"],
+ explanation:"El área de un cuadrado se calcula elevando el lado al cuadrado, no sumándolo cuatro veces (eso da el perímetro).",
+ procedure:"1) Identifica la fórmula correcta: Área = lado².\n2) Calcula: 9² = 81 cm².\n3) Reconoce que 36 corresponde al perímetro (9×4)."},
+
+{sub:"validacion", diff:"intermedia", competencia:"Interpretar y validar resultados.",
+ question:"Un vendedor afirma que si un producto sube de precio de $40.000 a $50.000, el aumento fue del 20%. ¿Es correcta esta afirmación?",
+ options:["No, el aumento real fue del 25%","Sí, el aumento fue del 20%","No, el aumento fue del 10%","No, el aumento fue del 50%"],
+ explanation:"El porcentaje de aumento se calcula sobre el precio inicial, no sobre el precio final.",
+ procedure:"1) Calcula el incremento: 50.000−40.000=10.000.\n2) Divide entre el valor inicial: 10.000/40.000=0,25.\n3) Convierte a porcentaje: 25%, no 20%."},
+
+{sub:"validacion", diff:"intermedia", competencia:"Interpretar y validar resultados.",
+ question:"Para transportar a 255 estudiantes en autobuses de 40 pasajeros, un estudiante calculó 255/40 = 6,375 y redondeó a 6 autobuses. ¿Es válida esta interpretación en el contexto del problema?",
+ options:["No, debe redondearse hacia arriba a 7 autobuses para transportar a todos","Sí, 6 autobuses es correcto","No, se necesitan exactamente 6,375 autobuses","No, se necesitan 8 autobuses"],
+ explanation:"En contextos de conteo de unidades completas (autobuses, personas, cajas), el redondeo debe hacerse hacia arriba si sobra un resto, para no dejar personas sin transporte.",
+ procedure:"1) Divide: 255/40 = 6,375.\n2) Reconoce que 6 autobuses solo llevan 240 estudiantes.\n3) Redondea hacia arriba: se necesitan 7 autobuses para cubrir a los 255."},
+
+{sub:"validacion", diff:"avanzada", competencia:"Interpretar y validar resultados.",
+ question:"Un ingeniero calculó que llenar un tanque de 500 litros con una llave de 8 litros por minuto toma 62,5 minutos, y concluyó 'aproximadamente 1 hora'. ¿Es razonable esta interpretación en el contexto?",
+ options:["Sí, 62,5 minutos equivalen aproximadamente a 1 hora con 2,5 minutos, una aproximación razonable","No, el resultado exacto debe usarse sin aproximar en ningún caso","No, porque 62,5 minutos equivalen en realidad a 2 horas","No, porque el cálculo correcto es 40 minutos"],
+ explanation:"En contextos prácticos de programación de tiempo, una aproximación razonable a la unidad más cercana es válida y útil.",
+ procedure:"1) Verifica el cálculo: 500/8=62,5 minutos.\n2) Convierte a horas y minutos: 1 hora y 2,5 minutos.\n3) Concluye que la aproximación a '1 hora' es razonable para fines prácticos."},
+
+{sub:"validacion", diff:"avanzada", competencia:"Interpretar y validar resultados.",
+ question:"Un estudiante calculó que invertir $1.000.000 al 3% mensual durante 12 meses genera $360.000 de interés (interés simple). Sin embargo, el banco pagó $420.000. ¿Cuál es la interpretación correcta de esta diferencia?",
+ options:["El banco probablemente aplicó interés compuesto, que genera más rendimiento que el simple","El estudiante calculó mal; el resultado correcto con interés simple era $420.000","La diferencia se debe únicamente a un error del banco","El interés simple siempre es mayor que el compuesto"],
+ explanation:"El cálculo de interés simple del estudiante (1.000.000×0,03×12=360.000) es correcto; la diferencia sugiere que el banco capitaliza intereses mes a mes (interés compuesto), lo cual genera un monto mayor.",
+ procedure:"1) Verifica el interés simple: 1.000.000×0,03×12=360.000 (correcto).\n2) Compara con el valor real pagado: 420.000, mayor al simple.\n3) Concluye que se aplicó una capitalización compuesta, no un error."},
+
+/* ---------- ICFES AVANZADO (6) — integran varias competencias ---------- */
+{sub:"icfesAvanzado", diff:"basica", competencia:"Argumentar la respuesta integrando varias competencias.",
+ question:"Un estudiante ahorra cada mes: en enero ahorró $20.000 y cada mes siguiente ahorra $5.000 más que el anterior. ¿Cuánto habrá ahorrado en total al finalizar junio (6 meses)?",
+ options:["$195.000","$150.000","$170.000","$210.000"],
+ explanation:"Es una suma de progresión aritmética con primer término 20.000 y diferencia 5.000.",
+ procedure:"1) Identifica a₁=20.000, d=5.000, n=6.\n2) Aplica S=n/2×(2a₁+(n−1)d).\n3) S=3×(40.000+25.000)=3×65.000=195.000."},
+
+{sub:"icfesAvanzado", diff:"intermedia", competencia:"Argumentar la respuesta integrando varias competencias.",
+ question:"Una empresa reduce su planta de personal en un 10% cada año durante 3 años consecutivos, partiendo de 200 empleados. ¿Aproximadamente cuántos empleados tendrá al finalizar el tercer año?",
+ options:["146","140","160","150"],
+ explanation:"Cada año se aplica el 90% sobre el valor del año anterior (decrecimiento porcentual compuesto).",
+ procedure:"1) Año 1: 200×0,9=180.\n2) Año 2: 180×0,9=162.\n3) Año 3: 162×0,9=145,8 ≈ 146 empleados."},
+
+{sub:"icfesAvanzado", diff:"avanzada", competencia:"Argumentar la respuesta integrando varias competencias.",
+ question:"Una fábrica de calzado produce 800 pares mensuales con un costo de $35.000 por par y los vende a $52.000. El próximo mes planea aumentar la producción en un 15% y reducir el costo por par en $2.000 mediante un nuevo proveedor, manteniendo el precio de venta. ¿Cuál será el incremento en la utilidad mensual?",
+ options:["$3.880.000","$2.040.000","$4.680.000","$1.840.000"],
+ explanation:"Se debe calcular la utilidad actual y la utilidad proyectada considerando el cambio simultáneo en producción y costo, y luego hallar la diferencia.",
+ procedure:"1) Utilidad actual: 800×(52.000−35.000)=13.600.000.\n2) Nueva producción: 800×1,15=920. Nuevo costo: 35.000−2.000=33.000.\n3) Nueva utilidad: 920×(52.000−33.000)=17.480.000.\n4) Incremento: 17.480.000−13.600.000=3.880.000."},
+
+{sub:"icfesAvanzado", diff:"avanzada", competencia:"Argumentar la respuesta integrando varias competencias.",
+ question:"Dos ciudades A y B están separadas por 480 km. Un camión sale de A hacia B a las 6:00 a.m. a 60 km/h. A las 7:30 a.m. sale otro camión de B hacia A a 80 km/h, el cual debe hacer una parada de 20 minutos a mitad de camino (a 240 km de B). ¿A qué hora se cruzan aproximadamente los dos camiones?",
+ options:["Aproximadamente a las 10:17 a.m.","Aproximadamente a las 9:30 a.m.","Aproximadamente a las 10:47 a.m.","Aproximadamente a las 11:00 a.m."],
+ explanation:"Debe verificarse si el cruce ocurre antes de que el segundo camión llegue a su punto de parada; en este caso sí ocurre antes, por lo que la parada es información que no afecta el resultado.",
+ procedure:"1) Avance del primer camión antes de las 7:30: 60×1,5=90 km. Distancia restante: 480−90=390 km.\n2) Velocidad de acercamiento desde 7:30: 60+80=140 km/h.\n3) Tiempo para encontrarse: 390/140≈2,79 h ≈ 2 h 47 min.\n4) Hora de encuentro: 7:30 a.m. + 2 h 47 min ≈ 10:17 a.m.\n5) Verifica que el segundo camión aún no llega a los 240 km de su parada (recorrería 80×2,79≈223 km), confirmando que la parada no interfiere."},
+
+{sub:"icfesAvanzado", diff:"avanzada", competencia:"Argumentar la respuesta integrando varias competencias.",
+ question:"Un municipio destina $480.000.000 a tres proyectos: educación (40%), salud (35%) y vías (el resto). El costo real del proyecto de vías resultó $28.000.000 mayor al presupuestado. ¿Qué porcentaje del presupuesto total representa ese sobrecosto?",
+ options:["Aproximadamente 5,8%","Aproximadamente 25%","Aproximadamente 23,3%","Aproximadamente 8%"],
+ explanation:"El sobrecosto debe compararse con el presupuesto total, no únicamente con el presupuesto asignado a vías.",
+ procedure:"1) Calcula el porcentaje de vías: 100%−40%−35%=25%.\n2) Presupuesto de vías: 480.000.000×0,25=120.000.000 (dato no indispensable para la pregunta final).\n3) Calcula el porcentaje del sobrecosto sobre el total: 28.000.000/480.000.000×100≈5,8%."},
+
+{sub:"icfesAvanzado", diff:"avanzada", competencia:"Argumentar la respuesta integrando varias competencias.",
+ question:"Una empresa tecnológica cuadruplicó su número de usuarios en 2 años, pasando de 15.000 a 60.000, manteniendo una tasa de crecimiento anual constante. ¿Cuál es aproximadamente esa tasa de crecimiento anual?",
+ options:["100% anual","200% anual","50% anual","300% anual"],
+ explanation:"Se debe plantear un crecimiento exponencial de dos periodos e igualarlo al factor de crecimiento total (4 veces).",
+ procedure:"1) Plantea 15.000×(1+r)²=60.000.\n2) Despeja (1+r)²=4.\n3) Extrae raíz cuadrada: 1+r=2, por lo tanto r=1, es decir 100% anual."}
+];
+
+/* Cuotas de selección por subtema para sumar exactamente 40 preguntas */
+const CUOTAS = {
+  comprension:5, modelacion:4, financiero:5, movimiento:4, geometria:5,
+  estadistica:4, variosPasos:4, validacion:4, icfesAvanzado:5
+};
+const RANGO_DIFICULTAD = {basica:0, intermedia:1, avanzada:2};
+const NOMBRE_DIFICULTAD = {basica:"Básica", intermedia:"Intermedia", avanzada:"Avanzada"};
+
+/* -------------------------------------------------------------------------
+   2) ESTADO GLOBAL
+   ------------------------------------------------------------------------- */
+const estado = {
+  preguntas: [],       // 40 preguntas seleccionadas y con opciones mezcladas
+  respuestas: [],       // índice de opción elegida por pregunta (o null)
+  actual: 0,
+  tiempoRestante: 60*60,
+  tiempoTotalConfigurado: 60*60,
+  temporizadorId: null,
+  sonidoActivo: true,
+  racha: 0,
+  rachaMax: 0,
+  bonoStreak: 0,
+  umbralesAlcanzados: new Set(),
+  inicioMs: 0,
+  finalizado: false
+};
+
+/* -------------------------------------------------------------------------
+   3) UTILIDADES
+   ------------------------------------------------------------------------- */
+function barajar(array){
+  const a = array.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function seleccionarPreguntas(){
+  let seleccion = [];
+  for(const sub in CUOTAS){
+    const pool = QUESTION_BANK.filter(q=>q.sub===sub);
+    const elegidas = barajar(pool).slice(0, CUOTAS[sub]);
+    seleccion = seleccion.concat(elegidas);
+  }
+  // ordenar por dificultad (progresión gradual), con mezcla dentro del mismo nivel
+  seleccion = barajar(seleccion).sort((a,b)=> RANGO_DIFICULTAD[a.diff]-RANGO_DIFICULTAD[b.diff]);
+
+  // preparar copia con opciones mezcladas y guardar índice de la correcta
+  return seleccion.map((q,idx)=>{
+    const opcionesConIndice = q.options.map((texto,i)=>({texto, esCorrecta:i===0}));
+    const mezcladas = barajar(opcionesConIndice);
+    return {
+      ...q,
+      idOriginal: idx,
+      opciones: mezcladas.map(o=>o.texto),
+      correctaIndex: mezcladas.findIndex(o=>o.esCorrecta)
+    };
+  });
+}
+
+function formatoTiempo(segundos){
+  const m = Math.floor(segundos/60);
+  const s = segundos%60;
+  return String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+}
+
+function mostrarToast(texto, esLogro){
+  const capa = document.getElementById('capa-toast');
+  const div = document.createElement('div');
+  div.className = 'toast' + (esLogro? ' logro':'');
+  div.textContent = texto;
+  capa.appendChild(div);
+  setTimeout(()=>{ div.remove(); }, 2700);
+}
+
+/* -------------------------------------------------------------------------
+   4) SONIDOS (Web Audio API — sin archivos externos)
+   ------------------------------------------------------------------------- */
+let contextoAudio = null;
+function getAudioCtx(){
+  if(!contextoAudio){
+    contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return contextoAudio;
+}
+function tono(frecuencia, duracion, tipo, retardo){
+  if(!estado.sonidoActivo) return;
+  try{
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = tipo || 'sine';
+    osc.frequency.value = frecuencia;
+    const inicio = ctx.currentTime + (retardo||0);
+    gain.gain.setValueAtTime(0.0001, inicio);
+    gain.gain.exponentialRampToValueAtTime(0.18, inicio+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, inicio+duracion);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(inicio);
+    osc.stop(inicio+duracion+0.02);
+  }catch(e){ /* silencioso si el navegador bloquea audio */ }
+}
+function sonidoCorrecta(){ tono(660,0.12,'triangle',0); tono(880,0.15,'triangle',0.1); }
+function sonidoIncorrecta(){ tono(220,0.22,'sawtooth',0); }
+function sonidoLogro(){ tono(523,0.12,'triangle',0); tono(659,0.12,'triangle',0.12); tono(784,0.2,'triangle',0.24); }
+function sonidoFinal(){ tono(392,0.15,'triangle',0); tono(523,0.15,'triangle',0.15); tono(659,0.15,'triangle',0.3); tono(784,0.3,'triangle',0.45); }
+function sonidoRacha(){ tono(740,0.1,'square',0); tono(988,0.14,'square',0.1); }
+
+/* -------------------------------------------------------------------------
+   5) PANTALLA DE INICIO
+   ------------------------------------------------------------------------- */
+document.getElementById('btnSonido').addEventListener('click', function(){
+  estado.sonidoActivo = !estado.sonidoActivo;
+  this.classList.toggle('apagado', !estado.sonidoActivo);
+  document.getElementById('txtSonido').textContent = estado.sonidoActivo? 'Sonido activado':'Sonido desactivado';
+});
+
+document.getElementById('btnIniciar').addEventListener('click', iniciarSimulacro);
+
+function iniciarSimulacro(){
+  const minutos = Math.max(10, Math.min(180, parseInt(document.getElementById('inputMinutos').value,10) || 60));
+  estado.tiempoTotalConfigurado = minutos*60;
+  estado.tiempoRestante = minutos*60;
+  estado.preguntas = seleccionarPreguntas();
+  estado.respuestas = new Array(estado.preguntas.length).fill(null);
+  estado.actual = 0;
+  estado.racha = 0;
+  estado.rachaMax = 0;
+  estado.bonoStreak = 0;
+  estado.umbralesAlcanzados = new Set();
+  estado.finalizado = false;
+  estado.inicioMs = Date.now();
+
+  document.getElementById('pantalla-inicio').classList.add('oculto');
+  document.getElementById('pantalla-resultados').classList.add('oculto');
+  document.getElementById('pantalla-examen').classList.remove('oculto');
+
+  construirGridPreguntas();
+  renderizarPregunta();
+  iniciarTemporizador();
+}
+
+/* -------------------------------------------------------------------------
+   6) TEMPORIZADOR
+   ------------------------------------------------------------------------- */
+function iniciarTemporizador(){
+  actualizarTextoTiempo();
+  clearInterval(estado.temporizadorId);
+  estado.temporizadorId = setInterval(()=>{
+    estado.tiempoRestante--;
+    actualizarTextoTiempo();
+    if(estado.tiempoRestante<=0){
+      clearInterval(estado.temporizadorId);
+      finalizarSimulacro(true);
+    }
+  },1000);
+}
+function actualizarTextoTiempo(){
+  document.getElementById('textoTiempo').textContent = formatoTiempo(Math.max(0,estado.tiempoRestante));
+  const caja = document.getElementById('cajaTemporizador');
+  caja.classList.toggle('alerta', estado.tiempoRestante<=300);
+}
+
+/* -------------------------------------------------------------------------
+   7) RENDER DE PREGUNTA Y NAVEGACIÓN
+   ------------------------------------------------------------------------- */
+function construirGridPreguntas(){
+  const grid = document.getElementById('gridPreguntas');
+  grid.innerHTML = '';
+  estado.preguntas.forEach((_,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'mini-pregunta';
+    btn.textContent = i+1;
+    btn.setAttribute('aria-label', 'Ir a la pregunta '+(i+1));
+    btn.addEventListener('click', ()=>{ estado.actual=i; renderizarPregunta(); });
+    grid.appendChild(btn);
+  });
+}
+
+function actualizarGridPreguntas(){
+  const botones = document.querySelectorAll('#gridPreguntas .mini-pregunta');
+  botones.forEach((b,i)=>{
+    b.classList.toggle('respondida', estado.respuestas[i]!==null);
+    b.classList.toggle('actual', i===estado.actual);
+  });
+}
+
+function renderizarPregunta(){
+  const q = estado.preguntas[estado.actual];
+  document.getElementById('etiquetaSubtema').textContent = SUBTEMAS[q.sub].emoji+' '+SUBTEMAS[q.sub].nombre;
+  const etDif = document.getElementById('etiquetaDificultad');
+  etDif.textContent = NOMBRE_DIFICULTAD[q.diff];
+  etDif.className = 'etiqueta dificultad-'+q.diff;
+  document.getElementById('numeroPreguntaTxt').textContent = 'Pregunta '+(estado.actual+1)+' de '+estado.preguntas.length;
+  document.getElementById('textoPregunta').innerHTML = q.question;
+
+  const cont = document.getElementById('contenedorOpciones');
+  cont.innerHTML = '';
+  const letras = ['A','B','C','D'];
+  q.opciones.forEach((texto,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opcion' + (estado.respuestas[estado.actual]===i? ' seleccionada':'');
+    btn.setAttribute('role','radio');
+    btn.setAttribute('aria-checked', estado.respuestas[estado.actual]===i? 'true':'false');
+    btn.innerHTML = '<span class="letra">'+letras[i]+'</span><span>'+texto+'</span>';
+    btn.addEventListener('click', ()=>seleccionarOpcion(i));
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('txtPreguntaActual').textContent = 'Pregunta '+(estado.actual+1)+' de '+estado.preguntas.length;
+  const respondidas = estado.respuestas.filter(r=>r!==null).length;
+  const restantes = estado.preguntas.length - respondidas;
+  const porc = Math.round((respondidas/estado.preguntas.length)*100);
+  document.getElementById('txtProgresoPorc').textContent = porc+'% completado · '+respondidas+' respondidas · '+restantes+' restantes';
+  document.getElementById('progresoRelleno').style.width = porc+'%';
+
+  document.getElementById('btnAnterior').disabled = estado.actual===0;
+  const esUltima = estado.actual===estado.preguntas.length-1;
+  document.getElementById('btnSiguiente').style.display = esUltima? 'none':'inline-flex';
+  document.getElementById('btnFinalizar').style.display = esUltima? 'inline-flex':'none';
+
+  actualizarGridPreguntas();
+  document.getElementById('valorRacha').textContent = estado.racha;
+}
+
+function seleccionarOpcion(indiceElegido){
+  const yaRespondida = estado.respuestas[estado.actual]!==null;
+  estado.respuestas[estado.actual] = indiceElegido;
+  const q = estado.preguntas[estado.actual];
+  const correcta = indiceElegido===q.correctaIndex;
+
+  if(!yaRespondida){
+    if(correcta){
+      estado.racha++;
+      estado.rachaMax = Math.max(estado.rachaMax, estado.racha);
+      sonidoCorrecta();
+      evaluarRacha();
+    } else {
+      estado.racha = 0;
+      estado.umbralesAlcanzados.clear();
+      sonidoIncorrecta();
+    }
+  }
+  renderizarPregunta();
+}
+
+function evaluarRacha(){
+  const bonos = {3:5, 5:15, 10:40};
+  [3,5,10].forEach(umbral=>{
+    if(estado.racha===umbral && !estado.umbralesAlcanzados.has(umbral)){
+      estado.umbralesAlcanzados.add(umbral);
+      estado.bonoStreak += bonos[umbral];
+      sonidoRacha();
+      mostrarToast('🔥 ¡Racha de '+umbral+' aciertos consecutivos! +'+bonos[umbral]+' puntos bono', false);
+    }
+  });
+}
+
+document.getElementById('btnAnterior').addEventListener('click', ()=>{
+  if(estado.actual>0){ estado.actual--; renderizarPregunta(); }
+});
+document.getElementById('btnSiguiente').addEventListener('click', ()=>{
+  if(estado.actual<estado.preguntas.length-1){ estado.actual++; renderizarPregunta(); }
+});
+
+/* Navegación por teclado */
+document.addEventListener('keydown', (e)=>{
+  const examenVisible = !document.getElementById('pantalla-examen').classList.contains('oculto');
+  if(!examenVisible) return;
+  if(document.activeElement && document.activeElement.tagName==='INPUT') return;
+  if(e.key==='ArrowRight'){ document.getElementById('btnSiguiente').click(); }
+  if(e.key==='ArrowLeft'){ document.getElementById('btnAnterior').click(); }
+  const letras = ['a','b','c','d','A','B','C','D','1','2','3','4'];
+  if(letras.includes(e.key)){
+    const mapa = {a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
+    const idx = mapa[e.key.toLowerCase()];
+    if(idx!==undefined && estado.preguntas[estado.actual].opciones[idx]!==undefined){
+      seleccionarOpcion(idx);
+    }
+  }
+});
+
+/* -------------------------------------------------------------------------
+   8) MODAL DE CONFIRMACIÓN Y FINALIZACIÓN
+   ------------------------------------------------------------------------- */
+function abrirModalConfirmacion(){
+  const respondidas = estado.respuestas.filter(r=>r!==null).length;
+  const faltantes = estado.preguntas.length - respondidas;
+  document.getElementById('modalTexto').textContent = faltantes>0
+    ? 'Aún tienes '+faltantes+' pregunta(s) sin responder. Una vez finalices no podrás modificar tus respuestas. ¿Deseas continuar?'
+    : 'Has respondido todas las preguntas. Una vez finalices no podrás modificar tus respuestas. ¿Deseas continuar?';
+  document.getElementById('modalConfirmar').classList.remove('oculto');
+}
+document.getElementById('btnFinalizarAntes').addEventListener('click', abrirModalConfirmacion);
+document.getElementById('btnFinalizar').addEventListener('click', abrirModalConfirmacion);
+document.getElementById('modalCancelar').addEventListener('click', ()=>{
+  document.getElementById('modalConfirmar').classList.add('oculto');
+});
+document.getElementById('modalConfirmarBtn').addEventListener('click', ()=>{
+  document.getElementById('modalConfirmar').classList.add('oculto');
+  finalizarSimulacro(false);
+});
+
+function finalizarSimulacro(tiempoAgotado){
+  if(estado.finalizado) return;
+  estado.finalizado = true;
+  clearInterval(estado.temporizadorId);
+  const tiempoEmpleadoSeg = estado.tiempoTotalConfigurado - Math.max(0,estado.tiempoRestante);
+  sonidoFinal();
+
+  document.getElementById('pantalla-examen').classList.add('oculto');
+  document.getElementById('pantalla-resultados').classList.remove('oculto');
+  renderizarResultados(tiempoEmpleadoSeg, tiempoAgotado);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* -------------------------------------------------------------------------
+   9) CÁLCULO Y RENDER DE RESULTADOS
+   ------------------------------------------------------------------------- */
+function renderizarResultados(tiempoEmpleadoSeg, tiempoAgotado){
+  const total = estado.preguntas.length;
+  let aciertos=0, errores=0;
+  const porSubtema = {};
+  Object.keys(SUBTEMAS).forEach(s=> porSubtema[s]={correctas:0, total:0});
+
+  estado.preguntas.forEach((q,i)=>{
+    const resp = estado.respuestas[i];
+    const correcta = resp===q.correctaIndex;
+    porSubtema[q.sub].total++;
+    if(correcta){ aciertos++; porSubtema[q.sub].correctas++; } else { errores++; }
+  });
+
+  const puntajeBase = aciertos*10;
+  const puntajeTotal = puntajeBase + estado.bonoStreak;
+  const porcentaje = Math.round((aciertos/total)*100);
+
+  let nivel = 'Básico';
+  if(porcentaje>=90) nivel='Sobresaliente';
+  else if(porcentaje>=70) nivel='Avanzado';
+  else if(porcentaje>=50) nivel='Intermedio';
+
+  let mensaje = '';
+  if(porcentaje<50) mensaje = 'Continúa practicando. Cada problema resuelto fortalece tu razonamiento matemático.';
+  else if(porcentaje<70) mensaje = 'Vas por buen camino. Sigue fortaleciendo las estrategias de resolución y la interpretación de los datos.';
+  else if(porcentaje<90) mensaje = 'Excelente desempeño. Demuestras una buena capacidad para modelar y resolver problemas contextualizados.';
+  else mensaje = '¡Felicitaciones! Has alcanzado un nivel sobresaliente de razonamiento matemático y resolución de problemas tipo ICFES.';
+  if(tiempoAgotado) mensaje = '⏱ Se agotó el tiempo disponible. ' + mensaje;
+
+  document.getElementById('mensajeMotivacional').textContent = mensaje;
+
+  const mm = Math.floor(tiempoEmpleadoSeg/60), ss = tiempoEmpleadoSeg%60;
+  const stats = [
+    {valor:puntajeTotal, etiqueta:'Puntaje total'},
+    {valor:porcentaje+'%', etiqueta:'Porcentaje'},
+    {valor:aciertos, etiqueta:'Aciertos'},
+    {valor:errores, etiqueta:'Errores'},
+    {valor:mm+'m '+String(ss).padStart(2,'0')+'s', etiqueta:'Tiempo empleado'},
+    {valor:nivel, etiqueta:'Nivel alcanzado'},
+    {valor:estado.rachaMax, etiqueta:'Mejor racha'},
+    {valor:'+'+estado.bonoStreak, etiqueta:'Bono por rachas'}
+  ];
+  const statsGrid = document.getElementById('statsGrid');
+  statsGrid.innerHTML = stats.map(s=>'<div class="stat-card"><div class="valor">'+s.valor+'</div><div class="etiqueta">'+s.etiqueta+'</div></div>').join('');
+
+  dibujarGraficoSubtemas(porSubtema);
+
+  // Fortalezas y mejoras
+  const desempenos = Object.keys(porSubtema).map(s=>({
+    s, nombre:SUBTEMAS[s].nombre,
+    porc: porSubtema[s].total? Math.round((porSubtema[s].correctas/porSubtema[s].total)*100):0
+  }));
+  const fortalezas = desempenos.filter(d=>d.porc>=70).sort((a,b)=>b.porc-a.porc);
+  const mejoras = desempenos.filter(d=>d.porc<70).sort((a,b)=>a.porc-b.porc);
+  document.getElementById('listaFortalezas').innerHTML = fortalezas.length
+    ? fortalezas.map(f=>'<li>'+f.nombre+' ('+f.porc+'%)</li>').join('')
+    : '<li>Aún no se identifican fortalezas destacadas (≥70%). ¡Sigue practicando!</li>';
+  document.getElementById('listaMejoras').innerHTML = mejoras.length
+    ? mejoras.map(f=>'<li>'+f.nombre+' ('+f.porc+'%)</li>').join('')
+    : '<li>¡Muy buen trabajo! No hay subtemáticas por debajo del 70%.</li>';
+
+  renderizarLogros(porSubtema, porcentaje);
+  renderizarRevision();
+}
+
+function dibujarGraficoSubtemas(porSubtema){
+  const canvas = document.getElementById('lienzoGrafico');
+  const dpr = window.devicePixelRatio || 1;
+  const cssWidth = canvas.parentElement.clientWidth;
+  const cssHeight = 340;
+  canvas.style.width = cssWidth+'px';
+  canvas.style.height = cssHeight+'px';
+  canvas.width = cssWidth*dpr;
+  canvas.height = cssHeight*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,cssWidth,cssHeight);
+
+  const claves = Object.keys(SUBTEMAS);
+  const datos = claves.map(s=>({
+    nombre: SUBTEMAS[s].nombre,
+    porc: porSubtema[s].total? (porSubtema[s].correctas/porSubtema[s].total)*100 : 0
+  }));
+
+  const margenIzq=40, margenDer=20, margenSup=20, margenInf=110;
+  const anchoGrafico = cssWidth-margenIzq-margenDer;
+  const altoGrafico = cssHeight-margenSup-margenInf;
+  const anchoBarra = anchoGrafico/datos.length*0.6;
+  const espacio = anchoGrafico/datos.length;
+
+  // ejes
+  ctx.strokeStyle = '#C9D1DA';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margenIzq, margenSup);
+  ctx.lineTo(margenIzq, margenSup+altoGrafico);
+  ctx.lineTo(margenIzq+anchoGrafico, margenSup+altoGrafico);
+  ctx.stroke();
+
+  // líneas de referencia 0,25,50,75,100
+  ctx.fillStyle = '#7C8798';
+  ctx.font = '11px DM Sans, sans-serif';
+  [0,25,50,75,100].forEach(v=>{
+    const y = margenSup+altoGrafico-(v/100*altoGrafico);
+    ctx.strokeStyle = '#EBEEF2';
+    ctx.beginPath(); ctx.moveTo(margenIzq,y); ctx.lineTo(margenIzq+anchoGrafico,y); ctx.stroke();
+    ctx.fillText(v+'%', 4, y+4);
+  });
+
+  datos.forEach((d,i)=>{
+    const x = margenIzq + i*espacio + (espacio-anchoBarra)/2;
+    const alturaBarra = (d.porc/100)*altoGrafico;
+    const y = margenSup+altoGrafico-alturaBarra;
+    const grad = ctx.createLinearGradient(0,y,0,margenSup+altoGrafico);
+    grad.addColorStop(0,'#F5B301');
+    grad.addColorStop(1,'#153B66');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x,y,anchoBarra,alturaBarra);
+
+    ctx.fillStyle = '#0A1B33';
+    ctx.font = 'bold 11px DM Sans, sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(Math.round(d.porc)+'%', x+anchoBarra/2, y-6);
+
+    // etiqueta rotada
+    ctx.save();
+    ctx.translate(x+anchoBarra/2, margenSup+altoGrafico+8);
+    ctx.rotate(-Math.PI/5);
+    ctx.textAlign='right';
+    ctx.fillStyle = '#3E4757';
+    ctx.font='10px DM Sans, sans-serif';
+    ctx.fillText(d.nombre, 0, 0);
+    ctx.restore();
+  });
+  ctx.textAlign='left';
+}
+
+function renderizarLogros(porSubtema, porcentajeGlobal){
+  const pct = s => porSubtema[s].total? (porSubtema[s].correctas/porSubtema[s].total)*100 : 0;
+  const logros = [
+    {emoji:'🧮', nombre:'Modelador Matemático', obtenido: pct('modelacion')>=80},
+    {emoji:'📈', nombre:'Analista de Datos', obtenido: pct('estadistica')>=80},
+    {emoji:'💰', nombre:'Experto Financiero', obtenido: pct('financiero')>=80},
+    {emoji:'🚗', nombre:'Maestro del Movimiento', obtenido: pct('movimiento')>=80},
+    {emoji:'📐', nombre:'Estratega Geométrico', obtenido: pct('geometria')>=80},
+    {emoji:'🧠', nombre:'Resolutor de Problemas', obtenido: pct('variosPasos')>=80},
+    {emoji:'🏆', nombre:'Dominio Matemático', obtenido: porcentajeGlobal>=90}
+  ];
+  const grid = document.getElementById('logrosGrid');
+  grid.innerHTML = logros.map(l=>
+    '<div class="logro-card '+(l.obtenido?'obtenido':'')+'"><span class="emoji">'+l.emoji+'</span><span class="nombre">'+l.nombre+'</span></div>'
+  ).join('');
+  const nuevosLogros = logros.filter(l=>l.obtenido);
+  if(nuevosLogros.length){
+    sonidoLogro();
+    setTimeout(()=> mostrarToast('🏅 Insignias desbloqueadas: '+nuevosLogros.map(l=>l.nombre).join(', '), true), 300);
+  }
+}
+
+function renderizarRevision(){
+  const cont = document.getElementById('listaRevision');
+  const letras = ['A','B','C','D'];
+  cont.innerHTML = estado.preguntas.map((q,i)=>{
+    const resp = estado.respuestas[i];
+    const correcta = resp===q.correctaIndex;
+    const textoResp = resp!==null? letras[resp]+') '+q.opciones[resp] : 'Sin responder';
+    const textoCorrecta = letras[q.correctaIndex]+') '+q.opciones[q.correctaIndex];
+    return '<div class="revision-item '+(correcta?'correcta':'incorrecta')+'">'
+      +'<div class="revision-header"><span class="num">Pregunta '+(i+1)+'</span>'
+      +'<span class="etiqueta subtema">'+SUBTEMAS[q.sub].emoji+' '+SUBTEMAS[q.sub].nombre+'</span>'
+      +'<span class="etiqueta dificultad-'+q.diff+'">'+NOMBRE_DIFICULTAD[q.diff]+'</span></div>'
+      +'<div class="texto-pregunta" style="font-size:1em;">'+q.question+'</div>'
+      +'<div class="resp-linea"><b>Tu respuesta: </b>'+textoResp+' '+(correcta?'✅':'❌')+'</div>'
+      +'<div class="resp-linea"><b>Respuesta correcta: </b>'+textoCorrecta+'</div>'
+      +'<div class="resp-linea"><b>Competencia evaluada: </b>'+q.competencia+'</div>'
+      +'<div class="caja-explicacion"><b>Explicación: </b>'+q.explanation+'</div>'
+      +'<div class="caja-explicacion"><b>Procedimiento recomendado:</b><br>'+q.procedure.replace(/\n/g,'<br>')+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+/* -------------------------------------------------------------------------
+   10) REINICIO
+   ------------------------------------------------------------------------- */
+document.getElementById('btnReiniciar').addEventListener('click', ()=>{
+  document.getElementById('pantalla-resultados').classList.add('oculto');
+  document.getElementById('pantalla-inicio').classList.remove('oculto');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* Redibuja el gráfico si cambia el tamaño de ventana y los resultados están visibles */
+window.addEventListener('resize', ()=>{
+  const resultadosVisibles = !document.getElementById('pantalla-resultados').classList.contains('oculto');
+  if(resultadosVisibles && estado.finalizado){
+    // recalcular solo el canvas usando los datos ya calculados
+    const porSubtema = {};
+    Object.keys(SUBTEMAS).forEach(s=> porSubtema[s]={correctas:0, total:0});
+    estado.preguntas.forEach((q,i)=>{
+      porSubtema[q.sub].total++;
+      if(estado.respuestas[i]===q.correctaIndex) porSubtema[q.sub].correctas++;
+    });
+    dibujarGraficoSubtemas(porSubtema);
+  }
+});
+</script>
+
+</body>
+</html>

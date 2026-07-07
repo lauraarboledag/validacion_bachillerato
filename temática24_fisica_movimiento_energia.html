@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Física: Movimiento, Fuerzas y Energía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   1. VARIABLES Y RESET
+   ============================================================ */
+:root{
+  --azul-oscuro:#0B2545;
+  --azul-oscuro-2:#123B7A;
+  --dorado:#F5A623;
+  --dorado-2:#FFC94A;
+  --blanco:#FFFFFF;
+  --gris-suave:#F4F6F9;
+  --gris-medio:#E3E8EF;
+  --gris-texto:#5A6478;
+  --verde-ok:#2FAE60;
+  --rojo-error:#E5484D;
+  --sombra: 0 10px 30px rgba(11,37,69,.10);
+  --sombra-fuerte: 0 16px 40px rgba(11,37,69,.18);
+  --radio:18px;
+  --font-titulo:'Poppins',-apple-system,sans-serif;
+  --font-texto:'DM Sans',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-texto);
+  background:linear-gradient(180deg,var(--gris-suave) 0%,#EAF0FA 100%);
+  color:var(--azul-oscuro);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-titulo);margin:0 0 .5em 0;color:var(--azul-oscuro);}
+p{margin:0 0 1em 0;}
+button{font-family:var(--font-texto);cursor:pointer;}
+:focus-visible{outline:3px solid var(--dorado);outline-offset:2px;}
+img,svg{max-width:100%;display:block;}
+.oculto{display:none !important;}
+.contenedor{max-width:980px;margin:0 auto;padding:20px;}
+
+/* ============================================================
+   2. ENCABEZADO GLOBAL
+   ============================================================ */
+.app-header{
+  background:linear-gradient(120deg,var(--azul-oscuro) 0%,var(--azul-oscuro-2) 100%);
+  color:var(--blanco);
+  padding:18px 20px;
+  position:sticky;top:0;z-index:50;
+  box-shadow:var(--sombra);
+}
+.app-header .contenedor{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:0;}
+.marca{display:flex;align-items:center;gap:12px;}
+.marca .icono-marca{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-2));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 4px 14px rgba(245,166,35,.4);
+  flex-shrink:0;
+}
+.marca-texto h1{font-size:1.05rem;color:var(--blanco);margin:0;}
+.marca-texto span{font-size:.78rem;color:#C9D6EE;}
+.panel-estado{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.temporizador{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  padding:8px 16px;border-radius:50px;font-weight:700;font-size:1rem;
+  font-variant-numeric:tabular-nums;
+}
+.temporizador.alerta{background:rgba(229,72,77,.25);border-color:var(--rojo-error);animation:pulso 1s infinite;}
+@keyframes pulso{0%,100%{opacity:1;}50%{opacity:.55;}}
+.btn-sonido{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:var(--blanco);border-radius:50%;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  transition:transform .15s ease, background .2s ease;
+}
+.btn-sonido:hover{background:rgba(255,255,255,.24);transform:scale(1.06);}
+
+/* ============================================================
+   3. BOTONES GENERALES
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:50px;font-weight:700;font-size:1rem;
+  padding:14px 30px;transition:transform .15s ease, box-shadow .2s ease, background .2s ease;
+  min-height:48px;
+}
+.btn:active{transform:translateY(1px) scale(.98);}
+.btn-primario{
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-2));
+  color:var(--azul-oscuro);box-shadow:0 6px 20px rgba(245,166,35,.4);
+}
+.btn-primario:hover{box-shadow:0 8px 26px rgba(245,166,35,.55);transform:translateY(-2px);}
+.btn-secundario{
+  background:var(--blanco);color:var(--azul-oscuro);
+  border:2px solid var(--gris-medio);box-shadow:var(--sombra);
+}
+.btn-secundario:hover{border-color:var(--azul-oscuro-2);}
+.btn-oscuro{background:var(--azul-oscuro);color:var(--blanco);box-shadow:var(--sombra);}
+.btn-oscuro:hover{background:var(--azul-oscuro-2);}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
+.btn-chico{padding:10px 18px;font-size:.88rem;min-height:40px;}
+
+/* ============================================================
+   4. PANTALLA DE INICIO
+   ============================================================ */
+.tarjeta{
+  background:var(--blanco);border-radius:var(--radio);
+  box-shadow:var(--sombra);padding:34px;
+  animation:aparecer .5s ease both;
+}
+@keyframes aparecer{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.hero-inicio{text-align:center;padding:44px 20px 10px;}
+.hero-inicio .chip{
+  display:inline-block;background:linear-gradient(135deg,var(--dorado),var(--dorado-2));
+  color:var(--azul-oscuro);font-weight:700;font-size:.78rem;letter-spacing:.06em;
+  text-transform:uppercase;padding:7px 18px;border-radius:50px;margin-bottom:16px;
+}
+.hero-inicio h1{font-size:clamp(1.6rem,4vw,2.5rem);}
+.hero-inicio p.sub{color:var(--gris-texto);font-size:1.05rem;max-width:640px;margin:0 auto 8px;}
+.grid-info{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:16px;margin:28px 0;
+}
+.info-mini{
+  background:var(--gris-suave);border-radius:14px;padding:18px;text-align:center;
+  border:1px solid var(--gris-medio);
+}
+.info-mini .valor{font-family:var(--font-titulo);font-size:1.6rem;font-weight:800;color:var(--azul-oscuro-2);}
+.info-mini .etiqueta{font-size:.8rem;color:var(--gris-texto);margin-top:2px;}
+.bloque-objetivo{
+  background:var(--gris-suave);border-left:5px solid var(--dorado);
+  border-radius:12px;padding:20px 22px;margin:22px 0;
+}
+.bloque-objetivo h3{font-size:1rem;color:var(--azul-oscuro-2);}
+.lista-subtemas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:18px 0 6px;}
+.lista-subtemas div{
+  background:var(--blanco);border:1px solid var(--gris-medio);border-radius:10px;
+  padding:10px 14px;font-size:.85rem;display:flex;gap:8px;align-items:center;
+}
+.lista-subtemas span.n{
+  background:var(--azul-oscuro);color:var(--blanco);border-radius:50%;
+  width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:700;
+}
+.config-fila{display:flex;align-items:center;justify-content:center;gap:12px;margin:26px 0;flex-wrap:wrap;}
+.config-fila label{font-weight:600;font-size:.92rem;}
+.config-fila input[type=number]{
+  width:80px;padding:10px;border-radius:10px;border:2px solid var(--gris-medio);
+  font-size:1rem;text-align:center;font-family:var(--font-texto);
+}
+.acciones-inicio{text-align:center;margin-top:14px;}
+
+/* ============================================================
+   5. PANTALLA DEL SIMULACRO
+   ============================================================ */
+.barra-progreso-wrap{
+  background:var(--blanco);border-bottom:1px solid var(--gris-medio);
+  position:sticky;top:80px;z-index:40;padding:14px 0;
+}
+.barra-progreso-info{
+  display:flex;justify-content:space-between;font-size:.82rem;color:var(--gris-texto);
+  margin-bottom:8px;flex-wrap:wrap;gap:6px;font-weight:600;
+}
+.barra-progreso-info strong{color:var(--azul-oscuro);}
+.barra-externa{background:var(--gris-medio);border-radius:50px;height:10px;overflow:hidden;}
+.barra-interna{
+  height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado-2));
+  border-radius:50px;transition:width .35s ease;
+}
+.paleta-preguntas{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.paleta-btn{
+  width:34px;height:34px;border-radius:8px;border:2px solid var(--gris-medio);
+  background:var(--blanco);font-size:.75rem;font-weight:700;color:var(--gris-texto);
+  display:flex;align-items:center;justify-content:center;transition:all .15s ease;
+}
+.paleta-btn.respondida{background:#E7F6EC;border-color:var(--verde-ok);color:var(--verde-ok);}
+.paleta-btn.actual{background:var(--azul-oscuro);border-color:var(--azul-oscuro);color:var(--blanco);transform:scale(1.1);}
+.paleta-btn:hover{border-color:var(--dorado);}
+
+.zona-pregunta{padding:26px 0 60px;}
+.tarjeta-pregunta{padding:30px;}
+.meta-pregunta{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;
+}
+.etiqueta{
+  font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:50px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.etiqueta.subtema{background:#E5EDFB;color:var(--azul-oscuro-2);}
+.etiqueta.dificultad-basico{background:#E7F6EC;color:var(--verde-ok);}
+.etiqueta.dificultad-intermedio{background:#FFF3D6;color:#B8860B;}
+.etiqueta.dificultad-avanzado{background:#FDE3E4;color:#C0392B;}
+.enunciado{font-size:1.14rem;font-weight:600;color:var(--azul-oscuro);margin-bottom:22px;}
+.contexto-caja{
+  background:var(--gris-suave);border-radius:12px;padding:16px 18px;
+  margin-bottom:18px;font-size:.95rem;color:var(--gris-texto);border:1px solid var(--gris-medio);
+}
+.opciones{display:flex;flex-direction:column;gap:12px;}
+.opcion{
+  display:flex;align-items:flex-start;gap:14px;text-align:left;
+  background:var(--gris-suave);border:2px solid var(--gris-medio);border-radius:14px;
+  padding:16px 18px;font-size:.98rem;color:var(--azul-oscuro);width:100%;
+  transition:all .15s ease;
+}
+.opcion:hover{border-color:var(--dorado);background:#FFF8E9;}
+.opcion .letra{
+  flex-shrink:0;width:30px;height:30px;border-radius:8px;background:var(--blanco);
+  border:2px solid var(--gris-medio);display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.85rem;
+}
+.opcion.seleccionada{border-color:var(--azul-oscuro-2);background:#E5EDFB;}
+.opcion.seleccionada .letra{background:var(--azul-oscuro-2);border-color:var(--azul-oscuro-2);color:var(--blanco);}
+.opcion.correcta{border-color:var(--verde-ok);background:#E7F6EC;}
+.opcion.correcta .letra{background:var(--verde-ok);border-color:var(--verde-ok);color:var(--blanco);}
+.opcion.incorrecta{border-color:var(--rojo-error);background:#FDECEC;}
+.opcion.incorrecta .letra{background:var(--rojo-error);border-color:var(--rojo-error);color:var(--blanco);}
+
+.controles-navegacion{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-top:26px;flex-wrap:wrap;
+}
+.controles-navegacion .grupo{display:flex;gap:10px;flex-wrap:wrap;}
+
+.aviso-flotante{
+  position:fixed;top:100px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:var(--azul-oscuro);color:var(--blanco);padding:14px 26px;border-radius:50px;
+  font-weight:700;box-shadow:var(--sombra-fuerte);z-index:200;opacity:0;
+  transition:all .35s ease;pointer-events:none;display:flex;align-items:center;gap:10px;
+}
+.aviso-flotante.mostrar{opacity:1;transform:translateX(-50%) translateY(0);}
+.aviso-flotante.racha{background:linear-gradient(135deg,var(--dorado),var(--dorado-2));color:var(--azul-oscuro);}
+
+/* ============================================================
+   6. MODAL DE CONFIRMACIÓN
+   ============================================================ */
+.modal-fondo{
+  position:fixed;inset:0;background:rgba(11,37,69,.55);
+  display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;
+  animation:aparecer .25s ease both;
+}
+.modal-caja{background:var(--blanco);border-radius:var(--radio);padding:30px;max-width:420px;text-align:center;box-shadow:var(--sombra-fuerte);}
+.modal-caja .icono{font-size:2.4rem;margin-bottom:8px;}
+.modal-acciones{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+
+/* ============================================================
+   7. PANTALLA DE RESULTADOS
+   ============================================================ */
+.resumen-resultado{text-align:center;padding:36px 20px;}
+.resumen-resultado .puntaje-grande{
+  font-family:var(--font-titulo);font-size:clamp(3rem,10vw,4.6rem);font-weight:800;
+  background:linear-gradient(135deg,var(--azul-oscuro-2),var(--dorado));
+  -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;
+}
+.resumen-resultado .nivel-badge{
+  display:inline-block;margin-top:10px;padding:8px 20px;border-radius:50px;
+  font-weight:700;font-size:.9rem;
+}
+.mensaje-motivacional{
+  background:var(--gris-suave);border-radius:14px;padding:20px;margin:20px auto;
+  max-width:640px;font-size:1.02rem;color:var(--azul-oscuro);border:1px solid var(--gris-medio);
+}
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin:26px 0;}
+.stat-card{background:var(--gris-suave);border-radius:14px;padding:18px;text-align:center;border:1px solid var(--gris-medio);}
+.stat-card .val{font-family:var(--font-titulo);font-size:1.5rem;font-weight:800;color:var(--azul-oscuro-2);}
+.stat-card .lab{font-size:.78rem;color:var(--gris-texto);}
+
+.seccion-titulo{display:flex;align-items:center;gap:10px;margin:34px 0 16px;}
+.seccion-titulo h2{font-size:1.2rem;margin:0;}
+.seccion-titulo .linea{flex:1;height:1px;background:var(--gris-medio);}
+
+.grafico-caja{background:var(--gris-suave);border-radius:16px;padding:20px;border:1px solid var(--gris-medio);}
+canvas{width:100%;display:block;}
+
+.barra-subtema-fila{display:flex;align-items:center;gap:12px;padding:10px 0;}
+.barra-subtema-fila .nombre{width:230px;flex-shrink:0;font-size:.85rem;font-weight:600;color:var(--azul-oscuro);}
+.barra-subtema-ext{flex:1;background:var(--gris-medio);border-radius:50px;height:14px;overflow:hidden;}
+.barra-subtema-int{height:100%;border-radius:50px;transition:width .6s ease;}
+.barra-subtema-fila .pct{width:50px;text-align:right;font-weight:700;font-size:.82rem;flex-shrink:0;}
+
+.fortalezas-mejoras{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.fm-caja{border-radius:14px;padding:18px;}
+.fm-caja.fortaleza{background:#E7F6EC;border:1px solid var(--verde-ok);}
+.fm-caja.mejora{background:#FFF3D6;border:1px solid var(--dorado);}
+.fm-caja h4{font-size:.92rem;margin-bottom:8px;}
+.fm-caja ul{margin:0;padding-left:20px;font-size:.87rem;}
+
+.grid-logros{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;}
+.logro-card{
+  background:var(--gris-suave);border-radius:14px;padding:18px 10px;text-align:center;
+  border:2px solid var(--gris-medio);opacity:.35;filter:grayscale(1);transition:all .3s ease;
+}
+.logro-card.conseguido{opacity:1;filter:none;border-color:var(--dorado);background:#FFF8E9;box-shadow:0 4px 14px rgba(245,166,35,.25);}
+.logro-card .emoji{font-size:2rem;margin-bottom:6px;}
+.logro-card .nombre-logro{font-size:.78rem;font-weight:700;}
+
+.review-item{border:1px solid var(--gris-medio);border-radius:16px;padding:22px;margin-bottom:16px;background:var(--blanco);}
+.review-item.ok{border-left:6px solid var(--verde-ok);}
+.review-item.mal{border-left:6px solid var(--rojo-error);}
+.review-cabecera{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+.review-num{font-weight:800;color:var(--azul-oscuro-2);font-family:var(--font-titulo);}
+.resultado-icono{font-weight:700;font-size:.82rem;padding:4px 12px;border-radius:50px;}
+.resultado-icono.ok{background:#E7F6EC;color:var(--verde-ok);}
+.resultado-icono.mal{background:#FDECEC;color:var(--rojo-error);}
+.review-explicacion{
+  background:var(--gris-suave);border-radius:12px;padding:14px 16px;margin-top:12px;font-size:.9rem;
+}
+.review-explicacion strong{color:var(--azul-oscuro-2);}
+
+.acciones-finales{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:34px 0 10px;}
+
+footer.pie{text-align:center;padding:40px 20px 60px;}
+
+/* ============================================================
+   8. RESPONSIVE
+   ============================================================ */
+@media (max-width:640px){
+  .contenedor{padding:14px;}
+  .tarjeta{padding:20px;}
+  .barra-progreso-wrap{top:74px;}
+  .barra-subtema-fila{flex-wrap:wrap;}
+  .barra-subtema-fila .nombre{width:100%;}
+  .controles-navegacion{flex-direction:column;align-items:stretch;}
+  .controles-navegacion .grupo{justify-content:center;}
+}
+
+/* Animación de confeti simple para logros */
+.confeti-pieza{
+  position:fixed;top:-20px;width:9px;height:9px;z-index:400;pointer-events:none;
+  animation:caer linear forwards;border-radius:2px;
+}
+@keyframes caer{to{transform:translateY(110vh) rotate(360deg);opacity:.2;}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- =================== ENCABEZADO GLOBAL =================== -->
+<header class="app-header">
+  <div class="contenedor">
+    <div class="marca">
+      <div class="icono-marca">⚛️</div>
+      <div class="marca-texto">
+        <h1>Simulador ICFES · Nivel 4</h1>
+        <span>Ciencias Naturales — Física: Movimiento, Fuerzas y Energía</span>
+      </div>
+    </div>
+    <div class="panel-estado">
+      <div id="temporizador" class="temporizador oculto" role="timer" aria-live="polite">⏱ <span id="tiempo-restante">60:00</span></div>
+      <button id="btn-sonido" class="btn-sonido" aria-label="Activar o desactivar sonido" title="Sonido">🔊</button>
+    </div>
+  </div>
+</header>
+
+<!-- =================== PANTALLA 1: INICIO =================== -->
+<main id="pantalla-inicio">
+  <div class="contenedor" style="max-width:840px;">
+    <section class="tarjeta hero-inicio">
+      <span class="chip">Nivel 4 · Ciencias Naturales</span>
+      <h1>Simulador tipo ICFES de Física</h1>
+      <p class="sub">Movimiento, fuerzas y energía en contextos cotidianos, tecnológicos y ambientales colombianos.</p>
+
+      <div class="bloque-objetivo" style="text-align:left;">
+        <h3>🎯 Competencia evaluada</h3>
+        <p style="margin:0;color:var(--gris-texto);">Comprender fenómenos del entorno mediante el uso comprensivo del conocimiento científico y la explicación de fenómenos físicos relacionados con el movimiento, las fuerzas y la energía, integrando indagación, uso de conceptos y explicación de fenómenos, tal como lo exige la prueba ICFES.</p>
+      </div>
+
+      <div class="grid-info">
+        <div class="info-mini"><div class="valor">40</div><div class="etiqueta">Preguntas</div></div>
+        <div class="info-mini"><div class="valor" id="info-tiempo">60</div><div class="etiqueta">Minutos</div></div>
+        <div class="info-mini"><div class="valor">10</div><div class="etiqueta">Subtemáticas</div></div>
+        <div class="info-mini"><div class="valor">4</div><div class="etiqueta">Opciones c/u</div></div>
+      </div>
+
+      <div class="bloque-objetivo" style="text-align:left;">
+        <h3>📘 Objetivos del simulacro</h3>
+        <ul style="margin:0;padding-left:20px;color:var(--gris-texto);font-size:.92rem;">
+          <li>Interpretar y explicar fenómenos de movimiento, fuerzas y energía en situaciones reales.</li>
+          <li>Analizar tablas, gráficas y datos experimentales de física.</li>
+          <li>Aplicar las leyes de Newton, la conservación de la energía y el uso de máquinas simples.</li>
+          <li>Fortalecer el razonamiento científico más allá de la memorización de fórmulas.</li>
+        </ul>
+      </div>
+
+      <h3 style="text-align:left;margin-top:10px;">🧪 Subtemáticas incluidas</h3>
+      <div class="lista-subtemas" id="lista-subtemas"></div>
+
+      <div class="config-fila">
+        <label for="input-minutos">⏱ Tiempo disponible (minutos):</label>
+        <input type="number" id="input-minutos" min="10" max="180" value="60">
+      </div>
+
+      <div class="acciones-inicio">
+        <button class="btn btn-primario" id="btn-iniciar">🚀 Iniciar simulacro</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- =================== PANTALLA 2: SIMULACRO =================== -->
+<div id="pantalla-quiz" class="oculto">
+  <div class="barra-progreso-wrap">
+    <div class="contenedor">
+      <div class="barra-progreso-info">
+        <span>Pregunta <strong id="preg-actual">1</strong> de <strong>40</strong></span>
+        <span id="preg-porcentaje"><strong>0%</strong> completado</span>
+        <span>✅ <strong id="preg-respondidas">0</strong> respondidas &nbsp; ⏳ <strong id="preg-pendientes">40</strong> pendientes</span>
+      </div>
+      <div class="barra-externa"><div class="barra-interna" id="barra-interna" style="width:2.5%;"></div></div>
+      <div class="paleta-preguntas" id="paleta-preguntas" role="navigation" aria-label="Navegación entre preguntas"></div>
+    </div>
+  </div>
+
+  <div class="zona-pregunta">
+    <div class="contenedor">
+      <section class="tarjeta tarjeta-pregunta" id="tarjeta-pregunta">
+        <!-- contenido inyectado por JS -->
+      </section>
+
+      <div class="controles-navegacion">
+        <div class="grupo">
+          <button class="btn btn-secundario" id="btn-anterior">⬅ Anterior</button>
+          <button class="btn btn-secundario" id="btn-siguiente">Siguiente ➡</button>
+        </div>
+        <button class="btn btn-oscuro" id="btn-finalizar">🏁 Finalizar simulacro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PANTALLA 3: RESULTADOS =================== -->
+<div id="pantalla-resultados" class="oculto">
+  <div class="contenedor" style="max-width:900px;">
+
+    <section class="tarjeta resumen-resultado">
+      <div class="chip">Informe final de resultados</div>
+      <div class="puntaje-grande" id="puntaje-porcentaje">0%</div>
+      <div class="nivel-badge" id="nivel-alcanzado">Nivel</div>
+      <div class="mensaje-motivacional" id="mensaje-motivacional"></div>
+
+      <div class="grid-stats">
+        <div class="stat-card"><div class="val" id="stat-correctas">0</div><div class="lab">Correctas</div></div>
+        <div class="stat-card"><div class="val" id="stat-incorrectas">0</div><div class="lab">Incorrectas</div></div>
+        <div class="stat-card"><div class="val" id="stat-tiempo">0:00</div><div class="lab">Tiempo empleado</div></div>
+        <div class="stat-card"><div class="val" id="stat-racha">0</div><div class="lab">Mejor racha</div></div>
+      </div>
+    </section>
+
+    <div class="seccion-titulo"><h2>📊 Desempeño general</h2><div class="linea"></div></div>
+    <div class="tarjeta grafico-caja">
+      <canvas id="grafico-donut" height="220" aria-label="Gráfico de aciertos y errores" role="img"></canvas>
+    </div>
+
+    <div class="seccion-titulo"><h2>📚 Desempeño por subtemática</h2><div class="linea"></div></div>
+    <div class="tarjeta" id="lista-subtemas-resultado"></div>
+
+    <div class="seccion-titulo"><h2>🧭 Fortalezas y aspectos por mejorar</h2><div class="linea"></div></div>
+    <div class="fortalezas-mejoras">
+      <div class="fm-caja fortaleza"><h4>💪 Fortalezas</h4><ul id="lista-fortalezas"></ul></div>
+      <div class="fm-caja mejora"><h4>🎯 Aspectos por mejorar</h4><ul id="lista-mejoras"></ul></div>
+    </div>
+
+    <div class="seccion-titulo"><h2>🏅 Insignias obtenidas</h2><div class="linea"></div></div>
+    <div class="tarjeta">
+      <div class="grid-logros" id="grid-logros"></div>
+    </div>
+
+    <div class="seccion-titulo"><h2>📝 Revisión detallada de las 40 preguntas</h2><div class="linea"></div></div>
+    <div id="lista-revision"></div>
+
+    <div class="acciones-finales">
+      <button class="btn btn-primario" id="btn-reiniciar">🔄 Reiniciar simulacro</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PIE / BOTÓN AULA VIRTUAL =================== -->
+<footer class="pie">
+<a id="btn-volver"
+   href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=787"
+   style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+  🏫 Regresar al Aula Virtual
+</a>
+<script>
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=787';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=787';
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (esMóvil) {
+    btn.href = appUrl;
+  }
+</script>
+</footer>
+
+<!-- =================== MODAL DE CONFIRMACIÓN (genérico) =================== -->
+<div id="modal-confirmacion" class="modal-fondo oculto">
+  <div class="modal-caja">
+    <div class="icono" id="modal-icono">⚠️</div>
+    <h3 id="modal-titulo">Confirmar acción</h3>
+    <p id="modal-texto" style="color:var(--gris-texto);"></p>
+    <div class="modal-acciones">
+      <button class="btn btn-secundario" id="modal-cancelar">Cancelar</button>
+      <button class="btn btn-primario" id="modal-aceptar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor de avisos flotantes (rachas / logros) -->
+<div id="aviso-flotante" class="aviso-flotante" aria-live="assertive"></div>
+
+<script>
+/* =====================================================================
+   SIMULADOR ICFES — FÍSICA: MOVIMIENTO, FUERZAS Y ENERGÍA (NIVEL 4)
+   Código 100% Vanilla JS, organizado en módulos por responsabilidad.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   MÓDULO 0: DATOS DE SUBTEMÁTICAS Y LOGROS
+   --------------------------------------------------------------------- */
+const SUBTEMAS = {
+  1:{nombre:"Magnitudes físicas y sistema de medición", color:"#3B6EA5"},
+  2:{nombre:"Movimiento y descripción del movimiento",  color:"#2FAE60"},
+  3:{nombre:"Fuerzas e interacción entre cuerpos",       color:"#E5484D"},
+  4:{nombre:"Leyes de Newton",                           color:"#8E44AD"},
+  5:{nombre:"Trabajo, energía y potencia",                color:"#F5A623"},
+  6:{nombre:"Máquinas simples y eficiencia",              color:"#16A2B8"},
+  7:{nombre:"Calor y temperatura",                        color:"#D35400"},
+  8:{nombre:"Energía en la naturaleza y sostenibilidad",  color:"#27AE60"},
+  9:{nombre:"Interpretación de información física",       color:"#2C5FAE"},
+  10:{nombre:"Explicación de fenómenos físicos (ICFES)",  color:"#0B2545"}
+};
+
+const LOGROS = [
+  {id:"movimiento",  emoji:"⚙️", nombre:"Maestro del Movimiento",   subtemas:[2],   umbral:0.75},
+  {id:"dinamica",    emoji:"🚀", nombre:"Experto en Dinámica",      subtemas:[4],   umbral:0.75},
+  {id:"fuerzas",     emoji:"🧲", nombre:"Dominador de las Fuerzas", subtemas:[3],   umbral:0.75},
+  {id:"energia",     emoji:"⚡", nombre:"Especialista en Energía",  subtemas:[5,8], umbral:0.75},
+  {id:"calor",       emoji:"🌡️", nombre:"Investigador del Calor",   subtemas:[7],   umbral:0.75},
+  {id:"maquinas",    emoji:"🔧", nombre:"Ingeniero de Máquinas Simples", subtemas:[6], umbral:0.75},
+  {id:"datos",       emoji:"📈", nombre:"Analista de Datos Físicos", subtemas:[9,1], umbral:0.75},
+  {id:"formacion",   emoji:"🔬", nombre:"Científico en Formación",   subtemas:"participacion", umbral:0},
+  {id:"maestria",    emoji:"🏆", nombre:"Maestro de la Física",      subtemas:"global", umbral:0.90}
+];
+
+/* ---------------------------------------------------------------------
+   MÓDULO 1: BANCO DE PREGUNTAS (40 preguntas originales)
+   Cada pregunta: id, subtema(1-10), dificultad, competencia,
+   contexto (opcional), pregunta, opciones[4] (la 0 es SIEMPRE la correcta
+   en los datos fuente; se baraja en tiempo de ejecución), explicacion.
+   --------------------------------------------------------------------- */
+const BANCO_PREGUNTAS = [
+// ===================== SUBTEMA 1: MAGNITUDES Y MEDICIÓN =====================
+{id:1, subtema:1, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"Un estudiante mide la longitud de su escritorio y obtiene 1,20 m. ¿Cuál de las siguientes magnitudes es fundamental, al igual que la longitud, en el Sistema Internacional?",
+ opciones:["La masa","La velocidad","El área","La densidad"],
+ explicacion:"La masa es una magnitud fundamental del SI, mientras que la velocidad, el área y la densidad son magnitudes derivadas porque se obtienen combinando magnitudes fundamentales (longitud, tiempo, masa)."},
+
+{id:2, subtema:1, dificultad:"basico", competencia:"Indagación",
+ contexto:"En un laboratorio, dos estudiantes miden cinco veces el mismo objeto con la misma regla. Estudiante A obtiene: 12,1; 12,0; 12,2; 12,1; 12,0 cm. Estudiante B obtiene: 10,5; 13,8; 11,2; 14,0; 9,9 cm. El valor real del objeto es 12,1 cm.",
+ pregunta:"¿Qué se puede concluir sobre las mediciones de los dos estudiantes?",
+ opciones:["A es preciso y exacto; B no es preciso ni exacto","A es exacto pero no preciso; B es preciso pero no exacto","B es más confiable porque tiene mayor variedad de datos","Ambos estudiantes tienen la misma precisión y exactitud"],
+ explicacion:"Las mediciones de A están cercanas entre sí (precisión) y cercanas al valor real (exactitud). Las de B varían mucho entre sí y se alejan del valor real, por lo que carecen de ambas cualidades."},
+
+{id:3, subtema:1, dificultad:"avanzado", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Un ciclista recorre una pista y su velocímetro marca 54 km/h.",
+ pregunta:"¿A cuántos metros por segundo (m/s), unidad del SI, equivale esta velocidad?",
+ opciones:["15 m/s","54 m/s","0,9 m/s","150 m/s"],
+ explicacion:"Para convertir se multiplica por 1000 m/km y se divide por 3600 s/h: 54 × 1000 / 3600 = 15 m/s. Un error común es dividir solo por 3,6 mal aplicado o confundir el factor de conversión."},
+
+{id:4, subtema:1, dificultad:"intermedio", competencia:"Indagación",
+ contexto:"Para medir el grosor de una lámina metálica muy delgada, un técnico dispone de una regla graduada en milímetros y un calibrador (pie de rey) graduado en centésimas de milímetro.",
+ pregunta:"¿Cuál instrumento es más adecuado y por qué?",
+ opciones:["El calibrador, porque su menor división permite mayor precisión en medidas pequeñas","La regla, porque es más fácil de usar y da resultados exactos","Cualquiera, porque el resultado no depende del instrumento","La regla, porque tiene mayor longitud total de medición"],
+ explicacion:"La precisión de un instrumento está relacionada con su menor división. El calibrador tiene divisiones mucho más finas que la regla, por lo que es más apropiado para medir espesores pequeños con menor incertidumbre."},
+
+// ===================== SUBTEMA 2: MOVIMIENTO =====================
+{id:5, subtema:2, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"Un pasajero sentado en un bus en movimiento observa que un árbol junto a la carretera parece moverse hacia atrás, mientras que su maleta en el asiento contiguo permanece en el mismo lugar respecto a él. Esto ilustra principalmente que:",
+ opciones:["El movimiento es relativo al sistema de referencia elegido","El árbol realmente se mueve hacia atrás","La velocidad del bus no afecta la percepción del movimiento","Solo los objetos pequeños pueden estar en reposo"],
+ explicacion:"El movimiento depende del sistema de referencia: respecto a la carretera el bus se mueve, pero respecto al pasajero la maleta está en reposo y el árbol parece moverse. No existe movimiento absoluto sin definir referencia."},
+
+{id:6, subtema:2, dificultad:"intermedio", competencia:"Interpretación de información física",
+ contexto:"Un dron se desplaza en línea recta 300 m hacia el norte y luego regresa 120 m hacia el sur, todo en 60 segundos.",
+ pregunta:"¿Cuál es la diferencia entre la distancia recorrida y la magnitud del desplazamiento del dron?",
+ opciones:["La distancia es 420 m y el desplazamiento es 180 m","La distancia y el desplazamiento son iguales, 420 m","La distancia es 180 m y el desplazamiento es 420 m","Ambos valores son 300 m porque solo cuenta el tramo inicial"],
+ explicacion:"La distancia suma todo el recorrido (300+120=420 m), mientras que el desplazamiento es la diferencia entre la posición final e inicial (300−120=180 m). Confundir ambos conceptos es un error común."},
+
+{id:7, subtema:2, dificultad:"avanzado", competencia:"Interpretación de información física",
+ contexto:"La gráfica de posición contra tiempo de un vehículo muestra una línea recta con pendiente constante y positiva durante los primeros 10 s, y luego una línea horizontal entre los segundos 10 y 15.",
+ pregunta:"¿Qué describe correctamente el movimiento del vehículo entre los segundos 10 y 15?",
+ opciones:["El vehículo está en reposo, con velocidad igual a cero","El vehículo se mueve con velocidad constante distinta de cero","El vehículo acelera uniformemente","El vehículo invierte el sentido de su movimiento"],
+ explicacion:"Una línea horizontal en una gráfica posición-tiempo indica que la posición no cambia con el tiempo, es decir, el objeto está en reposo. Si tuviera velocidad constante distinta de cero, la línea tendría pendiente diferente de cero."},
+
+{id:8, subtema:2, dificultad:"intermedio", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Un carro de pruebas parte del reposo y acelera uniformemente hasta alcanzar 20 m/s en 8 segundos, en línea recta.",
+ pregunta:"¿Cuál es la aceleración del carro y qué tipo de movimiento describe?",
+ opciones:["2,5 m/s², movimiento rectilíneo uniformemente acelerado","20 m/s², movimiento rectilíneo uniforme","8 m/s², movimiento circular uniforme","160 m/s², movimiento uniformemente acelerado"],
+ explicacion:"La aceleración se calcula como a=Δv/Δt=20/8=2,5 m/s². Como parte del reposo y su velocidad cambia uniformemente en el tiempo, corresponde a un MRUA, no a un MRU (que exige velocidad constante)."},
+
+// ===================== SUBTEMA 3: FUERZAS =====================
+{id:9, subtema:3, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"Un imán atrae un clip metálico sin tocarlo, mientras que una persona empuja una caja para moverla. ¿Cómo se clasifican estas dos fuerzas?",
+ opciones:["La del imán es a distancia; la del empujón es de contacto","Ambas son fuerzas de contacto","Ambas son fuerzas a distancia","La del imán es de contacto; la del empujón es a distancia"],
+ explicacion:"Las fuerzas a distancia actúan sin contacto físico directo, como la magnética o la gravitacional. Las fuerzas de contacto requieren que los cuerpos se toquen, como al empujar una caja."},
+
+{id:10, subtema:3, dificultad:"intermedio", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Un astronauta con una masa de 80 kg viaja a la Luna, donde la gravedad es aproximadamente 1/6 de la gravedad terrestre.",
+ pregunta:"¿Qué ocurre con la masa y el peso del astronauta al llegar a la Luna?",
+ opciones:["Su masa permanece igual, pero su peso disminuye","Su masa disminuye y su peso permanece igual","Tanto su masa como su peso disminuyen en la misma proporción","Su masa aumenta porque la gravedad es menor"],
+ explicacion:"La masa es una propiedad de la cantidad de materia y no depende del lugar, por lo que sigue siendo 80 kg. El peso sí depende de la gravedad local (peso=masa×gravedad), por lo que disminuye en la Luna."},
+
+{id:11, subtema:3, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Un bloque de madera se desliza sobre una mesa horizontal y finalmente se detiene, aunque nadie lo frenó con la mano.",
+ pregunta:"¿Cuál es la explicación física más adecuada de este fenómeno?",
+ opciones:["La fuerza de fricción entre el bloque y la mesa se opone al movimiento y disipa su energía","El bloque pierde su fuerza inicial poco a poco de forma natural","La fuerza normal detiene el bloque al empujarlo hacia arriba","El peso del bloque aumenta con el tiempo hasta detenerlo"],
+ explicacion:"La fricción es una fuerza de contacto que se opone al movimiento relativo entre superficies, convirtiendo energía cinética en calor hasta detener el bloque. La fuerza normal actúa perpendicular a la superficie y no se opone al movimiento horizontal."},
+
+{id:12, subtema:3, dificultad:"avanzado", competencia:"Interpretación de información física",
+ contexto:"Una lámpara de 5 kg cuelga en equilibrio del techo mediante una cuerda vertical.",
+ pregunta:"En el diagrama de cuerpo libre de la lámpara, ¿qué relación existe entre la tensión de la cuerda y el peso de la lámpara?",
+ opciones:["La tensión es igual en magnitud al peso, pero de sentido opuesto","La tensión es siempre mayor que el peso","La tensión es siempre menor que el peso porque la cuerda cede","No existe relación, pues son fuerzas de distinta naturaleza"],
+ explicacion:"Como la lámpara está en equilibrio (no acelera), la suma de fuerzas debe ser cero. Por lo tanto, la tensión hacia arriba debe igualar en magnitud al peso hacia abajo para que se cancelen."},
+
+// ===================== SUBTEMA 4: LEYES DE NEWTON =====================
+{id:13, subtema:4, dificultad:"basico", competencia:"Explicación de fenómenos",
+ pregunta:"Cuando un bus frena bruscamente, los pasajeros de pie tienden a irse hacia adelante. ¿Qué ley física explica mejor este fenómeno?",
+ opciones:["La primera ley de Newton (inercia)","La tercera ley de Newton (acción y reacción)","La ley de la gravitación universal","La ley de conservación de la energía"],
+ explicacion:"Por inercia, los cuerpos tienden a mantener su estado de movimiento. Cuando el bus frena, el cuerpo del pasajero tiende a seguir moviéndose hacia adelante hasta que una fuerza (como sujetarse) lo detenga."},
+
+{id:14, subtema:4, dificultad:"intermedio", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Se aplica una fuerza neta de 40 N a un objeto de 8 kg de masa, inicialmente en reposo, sobre una superficie sin fricción.",
+ pregunta:"¿Cuál es la aceleración que experimenta el objeto?",
+ opciones:["5 m/s²","0,2 m/s²","32 m/s²","48 m/s²"],
+ explicacion:"Según la segunda ley de Newton, a=F/m=40 N/8 kg=5 m/s². Un error frecuente es multiplicar en lugar de dividir, o invertir la fórmula."},
+
+{id:15, subtema:4, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Un nadador se impulsa empujando el agua hacia atrás con sus brazos y avanza hacia adelante.",
+ pregunta:"¿Qué ley de Newton explica principalmente este avance?",
+ opciones:["La tercera ley: a la fuerza que el nadador ejerce sobre el agua le corresponde una reacción igual y opuesta del agua sobre el nadador","La primera ley, porque el nadador tiende a permanecer en reposo","La segunda ley, porque solo importa la masa del nadador","La ley de conservación de la masa"],
+ explicacion:"Por la tercera ley de Newton, toda fuerza de acción genera una fuerza de reacción igual y de sentido contrario. El nadador empuja el agua hacia atrás (acción) y el agua empuja al nadador hacia adelante (reacción), permitiéndole avanzar."},
+
+{id:16, subtema:4, dificultad:"avanzado", competencia:"Interpretación de información física",
+ contexto:"Dos carros de igual masa están sobre una pista de pruebas. Al carro A se le aplica una fuerza de 200 N y al carro B una fuerza de 400 N, ambas durante el mismo tiempo, partiendo del reposo.",
+ pregunta:"¿Qué relación existe entre las aceleraciones y las velocidades finales de los dos carros?",
+ opciones:["El carro B tendrá el doble de aceleración y, por tanto, mayor velocidad final que A","Ambos carros tendrán la misma aceleración porque tienen la misma masa","El carro A tendrá mayor aceleración porque requiere menos fuerza","La aceleración no depende de la fuerza aplicada, solo de la masa"],
+ explicacion:"Como a=F/m y la masa es igual para ambos, el carro con mayor fuerza (B) tendrá mayor aceleración (proporcional a F). Al aplicarse durante el mismo tiempo, B también alcanzará mayor velocidad final."},
+
+// ===================== SUBTEMA 5: TRABAJO, ENERGÍA Y POTENCIA =====================
+{id:17, subtema:5, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"Una piedra se levanta desde el suelo hasta una altura de 2 m. ¿Qué tipo de energía gana principalmente la piedra?",
+ opciones:["Energía potencial gravitacional","Energía cinética","Energía térmica","Energía eléctrica"],
+ explicacion:"Al aumentar su altura respecto a un nivel de referencia, la piedra gana energía potencial gravitacional, asociada a su posición dentro de un campo gravitacional."},
+
+{id:18, subtema:5, dificultad:"intermedio", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Un obrero empuja una carretilla aplicando una fuerza constante de 60 N a lo largo de 5 m en la dirección de la fuerza.",
+ pregunta:"¿Cuál es el trabajo mecánico realizado por el obrero sobre la carretilla?",
+ opciones:["300 J","65 J","12 J","300 N"],
+ explicacion:"El trabajo mecánico se calcula como W=F×d=60 N×5 m=300 J (julios). Un error común es sumar en lugar de multiplicar, o confundir la unidad final (debe ser julios, no newtons)."},
+
+{id:19, subtema:5, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Un péndulo se suelta desde su punto más alto (A) y oscila pasando por su punto más bajo (B).",
+ pregunta:"¿Qué ocurre con la energía mecánica del péndulo entre los puntos A y B, si se ignora la fricción con el aire?",
+ opciones:["La energía potencial se transforma en energía cinética, pero la energía mecánica total se conserva","La energía mecánica total aumenta al bajar","La energía potencial desaparece sin transformarse","La energía cinética se transforma en energía potencial al bajar"],
+ explicacion:"Sin fricción, la energía mecánica total se conserva: al descender, la energía potencial gravitacional disminuye y se transforma en energía cinética, de modo que la suma de ambas permanece constante."},
+
+{id:20, subtema:5, dificultad:"intermedio", competencia:"Interpretación de información física",
+ contexto:"Dos motores realizan el mismo trabajo de 6000 J. El motor A lo hace en 20 segundos y el motor B lo hace en 5 segundos.",
+ pregunta:"¿Qué se puede afirmar sobre la potencia desarrollada por cada motor?",
+ opciones:["El motor B es más potente porque realiza el mismo trabajo en menos tiempo","El motor A es más potente porque tarda más tiempo","Ambos motores tienen la misma potencia porque realizan el mismo trabajo","La potencia no depende del tiempo empleado"],
+ explicacion:"La potencia es P=W/t. Para A: 6000/20=300 W; para B: 6000/5=1200 W. El motor B desarrolla mayor potencia porque realiza el mismo trabajo en menor tiempo."},
+
+// ===================== SUBTEMA 6: MÁQUINAS SIMPLES =====================
+{id:21, subtema:6, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"Un obrero usa una tabla apoyada en un extremo elevado para subir una carga pesada a un camión, en lugar de levantarla verticalmente. ¿Qué máquina simple está utilizando?",
+ opciones:["Un plano inclinado","Una palanca","Una polea","Un tornillo"],
+ explicacion:"Una superficie inclinada que permite subir una carga aplicando menos fuerza a lo largo de mayor distancia es un plano inclinado, una de las máquinas simples fundamentales."},
+
+{id:22, subtema:6, dificultad:"intermedio", competencia:"Explicación de fenómenos",
+ contexto:"En una obra de construcción se usa una polea fija en lo alto de una estructura para subir baldes de cemento.",
+ pregunta:"¿Cuál es la principal ventaja de usar esta polea fija, aunque no reduzca la fuerza necesaria?",
+ opciones:["Permite cambiar la dirección de la fuerza aplicada, facilitando el trabajo desde el suelo","Elimina por completo la necesidad de aplicar fuerza","Multiplica la fuerza aplicada varias veces","Convierte la energía potencial en energía eléctrica"],
+ explicacion:"Una polea fija no otorga ventaja mecánica en fuerza (la fuerza requerida es similar al peso), pero permite cambiar la dirección de la fuerza aplicada, de modo que se puede tirar hacia abajo para subir la carga."},
+
+{id:23, subtema:6, dificultad:"avanzado", competencia:"Interpretación de información física",
+ contexto:"Una palanca tiene su punto de apoyo (fulcro) ubicado de tal forma que el brazo de la fuerza aplicada es 4 veces más largo que el brazo de la resistencia (carga).",
+ pregunta:"Si se aplica una fuerza de 50 N en el extremo largo, ¿cuál es aproximadamente la carga máxima que puede levantar (ventaja mecánica ideal)?",
+ opciones:["200 N","12,5 N","50 N","4 N"],
+ explicacion:"La ventaja mecánica de una palanca es la razón entre el brazo de fuerza y el brazo de resistencia. Con brazo de fuerza 4 veces mayor, la ventaja mecánica es 4, por lo que la carga máxima teórica es 50 N×4=200 N."},
+
+{id:24, subtema:6, dificultad:"avanzado", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Una máquina simple realiza un trabajo de entrada de 500 J y entrega un trabajo útil de salida de 400 J, debido a pérdidas por fricción interna.",
+ pregunta:"¿Cuál es la eficiencia (rendimiento) de esta máquina?",
+ opciones:["80%","125%","100%","20%"],
+ explicacion:"La eficiencia se calcula como (trabajo útil de salida / trabajo de entrada) × 100 = (400/500) × 100 = 80%. Ninguna máquina real alcanza el 100% debido a pérdidas de energía, principalmente por fricción."},
+
+// ===================== SUBTEMA 7: CALOR Y TEMPERATURA =====================
+{id:25, subtema:7, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"Dos vasos contienen agua a la misma temperatura, pero uno tiene el doble de agua que el otro. ¿Qué se puede afirmar sobre el calor y la temperatura en ambos vasos?",
+ opciones:["Ambos tienen la misma temperatura, pero el vaso con más agua contiene más energía térmica total","Ambos tienen la misma cantidad de calor porque están a igual temperatura","El vaso con menos agua tiene mayor temperatura","La temperatura depende únicamente de la cantidad de agua"],
+ explicacion:"La temperatura mide el promedio de energía cinética de las partículas y no depende de la cantidad de sustancia, pero el calor (energía térmica total) sí depende de la masa: a igual temperatura, más masa implica más energía térmica almacenada."},
+
+{id:26, subtema:7, dificultad:"intermedio", competencia:"Explicación de fenómenos",
+ contexto:"Al calentar una olla con agua en una estufa, el mango metálico se calienta incluso sin tocar directamente el fuego, y el agua caliente del fondo sube mientras la fría baja.",
+ pregunta:"¿Qué mecanismos de transferencia de calor están presentes en cada caso?",
+ opciones:["Conducción en el mango y convección en el agua","Radiación en el mango y conducción en el agua","Convección en el mango y radiación en el agua","Conducción en ambos casos, sin convección"],
+ explicacion:"El calor viaja por el metal del mango mediante conducción (transferencia entre partículas en contacto directo, sin desplazamiento de materia). En el agua, el movimiento de las porciones calientes hacia arriba y frías hacia abajo es convección."},
+
+{id:27, subtema:7, dificultad:"intermedio", competencia:"Uso comprensivo del conocimiento científico",
+ contexto:"Un termómetro registra que el agua de una piscina está a 25 °C.",
+ pregunta:"¿A cuántos kelvin equivale esta temperatura, considerando que 0 °C equivale a 273 K?",
+ opciones:["298 K","25 K","248 K","546 K"],
+ explicacion:"Para convertir de Celsius a Kelvin se suma 273: 25+273=298 K. Un error común es multiplicar por un factor en lugar de sumar la constante de conversión."},
+
+{id:28, subtema:7, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Un cubo de hielo se deja a temperatura ambiente y comienza a derretirse hasta convertirse completamente en agua líquida, mientras su temperatura permanece en 0 °C durante todo el proceso de fusión.",
+ pregunta:"¿Cómo se explica que la temperatura no cambie mientras el hielo se derrite, a pesar de que sigue recibiendo calor?",
+ opciones:["El calor recibido se usa para romper la estructura interna del hielo (cambio de estado), no para aumentar la temperatura","El hielo deja de recibir calor mientras se derrite","La temperatura sí aumenta, pero el termómetro no lo detecta","El calor se transforma completamente en energía potencial gravitacional"],
+ explicacion:"Durante un cambio de estado, la energía suministrada (calor latente) se invierte en modificar la organización de las partículas, no en aumentar su energía cinética promedio, por lo que la temperatura permanece constante hasta completar el cambio de estado."},
+
+// ===================== SUBTEMA 8: ENERGÍA Y SOSTENIBILIDAD =====================
+{id:29, subtema:8, dificultad:"basico", competencia:"Uso comprensivo del conocimiento científico",
+ pregunta:"¿Cuál de las siguientes es una fuente de energía renovable ampliamente utilizada en Colombia?",
+ opciones:["La energía hidráulica de los embalses","El carbón mineral","El petróleo","El gas natural"],
+ explicacion:"La energía hidráulica se considera renovable porque proviene del ciclo del agua, que se renueva naturalmente. El carbón, el petróleo y el gas son combustibles fósiles no renovables, pues tardan millones de años en formarse."},
+
+{id:30, subtema:8, dificultad:"intermedio", competencia:"Explicación de fenómenos",
+ contexto:"En épocas de sequía prolongada, los embalses colombianos que generan energía hidroeléctrica bajan su nivel de agua, lo que ha llevado en ocasiones a promover el ahorro de energía en los hogares.",
+ pregunta:"¿Qué relación científica explica mejor esta situación?",
+ opciones:["Menor volumen de agua disponible reduce la energía potencial gravitacional que puede transformarse en energía eléctrica","La sequía aumenta la energía eléctrica disponible","El nivel del agua no influye en la generación de energía hidroeléctrica","La energía eléctrica se genera únicamente por radiación solar en los embalses"],
+ explicacion:"La generación hidroeléctrica depende de la energía potencial gravitacional del agua almacenada, que se transforma en energía cinética y luego eléctrica al caer. Menos agua implica menor energía potencial disponible para esa transformación."},
+
+{id:31, subtema:8, dificultad:"intermedio", competencia:"Indagación",
+ contexto:"Una familia decide reemplazar sus bombillas incandescentes por bombillas LED, que consumen menos energía para producir la misma cantidad de luz.",
+ pregunta:"¿Qué evidencia respalda mejor la afirmación de que las bombillas LED contribuyen al uso eficiente de la energía?",
+ opciones:["Producen la misma cantidad de luz consumiendo menor potencia eléctrica, reduciendo la energía desperdiciada como calor","Las bombillas LED no requieren energía eléctrica para funcionar","Las bombillas LED generan más calor que luz, ahorrando energía térmica","El color de la luz LED determina su eficiencia energética"],
+ explicacion:"La eficiencia energética se relaciona con la proporción de energía consumida que se transforma en el efecto útil deseado (luz) y no en energía desperdiciada (calor). Las bombillas LED disipan menos energía en forma de calor que las incandescentes."},
+
+{id:32, subtema:8, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Colombia ha impulsado la instalación de paneles solares y parques eólicos en regiones como La Guajira, además de sus embalses hidroeléctricos.",
+ pregunta:"¿Cuál es la principal razón científica y ambiental para diversificar las fuentes de energía renovable de un país, en lugar de depender de una sola?",
+ opciones:["Reduce la vulnerabilidad ante la variabilidad climática de una sola fuente (como la sequía) y disminuye el impacto ambiental frente a los combustibles fósiles","Las fuentes renovables producen más contaminación que las no renovables","Diversificar las fuentes elimina por completo la necesidad de ahorrar energía","Solo una fuente renovable es suficiente para cualquier país"],
+ explicacion:"Diversificar fuentes renovables (hídrica, solar, eólica) reduce el riesgo de que fenómenos climáticos (como sequías que afectan embalses) comprometan el suministro, y disminuye la dependencia de combustibles fósiles, cuya extracción y uso generan mayor impacto ambiental."},
+
+// ===================== SUBTEMA 9: INTERPRETACIÓN DE INFORMACIÓN =====================
+{id:33, subtema:9, dificultad:"basico", competencia:"Interpretación de información física",
+ contexto:"En una gráfica de velocidad contra tiempo, la línea es horizontal y se mantiene en 8 m/s durante 10 segundos.",
+ pregunta:"¿Qué tipo de movimiento representa esta gráfica?",
+ opciones:["Movimiento rectilíneo uniforme (MRU)","Movimiento con aceleración constante","Movimiento en reposo","Movimiento circular"],
+ explicacion:"Una línea horizontal en una gráfica velocidad-tiempo indica que la velocidad no cambia, lo cual corresponde a un movimiento rectilíneo uniforme (MRU), ya que la aceleración es cero."},
+
+{id:34, subtema:9, dificultad:"intermedio", competencia:"Interpretación de información física",
+ contexto:"Un estudiante realiza un experimento y registra en una tabla la fuerza aplicada a un resorte y su elongación (estiramiento): 2N→1cm, 4N→2cm, 6N→3cm, 8N→4cm.",
+ pregunta:"¿Qué conclusión sobre la relación entre fuerza y elongación se puede formular a partir de estos datos?",
+ opciones:["La elongación es directamente proporcional a la fuerza aplicada","La elongación es inversamente proporcional a la fuerza aplicada","La elongación no depende de la fuerza aplicada","La fuerza disminuye a medida que aumenta la elongación"],
+ explicacion:"Al duplicar la fuerza, la elongación también se duplica de manera consistente (la razón fuerza/elongación es constante: 2 N/cm), lo que evidencia una relación de proporcionalidad directa entre ambas variables, coherente con la ley de Hooke."},
+
+{id:35, subtema:9, dificultad:"intermedio", competencia:"Indagación",
+ contexto:"Un grupo investiga si el color de un objeto influye en la rapidez con que se calienta bajo el sol. Colocan un objeto negro y uno blanco, del mismo material y tamaño, bajo el mismo sol durante 30 minutos, y miden la temperatura cada 5 minutos.",
+ pregunta:"En este experimento, ¿cuál es la variable independiente?",
+ opciones:["El color del objeto","La temperatura registrada","El tiempo de exposición al sol","El tamaño del objeto"],
+ explicacion:"La variable independiente es la que el investigador manipula intencionalmente para observar su efecto: en este caso, el color del objeto. La temperatura es la variable dependiente, pues cambia en función del color."},
+
+{id:36, subtema:9, dificultad:"avanzado", competencia:"Interpretación de información física",
+ contexto:"En una gráfica de fuerza contra desplazamiento para un objeto empujado en línea recta, la fuerza aplicada es constante de 20 N mientras el objeto se desplaza 6 m en la misma dirección de la fuerza.",
+ pregunta:"¿Qué representa el área bajo la curva en esta gráfica fuerza-desplazamiento?",
+ opciones:["El trabajo mecánico realizado sobre el objeto","La velocidad final del objeto","La aceleración del objeto","La potencia desarrollada"],
+ explicacion:"En una gráfica fuerza-desplazamiento, el área bajo la curva corresponde al trabajo mecánico (W=F×d), ya que para fuerza constante el área de la región rectangular es precisamente el producto de ambas magnitudes: 20 N × 6 m = 120 J."},
+
+// ===================== SUBTEMA 10: FENÓMENOS INTEGRADORES (ICFES) =====================
+{id:37, subtema:10, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"En un ascensor de un edificio, cuando este comienza a subir, una persona en su interior siente momentáneamente que 'pesa más', y cuando empieza a bajar siente que 'pesa menos', aunque su masa no cambia.",
+ pregunta:"¿Qué combinación de conceptos físicos explica correctamente esta sensación?",
+ opciones:["La aceleración del ascensor modifica la fuerza normal que el piso ejerce sobre la persona, lo que se percibe como cambio de peso aparente, aunque la masa permanece constante","La masa de la persona cambia según la dirección del movimiento del ascensor","El peso real de la persona cambia porque la gravedad varía con la velocidad","La sensación se debe únicamente a un efecto psicológico sin base física"],
+ explicacion:"Cuando el ascensor acelera hacia arriba, la fuerza normal debe ser mayor que el peso para producir esa aceleración, generando la sensación de mayor peso; al acelerar hacia abajo ocurre lo contrario. La masa (cantidad de materia) no cambia, solo la fuerza normal percibida, integrando las leyes de Newton y el concepto de peso aparente."},
+
+{id:38, subtema:10, dificultad:"avanzado", competencia:"Interpretación de información física",
+ contexto:"Un ciclista desciende por una pendiente sin pedalear. Al inicio del descenso tiene poca velocidad, pero al llegar a la parte baja su velocidad es mucho mayor, mientras que la altura respecto al punto de partida ha disminuido considerablemente.",
+ pregunta:"¿Qué principio físico explica mejor el aumento de velocidad del ciclista durante el descenso, ignorando la fricción y la resistencia del aire?",
+ opciones:["La energía potencial gravitacional se transforma en energía cinética, conservándose la energía mecánica total","La energía cinética se transforma en energía potencial durante el descenso","La velocidad aumenta porque la masa del ciclista disminuye al bajar","El aumento de velocidad no tiene relación con la altura recorrida"],
+ explicacion:"Al descender, la altura (y por tanto la energía potencial gravitacional) disminuye, y esa energía se transforma en energía cinética, lo que se manifiesta como un aumento de velocidad. Esto ejemplifica el principio de conservación de la energía mecánica aplicado a un contexto cotidiano."},
+
+{id:39, subtema:10, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Una grúa de construcción levanta un bloque de concreto de 500 kg mediante un sistema de poleas, aplicando una fuerza menor que el peso del bloque gracias a la ventaja mecánica del sistema, pero tardando más tiempo en levantarlo que si se usara una fuerza mayor directa.",
+ pregunta:"¿Qué relación existe entre la fuerza aplicada, la ventaja mecánica y el trabajo realizado en este sistema, comparado con levantar el bloque directamente sin poleas?",
+ opciones:["El sistema de poleas reduce la fuerza necesaria, pero el trabajo total realizado (idealmente) es el mismo, ya que se recorre una mayor distancia con la cuerda","El sistema de poleas reduce tanto la fuerza como el trabajo total necesario para levantar el bloque","El trabajo realizado depende únicamente de la fuerza aplicada, sin importar la distancia recorrida","Usar poleas siempre aumenta el trabajo total necesario para levantar la carga"],
+ explicacion:"Las máquinas simples ideales no reducen el trabajo total (W=F×d), sino que permiten aplicar menor fuerza a cambio de recorrer una mayor distancia con esa fuerza, manteniendo aproximadamente constante el producto fuerza por distancia, salvo pérdidas por fricción que reducen la eficiencia real."},
+
+{id:40, subtema:10, dificultad:"avanzado", competencia:"Explicación de fenómenos",
+ contexto:"Una olla de agua se calienta en una estufa de una casa colombiana. El agua absorbe calor y, tras alcanzar cierta temperatura, comienza a hervir, transformándose gradualmente en vapor sin que la temperatura del agua líquida siga aumentando mientras dura la ebullición.",
+ pregunta:"¿Qué conceptos físicos deben integrarse para explicar completamente este fenómeno cotidiano?",
+ opciones:["La transferencia de calor por conducción y convección, junto con el cambio de estado, en el cual la energía se invierte en romper enlaces entre partículas y no en aumentar la temperatura","Únicamente la conducción de calor a través del metal de la olla","Solo el aumento de la energía cinética de las moléculas de agua, sin cambios de estado","La disminución de la masa del agua es la causa de que la temperatura deje de subir"],
+ explicacion:"El fenómeno integra varios conceptos: el calor se transfiere por conducción (de la estufa a la olla) y por convección (dentro del agua), y durante la ebullición (cambio de estado) la energía suministrada se usa para separar las moléculas de agua líquida y convertirlas en vapor, por lo que la temperatura permanece constante durante ese proceso, en coherencia con el calor latente de vaporización."}
+];
+
+/* ---------------------------------------------------------------------
+   MÓDULO 2: ESTADO GLOBAL DE LA APLICACIÓN
+   --------------------------------------------------------------------- */
+const estado = {
+  preguntas: [],          // copia de trabajo, barajada, con opciones barajadas
+  indiceActual: 0,
+  respuestas: {},         // {idPregunta: indiceOpcionSeleccionada}
+  tiempoLimiteSeg: 3600,
+  tiempoRestanteSeg: 3600,
+  temporizadorId: null,
+  horaInicio: null,
+  horaFin: null,
+  rachaActual: 0,
+  mejorRacha: 0,
+  rachasDesbloqueadas: new Set(),
+  sonidoActivo: true,
+  logrosConseguidos: new Set()
+};
+
+/* ---------------------------------------------------------------------
+   MÓDULO 3: UTILIDADES GENERALES
+   --------------------------------------------------------------------- */
+function barajar(array){
+  const copia = array.slice();
+  for(let i=copia.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [copia[i],copia[j]] = [copia[j],copia[i]];
+  }
+  return copia;
+}
+
+function formatoTiempo(segundosTotal){
+  const m = Math.floor(segundosTotal/60);
+  const s = Math.floor(segundosTotal%60);
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+const LETRAS = ["A","B","C","D"];
+
+/* ---------------------------------------------------------------------
+   MÓDULO 4: SONIDO (Web Audio API, sin archivos externos)
+   --------------------------------------------------------------------- */
+let contextoAudio = null;
+function obtenerContextoAudio(){
+  if(!contextoAudio){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    contextoAudio = new AC();
+  }
+  return contextoAudio;
+}
+function reproducirTono(frecuencia, duracion=0.16, tipo="sine", volumen=0.18, retraso=0){
+  if(!estado.sonidoActivo) return;
+  try{
+    const ctx = obtenerContextoAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = tipo;
+    osc.frequency.value = frecuencia;
+    gain.gain.value = volumen;
+    osc.connect(gain); gain.connect(ctx.destination);
+    const t0 = ctx.currentTime + retraso;
+    gain.gain.setValueAtTime(volumen,t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0+duracion);
+    osc.start(t0);
+    osc.stop(t0+duracion+0.02);
+  }catch(e){ /* audio no disponible en este navegador */ }
+}
+const Sonidos = {
+  correcto:()=>{reproducirTono(880,0.12,"triangle",0.16);reproducirTono(1175,0.14,"triangle",0.14,0.09);},
+  incorrecto:()=>{reproducirTono(220,0.22,"sawtooth",0.14);},
+  logro:()=>{[523,659,784,1047].forEach((f,i)=>reproducirTono(f,0.16,"triangle",0.15,i*0.09));},
+  finalizar:()=>{[392,494,587,784].forEach((f,i)=>reproducirTono(f,0.22,"sine",0.15,i*0.14));},
+  clic:()=>{reproducirTono(600,0.05,"square",0.05);}
+};
+
+/* ---------------------------------------------------------------------
+   MÓDULO 5: PREPARACIÓN DEL SIMULACRO
+   --------------------------------------------------------------------- */
+function prepararPreguntas(){
+  const base = barajar(BANCO_PREGUNTAS);
+  estado.preguntas = base.map(p=>{
+    const opcionesConIndice = p.opciones.map((texto,i)=>({texto, esCorrecta:i===0}));
+    const opcionesBarajadas = barajar(opcionesConIndice);
+    return {...p, opcionesBarajadas};
+  });
+  estado.indiceActual = 0;
+  estado.respuestas = {};
+  estado.rachaActual = 0;
+  estado.mejorRacha = 0;
+  estado.rachasDesbloqueadas = new Set();
+  estado.logrosConseguidos = new Set();
+}
+
+function pintarListaSubtemasInicio(){
+  const cont = document.getElementById("lista-subtemas");
+  cont.innerHTML = Object.entries(SUBTEMAS).map(([num,info])=>
+    `<div><span class="n">${num}</span>${info.nombre}</div>`
+  ).join("");
+}
+pintarListaSubtemasInicio();
+
+/* ---------------------------------------------------------------------
+   MÓDULO 6: TEMPORIZADOR
+   --------------------------------------------------------------------- */
+function iniciarTemporizador(){
+  const elemTiempo = document.getElementById("tiempo-restante");
+  const cajaTiempo = document.getElementById("temporizador");
+  cajaTiempo.classList.remove("oculto");
+  clearInterval(estado.temporizadorId);
+  estado.temporizadorId = setInterval(()=>{
+    estado.tiempoRestanteSeg--;
+    elemTiempo.textContent = formatoTiempo(Math.max(estado.tiempoRestanteSeg,0));
+    if(estado.tiempoRestanteSeg <= 300){ cajaTiempo.classList.add("alerta"); }
+    if(estado.tiempoRestanteSeg <= 0){
+      clearInterval(estado.temporizadorId);
+      finalizarSimulacro(true);
+    }
+  },1000);
+}
+
+/* ---------------------------------------------------------------------
+   MÓDULO 7: INICIO DEL SIMULACRO
+   --------------------------------------------------------------------- */
+document.getElementById("btn-iniciar").addEventListener("click", ()=>{
+  const minutos = Math.max(10, Math.min(180, parseInt(document.getElementById("input-minutos").value)||60));
+  estado.tiempoLimiteSeg = minutos*60;
+  estado.tiempoRestanteSeg = minutos*60;
+  prepararPreguntas();
+  estado.horaInicio = Date.now();
+
+  document.getElementById("pantalla-inicio").classList.add("oculto");
+  document.getElementById("pantalla-quiz").classList.remove("oculto");
+  document.getElementById("pantalla-resultados").classList.add("oculto");
+
+  construirPaleta();
+  renderizarPregunta();
+  iniciarTemporizador();
+});
+document.getElementById("info-tiempo").textContent = 60;
+document.getElementById("input-minutos").addEventListener("input", (e)=>{
+  document.getElementById("info-tiempo").textContent = e.target.value || 60;
+});
+
+/* ---------------------------------------------------------------------
+   MÓDULO 8: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN
+   --------------------------------------------------------------------- */
+function construirPaleta(){
+  const cont = document.getElementById("paleta-preguntas");
+  cont.innerHTML = "";
+  estado.preguntas.forEach((p,i)=>{
+    const b = document.createElement("button");
+    b.className = "paleta-btn";
+    b.textContent = i+1;
+    b.setAttribute("aria-label", `Ir a la pregunta ${i+1}`);
+    b.addEventListener("click", ()=>{ estado.indiceActual = i; renderizarPregunta(); });
+    cont.appendChild(b);
+  });
+}
+
+function actualizarPaletaYProgreso(){
+  const botones = document.querySelectorAll(".paleta-btn");
+  let respondidas = 0;
+  botones.forEach((b,i)=>{
+    b.classList.remove("actual","respondida");
+    const idPreg = estado.preguntas[i].id;
+    if(estado.respuestas[idPreg] !== undefined){ b.classList.add("respondida"); respondidas++; }
+    if(i===estado.indiceActual) b.classList.add("actual");
+  });
+  const total = estado.preguntas.length;
+  const pct = Math.round((respondidas/total)*100);
+  document.getElementById("preg-actual").textContent = estado.indiceActual+1;
+  document.getElementById("preg-porcentaje").innerHTML = `<strong>${pct}%</strong> completado`;
+  document.getElementById("preg-respondidas").textContent = respondidas;
+  document.getElementById("preg-pendientes").textContent = total-respondidas;
+  document.getElementById("barra-interna").style.width = `${Math.max(pct,2.5)}%`;
+}
+
+function renderizarPregunta(){
+  const p = estado.preguntas[estado.indiceActual];
+  const cont = document.getElementById("tarjeta-pregunta");
+  const dificultadTexto = {basico:"Nivel básico",intermedio:"Nivel intermedio",avanzado:"Nivel avanzado"}[p.dificultad];
+
+  cont.innerHTML = `
+    <div class="meta-pregunta">
+      <span class="etiqueta subtema">Subtemática ${p.subtema} · ${SUBTEMAS[p.subtema].nombre}</span>
+      <span class="etiqueta dificultad-${p.dificultad}">${dificultadTexto}</span>
+    </div>
+    ${p.contexto ? `<div class="contexto-caja">📋 <strong>Situación:</strong> ${p.contexto}</div>` : ""}
+    <div class="enunciado">${estado.indiceActual+1}. ${p.pregunta}</div>
+    <div class="opciones" role="radiogroup" aria-label="Opciones de respuesta"></div>
+  `;
+
+  const contOpciones = cont.querySelector(".opciones");
+  const seleccionActual = estado.respuestas[p.id];
+
+  p.opcionesBarajadas.forEach((op,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "opcion";
+    btn.setAttribute("role","radio");
+    btn.setAttribute("aria-checked", seleccionActual===i ? "true":"false");
+    if(seleccionActual===i) btn.classList.add("seleccionada");
+    btn.innerHTML = `<span class="letra">${LETRAS[i]}</span><span>${op.texto}</span>`;
+    btn.addEventListener("click", ()=> seleccionarOpcion(p, i));
+    contOpciones.appendChild(btn);
+  });
+
+  actualizarPaletaYProgreso();
+  document.getElementById("btn-anterior").disabled = estado.indiceActual===0;
+  document.getElementById("btn-siguiente").textContent = estado.indiceActual===estado.preguntas.length-1 ? "Ir a la última ➡" : "Siguiente ➡";
+  cont.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function seleccionarOpcion(pregunta, indiceElegido){
+  const eraNueva = estado.respuestas[pregunta.id] === undefined;
+  estado.respuestas[pregunta.id] = indiceElegido;
+
+  const esCorrecta = pregunta.opcionesBarajadas[indiceElegido].esCorrecta;
+
+  if(eraNueva){
+    if(esCorrecta){
+      Sonidos.correcto();
+      estado.rachaActual++;
+      if(estado.rachaActual > estado.mejorRacha) estado.mejorRacha = estado.rachaActual;
+      revisarRachas();
+    } else {
+      Sonidos.incorrecto();
+      estado.rachaActual = 0;
+    }
+  }
+  renderizarPregunta();
+}
+
+function revisarRachas(){
+  const hitos = [3,5,10];
+  hitos.forEach(hito=>{
+    if(estado.rachaActual===hito && !estado.rachasDesbloqueadas.has(hito)){
+      estado.rachasDesbloqueadas.add(hito);
+      mostrarAviso(`🔥 ¡Racha de ${hito} respuestas correctas seguidas!`, true);
+    }
+  });
+}
+
+let temporizadorAviso = null;
+function mostrarAviso(texto, esRacha=false){
+  const el = document.getElementById("aviso-flotante");
+  el.textContent = texto;
+  el.classList.toggle("racha", esRacha);
+  el.classList.add("mostrar");
+  clearTimeout(temporizadorAviso);
+  temporizadorAviso = setTimeout(()=> el.classList.remove("mostrar"), 2600);
+}
+
+document.getElementById("btn-siguiente").addEventListener("click", ()=>{
+  if(estado.indiceActual < estado.preguntas.length-1){ estado.indiceActual++; renderizarPregunta(); }
+});
+document.getElementById("btn-anterior").addEventListener("click", ()=>{
+  if(estado.indiceActual > 0){ estado.indiceActual--; renderizarPregunta(); }
+});
+
+/* Navegación por teclado: flechas izquierda/derecha */
+document.addEventListener("keydown",(e)=>{
+  const quizVisible = !document.getElementById("pantalla-quiz").classList.contains("oculto");
+  if(!quizVisible) return;
+  if(e.key==="ArrowRight") document.getElementById("btn-siguiente").click();
+  if(e.key==="ArrowLeft") document.getElementById("btn-anterior").click();
+});
+
+/* ---------------------------------------------------------------------
+   MÓDULO 9: MODAL DE CONFIRMACIÓN GENÉRICO
+   --------------------------------------------------------------------- */
+function pedirConfirmacion({icono="⚠️", titulo, texto, textoBoton="Confirmar"}){
+  return new Promise((resolve)=>{
+    const modal = document.getElementById("modal-confirmacion");
+    document.getElementById("modal-icono").textContent = icono;
+    document.getElementById("modal-titulo").textContent = titulo;
+    document.getElementById("modal-texto").textContent = texto;
+    const btnOk = document.getElementById("modal-aceptar");
+    const btnCancel = document.getElementById("modal-cancelar");
+    btnOk.textContent = textoBoton;
+    modal.classList.remove("oculto");
+
+    const limpiar = (resultado)=>{
+      modal.classList.add("oculto");
+      btnOk.removeEventListener("click", onOk);
+      btnCancel.removeEventListener("click", onCancel);
+      resolve(resultado);
+    };
+    const onOk = ()=> limpiar(true);
+    const onCancel = ()=> limpiar(false);
+    btnOk.addEventListener("click", onOk);
+    btnCancel.addEventListener("click", onCancel);
+  });
+}
+
+document.getElementById("btn-finalizar").addEventListener("click", async ()=>{
+  const total = estado.preguntas.length;
+  const respondidas = Object.keys(estado.respuestas).length;
+  const pendientes = total-respondidas;
+  const ok = await pedirConfirmacion({
+    icono:"🏁",
+    titulo:"¿Finalizar el simulacro?",
+    texto: pendientes>0
+      ? `Tienes ${pendientes} pregunta(s) sin responder. Una vez finalices no podrás modificar tus respuestas. ¿Deseas continuar?`
+      : "Has respondido todas las preguntas. ¿Deseas finalizar y ver tu informe de resultados?",
+    textoBoton:"Sí, finalizar"
+  });
+  if(ok) finalizarSimulacro(false);
+});
+
+/* ---------------------------------------------------------------------
+   MÓDULO 10: SONIDO ON/OFF
+   --------------------------------------------------------------------- */
+document.getElementById("btn-sonido").addEventListener("click", (e)=>{
+  estado.sonidoActivo = !estado.sonidoActivo;
+  e.target.textContent = estado.sonidoActivo ? "🔊" : "🔇";
+  e.target.setAttribute("aria-pressed", String(!estado.sonidoActivo));
+  if(estado.sonidoActivo) Sonidos.clic();
+});
+
+/* ---------------------------------------------------------------------
+   MÓDULO 11: CÁLCULO DE RESULTADOS
+   --------------------------------------------------------------------- */
+function calcularResultados(){
+  const total = estado.preguntas.length;
+  let correctas = 0;
+  const porSubtema = {};
+  Object.keys(SUBTEMAS).forEach(k=> porSubtema[k] = {correctas:0,total:0});
+
+  const detalle = estado.preguntas.map(p=>{
+    porSubtema[p.subtema].total++;
+    const indiceElegido = estado.respuestas[p.id];
+    const opcionCorrectaIdx = p.opcionesBarajadas.findIndex(o=>o.esCorrecta);
+    const esCorrecta = indiceElegido!==undefined && indiceElegido===opcionCorrectaIdx;
+    if(esCorrecta){ correctas++; porSubtema[p.subtema].correctas++; }
+    return {pregunta:p, indiceElegido, opcionCorrectaIdx, esCorrecta};
+  });
+
+  const incorrectasOsinResponder = total-correctas;
+  const porcentaje = Math.round((correctas/total)*100);
+  const tiempoEmpleadoSeg = estado.tiempoLimiteSeg - Math.max(estado.tiempoRestanteSeg,0);
+
+  return {total, correctas, incorrectasOsinResponder, porcentaje, porSubtema, detalle, tiempoEmpleadoSeg};
+}
+
+function nivelYMensaje(porcentaje){
+  if(porcentaje<50) return {nivel:"Insuficiente", color:"var(--rojo-error)", bg:"#FDECEC",
+    mensaje:"Comprender los fenómenos físicos requiere práctica y observación. Continúa fortaleciendo tu razonamiento científico."};
+  if(porcentaje<70) return {nivel:"Mínimo", color:"#B8860B", bg:"#FFF3D6",
+    mensaje:"Has desarrollado una buena base en Física. Sigue interpretando fenómenos y relacionando conceptos para mejorar tu desempeño."};
+  if(porcentaje<90) return {nivel:"Satisfactorio", color:"var(--verde-ok)", bg:"#E7F6EC",
+    mensaje:"Muy buen trabajo. Demuestras una sólida comprensión del movimiento, las fuerzas y la energía en diferentes contextos."};
+  return {nivel:"Avanzado", color:"var(--azul-oscuro-2)", bg:"#E5EDFB",
+    mensaje:"¡Excelente desempeño! Has demostrado un dominio sobresaliente de las competencias en Física evaluadas en las pruebas tipo ICFES."};
+}
+
+/* ---------------------------------------------------------------------
+   MÓDULO 12: LOGROS
+   --------------------------------------------------------------------- */
+function calcularLogros(resultados){
+  const conseguidos = new Set();
+  LOGROS.forEach(logro=>{
+    if(logro.subtemas==="participacion"){
+      conseguidos.add(logro.id); // se otorga siempre por completar el simulacro
+    } else if(logro.subtemas==="global"){
+      if(resultados.porcentaje/100 >= logro.umbral) conseguidos.add(logro.id);
+    } else {
+      let correctas=0, total=0;
+      logro.subtemas.forEach(s=>{ correctas+=resultados.porSubtema[s].correctas; total+=resultados.porSubtema[s].total; });
+      if(total>0 && (correctas/total) >= logro.umbral) conseguidos.add(logro.id);
+    }
+  });
+  return conseguidos;
+}
+
+/* ---------------------------------------------------------------------
+   MÓDULO 13: GRÁFICOS CON CANVAS (sin librerías externas)
+   --------------------------------------------------------------------- */
+function dibujarDonut(correctas, total){
+  const canvas = document.getElementById("grafico-donut");
+  const dpr = window.devicePixelRatio || 1;
+  const anchoCSS = canvas.parentElement.clientWidth;
+  const altoCSS = 220;
+  canvas.width = anchoCSS*dpr; canvas.height = altoCSS*dpr;
+  canvas.style.height = altoCSS+"px";
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,anchoCSS,altoCSS);
+
+  const cx = anchoCSS/2, cy = altoCSS/2, radio = 78, grosor = 26;
+  const incorrectas = total-correctas;
+  const fracCorrecta = total>0 ? correctas/total : 0;
+
+  // Fondo del anillo
+  ctx.beginPath();
+  ctx.arc(cx,cy,radio,0,Math.PI*2);
+  ctx.strokeStyle = "#E3E8EF"; ctx.lineWidth = grosor; ctx.stroke();
+
+  // Segmento correctas
+  ctx.beginPath();
+  ctx.arc(cx,cy,radio,-Math.PI/2, -Math.PI/2 + fracCorrecta*Math.PI*2);
+  ctx.strokeStyle = "#2FAE60"; ctx.lineWidth = grosor; ctx.lineCap="round"; ctx.stroke();
+
+  ctx.fillStyle = "#0B2545";
+  ctx.textAlign = "center"; ctx.textBaseline="middle";
+  ctx.font = "700 26px 'Poppins',sans-serif";
+  ctx.fillText(`${Math.round(fracCorrecta*100)}%`, cx, cy-6);
+  ctx.font = "500 12px 'DM Sans',sans-serif";
+  ctx.fillStyle = "#5A6478";
+  ctx.fillText("Correctas", cx, cy+16);
+
+  // Leyenda
+  ctx.textAlign="left";
+  ctx.font="600 13px 'DM Sans',sans-serif";
+  ctx.fillStyle="#2FAE60";
+  ctx.fillRect(cx+120, cy-32, 12,12);
+  ctx.fillStyle="#0B2545";
+  ctx.fillText(`Correctas: ${correctas}`, cx+140, cy-26);
+  ctx.fillStyle="#E5484D";
+  ctx.fillRect(cx+120, cy-4, 12,12);
+  ctx.fillStyle="#0B2545";
+  ctx.fillText(`Incorrectas/sin responder: ${incorrectas}`, cx+140, cy+2);
+}
+
+/* ---------------------------------------------------------------------
+   MÓDULO 14: RENDERIZADO DE PANTALLA DE RESULTADOS
+   --------------------------------------------------------------------- */
+function renderizarResultados(resultados){
+  const {porcentaje, correctas, incorrectasOsinResponder, tiempoEmpleadoSeg, porSubtema, detalle} = resultados;
+  const nyM = nivelYMensaje(porcentaje);
+
+  document.getElementById("puntaje-porcentaje").textContent = `${porcentaje}%`;
+  const nivelEl = document.getElementById("nivel-alcanzado");
+  nivelEl.textContent = `Nivel alcanzado: ${nyM.nivel}`;
+  nivelEl.style.background = nyM.bg; nivelEl.style.color = nyM.color;
+  document.getElementById("mensaje-motivacional").textContent = nyM.mensaje;
+
+  document.getElementById("stat-correctas").textContent = correctas;
+  document.getElementById("stat-incorrectas").textContent = incorrectasOsinResponder;
+  document.getElementById("stat-tiempo").textContent = formatoTiempo(tiempoEmpleadoSeg);
+  document.getElementById("stat-racha").textContent = estado.mejorRacha;
+
+  dibujarDonut(correctas, resultados.total);
+
+  // Desempeño por subtemática
+  const contSub = document.getElementById("lista-subtemas-resultado");
+  contSub.innerHTML = "";
+  Object.entries(porSubtema).forEach(([num,datos])=>{
+    const pct = datos.total>0 ? Math.round((datos.correctas/datos.total)*100) : 0;
+    const fila = document.createElement("div");
+    fila.className = "barra-subtema-fila";
+    fila.innerHTML = `
+      <div class="nombre">${num}. ${SUBTEMAS[num].nombre}</div>
+      <div class="barra-subtema-ext"><div class="barra-subtema-int" style="width:${pct}%;background:${SUBTEMAS[num].color};"></div></div>
+      <div class="pct">${pct}%</div>
+    `;
+    contSub.appendChild(fila);
+  });
+
+  // Fortalezas y aspectos por mejorar
+  const desempSubtemas = Object.entries(porSubtema).map(([num,d])=>({
+    num, nombre:SUBTEMAS[num].nombre, pct: d.total>0 ? (d.correctas/d.total) : 0
+  })).sort((a,b)=>b.pct-a.pct);
+
+  const fortalezas = desempSubtemas.filter(s=>s.pct>=0.75).slice(0,4);
+  const mejoras = desempSubtemas.filter(s=>s.pct<0.6).slice(0,4);
+
+  document.getElementById("lista-fortalezas").innerHTML = fortalezas.length
+    ? fortalezas.map(s=>`<li>${s.nombre} (${Math.round(s.pct*100)}% de aciertos)</li>`).join("")
+    : "<li>Sigue practicando para consolidar fortalezas claras en subtemáticas específicas.</li>";
+
+  document.getElementById("lista-mejoras").innerHTML = mejoras.length
+    ? mejoras.map(s=>`<li>${s.nombre} (${Math.round(s.pct*100)}% de aciertos)</li>`).join("")
+    : "<li>No se identificaron subtemáticas con desempeño crítico. ¡Buen trabajo general!</li>";
+
+  // Logros
+  const logrosConseguidos = calcularLogros(resultados);
+  estado.logrosConseguidos = logrosConseguidos;
+  const gridLogros = document.getElementById("grid-logros");
+  gridLogros.innerHTML = LOGROS.map(l=>`
+    <div class="logro-card ${logrosConseguidos.has(l.id)?"conseguido":""}">
+      <div class="emoji">${l.emoji}</div>
+      <div class="nombre-logro">${l.nombre}</div>
+    </div>
+  `).join("");
+
+  // Revisión detallada
+  const contRevision = document.getElementById("lista-revision");
+  contRevision.innerHTML = detalle.map((d,i)=>{
+    const p = d.pregunta;
+    const dificultadTexto = {basico:"Nivel básico",intermedio:"Nivel intermedio",avanzado:"Nivel avanzado"}[p.dificultad];
+    const opcionesHTML = p.opcionesBarajadas.map((op,idx)=>{
+      let clase="";
+      if(idx===d.opcionCorrectaIdx) clase="correcta";
+      else if(idx===d.indiceElegido && !d.esCorrecta) clase="incorrecta";
+      return `<div class="opcion ${clase}" style="cursor:default;">
+                <span class="letra">${LETRAS[idx]}</span><span>${op.texto}</span>
+              </div>`;
+    }).join("");
+
+    return `
+    <div class="review-item ${d.esCorrecta?"ok":"mal"}">
+      <div class="review-cabecera">
+        <span class="review-num">Pregunta ${i+1}</span>
+        <span class="resultado-icono ${d.esCorrecta?"ok":"mal"}">${d.esCorrecta?"✔ Correcta":(d.indiceElegido===undefined?"— Sin responder":"✘ Incorrecta")}</span>
+      </div>
+      <div class="meta-pregunta">
+        <span class="etiqueta subtema">Subtemática ${p.subtema} · ${SUBTEMAS[p.subtema].nombre}</span>
+        <span class="etiqueta dificultad-${p.dificultad}">${dificultadTexto}</span>
+        <span class="etiqueta subtema" style="background:#EFEFF4;color:#5A6478;">${p.competencia}</span>
+      </div>
+      ${p.contexto ? `<div class="contexto-caja">📋 ${p.contexto}</div>` : ""}
+      <div class="enunciado" style="font-size:1.02rem;">${p.pregunta}</div>
+      <div class="opciones">${opcionesHTML}</div>
+      <div class="review-explicacion">
+        <strong>Explicación y justificación científica:</strong> ${p.explicacion}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ---------------------------------------------------------------------
+   MÓDULO 15: FINALIZACIÓN DEL SIMULACRO
+   --------------------------------------------------------------------- */
+function finalizarSimulacro(porTiempoAgotado){
+  clearInterval(estado.temporizadorId);
+  estado.horaFin = Date.now();
+
+  document.getElementById("pantalla-quiz").classList.add("oculto");
+  document.getElementById("pantalla-inicio").classList.add("oculto");
+  document.getElementById("pantalla-resultados").classList.remove("oculto");
+  document.getElementById("temporizador").classList.add("oculto");
+
+  const resultados = calcularResultados();
+  renderizarResultados(resultados);
+  Sonidos.finalizar();
+  lanzarConfetiSiAplica(resultados.porcentaje);
+
+  if(porTiempoAgotado){
+    setTimeout(()=> mostrarAviso("⏰ El tiempo se agotó. Aquí está tu informe de resultados."), 300);
+  }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function lanzarConfetiSiAplica(porcentaje){
+  if(porcentaje<70) return;
+  const colores = ["#F5A623","#FFC94A","#0B2545","#2FAE60","#3B6EA5"];
+  for(let i=0;i<40;i++){
+    const pieza = document.createElement("div");
+    pieza.className = "confeti-pieza";
+    pieza.style.left = Math.random()*100+"vw";
+    pieza.style.background = colores[Math.floor(Math.random()*colores.length)];
+    pieza.style.animationDuration = (2.2+Math.random()*1.8)+"s";
+    document.body.appendChild(pieza);
+    setTimeout(()=>pieza.remove(), 4200);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   MÓDULO 16: REINICIO DEL SIMULACRO
+   --------------------------------------------------------------------- */
+document.getElementById("btn-reiniciar").addEventListener("click", async ()=>{
+  const ok = await pedirConfirmacion({
+    icono:"🔄",
+    titulo:"¿Reiniciar el simulacro?",
+    texto:"Se generará un nuevo conjunto aleatorio de preguntas, se reiniciará el temporizador y se eliminarán tus respuestas y estadísticas anteriores.",
+    textoBoton:"Sí, reiniciar"
+  });
+  if(!ok) return;
+
+  document.getElementById("pantalla-resultados").classList.add("oculto");
+  document.getElementById("pantalla-quiz").classList.add("oculto");
+  document.getElementById("pantalla-inicio").classList.remove("oculto");
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+/* Redibujar el gráfico donut si cambia el tamaño de ventana (responsive) */
+window.addEventListener("resize", ()=>{
+  const pantallaResultadosVisible = !document.getElementById("pantalla-resultados").classList.contains("oculto");
+  if(pantallaResultadosVisible){
+    const resultados = calcularResultados();
+    dibujarDonut(resultados.correctas, resultados.total);
+  }
+});
+</script>
+</body>
+</html>

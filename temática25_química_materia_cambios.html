@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Química: Materia y Cambios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul-oscuro:#0B2545;
+  --azul-oscuro-2:#123061;
+  --dorado:#F5A623;
+  --dorado-claro:#FFE066;
+  --blanco:#FFFFFF;
+  --gris-suave:#F4F6F9;
+  --gris-medio:#E3E8EF;
+  --gris-texto:#4B5563;
+  --verde-ok:#1E9E64;
+  --rojo-error:#D64545;
+  --radius:18px;
+  --sombra:0 8px 30px rgba(11,37,69,0.12);
+  --font-display:'Poppins',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  background:linear-gradient(160deg,var(--gris-suave) 0%, #EBF0F7 100%);
+  color:var(--azul-oscuro);
+  min-height:100vh;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:var(--font-body);cursor:pointer;}
+.app-shell{max-width:980px;margin:0 auto;padding:20px 16px 60px;}
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--azul-oscuro);
+  color:var(--blanco);
+  border-radius:var(--radius);
+  padding:14px 22px;
+  margin-bottom:18px;
+  box-shadow:var(--sombra);
+  flex-wrap:wrap;gap:10px;
+}
+.top-bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:1.05em;}
+.top-bar .brand span.icon{font-size:1.4em;}
+.sound-toggle{
+  display:flex;align-items:center;gap:8px;font-size:0.85em;background:rgba(255,255,255,0.08);
+  padding:8px 14px;border-radius:30px;border:1px solid rgba(255,255,255,0.2);
+}
+.sound-toggle input{accent-color:var(--dorado);width:18px;height:18px;}
+.card{
+  background:var(--blanco);
+  border-radius:var(--radius);
+  box-shadow:var(--sombra);
+  padding:28px;
+  margin-bottom:20px;
+  animation:fadeUp .45s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+h1,h2,h3{font-family:var(--font-display);color:var(--azul-oscuro);}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ---------- INTRO ---------- */
+.intro-hero{
+  text-align:center;padding:10px 6px 26px;
+}
+.intro-hero .molecule-badge{
+  width:92px;height:92px;margin:0 auto 14px;
+  background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:2.4em;box-shadow:0 6px 20px rgba(245,166,35,0.4);
+  animation:float 3.5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.intro-hero h1{font-size:1.7em;margin-bottom:6px;}
+.intro-hero p.subtitle{color:var(--gris-texto);font-size:1em;max-width:560px;margin:0 auto;}
+.eyebrow{
+  display:inline-block;background:var(--gris-suave);color:var(--azul-oscuro);
+  font-size:0.75em;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:6px 14px;border-radius:30px;margin-bottom:14px;border:1px solid var(--gris-medio);
+}
+.info-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px;margin:22px 0;
+}
+.info-tile{
+  background:var(--gris-suave);border-radius:14px;padding:16px 18px;border:1px solid var(--gris-medio);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.info-tile:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(11,37,69,0.08);}
+.info-tile .n{font-family:var(--font-display);font-weight:800;font-size:1.5em;color:var(--azul-oscuro);}
+.info-tile .l{font-size:0.85em;color:var(--gris-texto);}
+.competencia-box{
+  background:linear-gradient(135deg,var(--azul-oscuro),var(--azul-oscuro-2));
+  color:var(--blanco);border-radius:14px;padding:18px 20px;margin:20px 0;
+}
+.competencia-box h3{color:var(--dorado-claro);font-size:0.95em;margin-bottom:8px;letter-spacing:0.5px;}
+.competencia-box p{font-size:0.95em;color:#E8EEF7;}
+.subtemas-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:8px;margin:16px 0 22px;
+}
+.subtemas-list div{
+  background:var(--blanco);border:1px solid var(--gris-medio);border-radius:10px;
+  padding:8px 10px;font-size:0.78em;color:var(--gris-texto);text-align:center;font-weight:500;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;justify-content:center;
+  background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  color:var(--azul-oscuro);font-family:var(--font-display);font-weight:700;font-size:1.05em;
+  padding:16px 40px;border-radius:50px;border:none;
+  box-shadow:0 6px 20px rgba(245,166,35,0.4);
+  transition:transform .15s ease, box-shadow .15s ease;
+  width:100%;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(245,166,35,0.5);}
+.btn-primary:focus-visible, button:focus-visible, .opt-btn:focus-visible{outline:3px solid var(--azul-oscuro);outline-offset:2px;}
+.btn-secondary{
+  background:var(--gris-suave);color:var(--azul-oscuro);font-weight:700;border:1px solid var(--gris-medio);
+  padding:12px 26px;border-radius:50px;font-family:var(--font-display);font-size:0.95em;
+}
+.btn-secondary:hover{background:var(--gris-medio);}
+.btn-danger{background:#FCEAEA;color:var(--rojo-error);border:1px solid #F5C6C6;font-weight:700;padding:12px 22px;border-radius:50px;font-family:var(--font-display);}
+
+/* ---------- QUIZ ---------- */
+.quiz-header{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.timer-box{
+  background:var(--azul-oscuro);color:var(--blanco);font-family:var(--font-display);font-weight:700;
+  padding:10px 20px;border-radius:14px;font-size:1.15em;display:flex;align-items:center;gap:8px;
+  box-shadow:var(--sombra);
+}
+.timer-box.warn{background:var(--rojo-error);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.75;}}
+.progress-wrap{flex:1;min-width:220px;}
+.progress-bar-bg{
+  width:100%;height:12px;background:var(--gris-medio);border-radius:20px;overflow:hidden;
+}
+.progress-bar-fill{
+  height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado-claro));
+  border-radius:20px;transition:width .35s ease;
+}
+.progress-meta{display:flex;justify-content:space-between;font-size:0.78em;color:var(--gris-texto);margin-top:4px;}
+.streak-badge{
+  background:linear-gradient(135deg,#FFE066,#F59E0B);color:var(--azul-oscuro);font-weight:700;
+  padding:8px 16px;border-radius:30px;font-size:0.85em;display:none;align-items:center;gap:6px;
+}
+.qmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.tag{
+  font-size:0.72em;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.4px;
+  text-transform:uppercase;
+}
+.tag.sub{background:#E7ECF6;color:var(--azul-oscuro);}
+.tag.diff-basico{background:#E4F6EC;color:var(--verde-ok);}
+.tag.diff-intermedio{background:#FFF3D6;color:#B8760A;}
+.tag.diff-avanzado{background:#FCE7E7;color:var(--rojo-error);}
+.question-text{font-size:1.12em;font-weight:600;margin:10px 0 20px;color:var(--azul-oscuro);}
+.options{display:flex;flex-direction:column;gap:12px;}
+.opt-btn{
+  display:flex;align-items:flex-start;gap:12px;text-align:left;
+  background:var(--gris-suave);border:2px solid var(--gris-medio);border-radius:14px;
+  padding:14px 16px;font-size:0.98em;color:var(--azul-oscuro);transition:all .15s ease;
+}
+.opt-btn:hover{border-color:var(--dorado);background:#FFF8EC;}
+.opt-btn .letter{
+  flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--azul-oscuro);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85em;
+}
+.opt-btn.selected{border-color:var(--azul-oscuro);background:#EAF0FA;}
+.opt-btn.correct{border-color:var(--verde-ok);background:#E4F6EC;}
+.opt-btn.correct .letter{background:var(--verde-ok);}
+.opt-btn.incorrect{border-color:var(--rojo-error);background:#FCEAEA;}
+.opt-btn.incorrect .letter{background:var(--rojo-error);}
+.opt-btn:disabled{cursor:default;}
+.feedback-line{
+  margin-top:14px;padding:12px 16px;border-radius:12px;font-size:0.9em;display:none;font-weight:600;
+}
+.feedback-line.ok{background:#E4F6EC;color:var(--verde-ok);display:block;}
+.feedback-line.bad{background:#FCEAEA;color:var(--rojo-error);display:block;}
+.nav-row{display:flex;justify-content:space-between;gap:10px;margin-top:26px;flex-wrap:wrap;}
+.nav-row .side{display:flex;gap:10px;flex-wrap:wrap;}
+
+.palette-toggle{font-size:0.85em;color:var(--azul-oscuro);font-weight:700;background:none;border:none;text-decoration:underline;padding:6px;}
+.palette{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:8px;margin-top:14px;
+}
+.palette button{
+  width:100%;aspect-ratio:1;border-radius:8px;border:2px solid var(--gris-medio);background:var(--blanco);
+  font-weight:700;font-size:0.8em;color:var(--gris-texto);
+}
+.palette button.answered{background:var(--azul-oscuro);color:#fff;border-color:var(--azul-oscuro);}
+.palette button.current{border-color:var(--dorado);box-shadow:0 0 0 3px rgba(245,166,35,0.35);}
+
+/* ---------- MODAL ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(11,37,69,0.55);display:none;align-items:center;justify-content:center;
+  z-index:100;padding:20px;
+}
+.modal-overlay.active{display:flex;}
+.modal-box{background:#fff;border-radius:var(--radius);padding:26px;max-width:420px;text-align:center;box-shadow:var(--sombra);}
+.modal-box h3{margin-bottom:10px;}
+.modal-box p{color:var(--gris-texto);margin-bottom:20px;font-size:0.95em;}
+.modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+/* toast / streak / achievement pop */
+.toast{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-30px);
+  background:linear-gradient(135deg,var(--azul-oscuro),var(--azul-oscuro-2));color:#fff;
+  padding:14px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(11,37,69,0.4);
+  font-family:var(--font-display);font-weight:700;z-index:200;opacity:0;transition:all .4s ease;
+  display:flex;align-items:center;gap:10px;font-size:0.95em;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast .emoji{font-size:1.4em;}
+
+/* ---------- RESULTS ---------- */
+.score-hero{text-align:center;padding:10px 0 20px;}
+.score-circle{
+  width:170px;height:170px;border-radius:50%;margin:0 auto 16px;
+  background:conic-gradient(var(--dorado) calc(var(--pct)*1%), var(--gris-medio) 0);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.score-circle::before{content:"";position:absolute;inset:12px;background:#fff;border-radius:50%;}
+.score-circle span{position:relative;font-family:var(--font-display);font-weight:800;font-size:2em;color:var(--azul-oscuro);}
+.score-circle small{position:relative;display:block;font-size:0.35em;font-weight:600;color:var(--gris-texto);margin-top:4px;}
+.motivational{
+  background:var(--gris-suave);border-left:5px solid var(--dorado);border-radius:10px;
+  padding:16px 20px;font-size:0.98em;font-style:italic;color:var(--azul-oscuro);margin:16px 0;
+}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0;}
+.stat-card{background:var(--gris-suave);border-radius:14px;padding:16px;text-align:center;border:1px solid var(--gris-medio);}
+.stat-card .val{font-family:var(--font-display);font-weight:800;font-size:1.5em;color:var(--azul-oscuro);}
+.stat-card .lab{font-size:0.8em;color:var(--gris-texto);}
+canvas#chart{width:100%;max-width:100%;height:auto;display:block;margin:10px 0;}
+.badges-grid{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0;}
+.badge{
+  background:linear-gradient(135deg,#FFF8EC,#FFE9BE);border:1px solid var(--dorado);border-radius:14px;
+  padding:12px 16px;text-align:center;min-width:110px;font-size:0.8em;font-weight:700;color:var(--azul-oscuro);
+}
+.badge .ic{font-size:1.7em;display:block;margin-bottom:4px;}
+.badge.locked{background:var(--gris-suave);border-color:var(--gris-medio);color:var(--gris-texto);opacity:0.55;}
+.sub-perf-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:0.85em;}
+.sub-perf-row .name{width:180px;flex-shrink:0;color:var(--azul-oscuro);font-weight:600;}
+.sub-perf-bar-bg{flex:1;background:var(--gris-medio);border-radius:20px;height:14px;overflow:hidden;}
+.sub-perf-bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--dorado),var(--dorado-claro));}
+.sub-perf-row .pctval{width:44px;text-align:right;font-weight:700;color:var(--azul-oscuro);}
+.fortalezas-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+@media(max-width:640px){.fortalezas-grid{grid-template-columns:1fr;}}
+.fort-box{border-radius:14px;padding:16px;}
+.fort-box.pos{background:#E4F6EC;}
+.fort-box.neg{background:#FFF3D6;}
+.fort-box h4{margin-bottom:8px;font-size:0.95em;}
+.fort-box ul{padding-left:18px;font-size:0.86em;color:var(--gris-texto);}
+
+/* review */
+.review-item{border:1px solid var(--gris-medio);border-radius:14px;padding:18px;margin-bottom:14px;}
+.review-item .qhead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.review-item .qnum{font-family:var(--font-display);font-weight:700;color:var(--azul-oscuro);}
+.review-opt{padding:8px 12px;border-radius:10px;font-size:0.88em;margin-bottom:6px;border:1px solid var(--gris-medio);}
+.review-opt.user-correct{background:#E4F6EC;border-color:var(--verde-ok);}
+.review-opt.user-wrong{background:#FCEAEA;border-color:var(--rojo-error);}
+.review-opt.the-correct{background:#E4F6EC;border-color:var(--verde-ok);font-weight:700;}
+.explain-box{background:var(--gris-suave);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:0.86em;color:var(--gris-texto);}
+.explain-box b{color:var(--azul-oscuro);}
+.status-ok{color:var(--verde-ok);font-weight:700;}
+.status-bad{color:var(--rojo-error);font-weight:700;}
+.status-skip{color:var(--gris-texto);font-weight:700;}
+
+footer.final-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:26px 0;}
+
+@media(max-width:600px){
+  .card{padding:18px;}
+  .intro-hero h1{font-size:1.35em;}
+  .btn-primary{font-size:0.95em;padding:14px 20px;}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="top-bar">
+    <div class="brand"><span class="icon">🧪</span> Simulador ICFES · Química</div>
+    <label class="sound-toggle">
+      <input type="checkbox" id="soundToggle" checked aria-label="Activar o desactivar sonido">
+      🔊 Sonido
+    </label>
+  </div>
+
+  <!-- ================= INTRO ================= -->
+  <section id="screen-intro" class="screen active">
+    <div class="card">
+      <div class="intro-hero">
+        <div class="molecule-badge">⚛️</div>
+        <span class="eyebrow">Ciencias Naturales · Nivel 4</span>
+        <h1>Química: Materia y Cambios</h1>
+        <p class="subtitle">Simulacro interactivo tipo ICFES para poner a prueba tu comprensión sobre la materia, su estructura, sus propiedades y sus transformaciones.</p>
+      </div>
+
+      <div class="competencia-box">
+        <h3>COMPETENCIA EVALUADA</h3>
+        <p>Comprender fenómenos del entorno mediante el uso comprensivo del conocimiento científico y la explicación de fenómenos relacionados con la materia, sus propiedades, su estructura y sus transformaciones.</p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-tile"><div class="n">40</div><div class="l">Preguntas totales</div></div>
+        <div class="info-tile"><div class="n">60</div><div class="l">Minutos disponibles</div></div>
+        <div class="info-tile"><div class="n">10</div><div class="l">Subtemáticas evaluadas</div></div>
+        <div class="info-tile"><div class="n">4</div><div class="l">Opciones por pregunta</div></div>
+      </div>
+
+      <h3 style="margin-bottom:10px;font-size:1em;">Objetivos del simulacro</h3>
+      <ul style="padding-left:20px;color:var(--gris-texto);font-size:0.92em;margin-bottom:18px;">
+        <li>Analizar e interpretar situaciones cotidianas, industriales y ambientales desde la química.</li>
+        <li>Aplicar el razonamiento científico por encima de la memorización de definiciones.</li>
+        <li>Fortalecer la lectura de tablas, gráficos y evidencias experimentales.</li>
+      </ul>
+
+      <h3 style="margin-bottom:10px;font-size:1em;">Subtemáticas incluidas</h3>
+      <div class="subtemas-list" id="subtemasListIntro"></div>
+
+      <button class="btn-primary" id="btnIniciar">🚀 Iniciar simulacro</button>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ ================= -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="timer-box" id="timerBox">⏱ <span id="timerText">60:00</span></div>
+      <div class="progress-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-meta">
+          <span id="progressText">Pregunta 1 de 40</span>
+          <span id="progressPct">0%</span>
+        </div>
+      </div>
+      <div class="streak-badge" id="streakBadge">🔥 Racha x<span id="streakVal">0</span></div>
+    </div>
+
+    <div class="card">
+      <div class="qmeta">
+        <span class="tag sub" id="tagSub">Subtemática</span>
+        <span class="tag" id="tagDiff">Dificultad</span>
+      </div>
+      <p class="question-text" id="questionText">Cargando pregunta...</p>
+      <div class="options" id="optionsWrap"></div>
+      <div class="feedback-line" id="feedbackLine"></div>
+
+      <div class="nav-row">
+        <div class="side">
+          <button class="btn-secondary" id="btnPrev">← Anterior</button>
+          <button class="btn-secondary" id="btnNext">Siguiente →</button>
+        </div>
+        <div class="side">
+          <button class="btn-danger" id="btnFinalizar">Finalizar simulacro</button>
+        </div>
+      </div>
+
+      <button class="palette-toggle" id="btnTogglePalette">Ver panel de preguntas (respondidas / pendientes)</button>
+      <div class="palette" id="palette" style="display:none;"></div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section id="screen-results" class="screen">
+    <div class="card">
+      <div class="score-hero">
+        <span class="eyebrow">Informe final</span>
+        <div class="score-circle" id="scoreCircle" style="--pct:0;">
+          <span id="scoreCirclePct">0%<small id="scoreCircleLabel">Puntaje</small></span>
+        </div>
+        <h2 id="resultTitle">Resultados de tu simulacro</h2>
+      </div>
+
+      <div class="motivational" id="motivationalMsg"></div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="val" id="statCorrectas">0</div><div class="lab">Correctas</div></div>
+        <div class="stat-card"><div class="val" id="statIncorrectas">0</div><div class="lab">Incorrectas</div></div>
+        <div class="stat-card"><div class="val" id="statTiempo">0:00</div><div class="lab">Tiempo empleado</div></div>
+        <div class="stat-card"><div class="val" id="statNivel">-</div><div class="lab">Nivel alcanzado</div></div>
+      </div>
+
+      <h3 style="margin:16px 0 8px;font-size:1em;">Desempeño por subtemática</h3>
+      <div id="subPerfList"></div>
+
+      <h3 style="margin:20px 0 8px;font-size:1em;">Gráfico de desempeño</h3>
+      <canvas id="chart" width="900" height="320" role="img" aria-label="Gráfico de desempeño por subtemática"></canvas>
+
+      <div class="fortalezas-grid">
+        <div class="fort-box pos">
+          <h4>💪 Fortalezas</h4>
+          <ul id="listFortalezas"></ul>
+        </div>
+        <div class="fort-box neg">
+          <h4>📌 Aspectos por mejorar</h4>
+          <ul id="listMejorar"></ul>
+        </div>
+      </div>
+
+      <h3 style="margin:20px 0 8px;font-size:1em;">Insignias obtenidas</h3>
+      <div class="badges-grid" id="badgesGrid"></div>
+
+      <footer class="final-actions">
+        <button class="btn-primary" style="width:auto;" id="btnVerRevision">📋 Ver revisión detallada</button>
+        <button class="btn-secondary" id="btnReiniciar">🔄 Reiniciar simulacro</button>
+      </footer>
+    </div>
+
+    <div class="card" id="reviewSection" style="display:none;">
+      <h2 style="margin-bottom:16px;">Revisión detallada de las 40 preguntas</h2>
+      <div id="reviewList"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn-secondary" id="btnReiniciar2">🔄 Reiniciar simulacro</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Botón institucional -->
+  <div style="text-align:center;margin-top:30px;">
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=799"
+       style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+      🏫 Regresar al Aula Virtual
+    </a>
+    <script>
+      const btn = document.getElementById('btn-volver');
+      const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=799';
+      const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=799';
+      const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (esMóvil) {
+        btn.href = appUrl;
+      }
+    </script>
+  </div>
+</div>
+
+<!-- MODALS / TOASTS -->
+<div class="modal-overlay" id="modalConfirmFinish">
+  <div class="modal-box">
+    <h3>¿Finalizar el simulacro?</h3>
+    <p id="modalFinishText">Aún tienes preguntas sin responder. ¿Deseas finalizar de todas formas? Esta acción calculará tu puntaje final.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="btnCancelFinish">Seguir respondiendo</button>
+      <button class="btn-danger" id="btnConfirmFinish">Sí, finalizar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalConfirmReset">
+  <div class="modal-box">
+    <h3>¿Reiniciar simulacro?</h3>
+    <p>Se generará un nuevo intento con preguntas diferentes, el temporizador y las estadísticas se reiniciarán por completo.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="btnCancelReset">Cancelar</button>
+      <button class="btn-danger" id="btnConfirmReset">Sí, reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="emoji">🔥</span><span id="toastText">Racha</span></div>
+
+<script>
+/* =========================================================================
+   SIMULADOR ICFES - QUÍMICA: MATERIA Y CAMBIOS
+   Código modular en JavaScript puro (sin dependencias externas)
+   ========================================================================= */
+
+/* ---------- 1. NOMBRES DE SUBTEMÁTICAS ---------- */
+const SUBTEMAS = {
+  1:"La materia y sus propiedades",
+  2:"Estructura de la materia",
+  3:"Clasificación de la materia",
+  4:"Cambios físicos y químicos",
+  5:"Reacciones químicas y conservación de la materia",
+  6:"Tabla periódica y elementos químicos",
+  7:"Soluciones y concentración",
+  8:"Química y medio ambiente",
+  9:"Interpretación de información química",
+  10:"Explicación de fenómenos químicos y aplicaciones ICFES"
+};
+const DIFF_LABEL = {b:"Básico", i:"Intermedio", a:"Avanzado"};
+
+/* ---------- 2. BANCO DE PREGUNTAS (90 preguntas originales, 9 por subtemática) ---------- */
+const BANK = [
+/* ---- SUBTEMA 1 ---- */
+{s:1,d:"b",q:"¿Cuál de las siguientes opciones es un ejemplo de materia?",o:["El aire que respiramos","La luz del sol","El sonido de una campana","El calor que sientes cerca del fuego"],c:0,e:"La materia es todo lo que tiene masa y ocupa un volumen. El aire tiene masa y ocupa espacio. La luz, el sonido y el calor son formas de energía, no materia."},
+{s:1,d:"b",q:"Un estudiante coloca hielo en un vaso y observa que se convierte en agua líquida y luego, al calentarla, en vapor. ¿Qué característica de la materia se evidencia?",o:["Que puede cambiar de estado según la temperatura","Que pierde masa al cambiar de estado","Que deja de ser materia al evaporarse","Que su composición química cambia"],c:0,e:"Los cambios de estado son cambios físicos causados por variaciones de temperatura; la sustancia sigue siendo agua (H2O) sin alterar su composición química ni perder masa."},
+{s:1,d:"i",q:"Un chef distingue el aceite del vinagre porque el aceite es menos denso y flota al mezclarlos. ¿Qué tipo de propiedad usa el chef para diferenciarlos?",o:["Una propiedad física","Una propiedad química","Solo una propiedad organoléptica","Una reacción química"],c:0,e:"La densidad es una propiedad física porque se mide sin alterar la composición química de la sustancia; no hay transformación en nuevas sustancias, solo un comportamiento físico."},
+{s:1,d:"i",q:"Una muestra de metal tiene una masa de 78,9 g y un volumen de 10 mL. Si el cobre tiene una densidad de 8,96 g/mL, ¿qué se puede concluir?",o:["Su densidad es 7,89 g/mL, por lo que probablemente no es cobre","Su densidad es 78,9 g/mL, por lo que sí es cobre","Su densidad es 0,13 g/mL, es aluminio","Su densidad es 10 g/mL, es hierro"],c:0,e:"Densidad = masa/volumen = 78,9/10 = 7,89 g/mL, valor cercano al hierro (7,87 g/mL) pero distinto al cobre (8,96 g/mL)."},
+{s:1,d:"i",q:"Dos cubos del mismo tamaño, uno de corcho y otro de plomo, tienen el mismo volumen pero masas muy diferentes. ¿Qué explica esta diferencia?",o:["Tienen densidades distintas","Tienen distinta cantidad de átomos de un mismo elemento","El corcho no es materia real","El plomo ocupa menos espacio"],c:0,e:"A igual volumen, la masa depende de la densidad: el plomo tiene mucha mayor densidad que el corcho, por lo que empaqueta más masa en el mismo espacio."},
+{s:1,d:"a",q:"Un objeto se hunde en agua (densidad 1 g/mL) pero flota en mercurio (densidad 13,6 g/mL). ¿Qué se puede concluir sobre su densidad?",o:["Es mayor que la del agua pero menor que la del mercurio","Es menor que la del agua","Es mayor que la del mercurio","Es igual a la del agua"],c:0,e:"Un objeto flota si su densidad es menor que la del líquido y se hunde si es mayor; por lo tanto su densidad está entre 1 y 13,6 g/mL."},
+{s:1,d:"a",q:"Un joyero necesita comprobar si un anillo es de oro puro sin fundirlo ni rayarlo. ¿Qué propiedad debería medir?",o:["La densidad, calculando masa y volumen por desplazamiento de agua","El punto de fusión, derritiendo el anillo","La reactividad con ácidos fuertes","La dureza, rayando la superficie"],c:0,e:"La densidad identifica al material sin destruirlo: se mide la masa en balanza y el volumen por agua desplazada, comparando con la densidad conocida del oro (19,3 g/mL)."},
+{s:1,d:"a",q:"En la industria alimentaria se elige el vidrio para envasar productos ácidos como el vinagre, en lugar de ciertos metales, porque...",o:["el vidrio no reacciona químicamente con los ácidos, mientras algunos metales sí","el vidrio es más liviano que cualquier metal","el vidrio tiene mayor densidad que el vinagre","el vidrio cambia de estado a temperatura ambiente"],c:0,e:"El vidrio es químicamente inerte frente a ácidos, mientras que algunos metales pueden corroerse, contaminando el alimento."},
+{s:1,d:"i",q:"Al dejar un clavo de hierro a la intemperie, este se cubre de una capa rojiza con el tiempo. Esta transformación evidencia:",o:["Una propiedad química: su capacidad de reaccionar con el oxígeno","Una propiedad física, ya que solo cambia de color","Un cambio de estado del hierro","Una disminución del volumen del clavo"],c:0,e:"La formación de óxido resulta de una reacción química entre el hierro y el oxígeno del aire, evidenciando una propiedad química."},
+
+/* ---- SUBTEMA 2 ---- */
+{s:2,d:"b",q:"¿Cuál es la partícula subatómica que tiene carga positiva?",o:["El protón","El electrón","El neutrón","El ion"],c:0,e:"El protón tiene carga positiva y se localiza en el núcleo. El electrón tiene carga negativa y el neutrón no tiene carga."},
+{s:2,d:"b",q:"Un átomo tiene 11 protones y 12 neutrones. ¿Cuál es su número másico?",o:["23","11","12","1"],c:0,e:"El número másico es la suma de protones y neutrones: 11 + 12 = 23."},
+{s:2,d:"i",q:"Un átomo neutro de cloro (17 protones, 17 electrones) gana un electrón adicional. ¿Qué se forma?",o:["Un anión, con carga negativa","Un catión, con carga positiva","Un isótopo, sin carga","Una molécula neutra"],c:0,e:"Al ganar un electrón, el átomo adquiere más carga negativa que positiva, formando un anión (Cl⁻)."},
+{s:2,d:"i",q:"¿Cuál es la diferencia principal entre un elemento y un compuesto?",o:["El elemento tiene un solo tipo de átomo; el compuesto, dos o más combinados químicamente","El elemento siempre es gas y el compuesto siempre sólido","El compuesto no tiene electrones","El elemento tiene más protones que el compuesto"],c:0,e:"Un elemento contiene átomos de un solo tipo, mientras que un compuesto resulta de la unión química de dos o más elementos en proporciones fijas."},
+{s:2,d:"i",q:"La sal de mesa (NaCl) está formada por iones Na⁺ y Cl⁻. ¿Qué proceso explica la formación de estos iones?",o:["Transferencia de electrones entre el sodio y el cloro","Fusión de los núcleos de sodio y cloro","Pérdida de neutrones del sodio","Formación de una nueva molécula de gas"],c:0,e:"El sodio cede un electrón y el cloro lo recibe, un proceso de transferencia electrónica típico de los compuestos iónicos."},
+{s:2,d:"a",q:"Dos átomos tienen el mismo número de protones pero diferente número másico. ¿Cómo se les llama y qué varía?",o:["Isótopos; varía el número de neutrones","Iones; varía el número de electrones","Alótropos; varía la estructura molecular","Moléculas; varía el número de átomos"],c:0,e:"Los isótopos son átomos del mismo elemento con distinto número de neutrones, lo que cambia su número másico sin alterar su identidad química."},
+{s:2,d:"a",q:"En el laboratorio se determina que el agua está formada por moléculas y no por átomos aislados. ¿Qué evidencia respalda esta clasificación?",o:["Cada molécula de agua tiene H y O unidos químicamente en proporción fija","El agua es un elemento puro con un solo tipo de átomo","El agua tiene igual número de protones que de neutrones","El agua no puede descomponerse en sustancias más simples"],c:0,e:"Una molécula es la unión de átomos mediante enlaces químicos; en el agua, dos H se combinan con un O en proporción fija (H2O)."},
+{s:2,d:"a",q:"Un modelo atómico representa al átomo como una esfera maciza e indivisible. ¿Qué limitación tiene frente al conocimiento actual?",o:["No explica la existencia de protones, neutrones ni electrones internos","No explica por qué los átomos tienen masa","No permite calcular el número atómico","No explica la formación de moléculas"],c:0,e:"Los modelos modernos reconocen partículas subatómicas organizadas en núcleo y niveles de energía, algo que el modelo de esfera maciza (Dalton) no contemplaba."},
+{s:2,d:"i",q:"Si un átomo tiene número atómico 8 y número másico 16, ¿cuántos neutrones tiene?",o:["8","16","24","0"],c:0,e:"Neutrones = número másico − número atómico = 16 − 8 = 8."},
+
+/* ---- SUBTEMA 3 ---- */
+{s:3,d:"b",q:"El agua de mar es un ejemplo de:",o:["Mezcla homogénea","Sustancia pura","Elemento","Compuesto puro"],c:0,e:"El agua de mar es una mezcla homogénea porque sus componentes están distribuidos uniformemente y no se distinguen a simple vista."},
+{s:3,d:"b",q:"Una ensalada con trozos visibles de lechuga, tomate y zanahoria es un ejemplo de:",o:["Mezcla heterogénea","Mezcla homogénea","Sustancia pura","Elemento"],c:0,e:"En una mezcla heterogénea los componentes se distinguen a simple vista, como los trozos de vegetales en la ensalada."},
+{s:3,d:"i",q:"Un estudiante mezcla agua con arena y luego filtra para separar ambos. ¿Qué método aplicó y por qué funciona?",o:["Filtración; la arena es insoluble y de mayor tamaño de partícula","Decantación; el agua es más densa que la arena","Destilación; el agua se evapora antes que la arena","Cromatografía; los componentes tienen distinto color"],c:0,e:"La filtración separa un sólido insoluble de un líquido con un medio poroso; la arena queda retenida mientras el agua pasa."},
+{s:3,d:"i",q:"Una mezcla de agua y aceite forma dos capas diferenciadas al reposar. ¿Cómo se clasifica y cómo se separa?",o:["Mezcla heterogénea; se separa por decantación","Mezcla homogénea; se separa por destilación","Suspensión coloidal; solo por centrifugación","Solución; no se puede separar"],c:0,e:"Al formar dos fases visibles, agua y aceite constituyen una mezcla heterogénea; por su distinta densidad se separan por decantación."},
+{s:3,d:"i",q:"La leche es un ejemplo típico de:",o:["Coloide, sus partículas dispersan la luz pero no se ven a simple vista","Solución verdadera, sus partículas son invisibles al microscopio","Suspensión, sus partículas sedimentan rápidamente","Sustancia pura, tiene una sola sustancia"],c:0,e:"La leche es un coloide: sus partículas de grasa y proteína dispersan la luz (efecto Tyndall) y no sedimentan como una suspensión."},
+{s:3,d:"a",q:"En una planta de tratamiento de agua se agregan sustancias que agrupan partículas en flóculos más grandes, que luego decantan. ¿Qué principio explica esto?",o:["Al aumentar de tamaño, las partículas sedimentan más fácilmente por su mayor densidad relativa","El agua deja de ser una mezcla homogénea al agregar los químicos","Los sólidos se convierten en un compuesto químico nuevo","La suspensión se transforma en solución verdadera"],c:0,e:"Al formar flóculos más grandes y pesados, las partículas sedimentan con mayor facilidad por gravedad, sin cambiar la naturaleza química del agua."},
+{s:3,d:"a",q:"Un químico debe separar alcohol y agua, líquidos miscibles con distinto punto de ebullición. ¿Qué método es más adecuado?",o:["Destilación, aprovechando la diferencia en puntos de ebullición","Filtración, aprovechando el tamaño de partícula","Decantación, aprovechando la densidad","Tamizado, aprovechando el tamaño de grano"],c:0,e:"La destilación separa líquidos miscibles con distintos puntos de ebullición: el más volátil se evapora primero y se condensa aparte."},
+{s:3,d:"i",q:"¿Cuál de las siguientes opciones corresponde a una sustancia pura?",o:["Oxígeno gaseoso (O2)","Agua con gas y saborizante","Aire atmosférico","Agua de un río"],c:0,e:"El oxígeno gaseoso está formado por un solo tipo de átomo, por lo que es una sustancia pura; las demás son mezclas."},
+{s:3,d:"a",q:"Para separar una mezcla de sal, arena y limaduras de hierro se propone: pasar un imán, agregar agua y filtrar, y evaporar el agua. ¿Qué justifica este orden?",o:["Cada paso aprovecha una propiedad distinta sin alterar la composición química de los componentes","El orden no importa, cualquier secuencia da el mismo resultado","La arena se disuelve en agua igual que la sal","El hierro debe disolverse en agua antes de aplicar el imán"],c:0,e:"El método usa propiedades físicas específicas (magnetismo, solubilidad, insolubilidad y volatilidad) sin generar reacciones químicas."},
+
+/* ---- SUBTEMA 4 ---- */
+{s:4,d:"b",q:"Romper una hoja de papel en pedazos es un ejemplo de:",o:["Cambio físico, no se forma una nueva sustancia","Cambio químico, cambia su forma","Reacción química, libera energía","Cambio de estado, cambia su volumen"],c:0,e:"Al romper el papel solo cambia su forma y tamaño, pero la composición química de la celulosa sigue siendo la misma."},
+{s:4,d:"b",q:"Quemar un trozo de papel hasta convertirlo en ceniza es un ejemplo de:",o:["Cambio químico, se forman nuevas sustancias como cenizas y gases","Cambio físico, solo cambia de forma","Cambio de estado, se derrite","Un proceso reversible sin alteración de la materia"],c:0,e:"La combustión produce nuevas sustancias (CO2, vapor de agua, cenizas) diferentes a la celulosa original, un cambio químico irreversible."},
+{s:4,d:"i",q:"¿Cuál de las siguientes es una evidencia típica de que ha ocurrido una reacción química?",o:["Formación de un gas con burbujeo al mezclar dos sustancias","Un cambio en la forma del recipiente","Un aumento de temperatura solo por fricción mecánica","Una disminución de volumen al comprimir un gas"],c:0,e:"La formación de un gas, un precipitado, un cambio de color inesperado o liberación notable de calor son evidencias de reacciones químicas."},
+{s:4,d:"i",q:"La ley de conservación de la masa establece que:",o:["La masa total de los reactivos es igual a la de los productos","La masa siempre aumenta al formarse nuevas sustancias","La masa disminuye si se libera un gas invisible","La masa solo se conserva en cambios físicos"],c:0,e:"En un sistema cerrado la materia no se crea ni se destruye, solo se transforma; la masa de reactivos es igual a la de productos."},
+{s:4,d:"i",q:"Al derretir un cubo de hielo, ¿qué ocurre con su composición química?",o:["No cambia, sigue siendo H2O en estado líquido","Cambia, se forma una nueva sustancia","Cambia, se pierde parte del hidrógeno","Cambia, se libera oxígeno gaseoso"],c:0,e:"La fusión del hielo es un cambio físico: solo cambia el estado, pero las moléculas de agua permanecen intactas."},
+{s:4,d:"a",q:"Al mezclar bicarbonato de sodio con vinagre se observan burbujas, espuma y cambio de temperatura. ¿Qué conclusión es más adecuada?",o:["Ocurrió una reacción química que produjo un nuevo gas (CO2)","Ocurrió solo un cambio físico, las burbujas son aire atrapado","La masa del sistema disminuyó porque el gas no es parte de la reacción","El vinagre solo cambió de estado físico"],c:0,e:"El burbujeo, la espuma y el cambio de temperatura evidencian una reacción química entre el bicarbonato y el ácido acético del vinagre, que produce CO2, agua y acetato de sodio."},
+{s:4,d:"a",q:"Freír un huevo provoca un cambio irreversible en su textura y color. ¿Por qué es un cambio químico y no físico?",o:["El calor desnaturaliza las proteínas, formando nuevas estructuras irreversibles","El huevo solo cambia de forma al calentarse","El aceite se transforma en huevo","La masa del huevo aumenta considerablemente"],c:0,e:"La cocción desnaturaliza las proteínas de forma irreversible, a diferencia de un simple cambio de forma o estado que sería reversible."},
+{s:4,d:"a",q:"En la fabricación de cemento se calienta piedra caliza hasta liberar CO2 y formar óxido de calcio. ¿Qué tipo de cambio es y qué lo confirma?",o:["Cambio químico; se forman sustancias distintas a partir del carbonato original","Cambio físico; solo cambia el tamaño de las partículas","Cambio de estado; la piedra pasa de sólido a líquido","Ninguno, la piedra caliza no reacciona al calentarse"],c:0,e:"La descomposición térmica (CaCO3 → CaO + CO2) genera sustancias con propiedades y composición distintas a las del reactivo original."},
+{s:4,d:"i",q:"¿Cuál de las siguientes situaciones es un cambio físico?",o:["Disolver azúcar en agua para preparar una limonada","Oxidación de una manzana cortada expuesta al aire","Combustión de gasolina en un motor","Fermentación de la uva para producir vino"],c:0,e:"Disolver azúcar en agua no altera la composición química de ninguna sustancia; puede recuperarse evaporando el agua."},
+
+/* ---- SUBTEMA 5 ---- */
+{s:5,d:"b",q:"En una reacción química, las sustancias que se transforman se llaman:",o:["Reactivos","Productos","Catalizadores","Soluciones"],c:0,e:"Los reactivos son las sustancias de partida que se transforman durante una reacción química."},
+{s:5,d:"b",q:"En la reacción 2H2 + O2 → 2H2O, ¿cuál es el producto?",o:["Agua (H2O)","Hidrógeno (H2)","Oxígeno (O2)","Ninguno"],c:0,e:"El agua se forma a partir de la combinación de hidrógeno y oxígeno, por eso se ubica del lado derecho de la flecha, donde van los productos."},
+{s:5,d:"i",q:"Si los reactivos de una reacción tienen una masa total de 50 g, ¿cuál debe ser la masa total de los productos?",o:["50 g","Menos de 50 g siempre","Más de 50 g siempre","No se puede determinar sin la fórmula"],c:0,e:"Según la ley de conservación de la masa, en un sistema cerrado la masa total no cambia durante una reacción química."},
+{s:5,d:"i",q:"¿Qué factor puede aumentar la velocidad de una reacción química como la oxidación de un metal?",o:["Aumentar la temperatura del entorno","Disminuir la superficie de contacto del metal","Reducir la concentración de oxígeno disponible","Enfriar el metal a temperaturas muy bajas"],c:0,e:"Un aumento de temperatura incrementa la energía cinética de las partículas, favoreciendo más colisiones efectivas y acelerando la reacción."},
+{s:5,d:"i",q:"Un fertilizante reacciona con el agua del suelo para liberar nutrientes disponibles para las plantas. Esta situación representa:",o:["Un proceso químico donde reactivos se transforman en productos útiles","Un cambio físico sin transformación de sustancias","Un cambio de estado del fertilizante","Una mezcla sin ninguna transformación"],c:0,e:"La liberación de nutrientes involucra reacciones químicas que transforman los compuestos originales en formas asimilables por las plantas."},
+{s:5,d:"a",q:"En un recipiente cerrado la masa se conserva antes y después de una reacción; en uno abierto liberando gas, la masa final es menor. ¿Cómo se explica sin contradecir la ley de conservación?",o:["En el sistema abierto, el gas producido escapa y no se pesa, aunque la masa total del universo se conserva","La ley solo aplica en sistemas cerrados y no es válida en la naturaleza","La masa se destruyó al reaccionar en el sistema abierto","El experimento del sistema abierto está mal hecho"],c:0,e:"La ley se cumple siempre; al no incluir el gas escapado en la pesada, se observa una pérdida aparente de masa en el sistema abierto."},
+{s:5,d:"a",q:"En una fábrica farmacéutica se controla la temperatura y concentración de reactivos durante la síntesis de un medicamento. ¿Por qué es importante?",o:["Afectan la velocidad de la reacción y el rendimiento del producto final","Solo afectan el color del producto","La temperatura no influye en reacciones industriales","La concentración de reactivos nunca afecta la reacción"],c:0,e:"La temperatura y la concentración modifican la velocidad y el rendimiento de las reacciones, garantizando la calidad y pureza del medicamento."},
+{s:5,d:"a",q:"Al quemar 16 g de metano se producen 44 g de CO2 y 36 g de agua. ¿Cuántos gramos de oxígeno reaccionaron?",o:["64 g","44 g","36 g","80 g"],c:0,e:"Por conservación de la masa: 16 + x = 44 + 36 = 80, entonces x = 80 − 16 = 64 g de oxígeno."},
+{s:5,d:"i",q:"La representación simple de una reacción química (reactivos → productos) sirve principalmente para:",o:["Mostrar de forma resumida cómo se transforman unas sustancias en otras","Indicar el color de las sustancias antes y después","Mostrar el precio de los reactivos utilizados","Reemplazar la necesidad de experimentación"],c:0,e:"Una ecuación química muestra qué sustancias reaccionan y cuáles se forman, respetando la conservación de átomos y masa del proceso."},
+
+/* ---- SUBTEMA 6 ---- */
+{s:6,d:"b",q:"En la tabla periódica, los elementos se organizan principalmente según:",o:["Su número atómico creciente","El orden alfabético de su nombre","Su color a temperatura ambiente","Su año de descubrimiento"],c:0,e:"La tabla periódica organiza los elementos en orden creciente de número atómico, permitiendo observar patrones periódicos en sus propiedades."},
+{s:6,d:"b",q:"Las filas horizontales de la tabla periódica se llaman:",o:["Períodos","Grupos","Familias verticales","Series de transición únicamente"],c:0,e:"Las filas horizontales se denominan períodos; las columnas verticales se llaman grupos o familias."},
+{s:6,d:"i",q:"¿Cuál de las siguientes es una propiedad general de los metales?",o:["Buena conductividad eléctrica y térmica","Baja conductividad eléctrica","Tendencia a ganar electrones fácilmente","Estado gaseoso a temperatura ambiente en su mayoría"],c:0,e:"Los metales son buenos conductores de electricidad y calor, con tendencia a perder electrones (formar cationes)."},
+{s:6,d:"i",q:"El silicio se usa en semiconductores porque:",o:["Es un metaloide con propiedades intermedias entre metales y no metales","Es un metal puro con conductividad total","Es un no metal con conductividad nula","Es un gas noble estable"],c:0,e:"Los metaloides como el silicio tienen conductividad eléctrica variable (semiconductora), ideal para dispositivos electrónicos."},
+{s:6,d:"i",q:"El calcio es esencial en huesos y dientes, y el yodo en la tiroides. Esto ilustra:",o:["La importancia de los elementos químicos en procesos biológicos cotidianos","Que todos los elementos son tóxicos para el cuerpo humano","Que solo los metales son importantes para la salud","Que la tabla periódica no se relaciona con la biología"],c:0,e:"Muchos elementos cumplen funciones biológicas esenciales; el calcio es estructural y el yodo indispensable para hormonas tiroideas."},
+{s:6,d:"a",q:"Al avanzar de izquierda a derecha en un período, los elementos pasan de metálicos a no metálicos. ¿Qué explica esta tendencia?",o:["El aumento gradual de electrones de valencia favorece ganar electrones en vez de cederlos","La disminución del número atómico de izquierda a derecha","El cambio aleatorio sin relación con la estructura atómica","La disminución de protones en el núcleo"],c:0,e:"Al avanzar en un período aumenta el número de electrones de valencia, incrementando la tendencia a ganar electrones (carácter no metálico)."},
+{s:6,d:"a",q:"En la minería colombiana, el oro es un metal noble poco reactivo. Esto explica por qué:",o:["No se oxida ni se corroe fácilmente, manteniendo su brillo","Reacciona rápidamente con el oxígeno formando óxidos","Cambia de color al estar expuesto al aire","Se disuelve fácilmente en agua"],c:0,e:"Los metales nobles tienen baja reactividad química, por lo que no se oxidan fácilmente, conservando su brillo característico."},
+{s:6,d:"a",q:"Los gases nobles se caracterizan por su baja reactividad. ¿Cuál es la explicación según la estructura atómica?",o:["Tienen su última capa de electrones completa, lo que los hace estables","Tienen muy pocos electrones en su última capa","No tienen protones en su núcleo","Son los elementos más pesados de la tabla"],c:0,e:"Los gases nobles tienen la capa de valencia completa, lo que los hace muy estables y poco propensos a formar enlaces."},
+{s:6,d:"i",q:"El hierro, el aluminio y el cobre se usan ampliamente en construcción e industria debido principalmente a:",o:["Sus propiedades metálicas como resistencia, maleabilidad y conductividad","Su abundancia en la atmósfera terrestre","Su capacidad de existir solo en estado gaseoso","Su nula reactividad con cualquier sustancia"],c:0,e:"Estos metales presentan maleabilidad, resistencia mecánica y buena conductividad, características típicas de los metales."},
+
+/* ---- SUBTEMA 7 ---- */
+{s:7,d:"b",q:"En una solución de agua con azúcar, ¿cuál es el soluto y cuál el solvente?",o:["El azúcar es el soluto y el agua es el solvente","El agua es el soluto y el azúcar es el solvente","Ambos son solutos","Ambos son solventes"],c:0,e:"El soluto se disuelve y está en menor proporción (azúcar); el solvente disuelve y está en mayor proporción (agua)."},
+{s:7,d:"b",q:"¿Cuál de las siguientes es una solución sólida-sólida (aleación)?",o:["El bronce (cobre y estaño)","El agua salada","El aire","El vinagre"],c:0,e:"El bronce es una aleación metálica: una solución sólida formada por cobre y estaño en estado sólido."},
+{s:7,d:"i",q:"Al agregar azúcar a un vaso de agua, cierta cantidad ya no se disuelve y se deposita en el fondo. Esto indica que la solución alcanzó:",o:["El punto de saturación, donde el solvente ya no puede disolver más soluto","El punto de ebullición del agua","Una reacción química entre azúcar y agua","La formación de un coloide"],c:0,e:"Cuando una solución no puede disolver más soluto a una temperatura dada, se dice que está saturada; el exceso permanece sin disolver."},
+{s:7,d:"i",q:"¿Qué factor generalmente aumenta la solubilidad de un sólido en un líquido?",o:["El aumento de la temperatura, en la mayoría de los casos","La disminución de la temperatura, siempre","La disminución de la superficie de contacto","La eliminación de la agitación"],c:0,e:"Al aumentar la temperatura, las partículas del solvente tienen más energía cinética, facilitando la disolución de más soluto sólido."},
+{s:7,d:"i",q:"Una persona prepara suero oral casero siguiendo una receta médica exacta de sal y azúcar en agua. Esto ilustra la importancia de:",o:["Preparar soluciones con una concentración adecuada para que cumplan su función","Usar la mayor cantidad posible de soluto sin medir","Evitar disolver completamente los ingredientes","Usar únicamente agua sin ningún soluto"],c:0,e:"La concentración exacta de una solución es crucial: una concentración incorrecta puede hacer el tratamiento inefectivo o peligroso."},
+{s:7,d:"a",q:"Se disuelve la misma cantidad de sal en agua a 20°C y a 80°C, con agitación constante, y se disuelve más rápido en el agua caliente. ¿Qué explica esto a nivel de partículas?",o:["A mayor temperatura, las partículas de agua se mueven con más energía y chocan con más frecuencia con la sal","El agua caliente contiene menos moléculas de agua disponibles","La sal cambia su estructura química con el calor","El agua fría tiene mayor densidad y por eso disuelve más rápido"],c:0,e:"El aumento de temperatura incrementa la energía cinética de las moléculas, provocando más colisiones efectivas y acelerando la disolución física."},
+{s:7,d:"a",q:"Un agricultor prepara una solución de fertilizante más concentrada de lo recomendado en la etiqueta. ¿Qué riesgo podría generar?",o:["Podría dañar las plantas por exceso de nutrientes o sales","Las plantas crecerían siempre más rápido sin riesgo","No tendría ningún efecto en las plantas","El agua se volvería tóxica de forma permanente"],c:0,e:"Una concentración excesiva puede generar estrés osmótico en las raíces, dañando o matando el cultivo."},
+{s:7,d:"a",q:"En productos de limpieza se recomienda no mezclar cloro con amoniaco. Esta advertencia se relaciona con:",o:["Que al mezclarse pueden reaccionar químicamente liberando gases tóxicos","Que ambas sustancias forman una solución inofensiva","Que el cloro y el amoniaco nunca se mezclan","Que la mezcla siempre reduce la concentración sin generar productos nuevos"],c:0,e:"La mezcla genera una reacción química que produce gases tóxicos (cloraminas), un riesgo grave para la salud."},
+{s:7,d:"i",q:"¿Cuál de las siguientes situaciones representa una solución diluida?",o:["Una taza de café con muy poca cantidad de café en mucha agua","Agua saturada con exceso de azúcar en el fondo","Una aleación metálica sólida","Un coloide como la leche"],c:0,e:"Una solución diluida contiene una proporción baja de soluto respecto al solvente, como una taza de café con poco café en mucha agua."},
+
+/* ---- SUBTEMA 8 ---- */
+{s:8,d:"b",q:"¿Cuál de las siguientes sustancias es un contaminante común del aire producido por la quema de combustibles fósiles?",o:["Dióxido de carbono (CO2)","Oxígeno (O2)","Nitrógeno gaseoso (N2) natural","Vapor de agua puro"],c:0,e:"La combustión de combustibles fósiles libera grandes cantidades de CO2, uno de los principales gases de efecto invernadero."},
+{s:8,d:"b",q:"El vertimiento de residuos industriales sin tratamiento en un río puede causar:",o:["Contaminación del agua, afectando la vida acuática y el consumo humano","Purificación natural del agua","Aumento del oxígeno disuelto en el agua","Ningún efecto si el río es muy grande"],c:0,e:"Los residuos industriales sin tratamiento suelen contener sustancias tóxicas o materia orgánica en exceso que contaminan el agua."},
+{s:8,d:"i",q:"En Colombia, la minería informal que usa mercurio para extraer oro genera un problema ambiental grave porque:",o:["El mercurio contamina suelos y agua, bioacumulándose en la cadena alimenticia","El mercurio se evapora completamente sin dejar rastro","El mercurio mejora la calidad del suelo agrícola","El mercurio es inofensivo para los organismos vivos"],c:0,e:"El mercurio contamina ríos y suelos, y al ser un metal pesado se bioacumula en peces y otros organismos, riesgo para la salud humana."},
+{s:8,d:"i",q:"¿Cuál de las siguientes prácticas contribuye al desarrollo sostenible en el manejo de residuos?",o:["Separar residuos en orgánicos, reciclables y no reciclables","Quemar todos los residuos sin clasificación","Verter residuos directamente en ríos y quebradas","Enterrar residuos peligrosos sin tratamiento previo"],c:0,e:"La separación adecuada permite reciclar materiales, compostar orgánicos y dar tratamiento especial a peligrosos, reduciendo el impacto ambiental."},
+{s:8,d:"i",q:"El uso excesivo de pesticidas en cultivos puede provocar:",o:["Contaminación del suelo y agua subterránea por acumulación de residuos químicos","Mejora indefinida de la fertilidad del suelo sin riesgo","Eliminación total y permanente de plagas sin efectos secundarios","Aumento de la biodiversidad en la zona cultivada"],c:0,e:"El uso excesivo puede filtrarse al suelo y aguas subterráneas, afectando biodiversidad y contaminando fuentes de agua potable."},
+{s:8,d:"a",q:"Una ciudad enfrenta problemas de calidad del aire por alta concentración de material particulado (PM2.5) del tráfico vehicular. ¿Qué relación existe con la química de la combustión?",o:["La combustión incompleta genera partículas finas y gases contaminantes suspendidos en el aire","El material particulado proviene solo de fuentes naturales como el polen","Los vehículos no producen ningún tipo de emisión contaminante","El PM2.5 es un componente natural del aire limpio"],c:0,e:"La combustión incompleta genera hollín, hidrocarburos no quemados y partículas finas que afectan la calidad del aire y la salud respiratoria."},
+{s:8,d:"a",q:"Se reporta contaminación de un río por vertimiento de aguas residuales con alto contenido de materia orgánica de una industria láctea. ¿Qué consecuencia es más probable?",o:["Disminución del oxígeno disuelto por proliferación de microorganismos que degradan la materia orgánica","Aumento inmediato de la transparencia del agua sin efecto negativo","Purificación natural instantánea del río sin intervención humana","Neutralización total de cualquier contaminante presente"],c:0,e:"El exceso de materia orgánica favorece microorganismos que consumen oxígeno disuelto, reduciendo el oxígeno disponible para peces (eutrofización)."},
+{s:8,d:"a",q:"El reciclaje de plásticos contribuye al ciclo de los materiales porque:",o:["Permite reutilizar los polímeros, reduciendo la extracción de materias primas y los residuos","Elimina completamente cualquier contaminación de forma inmediata","Convierte el plástico en materia orgánica biodegradable","Aumenta la producción de petróleo necesaria para fabricar más plástico"],c:0,e:"El reciclaje reintroduce los materiales en nuevos ciclos de producción, disminuyendo la demanda de materias primas vírgenes y los residuos."},
+{s:8,d:"i",q:"El uso responsable de sustancias químicas en el hogar implica principalmente:",o:["Seguir las indicaciones de uso, dosificación y disposición final","Usar la mayor cantidad posible del producto para asegurar su efectividad","Verter los sobrantes directamente por el desagüe sin precaución","Mezclar libremente distintos productos de limpieza"],c:0,e:"El uso responsable implica seguir las instrucciones del fabricante, evitando mezclas peligrosas y minimizando el impacto ambiental."},
+
+/* ---- SUBTEMA 9 ---- */
+{s:9,d:"b",q:"Si a 20°C se disuelven 36 g de sal en 100 mL de agua y a 60°C se disuelven 45 g, ¿qué relación se observa?",o:["La solubilidad de la sal aumenta con la temperatura","La solubilidad de la sal disminuye con la temperatura","La solubilidad no cambia con la temperatura","La temperatura no se relaciona con la solubilidad"],c:0,e:"Los datos muestran que al aumentar la temperatura, aumenta la cantidad de sal disuelta, evidenciando una relación directa."},
+{s:9,d:"i",q:"Un estudiante mide la temperatura de una mezcla cada minuto mientras ocurre una reacción exotérmica. ¿Cuál es la variable independiente?",o:["El tiempo transcurrido","La temperatura registrada","El tipo de reacción","El color de la mezcla"],c:0,e:"La variable independiente es la que el experimentador controla deliberadamente (el tiempo); la temperatura es la variable dependiente."},
+{s:9,d:"i",q:"Un gráfico muestra la masa de un gas producido en una reacción, con una curva que aumenta rápido al inicio y luego se estabiliza. ¿Qué interpretación es correcta?",o:["La reacción es rápida al inicio y luego se desacelera, probablemente porque un reactivo se agota","La reacción nunca ocurrió, la curva no es una línea recta","La masa del gas disminuye constantemente","La reacción se acelera indefinidamente con el tiempo"],c:0,e:"Una curva que se aplana indica que la velocidad de formación del gas disminuye, lo cual ocurre cuando se agota alguno de los reactivos."},
+{s:9,d:"i",q:"Una tabla muestra que el aceite (0,92 g/mL) tiene menor densidad que el agua (1,0 g/mL). ¿Qué ocurre al mezclarlos?",o:["El aceite formará una capa superior sobre el agua","El agua flotará sobre el aceite","Ambos líquidos se mezclarán completamente","La mezcla formará una sustancia nueva"],c:0,e:"Al tener menor densidad, el aceite tenderá a ubicarse en la capa superior, formando dos fases (mezcla heterogénea)."},
+{s:9,d:"a",q:"Al medir el tiempo de disolución de una tableta efervescente a 10°C, 25°C y 40°C se obtienen 90 s, 55 s y 30 s. ¿Qué conclusión es más apropiada?",o:["A mayor temperatura del agua, menor el tiempo de disolución, relación inversa entre las variables","El volumen de agua fue la variable que más influyó","La temperatura no tuvo ninguna influencia","El tipo de tableta cambió durante el experimento"],c:0,e:"Los datos muestran que al aumentar la temperatura disminuye el tiempo de disolución, evidenciando una relación inversa entre estas variables."},
+{s:9,d:"a",q:"Se registra el pH del agua de un río cerca de una fábrica (4,5), en zona rural (7,0) y cerca de un cultivo con fertilizantes (6,2). ¿Qué conclusión es más razonable?",o:["El agua cercana a la fábrica presenta mayor acidez, posiblemente por vertimientos industriales","Todos los puntos tienen exactamente las mismas propiedades químicas","La zona rural presenta el agua más contaminada","El pH no se relaciona con la posible contaminación del agua"],c:0,e:"Un pH significativamente más ácido cerca de la fábrica sugiere posible influencia de vertimientos industriales, mientras la zona rural es más neutra."},
+{s:9,d:"a",q:"En un experimento se controla la cantidad de reactivo A en cuatro ensayos, manteniendo constante el reactivo B, y se mide el producto formado. ¿Cuál es la variable dependiente?",o:["La cantidad de producto formado","La cantidad de reactivo A","La cantidad de reactivo B","El número de ensayos realizados"],c:0,e:"La variable dependiente es la que se mide como resultado de los cambios en la independiente; aquí, el producto formado depende del reactivo A."},
+{s:9,d:"i",q:"En una gráfica de barras de residuos reciclados por tipo de material, el papel presenta la barra más alta. ¿Qué se concluye directamente?",o:["El papel es el material que más se recicla en esa comunidad","El papel es el material más contaminante de todos","El vidrio no se recicla en absoluto","Todos los materiales se reciclan en cantidades iguales"],c:0,e:"Una gráfica de barras compara cantidades directamente: la barra más alta indica el material que más se recicla, sin implicar nada sobre su contaminación."},
+{s:9,d:"a",q:"Un estudio evalúa el efecto de concentraciones de fertilizante (0%, 5%, 10%, 20%) en el crecimiento de fríjol. La altura aumenta hasta 10% pero disminuye al 20%. ¿Qué conclusión es adecuada?",o:["Existe una concentración óptima; concentraciones muy altas pueden ser perjudiciales","A mayor concentración, siempre mayor crecimiento","La concentración no influye en el crecimiento","El fertilizante nunca afecta negativamente a las plantas"],c:0,e:"Los datos muestran una relación no lineal: el crecimiento mejora hasta cierto punto pero una concentración excesiva genera un efecto negativo, indicando una concentración óptima."},
+
+/* ---- SUBTEMA 10 ---- */
+{s:10,d:"b",q:"¿Por qué una barra de hielo se derrite más rápido en un ambiente cálido que en uno frío?",o:["Porque la mayor temperatura ambiental transfiere más energía calorífica al hielo","Porque el hielo pierde masa espontáneamente sin relación con la temperatura","Porque el hielo se transforma químicamente en un ambiente cálido","Porque el ambiente frío elimina las moléculas de agua del hielo"],c:0,e:"La velocidad de fusión depende de la transferencia de calor del ambiente al hielo; a mayor temperatura, más rápido ocurre el cambio de estado."},
+{s:10,d:"i",q:"En la conservación de alimentos, la refrigeración retrasa la descomposición principalmente porque:",o:["Las bajas temperaturas ralentizan las reacciones químicas y la actividad de microorganismos","El frío elimina completamente cualquier microorganismo","La refrigeración hace a los alimentos inmunes a la descomposición","El frío evita que los alimentos tengan masa"],c:0,e:"Las bajas temperaturas disminuyen la velocidad de las reacciones y ralentizan el metabolismo de microorganismos, retrasando la descomposición."},
+{s:10,d:"i",q:"Agregar jugo de limón a frutas cortadas retrasa su oscurecimiento porque:",o:["El ácido cítrico retarda la reacción de oxidación de las enzimas presentes","El limón cambia el color natural de la fruta de forma permanente","El jugo de limón elimina el oxígeno del ambiente por completo","El limón evita cualquier cambio físico en la fruta"],c:0,e:"El ácido cítrico actúa como antioxidante, retardando la reacción enzimática de oxidación (pardeamiento) al contacto con el oxígeno."},
+{s:10,d:"a",q:"El uso de aerosoles con ciertos compuestos contribuyó al deterioro histórico de la capa de ozono. ¿Qué relación estructura-propiedad explica esto?",o:["Ciertos compuestos liberan átomos reactivos (como cloro) que rompen las moléculas de ozono en reacciones en cadena","Los aerosoles solo afectan físicamente el aire sin ninguna reacción química","El ozono no puede transformarse químicamente bajo ninguna circunstancia","La capa de ozono se regenera instantáneamente sin importar los contaminantes"],c:0,e:"Compuestos como los CFC liberan átomos de cloro reactivos que rompen las moléculas de ozono en reacciones en cadena, reduciendo esta capa protectora."},
+{s:10,d:"a",q:"En la producción de acero, el hierro se combina con carbono para mejorar su dureza y resistencia. ¿Qué principio explica este cambio de propiedades?",o:["La combinación de elementos en proporciones específicas genera una aleación con propiedades distintas a las de los elementos por separado","El hierro puro siempre es más resistente que cualquier aleación","El carbono no influye en las propiedades del hierro","Las propiedades de un material dependen únicamente de su color"],c:0,e:"Al combinar hierro con carbono en proporciones controladas se forma acero, cuya estructura interna le confiere mayor dureza y resistencia que el hierro puro."},
+{s:10,d:"a",q:"En temporada de altas temperaturas aumenta la concentración de ozono troposférico en una ciudad. ¿Cómo se explica esto desde la química ambiental?",o:["Se forma por reacciones fotoquímicas entre óxidos de nitrógeno e hidrocarburos, favorecidas por la radiación solar y el calor","Proviene directamente de la capa de ozono estratosférico sin transformación","El aumento de temperatura elimina automáticamente los contaminantes","El ozono a nivel del suelo siempre es beneficioso para la salud"],c:0,e:"El ozono troposférico (smog fotoquímico) se genera por reacciones entre contaminantes vehiculares e industriales en presencia de luz solar y calor, siendo perjudicial para la salud respiratoria."},
+{s:10,d:"a",q:"Un laboratorio farmacéutico debe garantizar que una tableta se disuelva completamente en el estómago para ser absorbida. ¿Qué conceptos son más relevantes?",o:["Solubilidad del principio activo y factores como temperatura corporal y pH gástrico","Únicamente el color y la forma de la tableta","La densidad del aire alrededor del paciente","El número atómico de los elementos del envase"],c:0,e:"La eficacia depende de que el principio activo se disuelva adecuadamente en los fluidos gástricos, relacionado con solubilidad, pH y temperatura corporal."},
+{s:10,d:"a",q:"Suelos cercanos a una planta de procesamiento de carbón presentan mayor acidez, afectando cultivos. ¿Qué explicación química es más plausible?",o:["La oxidación de compuestos de azufre del carbón puede generar ácido sulfúrico que acidifica el suelo con la lluvia","El carbón es químicamente inerte y nunca reacciona con el ambiente","La acidez del suelo no se relaciona con la actividad minera cercana","Los cultivos son la única causa de la acidez del suelo"],c:0,e:"El carbón puede contener azufre que, al oxidarse y reaccionar con el agua de lluvia, forma ácido sulfúrico (drenaje ácido de minas), acidificando el suelo."},
+{s:10,d:"i",q:"¿Cuál de las siguientes estrategias es más útil para resolver preguntas tipo ICFES sobre fenómenos químicos?",o:["Identificar variables, relacionar el fenómeno con conceptos científicos y evaluar la evidencia antes de responder","Elegir la primera opción que suene técnicamente correcta","Memorizar únicamente fórmulas sin comprender su aplicación","Descartar automáticamente las opciones más largas"],c:0,e:"Las preguntas ICFES evalúan competencias de análisis; la mejor estrategia es identificar variables, relacionar el fenómeno con conceptos científicos y evaluar la evidencia."}
+];
+
+/* ---------- 3. ESTADO GLOBAL ---------- */
+let state = {
+  exam: [],
+  answers: [],
+  current: 0,
+  streak: 0,
+  maxStreak: 0,
+  milestonesHit: {3:false,5:false,10:false},
+  timeLeft: 60*60,
+  timerId: null,
+  soundOn: true,
+  startTs: null,
+  endTs: null
+};
+
+/* ---------- 4. UTILIDADES ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildExam(){
+  const quotas = {b:10,i:14,a:16};
+  const pool = shuffle(BANK);
+  let selected = [];
+  let diffCount = {b:0,i:0,a:0};
+  let subCount = {};
+  for(let s=1;s<=10;s++) subCount[s]=0;
+
+  for(let cap=4; cap<=9 && selected.length<40; cap++){
+    for(const q of pool){
+      if(selected.length===40) break;
+      if(selected.includes(q)) continue;
+      if(diffCount[q.d] >= quotas[q.d]) continue;
+      if(subCount[q.s] >= cap) continue;
+      selected.push(q);
+      diffCount[q.d]++;
+      subCount[q.s]++;
+    }
+  }
+  if(selected.length < 40){
+    for(const q of pool){
+      if(selected.length===40) break;
+      if(!selected.includes(q)) selected.push(q);
+    }
+  }
+  selected = shuffle(selected).slice(0,40);
+
+  // clonar y mezclar opciones de cada pregunta
+  return selected.map(orig=>{
+    const optIdx = shuffle([0,1,2,3]);
+    const newOptions = optIdx.map(i=>orig.o[i]);
+    const newCorrect = optIdx.indexOf(orig.c);
+    return {
+      s: orig.s, d: orig.d, q: orig.q,
+      o: newOptions, c: newCorrect, e: orig.e
+    };
+  });
+}
+
+function formatTime(sec){
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+}
+
+/* ---------- 5. SONIDOS (Web Audio API, sin archivos externos) ---------- */
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; }
+  }
+  return audioCtx;
+}
+function beep(freqs, dur=0.12, type='sine', gap=0.03){
+  if(!state.soundOn) return;
+  const ctx = getCtx();
+  if(!ctx) return;
+  let t = ctx.currentTime;
+  freqs.forEach(f=>{
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0.15, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t+dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(t); osc.stop(t+dur);
+    t += dur+gap;
+  });
+}
+const sndCorrect = ()=>beep([523.25,659.25,783.99],0.11,'sine',0.02);
+const sndIncorrect = ()=>beep([220,180],0.16,'sawtooth',0.02);
+const sndFinish = ()=>beep([392,523.25,659.25,783.99],0.14,'triangle',0.03);
+const sndAchievement = ()=>beep([659.25,783.99,987.77],0.13,'square',0.02);
+
+/* ---------- 6. RENDER: INTRO ---------- */
+function renderIntroSubtemas(){
+  const wrap = document.getElementById('subtemasListIntro');
+  wrap.innerHTML = Object.values(SUBTEMAS).map(name=>`<div>${name}</div>`).join('');
+}
+
+/* ---------- 7. FLUJO DEL EXAMEN ---------- */
+function startExam(){
+  state.exam = buildExam();
+  state.answers = new Array(40).fill(null);
+  state.current = 0;
+  state.streak = 0;
+  state.maxStreak = 0;
+  state.milestonesHit = {3:false,5:false,10:false};
+  state.timeLeft = 60*60;
+  state.startTs = Date.now();
+  showScreen('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(state.timerId);
+  updateTimerDisplay();
+  state.timerId = setInterval(()=>{
+    state.timeLeft--;
+    updateTimerDisplay();
+    if(state.timeLeft<=0){
+      clearInterval(state.timerId);
+      finishExam(true);
+    }
+  },1000);
+}
+
+function updateTimerDisplay(){
+  const box = document.getElementById('timerBox');
+  document.getElementById('timerText').textContent = formatTime(Math.max(state.timeLeft,0));
+  if(state.timeLeft<=300){ box.classList.add('warn'); } else { box.classList.remove('warn'); }
+}
+
+function renderQuestion(){
+  const q = state.exam[state.current];
+  document.getElementById('tagSub').textContent = SUBTEMAS[q.s];
+  const diffTag = document.getElementById('tagDiff');
+  diffTag.textContent = DIFF_LABEL[q.d];
+  diffTag.className = 'tag diff-' + (q.d==='b'?'basico':q.d==='i'?'intermedio':'avanzado');
+  document.getElementById('questionText').textContent = q.q;
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  const userAns = state.answers[state.current];
+
+  q.o.forEach((optText, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.setAttribute('aria-label', 'Opción '+letters[idx]+': '+optText);
+    btn.innerHTML = `<span class="letter">${letters[idx]}</span><span>${optText}</span>`;
+    if(userAns !== null){
+      btn.disabled = true;
+      if(idx === q.c) btn.classList.add('correct');
+      else if(idx === userAns) btn.classList.add('incorrect');
+    }
+    btn.addEventListener('click', ()=> selectAnswer(idx));
+    wrap.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedbackLine');
+  fb.className = 'feedback-line';
+  fb.textContent = '';
+  if(userAns !== null){
+    if(userAns === q.c){
+      fb.classList.add('ok'); fb.textContent = '✅ ¡Correcto! ' + q.e;
+    } else {
+      fb.classList.add('bad'); fb.textContent = '❌ Incorrecto. ' + q.e;
+    }
+  }
+
+  updateProgress();
+  updatePalette();
+  document.getElementById('btnPrev').disabled = state.current===0;
+  document.getElementById('btnNext').textContent = state.current===39 ? 'Ir a finalizar →' : 'Siguiente →';
+}
+
+function selectAnswer(idx){
+  const q = state.exam[state.current];
+  if(state.answers[state.current] !== null) { // permitir cambiar respuesta
+    state.answers[state.current] = idx;
+    renderQuestion();
+    return;
+  }
+  state.answers[state.current] = idx;
+  const isCorrect = idx === q.c;
+  if(isCorrect){
+    sndCorrect();
+    state.streak++;
+    if(state.streak > state.maxStreak) state.maxStreak = state.streak;
+    checkStreakMilestone();
+  } else {
+    sndIncorrect();
+    state.streak = 0;
+  }
+  updateStreakBadge();
+  renderQuestion();
+}
+
+function checkStreakMilestone(){
+  [3,5,10].forEach(m=>{
+    if(state.streak === m && !state.milestonesHit[m]){
+      state.milestonesHit[m] = true;
+      sndAchievement();
+      showToast('🔥', `¡Racha de ${m} respuestas correctas seguidas! Vas muy bien.`);
+    }
+  });
+}
+
+function updateStreakBadge(){
+  const badge = document.getElementById('streakBadge');
+  if(state.streak >= 2){
+    badge.style.display = 'inline-flex';
+    document.getElementById('streakVal').textContent = state.streak;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function showToast(emoji, text){
+  const toast = document.getElementById('toast');
+  toast.querySelector('.emoji').textContent = emoji;
+  document.getElementById('toastText').textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=> toast.classList.remove('show'), 3200);
+}
+
+function updateProgress(){
+  const answered = state.answers.filter(a=>a!==null).length;
+  const pct = Math.round(((state.current+1)/40)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `Pregunta ${state.current+1} de 40 · Respondidas: ${answered} · Pendientes: ${40-answered}`;
+  document.getElementById('progressPct').textContent = pct+'%';
+}
+
+function updatePalette(){
+  const wrap = document.getElementById('palette');
+  wrap.innerHTML = '';
+  for(let i=0;i<40;i++){
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    b.setAttribute('aria-label','Ir a la pregunta '+(i+1));
+    if(state.answers[i]!==null) b.classList.add('answered');
+    if(i===state.current) b.classList.add('current');
+    b.addEventListener('click', ()=>{ state.current=i; renderQuestion(); });
+    wrap.appendChild(b);
+  }
+}
+
+document.getElementById('btnTogglePalette').addEventListener('click', ()=>{
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display==='none' ? 'grid' : 'none';
+});
+
+document.getElementById('btnPrev').addEventListener('click', ()=>{
+  if(state.current>0){ state.current--; renderQuestion(); }
+});
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  if(state.current<39){ state.current++; renderQuestion(); }
+  else { attemptFinish(); }
+});
+
+document.addEventListener('keydown', (e)=>{
+  if(!document.getElementById('screen-quiz').classList.contains('active')) return;
+  if(e.key==='ArrowRight'){ document.getElementById('btnNext').click(); }
+  if(e.key==='ArrowLeft'){ document.getElementById('btnPrev').click(); }
+  if(['1','2','3','4'].includes(e.key)){
+    const idx = parseInt(e.key)-1;
+    const opts = document.querySelectorAll('#optionsWrap .opt-btn');
+    if(opts[idx] && !opts[idx].disabled) opts[idx].click();
+  }
+});
+
+/* ---------- 8. FINALIZAR ---------- */
+function attemptFinish(){
+  const pending = state.answers.filter(a=>a===null).length;
+  const modal = document.getElementById('modalConfirmFinish');
+  document.getElementById('modalFinishText').textContent = pending>0
+    ? `Aún tienes ${pending} pregunta(s) sin responder. ¿Deseas finalizar de todas formas? Esta acción calculará tu puntaje final.`
+    : `Has respondido todas las preguntas. ¿Deseas finalizar y ver tu informe final?`;
+  modal.classList.add('active');
+}
+document.getElementById('btnFinalizar').addEventListener('click', attemptFinish);
+document.getElementById('btnCancelFinish').addEventListener('click', ()=> document.getElementById('modalConfirmFinish').classList.remove('active'));
+document.getElementById('btnConfirmFinish').addEventListener('click', ()=>{
+  document.getElementById('modalConfirmFinish').classList.remove('active');
+  finishExam(false);
+});
+
+function finishExam(byTimeout){
+  clearInterval(state.timerId);
+  state.endTs = Date.now();
+  sndFinish();
+  showScreen('results');
+  renderResults(byTimeout);
+}
+
+/* ---------- 9. RESULTADOS ---------- */
+function renderResults(byTimeout){
+  const total = 40;
+  let correct=0, incorrect=0;
+  const subStats = {};
+  for(let s=1;s<=10;s++) subStats[s] = {correct:0,total:0};
+
+  state.exam.forEach((q,i)=>{
+    subStats[q.s].total++;
+    if(state.answers[i]===q.c){ correct++; subStats[q.s].correct++; }
+    else if(state.answers[i]!==null){ incorrect++; }
+  });
+  const noAnswered = total-correct-incorrect;
+  const pct = Math.round((correct/total)*100);
+
+  const elapsedSec = byTimeout ? 60*60 : Math.round((state.endTs-state.startTs)/1000);
+  const usedSec = Math.min(elapsedSec, 60*60);
+
+  document.getElementById('scoreCircle').style.setProperty('--pct', pct);
+  document.getElementById('scoreCirclePct').innerHTML = pct+'%<small id="scoreCircleLabel">Puntaje total</small>';
+  document.getElementById('resultTitle').textContent = byTimeout ? 'Tiempo finalizado · Resultados de tu simulacro' : 'Resultados de tu simulacro';
+
+  let nivel = 'Inicial';
+  if(pct>=90) nivel='Avanzado superior';
+  else if(pct>=70) nivel='Avanzado';
+  else if(pct>=50) nivel='Intermedio';
+  else nivel='Inicial';
+
+  document.getElementById('statCorrectas').textContent = correct;
+  document.getElementById('statIncorrectas').textContent = incorrect + (noAnswered>0? ' ('+noAnswered+' sin responder)':'');
+  document.getElementById('statTiempo').textContent = formatTime(usedSec);
+  document.getElementById('statNivel').textContent = nivel;
+
+  let msg = '';
+  if(pct<50) msg = 'Comprender la materia y sus transformaciones requiere observación y práctica. Continúa fortaleciendo tu pensamiento científico.';
+  else if(pct<70) msg = 'Has construido una buena base en Química. Sigue relacionando conceptos y analizando fenómenos para mejorar tus resultados.';
+  else if(pct<90) msg = 'Muy buen desempeño. Demuestras una sólida comprensión de la materia, sus propiedades y sus cambios.';
+  else msg = '¡Excelente trabajo! Has demostrado un dominio sobresaliente de las competencias de Química evaluadas en las pruebas tipo ICFES.';
+  document.getElementById('motivationalMsg').textContent = msg;
+
+  // desempeño por subtemática
+  const subList = document.getElementById('subPerfList');
+  subList.innerHTML = '';
+  const subPercents = {};
+  for(let s=1;s<=10;s++){
+    const st = subStats[s];
+    const p = st.total>0 ? Math.round((st.correct/st.total)*100) : 0;
+    subPercents[s] = p;
+    const row = document.createElement('div');
+    row.className = 'sub-perf-row';
+    row.innerHTML = `<div class="name">${SUBTEMAS[s]}</div>
+      <div class="sub-perf-bar-bg"><div class="sub-perf-bar-fill" style="width:${p}%"></div></div>
+      <div class="pctval">${p}%</div>`;
+    subList.appendChild(row);
+  }
+
+  drawChart(subPercents);
+
+  // fortalezas y aspectos por mejorar
+  const sorted = Object.entries(subPercents).sort((a,b)=>b[1]-a[1]);
+  const fort = sorted.filter(e=>e[1]>=70).slice(0,4);
+  const mejorar = sorted.filter(e=>e[1]<70).slice(-4).reverse();
+  document.getElementById('listFortalezas').innerHTML = fort.length
+    ? fort.map(e=>`<li>${SUBTEMAS[e[0]]} (${e[1]}%)</li>`).join('')
+    : '<li>Sigue practicando: aún no se identifican fortalezas claras por encima del 70%.</li>';
+  document.getElementById('listMejorar').innerHTML = mejorar.length
+    ? mejorar.map(e=>`<li>${SUBTEMAS[e[0]]} (${e[1]}%)</li>`).join('')
+    : '<li>¡Buen trabajo! No hay subtemáticas críticas por debajo del 70%.</li>';
+
+  // logros / insignias
+  renderBadges(pct, subPercents);
+
+  // revisión detallada
+  renderReview();
+}
+
+function drawChart(subPercents){
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const margin = {top:20,right:20,bottom:60,left:40};
+  const chartW = W-margin.left-margin.right;
+  const chartH = H-margin.top-margin.bottom;
+  const n = 10;
+  const barW = chartW/n*0.6;
+  const gap = chartW/n;
+
+  // ejes
+  ctx.strokeStyle = '#E3E8EF';
+  ctx.lineWidth = 1;
+  for(let g=0; g<=100; g+=25){
+    const y = margin.top + chartH - (g/100)*chartH;
+    ctx.beginPath();
+    ctx.moveTo(margin.left, y);
+    ctx.lineTo(W-margin.right, y);
+    ctx.stroke();
+    ctx.fillStyle = '#4B5563';
+    ctx.font = '11px DM Sans, sans-serif';
+    ctx.fillText(g+'%', 6, y+4);
+  }
+
+  for(let s=1;s<=10;s++){
+    const p = subPercents[s];
+    const x = margin.left + gap*(s-1) + (gap-barW)/2;
+    const barH = (p/100)*chartH;
+    const y = margin.top + chartH - barH;
+    const grad = ctx.createLinearGradient(0,y,0,y+barH);
+    grad.addColorStop(0,'#FFE066');
+    grad.addColorStop(1,'#F59E0B');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x,y,barW,barH);
+    ctx.fillStyle = '#0B2545';
+    ctx.font = 'bold 11px Poppins, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(p+'%', x+barW/2, y-6);
+    ctx.save();
+    ctx.translate(x+barW/2, margin.top+chartH+14);
+    ctx.rotate(-0.5);
+    ctx.textAlign='right';
+    ctx.font='10px DM Sans, sans-serif';
+    ctx.fillStyle='#4B5563';
+    ctx.fillText('S'+s, 0, 0);
+    ctx.restore();
+  }
+  ctx.textAlign = 'left';
+}
+
+const ACHIEVEMENTS = [
+  {id:'explorador', icon:'🧪', name:'Explorador de la Materia', cond:(pct,sp)=> true},
+  {id:'atomo', icon:'⚛️', name:'Maestro del Átomo', cond:(pct,sp)=> sp[2]>=90},
+  {id:'transform', icon:'🧬', name:'Especialista en Transformaciones', cond:(pct,sp)=> ((sp[4]+sp[5])/2)>=75},
+  {id:'reacciones', icon:'🧫', name:'Analista de Reacciones', cond:(pct,sp)=> sp[5]>=90},
+  {id:'tabla', icon:'🧾', name:'Conocedor de la Tabla Periódica', cond:(pct,sp)=> sp[6]>=90},
+  {id:'ambiente', icon:'🌍', name:'Guardián del Medio Ambiente', cond:(pct,sp)=> sp[8]>=75},
+  {id:'evidencias', icon:'📊', name:'Intérprete de Evidencias', cond:(pct,sp)=> sp[9]>=90},
+  {id:'cientifico', icon:'🔬', name:'Científico en Formación', cond:(pct,sp)=> pct>=50},
+  {id:'maestro', icon:'🏆', name:'Maestro de la Química', cond:(pct,sp)=> pct>=90},
+];
+
+function renderBadges(pct, subPercents){
+  const grid = document.getElementById('badgesGrid');
+  grid.innerHTML = '';
+  ACHIEVEMENTS.forEach(a=>{
+    const unlocked = a.cond(pct, subPercents);
+    const div = document.createElement('div');
+    div.className = 'badge' + (unlocked? '' : ' locked');
+    div.innerHTML = `<span class="ic">${a.icon}</span>${a.name}`;
+    grid.appendChild(div);
+  });
+}
+
+/* ---------- 10. REVISIÓN DETALLADA ---------- */
+function renderReview(){
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  state.exam.forEach((q,i)=>{
+    const userAns = state.answers[i];
+    let statusHtml = '';
+    if(userAns===null) statusHtml = '<span class="status-skip">Sin responder</span>';
+    else if(userAns===q.c) statusHtml = '<span class="status-ok">Correcta</span>';
+    else statusHtml = '<span class="status-bad">Incorrecta</span>';
+
+    const optsHtml = q.o.map((opt,idx)=>{
+      let cls = 'review-opt';
+      if(idx===q.c) cls+=' the-correct';
+      else if(idx===userAns) cls+=' user-wrong';
+      if(idx===userAns && idx===q.c) cls='review-opt user-correct';
+      return `<div class="${cls}">${letters[idx]}) ${opt}</div>`;
+    }).join('');
+
+    const item = document.createElement('div');
+    item.className = 'review-item';
+    item.innerHTML = `
+      <div class="qhead">
+        <span class="qnum">Pregunta ${i+1}</span>
+        ${statusHtml}
+      </div>
+      <div style="margin-bottom:8px;">
+        <span class="tag sub">${SUBTEMAS[q.s]}</span>
+        <span class="tag diff-${q.d==='b'?'basico':q.d==='i'?'intermedio':'avanzado'}">${DIFF_LABEL[q.d]}</span>
+      </div>
+      <p style="font-weight:600;margin-bottom:10px;">${q.q}</p>
+      ${optsHtml}
+      <div class="explain-box">
+        <b>Explicación y justificación científica:</b> ${q.e}<br>
+        <b>Competencia evaluada:</b> Comprensión y explicación de fenómenos relacionados con la materia, sus propiedades y transformaciones (Nivel 4, Ciencias Naturales).<br>
+        <b>Subtemática:</b> ${SUBTEMAS[q.s]}
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+document.getElementById('btnVerRevision').addEventListener('click', ()=>{
+  const sec = document.getElementById('reviewSection');
+  sec.style.display = sec.style.display==='none' ? 'block' : 'none';
+  if(sec.style.display==='block') sec.scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- 11. REINICIO ---------- */
+function askReset(){ document.getElementById('modalConfirmReset').classList.add('active'); }
+document.getElementById('btnReiniciar').addEventListener('click', askReset);
+document.getElementById('btnReiniciar2').addEventListener('click', askReset);
+document.getElementById('btnCancelReset').addEventListener('click', ()=> document.getElementById('modalConfirmReset').classList.remove('active'));
+document.getElementById('btnConfirmReset').addEventListener('click', ()=>{
+  document.getElementById('modalConfirmReset').classList.remove('active');
+  document.getElementById('reviewSection').style.display='none';
+  showScreen('intro');
+});
+
+/* ---------- 12. NAVEGACIÓN DE PANTALLAS ---------- */
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('btnIniciar').addEventListener('click', startExam);
+document.getElementById('soundToggle').addEventListener('change', (e)=>{ state.soundOn = e.target.checked; });
+
+/* ---------- 13. INICIALIZACIÓN ---------- */
+renderIntroSubtemas();
+</script>
+</body>
+</html>

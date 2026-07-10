@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Historia y Geografía Básica · Nivel 5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --azul-oscuro:#0B2545;
+  --azul-medio:#123a6b;
+  --azul-suave:#e7edf7;
+  --dorado:#F5A623;
+  --dorado-fuerte:#F59E0B;
+  --dorado-claro:#FFE9B8;
+  --blanco:#FFFFFF;
+  --gris-claro:#F3F4F6;
+  --gris-medio:#6B7280;
+  --gris-borde:#E2E5EA;
+  --verde:#16A34A;
+  --verde-suave:#E7F7EC;
+  --rojo:#DC2626;
+  --rojo-suave:#FDECEC;
+  --radio:18px;
+  --sombra:0 10px 30px rgba(11,37,69,0.10);
+  --font-display:'Poppins',-apple-system,'Segoe UI',sans-serif;
+  --font-body:'DM Sans',-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-body);
+  background:linear-gradient(180deg,#eef2f8 0%, #f7f8fb 100%);
+  color:var(--azul-oscuro);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.oculto{display:none !important;}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-visible{
+  outline:3px solid var(--dorado-fuerte);
+  outline-offset:2px;
+}
+
+/* ---------- Layout general ---------- */
+.contenedor{
+  max-width:980px;
+  margin:0 auto;
+  padding:24px 18px 60px;
+}
+.topbar{
+  background:var(--azul-oscuro);
+  color:var(--blanco);
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  box-shadow:0 4px 16px rgba(11,37,69,0.25);
+}
+.topbar .marca{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-display);font-weight:700;font-size:1.05em;
+}
+.topbar .marca span.icono{font-size:1.3em;}
+.topbar .nivel-pill{
+  margin-left:auto;
+  background:var(--dorado);
+  color:#3a2405;
+  font-weight:700;
+  font-size:.78em;
+  padding:6px 14px;
+  border-radius:50px;
+  letter-spacing:.4px;
+}
+
+/* ---------- Tarjetas ---------- */
+.card{
+  background:var(--blanco);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  border:1px solid var(--gris-borde);
+  padding:28px;
+}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--azul-oscuro);margin-top:0;}
+
+/* ---------- Pantalla inicio ---------- */
+.hero{
+  text-align:center;
+  padding:38px 20px 8px;
+}
+.hero .icono-hero{
+  font-size:3em;
+  display:inline-block;
+  margin-bottom:6px;
+}
+.hero h1{font-size:1.9em;margin-bottom:6px;}
+.hero p.subt{color:var(--gris-medio);font-size:1.05em;max-width:620px;margin:0 auto;}
+
+.grid-info{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin:28px 0;
+}
+.info-box{
+  background:var(--gris-claro);
+  border-radius:14px;
+  padding:16px 10px;
+  text-align:center;
+}
+.info-box .num{font-family:var(--font-display);font-weight:800;font-size:1.5em;color:var(--azul-oscuro);}
+.info-box .etq{font-size:.82em;color:var(--gris-medio);margin-top:2px;}
+
+.bloque-competencia{
+  background:var(--azul-suave);
+  border-left:5px solid var(--azul-medio);
+  border-radius:12px;
+  padding:18px 20px;
+  margin:20px 0;
+}
+.bloque-competencia h3{margin:0 0 6px;font-size:1em;color:var(--azul-medio);}
+.lista-objetivos{margin:20px 0;}
+.lista-objetivos li{margin-bottom:8px;line-height:1.5;}
+
+.subtemas-chip-wrap{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 8px;}
+.chip{
+  background:var(--dorado-claro);
+  color:#5a3a05;
+  font-size:.78em;
+  font-weight:600;
+  padding:6px 12px;
+  border-radius:50px;
+}
+
+.btn-primario{
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-fuerte));
+  color:#2D1B0E;
+  border:none;
+  font-weight:700;
+  font-size:1.08em;
+  padding:16px 40px;
+  border-radius:50px;
+  box-shadow:0 6px 20px rgba(245,158,11,0.4);
+  transition:transform .15s ease, box-shadow .15s ease;
+  display:block;
+  margin:26px auto 4px;
+}
+.btn-primario:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(245,158,11,0.5);}
+.btn-secundario{
+  background:var(--blanco);
+  color:var(--azul-oscuro);
+  border:2px solid var(--azul-oscuro);
+  font-weight:700;
+  padding:12px 26px;
+  border-radius:50px;
+  transition:background .15s ease;
+}
+.btn-secundario:hover{background:var(--azul-suave);}
+.btn-ghost{
+  background:transparent;
+  border:2px solid var(--gris-borde);
+  color:var(--azul-oscuro);
+  font-weight:600;
+  padding:10px 20px;
+  border-radius:50px;
+}
+.btn-ghost:hover{border-color:var(--azul-medio);}
+
+.fila-config{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  margin-top:10px;flex-wrap:wrap;
+}
+.fila-config label{font-size:.9em;color:var(--gris-medio);font-weight:600;}
+.fila-config select, .fila-config input[type=number]{
+  padding:8px 12px;border-radius:10px;border:1.5px solid var(--gris-borde);font-family:inherit;font-size:.95em;
+}
+
+/* toggle sonido */
+.toggle-sonido{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:14px;}
+.switch{position:relative;width:46px;height:26px;display:inline-block;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-switch{
+  position:absolute;cursor:pointer;inset:0;
+  background:#ccc;border-radius:34px;transition:.2s;
+}
+.slider-switch:before{
+  position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;
+  background:white;border-radius:50%;transition:.2s;
+}
+.switch input:checked + .slider-switch{background:var(--verde);}
+.switch input:checked + .slider-switch:before{transform:translateX(20px);}
+
+/* ---------- Pantalla quiz ---------- */
+.barra-superior-quiz{
+  position:sticky;top:0;z-index:20;
+  background:var(--blanco);
+  border-bottom:1px solid var(--gris-borde);
+  padding:12px 18px;
+  box-shadow:0 4px 14px rgba(11,37,69,0.06);
+}
+.barra-superior-inner{
+  max-width:980px;margin:0 auto;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.temporizador{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:1.15em;
+  background:var(--azul-oscuro);
+  color:var(--blanco);
+  padding:8px 16px;
+  border-radius:12px;
+  min-width:110px;
+  text-align:center;
+}
+.temporizador.alerta{background:var(--rojo);animation:pulso 1s infinite;}
+@keyframes pulso{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+
+.progreso-wrap{flex:1;min-width:200px;}
+.progreso-texto{display:flex;justify-content:space-between;font-size:.82em;color:var(--gris-medio);margin-bottom:4px;}
+.barra-progreso-bg{
+  background:var(--gris-claro);
+  height:10px;border-radius:20px;overflow:hidden;
+}
+.barra-progreso-fg{
+  height:100%;
+  background:linear-gradient(90deg,var(--dorado),var(--dorado-fuerte));
+  border-radius:20px;
+  transition:width .3s ease;
+}
+.btn-mapa-preguntas{
+  background:var(--gris-claro);border:none;border-radius:10px;padding:8px 14px;font-weight:700;font-size:.85em;color:var(--azul-oscuro);
+}
+
+.panel-mapa{
+  max-width:980px;margin:10px auto 0;padding:14px 18px 0;
+  display:none;
+}
+.panel-mapa.mostrar{display:block;}
+.grid-mapa{
+  display:grid;grid-template-columns:repeat(10,1fr);gap:8px;
+  background:var(--blanco);border-radius:14px;padding:16px;box-shadow:var(--sombra);border:1px solid var(--gris-borde);
+}
+.celda-mapa{
+  aspect-ratio:1;border-radius:8px;border:none;font-weight:700;font-size:.85em;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--gris-claro);color:var(--azul-oscuro);
+}
+.celda-mapa.respondida{background:var(--verde-suave);color:var(--verde);border:2px solid var(--verde);}
+.celda-mapa.actual{background:var(--dorado);color:#3a2405;border:2px solid var(--dorado-fuerte);}
+.leyenda-mapa{display:flex;gap:16px;margin-top:10px;font-size:.8em;color:var(--gris-medio);flex-wrap:wrap;}
+.leyenda-mapa span{display:inline-flex;align-items:center;gap:6px;}
+.dot-leyenda{width:12px;height:12px;border-radius:4px;display:inline-block;}
+
+.pregunta-shell{max-width:980px;margin:22px auto;padding:0 18px;}
+.pregunta-card{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);border:1px solid var(--gris-borde);padding:28px;animation:aparecer .35s ease;}
+@keyframes aparecer{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.etiquetas-pregunta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.etq-tag{font-size:.72em;font-weight:700;padding:4px 12px;border-radius:50px;background:var(--azul-suave);color:var(--azul-medio);}
+.etq-tag.dificultad-basico{background:var(--verde-suave);color:var(--verde);}
+.etq-tag.dificultad-intermedio{background:#FFF3D6;color:#8a5a05;}
+.etq-tag.dificultad-avanzado{background:var(--rojo-suave);color:var(--rojo);}
+
+.texto-pregunta{font-size:1.12em;line-height:1.55;margin:6px 0 18px;font-weight:600;}
+
+.opciones-lista{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;}
+.opcion{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--gris-claro);
+  border:2px solid transparent;
+  border-radius:14px;padding:14px 16px;
+  transition:all .15s ease;
+}
+.opcion:hover{border-color:var(--dorado-fuerte);background:var(--dorado-claro);}
+.opcion.seleccionada{border-color:var(--azul-medio);background:var(--azul-suave);}
+.opcion .letra{
+  width:30px;height:30px;flex:0 0 30px;border-radius:50%;
+  background:var(--blanco);border:2px solid var(--gris-borde);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;
+}
+.opcion.seleccionada .letra{background:var(--azul-medio);color:var(--blanco);border-color:var(--azul-medio);}
+.opcion .texto-op{padding-top:3px;line-height:1.4;}
+
+.nav-pregunta{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:24px;gap:10px;flex-wrap:wrap;
+}
+.nav-pregunta .grupo-der{display:flex;gap:10px;}
+
+.streak-toast{
+  position:fixed;top:90px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-fuerte));
+  color:#2D1B0E;font-weight:800;font-family:var(--font-display);
+  padding:14px 28px;border-radius:50px;box-shadow:0 10px 30px rgba(245,158,11,.5);
+  z-index:100;opacity:0;transition:all .35s ease;pointer-events:none;font-size:1em;
+}
+.streak-toast.mostrar{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ---------- Modal de confirmación propio (no depende de confirm() nativo) ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(11,37,69,0.55);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s ease;
+}
+.modal-overlay.mostrar{opacity:1;pointer-events:auto;}
+.modal-caja{
+  background:var(--blanco);border-radius:18px;max-width:420px;width:100%;
+  padding:26px 26px 22px;box-shadow:0 20px 50px rgba(11,37,69,.35);
+  transform:translateY(10px);transition:transform .2s ease;
+}
+.modal-overlay.mostrar .modal-caja{transform:translateY(0);}
+.modal-caja h3{margin:0 0 10px;font-size:1.1em;display:flex;align-items:center;gap:8px;}
+.modal-caja p{margin:0 0 20px;line-height:1.5;color:var(--gris-medio);font-size:.95em;}
+.modal-botones{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+
+/* ---------- visuales de preguntas ---------- */
+.viz{margin:14px 0 20px;background:var(--gris-claro);border-radius:14px;padding:16px;overflow-x:auto;}
+.viz-title{font-size:.78em;color:var(--gris-medio);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px;}
+
+.viz-timeline{display:flex;align-items:flex-start;gap:0;min-width:520px;padding:10px 0;}
+.viz-timeline-item{flex:1;position:relative;text-align:center;padding-top:14px;}
+.viz-timeline-item:before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--gris-borde);
+}
+.viz-timeline-item:first-child:before{left:50%;}
+.viz-timeline-item:last-child:before{right:50%;}
+.viz-timeline-item .viz-dot{
+  width:16px;height:16px;border-radius:50%;background:var(--azul-medio);
+  position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:3px solid var(--blanco);
+}
+.viz-timeline-item .viz-fecha{font-family:var(--font-display);font-weight:800;color:var(--azul-oscuro);margin-top:10px;font-size:.95em;}
+.viz-timeline-item .viz-label{font-size:.78em;color:var(--gris-medio);padding:0 6px;margin-top:2px;}
+
+table.viz-table{width:100%;border-collapse:collapse;font-size:.92em;background:var(--blanco);border-radius:10px;overflow:hidden;}
+table.viz-table th, table.viz-table td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--gris-borde);}
+table.viz-table th{background:var(--azul-oscuro);color:var(--blanco);font-family:var(--font-display);font-size:.85em;}
+table.viz-table tr:last-child td{border-bottom:none;}
+
+.viz-chart{display:flex;align-items:flex-end;gap:14px;height:160px;padding:6px 4px;min-width:380px;}
+.viz-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.viz-bar{width:100%;max-width:52px;background:linear-gradient(180deg,var(--dorado),var(--dorado-fuerte));border-radius:8px 8px 0 0;position:relative;}
+.viz-bar-val{font-size:.75em;font-weight:700;color:var(--azul-oscuro);margin-bottom:4px;}
+.viz-bar-label{font-size:.75em;color:var(--gris-medio);margin-top:6px;text-align:center;}
+
+.viz-map{display:flex;gap:6px;flex-wrap:wrap;min-width:420px;}
+.viz-region{
+  flex:1;min-width:70px;border-radius:10px;padding:14px 8px;text-align:center;color:var(--blanco);font-size:.78em;font-weight:700;
+}
+.viz-map-leyenda{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;font-size:.75em;color:var(--gris-medio);}
+
+.viz-coord{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,44px);gap:2px;min-width:340px;background:var(--azul-oscuro);padding:2px;border-radius:10px;}
+.viz-coord-cell{background:var(--blanco);position:relative;font-size:.65em;color:var(--gris-medio);}
+.viz-coord-cell .punto{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:16px;height:16px;background:var(--rojo);border-radius:50%;border:3px solid var(--blanco);box-shadow:0 0 0 2px var(--rojo);
+}
+
+.viz-photo{
+  background:repeating-linear-gradient(135deg,#d8dce3,#d8dce3 10px,#cfd4dc 10px,#cfd4dc 20px);
+  border:6px solid var(--blanco);outline:2px solid var(--gris-borde);
+  border-radius:8px;padding:30px 16px;text-align:center;color:var(--azul-oscuro);font-weight:700;
+  box-shadow:var(--sombra);
+}
+.viz-photo .cap{font-weight:400;font-size:.82em;color:var(--gris-medio);margin-top:8px;}
+
+/* ---------- Resultados ---------- */
+.resumen-hero{text-align:center;padding:20px 10px 6px;}
+.resumen-hero .puntaje-grande{font-family:var(--font-display);font-weight:800;font-size:3.4em;color:var(--azul-oscuro);}
+.resumen-hero .puntaje-pct{color:var(--dorado-fuerte);}
+.mensaje-motivacional{
+  background:var(--azul-suave);border-radius:14px;padding:18px 22px;margin:18px 0;
+  font-style:italic;color:var(--azul-medio);text-align:center;line-height:1.5;
+}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0;}
+.stat-card{background:var(--gris-claro);border-radius:14px;padding:16px;text-align:center;}
+.stat-card .valor{font-family:var(--font-display);font-weight:800;font-size:1.4em;color:var(--azul-oscuro);}
+.stat-card .lbl{font-size:.78em;color:var(--gris-medio);margin-top:2px;}
+
+.subtema-fila{margin-bottom:12px;}
+.subtema-fila .cab{display:flex;justify-content:space-between;font-size:.86em;margin-bottom:4px;}
+.subtema-fila .cab b{color:var(--azul-oscuro);}
+.barra-sub-bg{background:var(--gris-claro);height:12px;border-radius:20px;overflow:hidden;}
+.barra-sub-fg{height:100%;border-radius:20px;transition:width .6s ease;}
+
+.dos-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+.col-box{background:var(--gris-claro);border-radius:14px;padding:16px 18px;}
+.col-box h4{margin:0 0 8px;font-size:.95em;}
+.col-box.fortalezas{border-left:5px solid var(--verde);}
+.col-box.mejorar{border-left:5px solid var(--dorado-fuerte);}
+.col-box li{margin-bottom:6px;font-size:.9em;line-height:1.4;}
+
+.badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+.badge{
+  background:var(--gris-claro);border-radius:14px;padding:14px 8px;text-align:center;opacity:.35;filter:grayscale(1);
+  transition:all .3s ease;
+}
+.badge.desbloqueada{opacity:1;filter:none;background:var(--dorado-claro);box-shadow:0 4px 14px rgba(245,158,11,.35);animation:pop .4s ease;}
+@keyframes pop{0%{transform:scale(.7);}70%{transform:scale(1.08);}100%{transform:scale(1);}}
+.badge .ico{font-size:1.9em;}
+.badge .nombre{font-size:.72em;font-weight:700;margin-top:4px;color:var(--azul-oscuro);}
+
+/* mini grafico de desempeño por subtema en resultados */
+.grafico-desempeno{display:flex;align-items:flex-end;gap:8px;height:180px;padding:10px 4px;overflow-x:auto;}
+.gd-col{flex:1;min-width:34px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.gd-bar{width:100%;max-width:34px;border-radius:6px 6px 0 0;}
+.gd-num{font-size:.68em;font-weight:700;margin-bottom:3px;}
+.gd-lbl{font-size:.6em;color:var(--gris-medio);margin-top:6px;text-align:center;line-height:1.15;}
+
+.acciones-finales{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:26px 0 6px;}
+
+/* revisión de preguntas */
+.revision-item{border:1px solid var(--gris-borde);border-radius:14px;padding:18px 20px;margin-bottom:14px;}
+.revision-item.correcta{border-left:5px solid var(--verde);}
+.revision-item.incorrecta{border-left:5px solid var(--rojo);}
+.revision-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.badge-resultado{font-size:.75em;font-weight:800;padding:4px 12px;border-radius:50px;}
+.badge-resultado.correcta{background:var(--verde-suave);color:var(--verde);}
+.badge-resultado.incorrecta{background:var(--rojo-suave);color:var(--rojo);}
+.rev-opcion{padding:8px 12px;border-radius:10px;margin-bottom:6px;font-size:.9em;background:var(--gris-claro);}
+.rev-opcion.marcar-correcta{background:var(--verde-suave);border:1.5px solid var(--verde);}
+.rev-opcion.marcar-elegida-mala{background:var(--rojo-suave);border:1.5px solid var(--rojo);}
+.rev-explicacion{background:var(--azul-suave);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:.88em;line-height:1.5;color:var(--azul-medio);}
+.rev-meta{font-size:.72em;color:var(--gris-medio);margin-top:8px;}
+
+footer.pie{text-align:center;margin-top:40px;}
+
+/* ---------- Responsive ---------- */
+@media (max-width:800px){
+  .grid-info{grid-template-columns:repeat(2,1fr);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .dos-col{grid-template-columns:1fr;}
+  .badges-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-mapa{grid-template-columns:repeat(6,1fr);}
+}
+@media (max-width:520px){
+  .contenedor{padding:16px 10px 50px;}
+  .card{padding:18px;}
+  .hero h1{font-size:1.4em;}
+  .grid-info{grid-template-columns:repeat(2,1fr);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .badges-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-mapa{grid-template-columns:repeat(5,1fr);}
+  .nav-pregunta{flex-direction:column;align-items:stretch;}
+  .nav-pregunta .grupo-der{justify-content:space-between;}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="marca"><span class="icono">🏛️🗺️</span> Simulador ICFES</div>
+  <div class="nivel-pill">Nivel 5 · Competencias Ciudadanas</div>
+</div>
+
+<div class="contenedor">
+
+  <!-- ======================= PANTALLA INICIO ======================= -->
+  <section id="pantalla-inicio" class="card">
+    <div class="hero">
+      <div class="icono-hero">🏛️🧭🗺️</div>
+      <h1>Historia y Geografía Básica</h1>
+      <p class="subt">Simulacro interactivo tipo ICFES para fortalecer el pensamiento histórico, la interpretación geográfica y las competencias ciudadanas.</p>
+    </div>
+
+    <div class="bloque-competencia">
+      <h3>🎯 Competencia evaluada</h3>
+      <p style="margin:0;line-height:1.55;">Comprender procesos históricos, interpretar información geográfica y analizar las relaciones entre sociedad, territorio y ambiente, fortaleciendo las competencias ciudadanas mediante el análisis crítico de situaciones contextualizadas.</p>
+    </div>
+
+    <div class="grid-info">
+      <div class="info-box"><div class="num">30</div><div class="etq">Preguntas</div></div>
+      <div class="info-box"><div class="num">45</div><div class="etq">Minutos</div></div>
+      <div class="info-box"><div class="num">10</div><div class="etq">Subtemáticas</div></div>
+      <div class="info-box"><div class="num">4</div><div class="etq">Opciones c/u</div></div>
+    </div>
+
+    <h3>📋 Objetivos del simulacro</h3>
+    <ul class="lista-objetivos">
+      <li>Analizar fuentes, líneas de tiempo y procesos de cambio y permanencia en la historia.</li>
+      <li>Reconocer los grandes períodos históricos y su relación con la actualidad.</li>
+      <li>Interpretar mapas, planos, escalas, coordenadas y símbolos cartográficos.</li>
+      <li>Comprender la geografía física y humana de Colombia y del mundo.</li>
+      <li>Argumentar sobre las relaciones entre sociedad, territorio y medio ambiente.</li>
+      <li>Interpretar tablas, gráficos e infografías con enfoque en competencias ICFES.</li>
+    </ul>
+
+    <h3 style="margin-bottom:6px;">🧩 Subtemáticas incluidas</h3>
+    <div class="subtemas-chip-wrap" id="chips-subtemas"></div>
+
+    <div class="fila-config">
+      <label for="sel-tiempo">⏱ Tiempo del simulacro:</label>
+      <select id="sel-tiempo">
+        <option value="45" selected>45 minutos (recomendado)</option>
+        <option value="30">30 minutos</option>
+        <option value="60">60 minutos</option>
+        <option value="20">20 minutos (modo rápido)</option>
+      </select>
+    </div>
+
+    <div class="toggle-sonido">
+      <label class="switch"><input type="checkbox" id="chk-sonido-inicio" checked><span class="slider-switch"></span></label>
+      <span style="font-size:.9em;color:var(--gris-medio);font-weight:600;">🔊 Sonidos activados</span>
+    </div>
+
+    <button class="btn-primario" id="btn-iniciar">🚀 Iniciar simulacro</button>
+  </section>
+
+  <!-- ======================= PANTALLA QUIZ ======================= -->
+  <section id="pantalla-quiz" class="oculto">
+  </section>
+
+  <!-- barra fija de quiz (fuera del flujo del contenedor para sticky real) -->
+  <div id="barra-quiz" class="barra-superior-quiz oculto">
+    <div class="barra-superior-inner">
+      <div class="temporizador" id="temporizador" aria-live="polite">45:00</div>
+      <div class="progreso-wrap">
+        <div class="progreso-texto">
+          <span id="txt-progreso">Pregunta 1 de 30</span>
+          <span id="txt-porcentaje">0%</span>
+        </div>
+        <div class="barra-progreso-bg"><div class="barra-progreso-fg" id="barra-progreso-fg" style="width:0%"></div></div>
+      </div>
+      <button class="btn-mapa-preguntas" id="btn-toggle-mapa" aria-expanded="false">🗂️ Ver preguntas</button>
+      <label class="switch" title="Activar o desactivar sonido"><input type="checkbox" id="chk-sonido-quiz" checked><span class="slider-switch"></span></label>
+    </div>
+  </div>
+
+  <div class="panel-mapa" id="panel-mapa">
+    <div class="grid-mapa" id="grid-mapa"></div>
+    <div class="leyenda-mapa">
+      <span><i class="dot-leyenda" style="background:var(--gris-claro);border:1px solid var(--gris-borde);"></i>Pendiente</span>
+      <span><i class="dot-leyenda" style="background:var(--verde-suave);border:1px solid var(--verde);"></i>Respondida</span>
+      <span><i class="dot-leyenda" style="background:var(--dorado);"></i>Actual</span>
+    </div>
+  </div>
+
+  <div class="pregunta-shell oculto" id="shell-pregunta">
+    <div class="pregunta-card" id="pregunta-card"></div>
+    <div class="nav-pregunta">
+      <button class="btn-ghost" id="btn-anterior">⬅ Anterior</button>
+      <div class="grupo-der">
+        <button class="btn-secundario" id="btn-finalizar">🏁 Finalizar simulacro</button>
+        <button class="btn-primario" id="btn-siguiente" style="margin:0;padding:14px 32px;">Siguiente ➡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= PANTALLA RESULTADOS ======================= -->
+  <section id="pantalla-resultados" class="oculto">
+    <div class="card">
+      <div class="resumen-hero">
+        <div style="font-size:2.2em;">🏆</div>
+        <h1>Informe final del simulacro</h1>
+        <div class="puntaje-grande"><span id="res-pct" class="puntaje-pct">0%</span></div>
+        <p style="color:var(--gris-medio);">Nivel alcanzado: <b id="res-nivel">-</b></p>
+      </div>
+
+      <div class="mensaje-motivacional" id="mensaje-motivacional"></div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="valor" id="res-correctas">0</div><div class="lbl">Correctas</div></div>
+        <div class="stat-card"><div class="valor" id="res-incorrectas">0</div><div class="lbl">Incorrectas</div></div>
+        <div class="stat-card"><div class="valor" id="res-tiempo">0:00</div><div class="lbl">Tiempo empleado</div></div>
+        <div class="stat-card"><div class="valor" id="res-puntaje">0</div><div class="lbl">Puntaje total</div></div>
+      </div>
+
+      <h3>📊 Rendimiento por subtemática</h3>
+      <div id="lista-subtemas"></div>
+
+      <h3>📈 Gráfico de desempeño</h3>
+      <div class="viz" style="background:var(--gris-claro);">
+        <div class="grafico-desempeno" id="grafico-desempeno"></div>
+      </div>
+
+      <div class="dos-col">
+        <div class="col-box fortalezas">
+          <h4>💪 Fortalezas identificadas</h4>
+          <ul id="lista-fortalezas"></ul>
+        </div>
+        <div class="col-box mejorar">
+          <h4>🎯 Aspectos por mejorar</h4>
+          <ul id="lista-mejorar"></ul>
+        </div>
+      </div>
+
+      <h3>🏅 Insignias obtenidas</h3>
+      <div class="badges-grid" id="badges-grid"></div>
+
+      <div class="acciones-finales">
+        <button class="btn-primario" id="btn-ver-revision" style="margin:0;">📝 Ver revisión de las 30 preguntas</button>
+        <button class="btn-secundario" id="btn-reiniciar">🔄 Reiniciar simulacro</button>
+      </div>
+    </div>
+
+    <div class="card oculto" id="card-revision" style="margin-top:22px;">
+      <h2>📝 Revisión detallada de preguntas</h2>
+      <div id="contenedor-revision"></div>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=826"
+       style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+      🏫 Regresar al Aula Virtual
+    </a>
+    <script>
+      const btn = document.getElementById('btn-volver');
+      const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=826';
+      const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=826';
+      const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (esMóvil) {
+        btn.href = appUrl;
+      }
+    </script>
+  </footer>
+
+</div>
+
+<div class="streak-toast" id="streak-toast"></div>
+
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div class="modal-caja">
+    <h3 id="modal-titulo">⚠️ Confirmar acción</h3>
+    <p id="modal-mensaje"></p>
+    <div class="modal-botones">
+      <button class="btn-ghost" id="modal-btn-cancelar">Cancelar</button>
+      <button class="btn-primario" id="modal-btn-aceptar" style="margin:0;padding:12px 26px;">Sí, continuar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+   SIMULADOR ICFES – HISTORIA Y GEOGRAFÍA BÁSICA – NIVEL 5
+   Código 100% Vanilla JS. Sin dependencias externas.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. DATOS: SUBTEMÁTICAS Y BANCO DE PREGUNTAS
+--------------------------------------------------------------------------- */
+const SUBTEMAS = [
+  "La historia como herramienta para comprender la sociedad",
+  "Grandes períodos de la historia",
+  "Historia de Colombia",
+  "Conceptos básicos de geografía",
+  "Representación del espacio geográfico",
+  "Geografía física de Colombia y del mundo",
+  "Geografía humana y organización del territorio",
+  "Relaciones entre sociedad y medio ambiente",
+  "Interpretación de información geográfica e histórica",
+  "Explicación de procesos históricos y geográficos tipo ICFES"
+];
+const COLOR_SUBTEMA = ["#0B2545","#123a6b","#1c4f8f","#2a6bb0","#F59E0B","#e08a1a","#c9720f","#16A34A","#0e8a45","#DC2626"];
+
+function vizTimeline(items){
+  let html = '<div class="viz"><div class="viz-title">Línea de tiempo</div><div class="viz-timeline">';
+  items.forEach(it=>{
+    html += '<div class="viz-timeline-item"><div class="viz-dot"></div><div class="viz-fecha">'+it[0]+'</div><div class="viz-label">'+it[1]+'</div></div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+function vizTable(titulo, headers, rows){
+  let html = '<div class="viz"><div class="viz-title">'+titulo+'</div><table class="viz-table"><thead><tr>';
+  headers.forEach(h=> html += '<th>'+h+'</th>');
+  html += '</tr></thead><tbody>';
+  rows.forEach(r=>{ html += '<tr>'; r.forEach(c=> html += '<td>'+c+'</td>'); html += '</tr>'; });
+  html += '</tbody></table></div>';
+  return html;
+}
+function vizChart(titulo, data){ // data: [[label, value, maxRef],...]
+  const max = Math.max(...data.map(d=>d[1]))*1.15;
+  let html = '<div class="viz"><div class="viz-title">'+titulo+'</div><div class="viz-chart">';
+  data.forEach(d=>{
+    const h = Math.max(6, Math.round((d[1]/max)*130));
+    html += '<div class="viz-bar-col"><div class="viz-bar-val">'+d[1]+(d[2]||'')+'</div><div class="viz-bar" style="height:'+h+'px;"></div><div class="viz-bar-label">'+d[0]+'</div></div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+function vizMap(titulo, regiones, leyenda){ // regiones:[[nombre,color]]
+  let html = '<div class="viz"><div class="viz-title">'+titulo+'</div><div class="viz-map">';
+  regiones.forEach(r=>{ html += '<div class="viz-region" style="background:'+r[1]+';">'+r[0]+'</div>'; });
+  html += '</div>';
+  if(leyenda){ html += '<div class="viz-map-leyenda">'+leyenda.map(l=>'<span><i class="dot-leyenda" style="background:'+l[1]+';"></i>'+l[0]+'</span>').join('')+'</div>'; }
+  html += '</div>';
+  return html;
+}
+function vizCoord(puntoX, puntoY){ // grid 5x4, punto en celda
+  let html = '<div class="viz"><div class="viz-title">Cuadrícula de coordenadas (simplificada)</div><div class="viz-coord">';
+  for(let y=0;y<4;y++){
+    for(let x=0;x<5;x++){
+      html += '<div class="viz-coord-cell">'+((x===puntoX&&y===puntoY)?'<div class="punto"></div>':'')+'</div>';
+    }
+  }
+  html += '</div></div>';
+  return html;
+}
+function vizPhoto(texto, cap){
+  return '<div class="viz"><div class="viz-title">Fotografía / registro histórico (esquematizado)</div><div class="viz-photo">📷 '+texto+'<div class="cap">'+cap+'</div></div></div>';
+}
+
+/* Banco de 40 preguntas originales (4 por subtemática: básico, intermedio, intermedio, avanzado) */
+const BANCO_RAW = [
+/* ===== SUBTEMA 1 ===== */
+{s:1,d:'basico',c:'Clasificación de fuentes históricas',
+ p:'Un investigador encuentra una carta escrita en 1810 por un habitante de Santa Fe, en la que describe el ambiente de tensión previo al 20 de julio. ¿Qué tipo de fuente histórica es este documento?',
+ v:null,
+ o:[['Fuente primaria, porque fue elaborada por alguien que vivió los hechos en el momento en que ocurrieron', true],
+    ['Fuente secundaria, porque narra un acontecimiento político', false],
+    ['Fuente terciaria, porque resume información de otros documentos', false],
+    ['No es una fuente histórica válida porque se trata de un texto personal', false]],
+ e:'Las fuentes primarias son aquellas producidas por testigos o protagonistas directos de un hecho, en el momento o cerca de su ocurrencia. Una carta de 1810 escrita por alguien que vivió esos días cumple esta condición, a diferencia de las fuentes secundarias, que interpretan o analizan hechos ya ocurridos con base en otras fuentes.'},
+
+{s:1,d:'intermedio',c:'Interpretación de líneas de tiempo y relación causa-consecuencia',
+ p:'Observa la línea de tiempo de un municipio colombiano. ¿Cuál opción explica mejor la relación causa-consecuencia entre la llegada del ferrocarril y el crecimiento del comercio local?',
+ v:vizTimeline([['1850','Fundación del municipio'],['1920','Llegada del ferrocarril'],['1935','Crecimiento del comercio local'],['1960','Migración campo-ciudad']]),
+ o:[['La llegada del ferrocarril facilitó el transporte de mercancías, lo que impulsó el crecimiento del comercio local', true],
+    ['El crecimiento del comercio local hizo necesaria la construcción del ferrocarril años después', false],
+    ['Ambos hechos ocurrieron de forma simultánea y no guardan relación entre sí', false],
+    ['La fundación del municipio en 1850 fue la causa directa del comercio de 1935, sin relación con el ferrocarril', false]],
+ e:'En el tiempo histórico, los hechos no solo se ordenan cronológicamente sino que se conectan por relaciones de causalidad. El ferrocarril, al facilitar el transporte de personas y mercancías, generó condiciones favorables para la actividad comercial, lo cual explica por qué el crecimiento comercial aparece después de 1920 y no antes.'},
+
+{s:1,d:'intermedio',c:'Diferenciación entre tiempo cronológico y tiempo histórico',
+ p:'Un docente afirma que "el tiempo histórico no es lo mismo que el tiempo cronológico". ¿Cuál de las siguientes situaciones ilustra mejor esta idea?',
+ v:null,
+ o:[['La Edad Media duró varios siglos, pero sus estructuras sociales y económicas no cambiaron al mismo ritmo en todas las regiones de Europa', true],
+    ['Un calendario permite ubicar con exactitud el día en que ocurrió una batalla', false],
+    ['Los historiadores usan fechas exactas para narrar los hechos en orden', false],
+    ['El tiempo cronológico y el tiempo histórico son términos que significan exactamente lo mismo', false]],
+ e:'El tiempo cronológico mide años, meses y días de forma exacta y uniforme, mientras que el tiempo histórico se refiere a la duración y ritmo de los procesos sociales, que pueden ser lentos (permanencias) o acelerados (cambios) y variar según el lugar. Por eso una misma "época" puede vivirse de forma distinta en diferentes regiones.'},
+
+{s:1,d:'avanzado',c:'Argumentación sobre confiabilidad de fuentes históricas',
+ p:'Para reconstruir cómo se sentía la población de una ciudad durante una epidemia del siglo XIX, un historiador cuenta con dos fuentes: (1) el diario íntimo de un médico que atendió enfermos día a día, y (2) un libro publicado 80 años después que analiza las causas económicas de la epidemia. ¿Cuál es el uso más adecuado de estas fuentes?',
+ v:null,
+ o:[['El diario es más útil para comprender las emociones y vivencias inmediatas, mientras que el libro posterior aporta una visión más amplia de las causas a largo plazo', true],
+    ['El libro publicado después es siempre más confiable porque fue escrito con mayor información disponible', false],
+    ['El diario debe descartarse porque refleja solo la opinión subjetiva de una persona', false],
+    ['Ambas fuentes deben ignorarse porque ninguna presenta datos estadísticos exactos', false]],
+ e:'Cada tipo de fuente aporta una perspectiva distinta y complementaria: las fuentes primarias, como un diario, permiten acercarse a las vivencias y emociones del momento, mientras que las fuentes secundarias, elaboradas con distancia temporal, ayudan a comprender causas estructurales y consecuencias a largo plazo. Un buen análisis histórico combina ambos tipos de fuentes en lugar de descartar alguna.'},
+
+/* ===== SUBTEMA 2 ===== */
+{s:2,d:'basico',c:'Reconocimiento de los grandes períodos históricos',
+ p:'La invención de la escritura se utiliza tradicionalmente como el criterio que marca el paso de un período histórico a otro. ¿A qué transición corresponde este hecho?',
+ v:null,
+ o:[['El paso de la Prehistoria a la Edad Antigua', true],
+    ['El paso de la Edad Antigua a la Edad Media', false],
+    ['El paso de la Edad Media a la Edad Moderna', false],
+    ['El paso de la Edad Moderna a la Edad Contemporánea', false]],
+ e:'La Prehistoria comprende el período previo a la aparición de la escritura, mientras que la Edad Antigua inicia precisamente cuando distintas civilizaciones comienzan a dejar registros escritos, lo que permite a los historiadores contar con fuentes primarias directas para reconstruir esos hechos.'},
+
+{s:2,d:'intermedio',c:'Relación entre períodos históricos y sus características',
+ p:'Un estudiante afirma: "En la Edad Media, buena parte del poder político y económico estaba en manos de señores feudales, mientras los campesinos trabajaban la tierra a cambio de protección". ¿Qué elemento de esta afirmación describe correctamente una característica del período?',
+ v:null,
+ o:[['La organización social basada en relaciones de dependencia entre señores feudales y campesinos', true],
+    ['La existencia de repúblicas democráticas gobernadas por el voto popular', false],
+    ['El predominio de la producción industrial en grandes fábricas', false],
+    ['La exploración y colonización de América por parte de reinos europeos', false]],
+ e:'El feudalismo fue una de las principales estructuras sociales y económicas de la Edad Media en Europa, caracterizada por relaciones de dependencia entre señores feudales, que ofrecían protección y tierras, y campesinos o vasallos, que a cambio entregaban trabajo o tributos.'},
+
+{s:2,d:'intermedio',c:'Relación entre los períodos históricos y la actualidad',
+ p:'Muchos sistemas de gobierno actuales se basan en la división de poderes y la participación ciudadana. ¿Con qué período histórico se asocia principalmente el origen de estas ideas políticas que hoy inspiran las democracias contemporáneas?',
+ v:null,
+ o:[['La Edad Moderna, con el desarrollo de ideas ilustradas sobre la soberanía popular y la separación de poderes', true],
+    ['La Prehistoria, por la organización en clanes y tribus nómadas', false],
+    ['La Edad Media, por el sistema de gobierno feudal', false],
+    ['Únicamente la Edad Contemporánea, sin ninguna relación con períodos anteriores', false]],
+ e:'Durante la Edad Moderna, especialmente con la Ilustración, se consolidaron ideas como la soberanía popular, la división de poderes y los derechos individuales, que sentaron las bases filosóficas de las democracias contemporáneas, mostrando cómo procesos históricos del pasado siguen influyendo en la actualidad.'},
+
+{s:2,d:'avanzado',c:'Análisis integrador de procesos históricos de la Edad Moderna',
+ p:'Durante la Edad Moderna confluyeron varios procesos: la invención de la imprenta, los viajes de navegación transoceánica y el auge del pensamiento humanista. ¿Cuál es la mejor explicación de cómo estos procesos, combinados, contribuyeron a la expansión europea hacia otros continentes?',
+ v:null,
+ o:[['La imprenta permitió difundir conocimientos técnicos y mapas, el humanismo impulsó la curiosidad por explorar el mundo, y los avances en navegación hicieron posible viajar largas distancias, factores que juntos favorecieron la expansión europea', true],
+    ['Estos tres procesos ocurrieron de forma aislada y ninguno influyó en los demás', false],
+    ['Solo la navegación fue relevante, mientras que la imprenta y el humanismo no tuvieron ninguna incidencia', false],
+    ['La expansión europea se debió exclusivamente a factores religiosos, sin relación con avances técnicos o intelectuales', false]],
+ e:'Los procesos históricos rara vez tienen una sola causa. En este caso, la difusión de conocimiento gracias a la imprenta, el interés humanista por conocer y explorar el mundo, y los avances técnicos en navegación se combinaron para hacer posible y atractiva la expansión europea, lo que ilustra cómo distintos factores culturales, intelectuales y técnicos interactúan en un mismo proceso histórico.'},
+
+/* ===== SUBTEMA 3 ===== */
+{s:3,d:'basico',c:'Comprensión de la organización de los pueblos indígenas americanos',
+ p:'Antes de la llegada de los europeos, diversos pueblos indígenas como los muiscas desarrollaron sistemas de agricultura, organización social y comercio propios. ¿Qué idea describe mejor esta situación?',
+ v:null,
+ o:[['Los pueblos indígenas tenían formas de organización social, económica y territorial complejas y propias antes de la Conquista', true],
+    ['Los pueblos indígenas no tenían ningún tipo de organización social antes de la llegada de los europeos', false],
+    ['Todos los pueblos indígenas de América tenían exactamente la misma cultura y organización', false],
+    ['La agricultura y el comercio en América solo existieron después de la Conquista española', false]],
+ e:'Pueblos como los muiscas, taironas o incas desarrollaron sociedades con estructuras políticas, sistemas agrícolas y redes de intercambio comercial mucho antes de la llegada europea, lo que demuestra la diversidad y complejidad de las culturas americanas precolombinas.'},
+
+{s:3,d:'intermedio',c:'Comprensión de las consecuencias sociales de la Conquista y la Colonia',
+ p:'Durante la Colonia, el sistema de la encomienda obligaba a los indígenas a trabajar para los colonizadores españoles a cambio de supuesta "protección" y evangelización. ¿Cuál fue una consecuencia directa de este sistema para la población indígena?',
+ v:null,
+ o:[['La explotación laboral y la disminución de la población indígena debido a las duras condiciones de trabajo y las enfermedades', true],
+    ['El fortalecimiento político y económico de los pueblos indígenas frente a los colonizadores', false],
+    ['La independencia inmediata de los territorios indígenas frente a la Corona española', false],
+    ['La desaparición total del sistema de encomienda desde su primer año de aplicación', false]],
+ e:'La encomienda impuso condiciones de trabajo forzado que, sumadas a la llegada de enfermedades desconocidas para los indígenas, provocaron una fuerte disminución demográfica y un profundo impacto social y económico en las comunidades originarias durante la Colonia.'},
+
+{s:3,d:'intermedio',c:'Comprensión de las causas del proceso de independencia',
+ p:'El 20 de julio de 1810 se conformó en Santa Fe una Junta de Gobierno que cuestionó la autoridad del virrey. ¿Qué relación existe entre este hecho y el proceso de independencia de la Nueva Granada?',
+ v:null,
+ o:[['Fue uno de los hechos que dio inicio al proceso político que, con el tiempo, condujo a la independencia definitiva', true],
+    ['Fue el momento exacto en que se firmó la independencia total de España, sin procesos posteriores', false],
+    ['No tuvo ninguna relación con el proceso de independencia, fue un hecho aislado', false],
+    ['Ocurrió después de que Colombia ya fuera un país completamente independiente', false]],
+ e:'El 20 de julio de 1810 no significó la independencia inmediata, sino el inicio de un proceso político de varios años que incluyó conflictos internos, la reconquista española y finalmente la independencia definitiva en 1819, lo que muestra que los procesos históricos suelen desarrollarse en etapas.'},
+
+{s:3,d:'avanzado',c:'Análisis integrador de la historia de Colombia',
+ p:'Observa la secuencia de procesos de la historia de Colombia. ¿Cuál opción explica mejor la relación general entre estos períodos?',
+ v:vizTimeline([['Pueblos originarios','Organización social y territorial propia'],['Conquista y Colonia','Dominio español y nuevas estructuras sociales'],['Independencia','Ruptura política con España'],['República','Formación del Estado y transformaciones políticas']]),
+ o:[['Cada período transformó las estructuras heredadas del anterior, generando cambios políticos, sociales y territoriales que explican la configuración actual del país', true],
+    ['Cada período ocurrió de manera aislada, sin ninguna influencia sobre el siguiente', false],
+    ['La Independencia eliminó por completo cualquier huella dejada por la Colonia', false],
+    ['La organización de los pueblos originarios no tuvo ninguna influencia en los períodos posteriores', false]],
+ e:'La historia de Colombia es un proceso acumulativo: las estructuras territoriales y sociales indígenas fueron transformadas por la Colonia, la Independencia modificó el orden político heredado, y la formación de la República continuó ajustando esas estructuras. Comprender el presente exige reconocer esta cadena de cambios y permanencias.'},
+
+/* ===== SUBTEMA 4 ===== */
+{s:4,d:'basico',c:'Comprensión del concepto de espacio geográfico',
+ p:'Una ciudad cuenta con montañas, ríos, calles, edificios y parques. ¿Qué concepto describe mejor la combinación de estos elementos naturales y construidos por el ser humano?',
+ v:null,
+ o:[['Espacio geográfico, porque integra elementos naturales y las transformaciones realizadas por la sociedad', true],
+    ['Paisaje exclusivamente natural, porque solo se consideran montañas y ríos', false],
+    ['Territorio político, porque únicamente se refiere a los límites administrativos', false],
+    ['Mapa, porque es la única forma de representar una ciudad', false]],
+ e:'El espacio geográfico es el resultado de la interacción entre los elementos naturales (relieve, ríos, clima) y las intervenciones humanas (ciudades, vías, cultivos), por lo que no puede reducirse únicamente a lo natural ni únicamente a lo construido.'},
+
+{s:4,d:'intermedio',c:'Diferenciación entre localización absoluta y relativa',
+ p:'Un turista pregunta cómo llegar a un museo y recibe dos respuestas distintas: (1) "Está en las coordenadas 4°36′N, 74°04′O" y (2) "Está a dos cuadras de la plaza principal, cerca del río". ¿Qué tipo de localización representa cada respuesta?',
+ v:null,
+ o:[['La primera es localización absoluta y la segunda es localización relativa', true],
+    ['Ambas respuestas representan localización absoluta', false],
+    ['Ambas respuestas representan localización relativa', false],
+    ['La primera es localización relativa y la segunda es localización absoluta', false]],
+ e:'La localización absoluta se basa en coordenadas geográficas exactas (latitud y longitud), mientras que la localización relativa describe un lugar a partir de su relación o cercanía con otros puntos de referencia conocidos, como una plaza o un río.'},
+
+{s:4,d:'intermedio',c:'Lectura de coordenadas geográficas',
+ p:'En la cuadrícula simplificada se ha marcado un punto. Si cada fila representa un valor de latitud y cada columna un valor de longitud, ¿qué elementos son necesarios para ubicar con precisión ese punto en el planeta?',
+ v:vizCoord(2,1),
+ o:[['La latitud, que indica la posición norte-sur, y la longitud, que indica la posición este-oeste', true],
+    ['Únicamente los puntos cardinales, sin necesidad de coordenadas', false],
+    ['Solamente la escala del mapa, sin importar la latitud ni la longitud', false],
+    ['El nombre del país, ya que las coordenadas no son necesarias para ubicar un lugar', false]],
+ e:'La latitud y la longitud son las dos coordenadas que permiten ubicar cualquier punto exacto sobre la superficie terrestre: la latitud mide la distancia angular al norte o sur del Ecuador, y la longitud mide la distancia angular al este u oeste del meridiano de Greenwich.'},
+
+{s:4,d:'avanzado',c:'Diferenciación entre paisaje natural y paisaje cultural',
+ p:'Una llanura que originalmente estaba cubierta de bosque nativo fue transformada durante décadas en campos de cultivo, canales de riego y vías rurales. ¿Cómo se explica mejor esta transformación desde la geografía?',
+ v:null,
+ o:[['El paisaje natural fue modificado por la acción humana hasta convertirse en un paisaje cultural, sin dejar de tener como base los elementos naturales originales', true],
+    ['El paisaje natural desapareció por completo y fue reemplazado por un espacio sin ninguna relación con la geografía', false],
+    ['No hubo ninguna transformación, ya que los paisajes naturales no pueden ser modificados por el ser humano', false],
+    ['Se trata únicamente de un paisaje natural, pues los canales de riego no son intervenciones humanas', false]],
+ e:'El paisaje cultural surge cuando la sociedad transforma un paisaje natural mediante actividades como la agricultura o la construcción de infraestructura, pero conserva como base los elementos naturales originales (relieve, suelos, clima), que condicionan el tipo de transformación posible.'},
+
+/* ===== SUBTEMA 5 ===== */
+{s:5,d:'basico',c:'Diferenciación entre mapas, planos y croquis',
+ p:'Un estudiante debe explicar a un compañero nuevo cómo llegar caminando desde la entrada del colegio hasta la biblioteca, usando un dibujo simple hecho a mano, sin escala exacta. ¿Qué tipo de representación del espacio está utilizando?',
+ v:null,
+ o:[['Un croquis, porque es una representación simple y aproximada, elaborada sin instrumentos de precisión', true],
+    ['Un mapa, porque siempre representa con exactitud grandes extensiones de territorio', false],
+    ['Un globo terráqueo, porque representa la Tierra en forma esférica', false],
+    ['Un plano catastral, porque incluye límites legales de propiedad', false]],
+ e:'El croquis es una representación gráfica simplificada de un espacio, realizada generalmente a mano y sin instrumentos de precisión, útil para orientarse rápidamente, a diferencia del mapa o el plano, que requieren escalas y mediciones más exactas.'},
+
+{s:5,d:'intermedio',c:'Interpretación de la escala cartográfica',
+ p:'En un mapa, la escala indica que 1 centímetro representa 5 kilómetros en la realidad. Si la distancia entre dos pueblos en el mapa es de 6 centímetros, ¿cuál es la distancia real aproximada entre ellos?',
+ v:null,
+ o:[['30 kilómetros', true],
+    ['11 kilómetros', false],
+    ['6 kilómetros', false],
+    ['60 kilómetros', false]],
+ e:'La escala cartográfica relaciona la distancia en el mapa con la distancia real. Si 1 cm equivale a 5 km, entonces 6 cm equivalen a 6 × 5 = 30 km. Comprender la escala es esencial para interpretar correctamente las distancias reales representadas en un mapa.'},
+
+{s:5,d:'intermedio',c:'Interpretación de símbolos cartográficos',
+ p:'En un mapa turístico aparece una tabla de símbolos junto al mapa principal. Un símbolo circular azul indica "fuente de agua" y un triángulo verde indica "zona de camping". Si un excursionista busca un lugar para acampar cerca del agua, ¿qué debe hacer?',
+ v:vizTable('Leyenda del mapa turístico', ['Símbolo','Significado'], [['🔵 Círculo azul','Fuente de agua'],['🔺 Triángulo verde','Zona de camping'],['⬛ Cuadrado gris','Refugio de montaña']]),
+ o:[['Ubicar en el mapa un triángulo verde que esté cerca de un círculo azul', true],
+    ['Buscar únicamente cuadrados grises, ya que representan cualquier tipo de actividad al aire libre', false],
+    ['Ignorar la leyenda, porque los símbolos cartográficos no aportan información útil', false],
+    ['Buscar un círculo azul solo, sin relacionarlo con ningún otro símbolo', false]],
+ e:'Los símbolos cartográficos, junto con su leyenda, permiten identificar rápidamente elementos del territorio representado. En este caso, interpretar correctamente el mapa implica relacionar dos símbolos distintos (camping y fuente de agua) para encontrar un lugar que cumpla ambas condiciones.'},
+
+{s:5,d:'avanzado',c:'Interpretación de un mapa temático',
+ p:'El siguiente mapa temático simplificado muestra la densidad de población de cinco regiones mediante la intensidad del color: entre más oscuro, mayor densidad poblacional. ¿Qué conclusión se puede sustentar con esta información?',
+ v:vizMap('Densidad de población por región (mapa temático simplificado)',
+   [['Región A','#0B2545'],['Región B','#123a6b'],['Región C','#7c98c2'],['Región D','#c3d2e6'],['Región E','#123a6b']],
+   [['Muy alta densidad','#0B2545'],['Alta densidad','#123a6b'],['Media densidad','#7c98c2'],['Baja densidad','#c3d2e6']]),
+ o:[['La Región A concentra una mayor cantidad de población en relación con su territorio que la Región D', true],
+    ['Todas las regiones tienen exactamente la misma densidad de población', false],
+    ['El color del mapa no aporta ninguna información sobre la población de las regiones', false],
+    ['La Región D es la que tiene mayor densidad poblacional de todas', false]],
+ e:'Los mapas temáticos usan variables visuales, como la intensidad del color, para representar datos como la densidad de población. Interpretar correctamente este tipo de mapa implica relacionar la intensidad del color con la leyenda: colores más oscuros indican mayor concentración poblacional, como ocurre en la Región A frente a la D.'},
+
+/* ===== SUBTEMA 6 ===== */
+{s:6,d:'basico',c:'Reconocimiento de las regiones naturales de Colombia',
+ p:'Colombia se divide en varias regiones naturales según sus características de relieve, clima e hidrografía, como la región Andina, la Caribe, la Pacífica, la Orinoquía, la Amazonía y la Insular. ¿Qué criterio se utiliza principalmente para esta división?',
+ v:null,
+ o:[['Las características físicas y naturales del territorio, como el relieve, el clima y la vegetación', true],
+    ['Únicamente la cantidad de habitantes que vive en cada zona', false],
+    ['Exclusivamente los límites políticos entre departamentos', false],
+    ['El idioma que se habla en cada región del país', false]],
+ e:'Las regiones naturales de Colombia se definen principalmente a partir de rasgos físicos compartidos, como el relieve, el clima, la vegetación y la hidrografía, lo que permite agrupar zonas con condiciones ambientales similares, más allá de las divisiones político-administrativas.'},
+
+{s:6,d:'intermedio',c:'Relación entre relieve y clima (pisos térmicos)',
+ p:'Un agricultor cultiva café en una zona ubicada a 1.600 metros sobre el nivel del mar, con temperaturas templadas, mientras que otro agricultor cultiva papa a 3.000 metros, con temperaturas frías. ¿Qué concepto geográfico explica esta diferencia de cultivos según la altitud?',
+ v:null,
+ o:[['Los pisos térmicos, ya que la temperatura varía según la altitud sobre el nivel del mar', true],
+    ['La longitud geográfica, ya que determina exclusivamente la temperatura de un lugar', false],
+    ['El tamaño de la finca, ya que entre más grande, más fría es la temperatura', false],
+    ['La cercanía al mar, sin relación alguna con la altitud del terreno', false]],
+ e:'En zonas de relieve montañoso como los Andes colombianos, la temperatura disminuye a medida que aumenta la altitud, lo que da origen a los pisos térmicos (cálido, templado, frío, páramo). Esta variación explica por qué diferentes cultivos se desarrollan mejor en distintas alturas.'},
+
+{s:6,d:'intermedio',c:'Reconocimiento de las principales cuencas hidrográficas de Colombia',
+ p:'El río Magdalena atraviesa gran parte del territorio colombiano de sur a norte y ha sido históricamente una vía de transporte y fuente de recursos para numerosas poblaciones. ¿Qué elemento geográfico describe mejor su función dentro del territorio?',
+ v:null,
+ o:[['Es uno de los principales ejes hidrográficos del país, con gran importancia económica, social y de conectividad', true],
+    ['Es un río de poca importancia porque no atraviesa zonas pobladas', false],
+    ['Es un canal artificial construido completamente por el ser humano', false],
+    ['No tiene ninguna relación con la economía ni el poblamiento del territorio colombiano', false]],
+ e:'El río Magdalena ha sido, desde tiempos precolombinos, un eje fundamental de comunicación, comercio y asentamiento humano en Colombia, lo que demuestra la estrecha relación entre la hidrografía y la organización social y económica de un territorio.'},
+
+{s:6,d:'avanzado',c:'Comparación de ecosistemas y su relación con los recursos hídricos',
+ p:'Los páramos actúan como grandes reguladores y proveedores de agua dulce para las ciudades cercanas, mientras que la selva húmeda tropical amazónica regula la humedad y el clima a escala continental. ¿Qué conclusión integra mejor esta comparación?',
+ v:null,
+ o:[['Aunque son ecosistemas distintos, ambos cumplen funciones ambientales esenciales relacionadas con el ciclo del agua y el equilibrio climático', true],
+    ['Los páramos y la selva amazónica son ecosistemas idénticos en clima, vegetación y función ambiental', false],
+    ['Solo la selva amazónica tiene alguna relación con el agua; los páramos no cumplen ninguna función hídrica', false],
+    ['Estos ecosistemas no tienen ninguna relación con el bienestar de las poblaciones humanas', false]],
+ e:'Aunque el páramo y la selva húmeda tropical son ecosistemas muy diferentes en clima, altitud y biodiversidad, ambos cumplen funciones ambientales clave para la regulación del agua y el clima, lo que evidencia la importancia de conservarlos pese a sus diferencias.'},
+
+/* ===== SUBTEMA 7 ===== */
+{s:7,d:'basico',c:'Comprensión de la división político-administrativa de Colombia',
+ p:'Colombia está organizada territorialmente en departamentos, y estos a su vez se dividen en municipios, cada uno con sus propias autoridades locales. ¿Qué propósito cumple principalmente esta organización político-administrativa?',
+ v:null,
+ o:[['Facilitar el gobierno, la administración de recursos y la atención a las necesidades de la población en distintas escalas territoriales', true],
+    ['Impedir que los ciudadanos participen en las decisiones políticas de su territorio', false],
+    ['Eliminar cualquier diferencia cultural o económica entre las regiones del país', false],
+    ['Servir únicamente como una división simbólica sin ninguna función administrativa', false]],
+ e:'La división político-administrativa permite distribuir funciones de gobierno y administración en distintos niveles (nacional, departamental, municipal), facilitando la atención de las necesidades específicas de cada territorio y su población.'},
+
+{s:7,d:'intermedio',c:'Interpretación de tablas de población urbana y rural',
+ p:'La siguiente tabla muestra el porcentaje de población urbana y rural en un país durante tres décadas. ¿Qué tendencia se puede identificar con base en estos datos?',
+ v:vizTable('Evolución de la población urbana y rural', ['Año','Población urbana','Población rural'], [['1990','55%','45%'],['2005','68%','32%'],['2020','78%','22%']]),
+ o:[['Se ha presentado un proceso sostenido de urbanización, con una disminución progresiva de la población rural', true],
+    ['La población rural ha aumentado de forma constante durante las tres décadas', false],
+    ['No existe ninguna diferencia significativa entre la población urbana y rural en el período analizado', false],
+    ['La población urbana ha disminuido progresivamente desde 1990 hasta 2020', false]],
+ e:'Al comparar los datos de las tres décadas se observa un incremento constante del porcentaje de población urbana (de 55% a 78%) y una disminución correspondiente de la población rural, lo que evidencia un proceso de urbanización característico de muchos países en las últimas décadas.'},
+
+{s:7,d:'intermedio',c:'Clasificación de los sectores económicos',
+ p:'En una región, unos habitantes se dedican al cultivo de café, otros trabajan en una fábrica de textiles, y otros ofrecen servicios de transporte turístico. ¿Cómo se clasifican estas actividades según los sectores económicos?',
+ v:null,
+ o:[['Sector primario (cultivo de café), sector secundario (fábrica de textiles) y sector terciario (servicios de transporte turístico)', true],
+    ['Todas las actividades pertenecen al sector primario, porque todas generan ingresos económicos', false],
+    ['El cultivo de café pertenece al sector terciario porque se vende en el mercado', false],
+    ['La fábrica de textiles pertenece al sector primario porque transforma materias primas', false]],
+ e:'El sector primario incluye actividades de extracción o producción de materias primas (agricultura, ganadería, minería); el sector secundario transforma esas materias primas en productos elaborados (industria); y el sector terciario agrupa actividades de servicios, como el comercio, el transporte o el turismo.'},
+
+{s:7,d:'avanzado',c:'Interpretación de gráficos sobre crecimiento urbano y sus causas',
+ p:'El siguiente gráfico muestra el crecimiento de la población en tres ciudades durante 20 años. ¿Qué explicación es más coherente con este patrón de crecimiento urbano?',
+ v:vizChart('Crecimiento poblacional en 20 años (miles de habitantes)', [['Ciudad X',120,'k'],['Ciudad Y',310,'k'],['Ciudad Z',480,'k']]),
+ o:[['Es probable que la Ciudad Z haya recibido mayor migración desde zonas rurales u otras regiones, posiblemente por mejores oportunidades laborales o de servicios', true],
+    ['El crecimiento poblacional de las ciudades no tiene relación con procesos de migración ni con oportunidades económicas', false],
+    ['La Ciudad X tuvo el mayor crecimiento poblacional de las tres ciudades analizadas', false],
+    ['Todas las ciudades presentaron exactamente el mismo nivel de crecimiento poblacional', false]],
+ e:'El crecimiento urbano diferenciado entre ciudades suele estar relacionado con procesos de migración interna, motivados por la búsqueda de empleo, educación o mejores servicios. Interpretar un gráfico de este tipo implica no solo leer los datos, sino relacionarlos con posibles causas sociales y económicas.'},
+
+/* ===== SUBTEMA 8 ===== */
+{s:8,d:'basico',c:'Comprensión del concepto de desarrollo sostenible',
+ p:'Una comunidad decide aprovechar sus recursos forestales para obtener madera, pero solo tala los árboles necesarios y siembra nuevos ejemplares para garantizar que el bosque se mantenga en el futuro. ¿Qué concepto describe mejor esta práctica?',
+ v:null,
+ o:[['Desarrollo sostenible, porque busca satisfacer necesidades actuales sin comprometer los recursos de las futuras generaciones', true],
+    ['Sobreexplotación, porque se están utilizando los recursos naturales sin ningún control', false],
+    ['Deforestación total, porque implica la eliminación completa del bosque', false],
+    ['Actividad económica sin ninguna relación con el medio ambiente', false]],
+ e:'El desarrollo sostenible busca un equilibrio entre el aprovechamiento de los recursos naturales para satisfacer necesidades humanas actuales y la conservación de esos recursos para que las generaciones futuras también puedan utilizarlos.'},
+
+{s:8,d:'intermedio',c:'Análisis de problemáticas ambientales: deforestación',
+ p:'En una región se ha talado gran parte del bosque para ampliar la frontera agrícola. Con el tiempo, los habitantes notan menor cantidad de agua en las quebradas y mayor erosión del suelo. ¿Qué relación explica mejor esta situación?',
+ v:null,
+ o:[['La deforestación redujo la capacidad del bosque para regular el agua y proteger el suelo, generando estas consecuencias ambientales', true],
+    ['La disminución del agua y la erosión del suelo no tienen ninguna relación con la tala de árboles', false],
+    ['La ampliación de la frontera agrícola siempre mejora la disponibilidad de agua en una región', false],
+    ['La erosión del suelo ocurre únicamente por causas naturales, sin relación con la actividad humana', false]],
+ e:'Los bosques cumplen funciones ecológicas fundamentales, como retener agua en el suelo y evitar su erosión gracias a las raíces de los árboles. Al eliminarlos, se afecta el ciclo hídrico local y aumenta la vulnerabilidad del suelo, lo que conecta directamente una acción humana con sus consecuencias ambientales.'},
+
+{s:8,d:'intermedio',c:'Reconocimiento de evidencias del cambio climático',
+ p:'Un noticiero informa que en los últimos años se han registrado temperaturas más altas de lo habitual, deshielo acelerado en zonas de alta montaña y eventos climáticos extremos más frecuentes. ¿A qué fenómeno global se asocian principalmente estas noticias?',
+ v:null,
+ o:[['Al cambio climático, entendido como la alteración a largo plazo de los patrones climáticos del planeta', true],
+    ['A un fenómeno exclusivamente local, sin ninguna relación con procesos globales', false],
+    ['A un ciclo natural que no tiene relación con la actividad humana', false],
+    ['A un evento que ocurre únicamente una vez cada varios siglos, sin relación con la actualidad', false]],
+ e:'El aumento de temperaturas, el deshielo de glaciares y la mayor frecuencia de eventos climáticos extremos son evidencias asociadas al cambio climático, un fenómeno global que, según el consenso científico, se ha visto acelerado por actividades humanas como la quema de combustibles fósiles.'},
+
+{s:8,d:'avanzado',c:'Interpretación de riesgo natural y responsabilidad ciudadana',
+ p:'El siguiente mapa esquemático muestra zonas de una ciudad clasificadas según su nivel de riesgo ante deslizamientos. ¿Qué acción sería más coherente con un enfoque de responsabilidad ciudadana y gestión del riesgo?',
+ v:vizMap('Zonas de riesgo por deslizamiento (esquema)',
+   [['Zona 1','#DC2626'],['Zona 2','#F59E0B'],['Zona 3','#16A34A'],['Zona 4','#F59E0B']],
+   [['Riesgo alto','#DC2626'],['Riesgo medio','#F59E0B'],['Riesgo bajo','#16A34A']]),
+ o:[['Evitar la construcción de viviendas en la Zona 1 y promover programas de reubicación y prevención en las zonas de mayor riesgo', true],
+    ['Construir más viviendas en la Zona 1 porque el riesgo alto no representa ningún peligro real', false],
+    ['Ignorar el mapa de riesgo, ya que no aporta información útil para la planificación territorial', false],
+    ['Reubicar a toda la población de la ciudad sin importar el nivel de riesgo de cada zona', false]],
+ e:'La gestión adecuada del riesgo implica identificar las zonas más vulnerables mediante herramientas como los mapas de riesgo, y a partir de esa información tomar decisiones responsables, como restringir la construcción en zonas de alto riesgo y priorizar la prevención, lo que conecta la interpretación geográfica con la responsabilidad ciudadana.'},
+
+/* ===== SUBTEMA 9 ===== */
+{s:9,d:'basico',c:'Interpretación básica de líneas de tiempo',
+ p:'Observa la línea de tiempo de un proceso histórico local. ¿Cuál fue el segundo hecho en ocurrir?',
+ v:vizTimeline([['1900','Llegada de nuevos pobladores'],['1935','Construcción de la primera escuela'],['1958','Pavimentación de la vía principal'],['1990','Creación del primer hospital']]),
+ o:[['La construcción de la primera escuela', true],
+    ['La llegada de nuevos pobladores', false],
+    ['La pavimentación de la vía principal', false],
+    ['La creación del primer hospital', false]],
+ e:'Leer correctamente una línea de tiempo implica identificar el orden cronológico de los hechos representados. Según la secuencia, el segundo hecho, después de la llegada de nuevos pobladores en 1900, fue la construcción de la primera escuela en 1935.'},
+
+{s:9,d:'intermedio',c:'Interpretación de tablas demográficas',
+ p:'La siguiente tabla presenta la esperanza de vida y la tasa de natalidad en tres países. ¿Qué conclusión se puede sustentar con la información presentada?',
+ v:vizTable('Indicadores demográficos por país', ['País','Esperanza de vida','Tasa de natalidad (por 1000 hab.)'], [['País A','82 años','9'],['País B','74 años','15'],['País C','65 años','28']]),
+ o:[['El País C, con menor esperanza de vida, presenta la mayor tasa de natalidad entre los tres países', true],
+    ['El País A tiene la mayor tasa de natalidad de los tres países', false],
+    ['No existe ninguna diferencia relevante entre los tres países en los indicadores presentados', false],
+    ['El País B tiene la menor esperanza de vida de los tres países', false]],
+ e:'Interpretar una tabla demográfica implica comparar los datos entre las distintas categorías. En este caso, se observa que el País C combina la menor esperanza de vida con la mayor tasa de natalidad, un patrón frecuente en países con determinadas condiciones sociales y económicas.'},
+
+{s:9,d:'intermedio',c:'Interpretación de gráficos sobre fuentes de energía',
+ p:'El siguiente gráfico muestra la participación de distintas fuentes de energía en la matriz energética de un país. ¿Qué conclusión es coherente con la información presentada?',
+ v:vizChart('Participación de fuentes de energía (%)', [['Hidráulica',65,'%'],['Térmica',20,'%'],['Solar',8,'%'],['Eólica',7,'%']]),
+ o:[['La energía hidráulica representa la principal fuente de generación de energía en este país', true],
+    ['La energía solar es la fuente de energía más utilizada en este país', false],
+    ['Todas las fuentes de energía tienen exactamente la misma participación porcentual', false],
+    ['La energía térmica supera a todas las demás fuentes de energía combinadas', false]],
+ e:'Interpretar correctamente un gráfico de barras implica comparar la altura o el valor de cada barra. En este caso, la energía hidráulica, con 65%, es claramente la fuente predominante en la matriz energética representada, muy por encima de las demás fuentes.'},
+
+{s:9,d:'avanzado',c:'Análisis contextual integrando fuentes históricas y geográficas',
+ p:'Una fotografía histórica muestra un puerto fluvial muy activo a comienzos del siglo XX, con numerosos barcos y bodegas de almacenamiento. Actualmente, ese mismo lugar es un pequeño muelle poco utilizado, mientras que el transporte terrestre domina la región. ¿Qué explicación integra mejor la imagen histórica con el contexto geográfico actual?',
+ v:vizPhoto('Puerto fluvial activo, inicios del siglo XX', 'Numerosas embarcaciones y bodegas junto al río'),
+ o:[['El desarrollo de carreteras y otros medios de transporte redujo la importancia económica que antes tenía el transporte fluvial en la región', true],
+    ['El puerto dejó de ser importante porque el río desapareció por completo', false],
+    ['La fotografía no aporta ninguna información útil para comprender los cambios del territorio', false],
+    ['El transporte terrestre y el transporte fluvial nunca han tenido relación con la economía de una región', false]],
+ e:'Analizar una fuente histórica visual junto con el contexto geográfico actual permite comprender procesos de cambio territorial: la disminución de la actividad portuaria suele explicarse por transformaciones en los medios de transporte dominantes, como el auge de las carreteras, que desplazan progresivamente al transporte fluvial.'},
+
+/* ===== SUBTEMA 10 ===== */
+{s:10,d:'basico',c:'Identificación de relaciones causa-efecto',
+ p:'Una región experimenta una sequía prolongada que afecta gravemente los cultivos y el acceso al agua. Como consecuencia, muchas familias deciden trasladarse a otras zonas en busca de mejores condiciones de vida. ¿Qué relación se establece entre estos dos hechos?',
+ v:null,
+ o:[['La sequía es la causa y la migración de las familias es la consecuencia', true],
+    ['La migración de las familias es la causa y la sequía es la consecuencia', false],
+    ['Ambos hechos son completamente independientes y no guardan ninguna relación', false],
+    ['La sequía y la migración ocurrieron exactamente al mismo tiempo sin relación causal', false]],
+ e:'En este caso existe una clara relación de causa-efecto: la sequía (causa) genera condiciones adversas para la agricultura y el acceso al agua, lo que impulsa a las familias a migrar (efecto o consecuencia) en búsqueda de mejores condiciones.'},
+
+{s:10,d:'intermedio',c:'Comprensión de la relación entre territorio y sociedad',
+ p:'Muchas ciudades importantes del mundo se desarrollaron cerca de ríos o costas. ¿Qué explicación es más coherente con esta relación entre territorio y sociedad?',
+ v:null,
+ o:[['La cercanía a fuentes de agua facilita actividades esenciales como el consumo, la agricultura, el transporte y el comercio, lo que favorece el asentamiento humano', true],
+    ['Las ciudades se ubican cerca de ríos y costas exclusivamente por razones estéticas o paisajísticas', false],
+    ['La ubicación de las ciudades no tiene ninguna relación con las características del territorio', false],
+    ['Los ríos y las costas dificultan siempre el desarrollo de actividades económicas y sociales', false]],
+ e:'La relación entre territorio y sociedad es fundamental en geografía: los asentamientos humanos suelen ubicarse estratégicamente en lugares que facilitan el acceso a recursos esenciales, como el agua, y que favorecen actividades productivas y de comunicación, como ocurre con las ciudades cercanas a ríos o costas.'},
+
+{s:10,d:'intermedio',c:'Análisis de problemáticas territoriales y argumentación',
+ p:'En una región agrícola, algunos propietarios desean convertir sus tierras en zonas de vivienda campestre, mientras que otros habitantes insisten en mantener el uso agrícola para garantizar la producción de alimentos. ¿Qué opción representa una argumentación equilibrada frente a esta problemática territorial?',
+ v:null,
+ o:[['Es necesario un ordenamiento territorial que armonice ambos intereses, considerando la vocación del suelo, la seguridad alimentaria y las necesidades de vivienda', true],
+    ['La solución más adecuada es prohibir por completo cualquier tipo de vivienda en zonas rurales, sin excepción', false],
+    ['La solución más adecuada es eliminar toda la actividad agrícola de la región sin ningún análisis adicional', false],
+    ['No es necesario ningún tipo de planificación, ya que cada propietario puede decidir libremente sin considerar el interés colectivo', false]],
+ e:'Las problemáticas territoriales suelen involucrar intereses distintos y a veces contrapuestos. Una argumentación sólida, propia del pensamiento geográfico e histórico, reconoce esta complejidad y propone soluciones de ordenamiento territorial que consideren tanto la vocación del suelo como las necesidades sociales y económicas de la población.'},
+
+{s:10,d:'avanzado',c:'Integración de procesos históricos y geográficos en una situación compleja',
+ p:'Durante 40 años, una región pasó de ser una zona boscosa poco poblada a convertirse en un territorio con alta deforestación, crecimiento urbano acelerado y migración constante desde otras zonas del país. ¿Cuál es la explicación más completa de este proceso, integrando varias subtemáticas?',
+ v:vizTimeline([['Década 1','Zona boscosa, baja densidad poblacional'],['Década 2','Inicio de la deforestación para actividades económicas'],['Década 3','Llegada de nuevos pobladores y crecimiento urbano'],['Década 4','Consolidación urbana y presión sobre los recursos naturales']]),
+ o:[['La transformación del territorio resultó de la interacción entre procesos históricos de poblamiento, decisiones económicas sobre el uso del suelo y sus consecuencias ambientales y sociales a largo plazo', true],
+    ['El proceso se debió únicamente al crecimiento natural de la población, sin relación con decisiones económicas ni ambientales', false],
+    ['La deforestación y la migración ocurrieron de manera aislada, sin ninguna conexión entre sí', false],
+    ['Este tipo de transformación territorial no puede explicarse desde la historia ni desde la geografía', false]],
+ e:'Las preguntas tipo ICFES más avanzadas requieren integrar varias subtemáticas: en este caso, comprender la transformación de un territorio implica relacionar procesos históricos de poblamiento y migración, decisiones económicas sobre el uso del suelo, y sus consecuencias ambientales, mostrando que la historia y la geografía están profundamente interconectadas.'}
+];
+
+const BANCO = BANCO_RAW.map((q,i)=>({
+  id:i+1,
+  subtema:q.s,
+  subtemaNombre:SUBTEMAS[q.s-1],
+  dificultad:q.d,
+  competencia:q.c,
+  pregunta:q.p,
+  visual:q.v,
+  opciones:q.o.map(o=>({texto:o[0], correcta:o[1]})),
+  explicacion:q.e
+}));
+
+/* ---------------------------------------------------------------------------
+   2. UTILIDADES
+--------------------------------------------------------------------------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function formatoTiempo(seg){
+  const m = Math.floor(seg/60);
+  const s = seg%60;
+  return m+':' + (s<10?'0':'') + s;
+}
+function letraOpcion(i){ return ['A','B','C','D'][i]; }
+
+/* Modal de confirmación propio: reemplaza a window.confirm(), que puede estar
+   bloqueado dentro de iframes (por ejemplo, al incrustar el simulador en Moodle). */
+function mostrarConfirmacion(mensaje, onAceptar){
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('modal-mensaje').textContent = mensaje;
+  overlay.classList.add('mostrar');
+
+  const btnAceptar = document.getElementById('modal-btn-aceptar');
+  const btnCancelar = document.getElementById('modal-btn-cancelar');
+
+  function cerrar(){
+    overlay.classList.remove('mostrar');
+    btnAceptar.removeEventListener('click', alAceptar);
+    btnCancelar.removeEventListener('click', alCancelar);
+    document.removeEventListener('keydown', alEscape);
+  }
+  function alAceptar(){ cerrar(); onAceptar(); }
+  function alCancelar(){ cerrar(); }
+  function alEscape(e){ if(e.key === 'Escape') alCancelar(); }
+
+  btnAceptar.addEventListener('click', alAceptar);
+  btnCancelar.addEventListener('click', alCancelar);
+  document.addEventListener('keydown', alEscape);
+  btnAceptar.focus();
+}
+
+/* ---------------------------------------------------------------------------
+   3. ESTADO DEL SIMULACRO
+--------------------------------------------------------------------------- */
+let estado = {
+  preguntas: [],
+  respuestas: [],
+  indiceActual: 0,
+  puntajeBase: 0,
+  puntajeBonus: 0,
+  racha: 0,
+  rachaMax: 0,
+  rachasNotificadas: new Set(),
+  tiempoTotal: 45*60,
+  tiempoRestante: 45*60,
+  timerId: null,
+  sonidoActivo: true,
+  tiempoInicioMs: null,
+  terminado: false
+};
+
+/* Audio: generación de sonidos con Web Audio API, sin archivos externos */
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  }
+  return audioCtx;
+}
+function beep(freq, dur, tipo, volumen, delay){
+  if(!estado.sonidoActivo) return;
+  const ctx = getAudioCtx();
+  if(!ctx) return;
+  const t0 = ctx.currentTime + (delay||0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = tipo || 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(volumen||0.14, t0+0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+function sonidoCorrecta(){ beep(587,0.12,'sine',0.13,0); beep(880,0.16,'sine',0.13,0.1); }
+function sonidoIncorrecta(){ beep(220,0.28,'sawtooth',0.09,0); }
+function sonidoFinal(){ [523,659,784,1047].forEach((f,i)=>beep(f,0.22,'sine',0.12,i*0.15)); }
+function sonidoLogro(){ [660,880,1100,1320].forEach((f,i)=>beep(f,0.14,'triangle',0.11,i*0.08)); }
+
+/* ---------------------------------------------------------------------------
+   4. SELECCIÓN DE PREGUNTAS (aleatoria, con distribución de dificultad)
+--------------------------------------------------------------------------- */
+function seleccionarPreguntas(){
+  const porDif = {basico:[], intermedio:[], avanzado:[]};
+  BANCO.forEach(q => porDif[q.dificultad].push(q));
+  const nBasico = 9, nIntermedio = 12, nAvanzado = 9;
+  let seleccion = [
+    ...shuffle(porDif.basico).slice(0, nBasico),
+    ...shuffle(porDif.intermedio).slice(0, nIntermedio),
+    ...shuffle(porDif.avanzado).slice(0, nAvanzado)
+  ];
+  seleccion = shuffle(seleccion);
+  seleccion = seleccion.map(q=>{
+    const opcionesShuffled = shuffle(q.opciones.map((o,idx)=>({texto:o.texto, correcta:o.correcta})));
+    return Object.assign({}, q, {opciones:opcionesShuffled});
+  });
+  return seleccion;
+}
+
+/* ---------------------------------------------------------------------------
+   5. RENDERIZADO: PANTALLA INICIO
+--------------------------------------------------------------------------- */
+function renderChipsSubtemas(){
+  const cont = document.getElementById('chips-subtemas');
+  cont.innerHTML = SUBTEMAS.map(s=>'<span class="chip">'+s+'</span>').join('');
+}
+renderChipsSubtemas();
+
+/* ---------------------------------------------------------------------------
+   6. INICIO DEL SIMULACRO
+--------------------------------------------------------------------------- */
+document.getElementById('btn-iniciar').addEventListener('click', ()=>{
+  const minutos = parseInt(document.getElementById('sel-tiempo').value, 10) || 45;
+  estado.sonidoActivo = document.getElementById('chk-sonido-inicio').checked;
+  document.getElementById('chk-sonido-quiz').checked = estado.sonidoActivo;
+  iniciarSimulacro(minutos);
+});
+
+function iniciarSimulacro(minutos){
+  estado.preguntas = seleccionarPreguntas();
+  estado.respuestas = new Array(estado.preguntas.length).fill(null);
+  estado.indiceActual = 0;
+  estado.puntajeBase = 0;
+  estado.puntajeBonus = 0;
+  estado.racha = 0;
+  estado.rachaMax = 0;
+  estado.rachasNotificadas = new Set();
+  estado.tiempoTotal = minutos*60;
+  estado.tiempoRestante = minutos*60;
+  estado.tiempoInicioMs = Date.now();
+  estado.terminado = false;
+
+  document.getElementById('pantalla-inicio').classList.add('oculto');
+  document.getElementById('pantalla-resultados').classList.add('oculto');
+  document.getElementById('barra-quiz').classList.remove('oculto');
+  document.getElementById('shell-pregunta').classList.remove('oculto');
+
+  construirGridMapa();
+  renderPregunta();
+  iniciarTemporizador();
+}
+
+/* ---------------------------------------------------------------------------
+   7. TEMPORIZADOR
+--------------------------------------------------------------------------- */
+function iniciarTemporizador(){
+  actualizarTemporizadorUI();
+  if(estado.timerId) clearInterval(estado.timerId);
+  estado.timerId = setInterval(()=>{
+    estado.tiempoRestante--;
+    if(estado.tiempoRestante <= 0){
+      estado.tiempoRestante = 0;
+      actualizarTemporizadorUI();
+      clearInterval(estado.timerId);
+      finalizarSimulacro(true);
+      return;
+    }
+    actualizarTemporizadorUI();
+  }, 1000);
+}
+function actualizarTemporizadorUI(){
+  const el = document.getElementById('temporizador');
+  el.textContent = '⏱ ' + formatoTiempo(estado.tiempoRestante);
+  el.classList.toggle('alerta', estado.tiempoRestante <= 60);
+}
+
+/* ---------------------------------------------------------------------------
+   8. RENDER DE PREGUNTA
+--------------------------------------------------------------------------- */
+function renderPregunta(){
+  const i = estado.indiceActual;
+  const q = estado.preguntas[i];
+  const card = document.getElementById('pregunta-card');
+
+  let html = '';
+  html += '<div class="etiquetas-pregunta">';
+  html += '<span class="etq-tag">Pregunta '+(i+1)+' de '+estado.preguntas.length+'</span>';
+  html += '<span class="etq-tag dificultad-'+q.dificultad+'">'+q.dificultad.charAt(0).toUpperCase()+q.dificultad.slice(1)+'</span>';
+  html += '<span class="etq-tag">📚 '+q.subtemaNombre+'</span>';
+  html += '</div>';
+  html += '<div class="texto-pregunta">'+q.pregunta+'</div>';
+  if(q.visual) html += q.visual;
+
+  html += '<ul class="opciones-lista" role="radiogroup" aria-label="Opciones de respuesta">';
+  q.opciones.forEach((op, idx)=>{
+    const sel = estado.respuestas[i] === idx;
+    html += '<li><button type="button" class="opcion'+(sel?' seleccionada':'')+'" role="radio" aria-checked="'+sel+'" data-idx="'+idx+'" onclick="seleccionarOpcion('+idx+')">';
+    html += '<span class="letra">'+letraOpcion(idx)+'</span><span class="texto-op">'+op.texto+'</span>';
+    html += '</button></li>';
+  });
+  html += '</ul>';
+
+  card.innerHTML = html;
+  card.setAttribute('tabindex','-1');
+
+  document.getElementById('txt-progreso').textContent = 'Pregunta '+(i+1)+' de '+estado.preguntas.length;
+  const respondidas = estado.respuestas.filter(r=>r!==null).length;
+  const pct = Math.round((respondidas/estado.preguntas.length)*100);
+  document.getElementById('txt-porcentaje').textContent = pct+'% completado';
+  document.getElementById('barra-progreso-fg').style.width = pct+'%';
+
+  document.getElementById('btn-anterior').disabled = (i===0);
+  document.getElementById('btn-anterior').style.opacity = (i===0? .4:1);
+  document.getElementById('btn-siguiente').textContent = (i === estado.preguntas.length-1) ? 'Ir a finalizar ➡' : 'Siguiente ➡';
+
+  actualizarGridMapa();
+}
+
+function seleccionarOpcion(idx){
+  const i = estado.indiceActual;
+  const yaRespondida = estado.respuestas[i] !== null;
+  const q = estado.preguntas[i];
+
+  if(!yaRespondida){
+    const esCorrecta = q.opciones[idx].correcta;
+    if(esCorrecta){
+      estado.puntajeBase += 10;
+      estado.racha++;
+      estado.rachaMax = Math.max(estado.rachaMax, estado.racha);
+      sonidoCorrecta();
+      revisarRacha();
+    } else {
+      estado.racha = 0;
+      sonidoIncorrecta();
+    }
+  }
+  estado.respuestas[i] = idx;
+  renderPregunta();
+}
+
+function revisarRacha(){
+  const hitos = [3,5,10];
+  hitos.forEach(h=>{
+    if(estado.racha === h && !estado.rachasNotificadas.has(h)){
+      estado.rachasNotificadas.add(h);
+      const bono = h===3?5:(h===5?10:20);
+      estado.puntajeBonus += bono;
+      mostrarStreakToast('🔥 ¡Racha de '+h+' respuestas correctas! +'+bono+' puntos bono');
+      sonidoLogro();
+    }
+  });
+}
+function mostrarStreakToast(msg){
+  const t = document.getElementById('streak-toast');
+  t.textContent = msg;
+  t.classList.add('mostrar');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(()=> t.classList.remove('mostrar'), 2600);
+}
+
+/* ---------------------------------------------------------------------------
+   9. NAVEGACIÓN
+--------------------------------------------------------------------------- */
+document.getElementById('btn-anterior').addEventListener('click', ()=>{
+  if(estado.indiceActual>0){ estado.indiceActual--; renderPregunta(); document.getElementById('pregunta-card').focus(); }
+});
+document.getElementById('btn-siguiente').addEventListener('click', ()=>{
+  if(estado.indiceActual < estado.preguntas.length-1){
+    estado.indiceActual++;
+    renderPregunta();
+    document.getElementById('pregunta-card').focus();
+  } else {
+    intentarFinalizar();
+  }
+});
+document.getElementById('btn-finalizar').addEventListener('click', intentarFinalizar);
+
+function intentarFinalizar(){
+  const pendientes = estado.respuestas.filter(r=>r===null).length;
+  let msg = '¿Deseas finalizar el simulacro ahora?';
+  if(pendientes>0) msg = 'Tienes '+pendientes+' pregunta(s) sin responder. '+msg;
+  mostrarConfirmacion(msg, ()=>{ finalizarSimulacro(false); });
+}
+
+/* Panel de mapa de preguntas */
+document.getElementById('btn-toggle-mapa').addEventListener('click', function(){
+  const panel = document.getElementById('panel-mapa');
+  const mostrar = !panel.classList.contains('mostrar');
+  panel.classList.toggle('mostrar', mostrar);
+  this.setAttribute('aria-expanded', mostrar);
+});
+function construirGridMapa(){
+  const grid = document.getElementById('grid-mapa');
+  grid.innerHTML = '';
+  estado.preguntas.forEach((q,idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'celda-mapa';
+    btn.textContent = idx+1;
+    btn.setAttribute('aria-label','Ir a la pregunta '+(idx+1));
+    btn.addEventListener('click', ()=>{
+      estado.indiceActual = idx;
+      renderPregunta();
+      document.getElementById('pregunta-card').focus();
+    });
+    grid.appendChild(btn);
+  });
+}
+function actualizarGridMapa(){
+  const celdas = document.querySelectorAll('.celda-mapa');
+  celdas.forEach((c,idx)=>{
+    c.classList.toggle('respondida', estado.respuestas[idx] !== null);
+    c.classList.toggle('actual', idx === estado.indiceActual);
+  });
+}
+
+/* Toggle de sonido durante el quiz */
+document.getElementById('chk-sonido-quiz').addEventListener('change', function(){
+  estado.sonidoActivo = this.checked;
+});
+
+/* Navegación por teclado: 1-4 / A-D para opciones, flechas para navegar */
+document.addEventListener('keydown', (e)=>{
+  const quizVisible = !document.getElementById('shell-pregunta').classList.contains('oculto');
+  if(!quizVisible) return;
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if(tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+  const mapaTeclas = {'1':0,'2':1,'3':2,'4':3,'a':0,'b':1,'c':2,'d':3,'A':0,'B':1,'C':2,'D':3};
+  if(mapaTeclas.hasOwnProperty(e.key)){
+    seleccionarOpcion(mapaTeclas[e.key]);
+  } else if(e.key === 'ArrowRight'){
+    document.getElementById('btn-siguiente').click();
+  } else if(e.key === 'ArrowLeft'){
+    document.getElementById('btn-anterior').click();
+  }
+});
+
+/* ---------------------------------------------------------------------------
+   10. FINALIZACIÓN Y CÁLCULO DE RESULTADOS
+--------------------------------------------------------------------------- */
+function finalizarSimulacro(porTiempo){
+  if(estado.terminado) return;
+  estado.terminado = true;
+  if(estado.timerId) clearInterval(estado.timerId);
+  sonidoFinal();
+
+  const tiempoEmpleadoSeg = estado.tiempoTotal - estado.tiempoRestante;
+
+  document.getElementById('barra-quiz').classList.add('oculto');
+  document.getElementById('panel-mapa').classList.remove('mostrar');
+  document.getElementById('shell-pregunta').classList.add('oculto');
+  document.getElementById('pantalla-resultados').classList.remove('oculto');
+  document.getElementById('card-revision').classList.add('oculto');
+
+  renderResultados(tiempoEmpleadoSeg, porTiempo);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderResultados(tiempoEmpleadoSeg, porTiempo){
+  const total = estado.preguntas.length;
+  let correctas = 0, incorrectas = 0;
+  const porSubtema = {};
+  SUBTEMAS.forEach((nombre, idx)=> porSubtema[idx+1] = {nombre, correctas:0, total:0});
+
+  estado.preguntas.forEach((q, i)=>{
+    const r = estado.respuestas[i];
+    const acerto = (r !== null) && q.opciones[r].correcta;
+    if(acerto) correctas++; else incorrectas++;
+    porSubtema[q.subtema].total++;
+    if(acerto) porSubtema[q.subtema].correctas++;
+  });
+
+  const pct = Math.round((correctas/total)*100);
+  const puntajeTotal = estado.puntajeBase + estado.puntajeBonus;
+
+  document.getElementById('res-pct').textContent = pct+'%';
+  document.getElementById('res-correctas').textContent = correctas;
+  document.getElementById('res-incorrectas').textContent = incorrectas;
+  document.getElementById('res-tiempo').textContent = formatoTiempo(tiempoEmpleadoSeg);
+  document.getElementById('res-puntaje').textContent = puntajeTotal+' pts';
+
+  let nivel = 'Inicial';
+  if(pct>=90) nivel='Sobresaliente';
+  else if(pct>=70) nivel='Satisfactorio';
+  else if(pct>=50) nivel='Básico';
+  document.getElementById('res-nivel').textContent = nivel + (porTiempo? ' (tiempo agotado)':'');
+
+  let mensaje = '';
+  if(pct < 50) mensaje = 'Comprender la historia y la geografía requiere analizar los procesos y relacionarlos con el presente. Continúa practicando y fortaleciendo tu pensamiento crítico.';
+  else if(pct < 70) mensaje = 'Has construido una buena base para interpretar procesos históricos y geográficos. Sigue desarrollando tu capacidad de análisis y argumentación.';
+  else if(pct < 90) mensaje = 'Muy buen desempeño. Demuestras una sólida comprensión de la relación entre la sociedad, el territorio y los procesos históricos.';
+  else mensaje = '¡Excelente trabajo! Has demostrado un dominio sobresaliente de las competencias de Historia y Geografía evaluadas en las pruebas tipo ICFES.';
+  document.getElementById('mensaje-motivacional').textContent = mensaje;
+
+  /* Rendimiento por subtemática (barras) */
+  const contSub = document.getElementById('lista-subtemas');
+  contSub.innerHTML = '';
+  const gd = document.getElementById('grafico-desempeno');
+  gd.innerHTML = '';
+  const resumenSub = [];
+
+  Object.keys(porSubtema).forEach(k=>{
+    const s = porSubtema[k];
+    const p = s.total>0 ? Math.round((s.correctas/s.total)*100) : 0;
+    resumenSub.push({idx:parseInt(k), nombre:s.nombre, pct:p, total:s.total, correctas:s.correctas});
+
+    const color = p>=80? 'var(--verde)' : (p>=50? 'var(--dorado-fuerte)' : 'var(--rojo)');
+    const fila = document.createElement('div');
+    fila.className = 'subtema-fila';
+    fila.innerHTML = '<div class="cab"><span>'+s.nombre+'</span><b>'+s.correctas+'/'+s.total+' ('+p+'%)</b></div>'+
+                      '<div class="barra-sub-bg"><div class="barra-sub-fg" style="width:'+p+'%;background:'+color+';"></div></div>';
+    contSub.appendChild(fila);
+
+    const col = document.createElement('div');
+    col.className = 'gd-col';
+    col.innerHTML = '<div class="gd-num">'+p+'%</div><div class="gd-bar" style="height:'+Math.max(6,p*1.5)+'px;background:'+color+';"></div><div class="gd-lbl">'+s.nombre.split(' ').slice(0,2).join(' ')+'</div>';
+    gd.appendChild(col);
+  });
+
+  /* Fortalezas y aspectos por mejorar */
+  const ordenadas = resumenSub.filter(s=>s.total>0).sort((a,b)=> b.pct - a.pct);
+  const fortalezas = ordenadas.filter(s=>s.pct>=70).slice(0,4);
+  const mejorar = ordenadas.filter(s=>s.pct<70).sort((a,b)=>a.pct-b.pct).slice(0,4);
+
+  const ulFort = document.getElementById('lista-fortalezas');
+  ulFort.innerHTML = fortalezas.length ? fortalezas.map(f=>'<li>'+f.nombre+' ('+f.pct+'%)</li>').join('') : '<li>Sigue practicando para consolidar tus fortalezas en próximos intentos.</li>';
+  const ulMej = document.getElementById('lista-mejorar');
+  ulMej.innerHTML = mejorar.length ? mejorar.map(f=>'<li>'+f.nombre+' ('+f.pct+'%)</li>').join('') : '<li>¡Buen trabajo! No se identificaron subtemáticas críticas por reforzar.</li>';
+
+  /* Logros / insignias */
+  renderLogros(porSubtema, pct);
+
+  /* Guardar datos para la revisión */
+  estado._resumenFinal = {correctas, incorrectas, pct, tiempoEmpleadoSeg, puntajeTotal};
+}
+
+/* ---------------------------------------------------------------------------
+   11. LOGROS / INSIGNIAS
+--------------------------------------------------------------------------- */
+const DEF_LOGROS = [
+  {id:'explorador', ico:'🏛', nombre:'Explorador de la Historia', check:(ps,pct)=> promSub(ps,[1,2,3]) >= 70},
+  {id:'maestro_geo', ico:'🗺', nombre:'Maestro de la Geografía', check:(ps,pct)=> promSub(ps,[4,5,6]) >= 70},
+  {id:'analista', ico:'📚', nombre:'Analista Histórico', check:(ps,pct)=> pctSub(ps,1) >= 80},
+  {id:'ciudadano', ico:'🌎', nombre:'Ciudadano del Mundo', check:(ps,pct)=> promSub(ps,[7,8]) >= 70},
+  {id:'cartografo', ico:'🧭', nombre:'Experto en Cartografía', check:(ps,pct)=> pctSub(ps,5) >= 80},
+  {id:'interprete', ico:'📊', nombre:'Intérprete de Información', check:(ps,pct)=> pctSub(ps,9) >= 80},
+  {id:'defensor', ico:'🏞', nombre:'Defensor del Territorio', check:(ps,pct)=> pctSub(ps,8) >= 80},
+  {id:'maestro_total', ico:'🏆', nombre:'Maestro de Historia y Geografía', check:(ps,pct)=> pct >= 90}
+];
+function pctSub(ps, idx){ const s = ps[idx]; if(!s || s.total===0) return 0; return Math.round((s.correctas/s.total)*100); }
+function promSub(ps, idxs){ const vals = idxs.map(i=>pctSub(ps,i)); return vals.reduce((a,b)=>a+b,0)/vals.length; }
+
+function renderLogros(porSubtema, pct){
+  const grid = document.getElementById('badges-grid');
+  grid.innerHTML = '';
+  let algunNuevo = false;
+  DEF_LOGROS.forEach(l=>{
+    const desbloqueada = l.check(porSubtema, pct);
+    if(desbloqueada) algunNuevo = true;
+    const div = document.createElement('div');
+    div.className = 'badge' + (desbloqueada? ' desbloqueada':'');
+    div.innerHTML = '<div class="ico">'+l.ico+'</div><div class="nombre">'+l.nombre+'</div>';
+    grid.appendChild(div);
+  });
+  if(algunNuevo) setTimeout(sonidoLogro, 300);
+}
+
+/* ---------------------------------------------------------------------------
+   12. REVISIÓN DETALLADA DE LAS 30 PREGUNTAS
+--------------------------------------------------------------------------- */
+document.getElementById('btn-ver-revision').addEventListener('click', ()=>{
+  const card = document.getElementById('card-revision');
+  const mostrar = card.classList.contains('oculto');
+  if(mostrar){
+    renderRevision();
+    card.classList.remove('oculto');
+    card.scrollIntoView({behavior:'smooth', block:'start'});
+  } else {
+    card.classList.add('oculto');
+  }
+});
+
+function renderRevision(){
+  const cont = document.getElementById('contenedor-revision');
+  let html = '';
+  estado.preguntas.forEach((q,i)=>{
+    const r = estado.respuestas[i];
+    const acerto = (r !== null) && q.opciones[r].correcta;
+    html += '<div class="revision-item '+(acerto?'correcta':'incorrecta')+'">';
+    html += '<div class="revision-cab"><b>Pregunta '+(i+1)+'</b><span class="badge-resultado '+(acerto?'correcta':'incorrecta')+'">'+(acerto?'✔ Correcta':(r===null?'⚠ Sin responder':'✘ Incorrecta'))+'</span></div>';
+    html += '<div style="font-weight:600;margin-bottom:10px;">'+q.pregunta+'</div>';
+    if(q.visual) html += q.visual;
+    q.opciones.forEach((op, idx)=>{
+      let cls = 'rev-opcion';
+      if(op.correcta) cls += ' marcar-correcta';
+      else if(idx === r) cls += ' marcar-elegida-mala';
+      html += '<div class="'+cls+'"><b>'+letraOpcion(idx)+'.</b> '+op.texto+(op.correcta?' &nbsp;✔️ Respuesta correcta':'')+((idx===r && !op.correcta)?' &nbsp;❌ Tu respuesta':'')+'</div>';
+    });
+    html += '<div class="rev-explicacion"><b>Explicación:</b> '+q.explicacion+'</div>';
+    html += '<div class="rev-meta">Subtemática: '+q.subtemaNombre+' · Competencia evaluada: '+q.competencia+' · Nivel: '+q.dificultad+'</div>';
+    html += '</div>';
+  });
+  cont.innerHTML = html;
+}
+
+/* ---------------------------------------------------------------------------
+   13. REINICIO
+--------------------------------------------------------------------------- */
+document.getElementById('btn-reiniciar').addEventListener('click', ()=>{
+  mostrarConfirmacion('¿Deseas reiniciar el simulacro? Se generará un nuevo intento con preguntas aleatorias.', ()=>{
+    document.getElementById('pantalla-resultados').classList.add('oculto');
+    document.getElementById('card-revision').classList.add('oculto');
+    document.getElementById('pantalla-inicio').classList.remove('oculto');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>

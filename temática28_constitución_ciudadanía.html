@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Constitución y Ciudadanía · Nivel 5</title>
+<style>
+/* ============================================================
+   VARIABLES Y RESET
+   ============================================================ */
+:root{
+  --azul-oscuro:#0B2545;
+  --azul-oscuro-2:#123C69;
+  --azul-medio:#1D4E8F;
+  --dorado:#F5A623;
+  --dorado-claro:#FFD873;
+  --dorado-oscuro:#C9820A;
+  --blanco:#FFFFFF;
+  --gris-claro:#F4F6F9;
+  --gris-medio:#D9DFE7;
+  --gris-texto:#5B6B82;
+  --texto:#1B2A3D;
+  --verde:#1C9A5B;
+  --verde-bg:#E6F7EE;
+  --rojo:#D64545;
+  --rojo-bg:#FCEBEA;
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 10px 30px rgba(11,37,69,0.12);
+  --shadow-sm:0 4px 14px rgba(11,37,69,0.08);
+  --font-display:'Poppins','DM Sans',-apple-system,'Segoe UI',sans-serif;
+  --font-body:'DM Sans','Poppins',-apple-system,'Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  background:var(--gris-claro);
+  color:var(--texto);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0 0 .5em 0;color:var(--azul-oscuro);}
+p{margin:0 0 1em 0;}
+button{font-family:inherit;cursor:pointer;}
+a{color:inherit;}
+img,svg{display:block;}
+:focus-visible{outline:3px solid var(--dorado);outline-offset:2px;border-radius:6px;}
+.oculto{display:none !important;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+
+/* ============================================================
+   LAYOUT GENERAL
+   ============================================================ */
+.contenedor{max-width:980px;margin:0 auto;padding:24px 20px 60px;}
+.pantalla{animation:fadeIn .45s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+}
+
+/* Cabecera institucional */
+.topbar{
+  background:linear-gradient(120deg,var(--azul-oscuro),var(--azul-oscuro-2));
+  color:var(--blanco);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:var(--shadow-sm);
+  position:sticky;top:0;z-index:40;
+  flex-wrap:wrap;
+}
+.marca{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;letter-spacing:.3px;}
+.marca .icono-escudo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--dorado),var(--dorado-oscuro));
+  display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;
+}
+.marca small{display:block;font-weight:400;font-size:.72em;opacity:.85;font-family:var(--font-body);}
+
+/* ============================================================
+   PANTALLA DE INICIO
+   ============================================================ */
+.hero{
+  background:radial-gradient(circle at 20% 10%, var(--azul-medio) 0%, var(--azul-oscuro) 55%, var(--azul-oscuro) 100%);
+  color:var(--blanco);
+  border-radius:var(--radius);
+  padding:44px 34px;
+  margin:26px 0 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.hero::after{
+  content:"";position:absolute;right:-60px;top:-60px;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle, rgba(245,166,35,.35), transparent 70%);
+}
+.hero .etiqueta-nivel{
+  display:inline-block;background:rgba(245,166,35,.18);border:1px solid var(--dorado);
+  color:var(--dorado-claro);font-size:.78em;font-weight:600;padding:5px 14px;border-radius:30px;
+  letter-spacing:.6px;text-transform:uppercase;margin-bottom:14px;
+}
+.hero h1{color:var(--blanco);font-size:1.9em;margin-bottom:8px;max-width:640px;}
+.hero p.lead{color:#DCE6F5;max-width:620px;font-size:1.02em;}
+
+.tarjetas-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:26px 0;}
+.tarjeta{
+  background:var(--blanco);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);
+  border:1px solid var(--gris-medio);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.tarjeta:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tarjeta .icono{font-size:1.6em;margin-bottom:8px;}
+.tarjeta h3{font-size:1em;margin-bottom:4px;color:var(--azul-oscuro);}
+.tarjeta p{color:var(--gris-texto);font-size:.9em;margin:0;}
+
+.panel{background:var(--blanco);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-sm);border:1px solid var(--gris-medio);margin-bottom:20px;}
+.panel h2{font-size:1.15em;display:flex;align-items:center;gap:8px;}
+.lista-objetivos{margin:10px 0 0;padding-left:0;list-style:none;display:grid;gap:10px;}
+.lista-objetivos li{display:flex;gap:10px;align-items:flex-start;color:var(--texto);font-size:.96em;}
+.lista-objetivos li .chip{
+  flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--dorado);color:var(--azul-oscuro);
+  font-weight:700;font-size:.75em;display:flex;align-items:center;justify-content:center;
+}
+
+.fila-config{display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin-top:16px;}
+.campo-config{display:flex;flex-direction:column;gap:6px;}
+.campo-config label{font-size:.85em;font-weight:600;color:var(--azul-oscuro);}
+.campo-config input[type="number"]{
+  width:110px;padding:9px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--gris-medio);
+  font-size:1em;font-family:inherit;
+}
+.interruptor{display:flex;align-items:center;gap:10px;}
+.interruptor input{display:none;}
+.interruptor .pista{
+  width:46px;height:26px;background:var(--gris-medio);border-radius:20px;position:relative;transition:.25s;flex-shrink:0;
+}
+.interruptor .pista::after{
+  content:"";position:absolute;width:20px;height:20px;background:var(--blanco);border-radius:50%;top:3px;left:3px;transition:.25s;
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+.interruptor input:checked + .pista{background:var(--verde);}
+.interruptor input:checked + .pista::after{left:23px;}
+.interruptor label{font-size:.9em;font-weight:600;cursor:pointer;}
+
+.btn{
+  border:none;border-radius:50px;padding:15px 34px;font-weight:700;font-size:1em;letter-spacing:.4px;
+  display:inline-flex;align-items:center;gap:10px;transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn-primario{
+  background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  color:var(--azul-oscuro);box-shadow:0 6px 18px rgba(245,166,35,.4);
+}
+.btn-primario:hover{box-shadow:0 8px 22px rgba(245,166,35,.55);}
+.btn-secundario{background:var(--blanco);color:var(--azul-oscuro);border:2px solid var(--azul-oscuro);}
+.btn-secundario:hover{background:var(--azul-oscuro);color:var(--blanco);}
+.btn-fantasma{background:transparent;color:var(--azul-oscuro);border:1.5px solid var(--gris-medio);}
+.btn-fantasma:hover{border-color:var(--azul-oscuro);}
+.btn-peligro{background:var(--rojo);color:var(--blanco);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.centrado{text-align:center;}
+
+/* ============================================================
+   PANTALLA DE EXAMEN
+   ============================================================ */
+.barra-examen{
+  background:var(--blanco);border-radius:var(--radius);padding:18px 22px;box-shadow:var(--shadow-sm);
+  border:1px solid var(--gris-medio);margin:20px 0 18px;
+  display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;
+}
+.temporizador{
+  display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:1.25em;color:var(--azul-oscuro);
+  background:var(--gris-claro);padding:8px 16px;border-radius:12px;border:1.5px solid var(--gris-medio);
+}
+.temporizador.alerta{color:var(--rojo);border-color:var(--rojo);animation:pulso 1s infinite;}
+@keyframes pulso{0%,100%{opacity:1;}50%{opacity:.55;}}
+.contador-preguntas{font-weight:600;color:var(--gris-texto);font-size:.95em;}
+.racha-indicador{
+  display:flex;align-items:center;gap:6px;font-weight:700;color:var(--dorado-oscuro);background:#FFF6E5;
+  padding:7px 14px;border-radius:12px;border:1.5px solid var(--dorado-claro);font-size:.92em;
+}
+
+.progreso-wrap{margin:0 0 22px;}
+.progreso-textos{display:flex;justify-content:space-between;font-size:.85em;color:var(--gris-texto);margin-bottom:6px;font-weight:600;}
+.barra-progreso-fondo{height:12px;background:var(--gris-medio);border-radius:20px;overflow:hidden;}
+.barra-progreso-relleno{height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado-oscuro));border-radius:20px;transition:width .4s ease;}
+
+.grid-navegador{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.punto-nav{
+  width:34px;height:34px;border-radius:9px;border:1.5px solid var(--gris-medio);background:var(--blanco);
+  font-size:.78em;font-weight:700;color:var(--gris-texto);display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+.punto-nav.respondida{background:var(--verde-bg);border-color:var(--verde);color:var(--verde);}
+.punto-nav.actual{outline:2.5px solid var(--dorado);outline-offset:1px;}
+.punto-nav:hover{transform:translateY(-2px);}
+
+.tarjeta-pregunta{
+  background:var(--blanco);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);
+  border:1px solid var(--gris-medio);margin-bottom:20px;
+}
+.meta-pregunta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{
+  font-size:.72em;font-weight:700;padding:5px 12px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase;
+}
+.etiqueta.sub{background:#EAF1FB;color:var(--azul-medio);}
+.etiqueta.dif-basico{background:#E6F7EE;color:var(--verde);}
+.etiqueta.dif-intermedio{background:#FFF3DA;color:var(--dorado-oscuro);}
+.etiqueta.dif-avanzado{background:#FCE9E9;color:var(--rojo);}
+.etiqueta.tipo{background:var(--gris-claro);color:var(--gris-texto);}
+
+.enunciado{font-size:1.12em;font-weight:600;color:var(--texto);margin-bottom:16px;}
+.estimulo{
+  background:var(--gris-claro);border-left:4px solid var(--dorado);border-radius:8px;padding:16px 18px;margin-bottom:18px;
+  font-size:.92em;color:var(--texto);
+}
+.estimulo table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.94em;}
+.estimulo th,.estimulo td{border:1px solid var(--gris-medio);padding:8px 10px;text-align:left;}
+.estimulo th{background:var(--azul-oscuro);color:var(--blanco);}
+.estimulo tr:nth-child(even){background:#EEF2F8;}
+.mini-barra-fila{display:flex;align-items:center;gap:8px;margin:4px 0;}
+.mini-barra-fondo{flex:1;height:14px;background:var(--gris-medio);border-radius:8px;overflow:hidden;}
+.mini-barra-relleno{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--azul-medio),var(--azul-oscuro));}
+.mini-barra-fila span{font-size:.82em;width:150px;flex-shrink:0;color:var(--texto);}
+.mini-barra-fila b{font-size:.82em;width:50px;text-align:right;color:var(--azul-oscuro);}
+
+.opciones{display:grid;gap:12px;}
+.opcion{
+  display:flex;align-items:flex-start;gap:12px;text-align:left;background:var(--blanco);
+  border:2px solid var(--gris-medio);border-radius:var(--radius-sm);padding:14px 16px;font-size:.98em;color:var(--texto);
+  transition:.15s;width:100%;
+}
+.opcion:hover:not(:disabled){border-color:var(--azul-medio);background:#F7FAFF;}
+.opcion .letra{
+  flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--gris-claro);border:1.5px solid var(--gris-medio);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em;color:var(--azul-oscuro);
+}
+.opcion.seleccionada{border-color:var(--azul-oscuro);background:#EAF1FB;}
+.opcion.seleccionada .letra{background:var(--azul-oscuro);color:var(--blanco);border-color:var(--azul-oscuro);}
+.opcion.correcta{border-color:var(--verde);background:var(--verde-bg);}
+.opcion.correcta .letra{background:var(--verde);color:var(--blanco);border-color:var(--verde);}
+.opcion.incorrecta{border-color:var(--rojo);background:var(--rojo-bg);}
+.opcion.incorrecta .letra{background:var(--rojo);color:var(--blanco);border-color:var(--rojo);}
+
+.nav-examen{display:flex;justify-content:space-between;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.nav-examen .grupo-der{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* Toast de racha / logro */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:linear-gradient(135deg,var(--azul-oscuro),var(--azul-oscuro-2));color:var(--blanco);
+  padding:14px 26px;border-radius:50px;box-shadow:0 10px 30px rgba(0,0,0,.3);font-weight:700;
+  display:flex;align-items:center;gap:10px;z-index:100;opacity:0;transition:.35s ease;pointer-events:none;
+  border:1.5px solid var(--dorado);
+}
+.toast.visible{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Modal confirmación */
+.modal-fondo{
+  position:fixed;inset:0;background:rgba(11,37,69,.55);display:flex;align-items:center;justify-content:center;
+  z-index:200;padding:20px;
+}
+.modal-caja{background:var(--blanco);border-radius:var(--radius);padding:28px;max-width:420px;width:100%;box-shadow:var(--shadow);}
+.modal-caja h3{margin-bottom:10px;}
+.modal-botones{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap;}
+
+/* ============================================================
+   PANTALLA DE RESULTADOS
+   ============================================================ */
+.resumen-hero{
+  background:linear-gradient(120deg,var(--azul-oscuro),var(--azul-medio));color:var(--blanco);
+  border-radius:var(--radius);padding:36px;text-align:center;margin:24px 0;box-shadow:var(--shadow);
+}
+.resumen-hero .puntaje-grande{font-family:var(--font-display);font-size:3.4em;font-weight:800;color:var(--dorado-claro);line-height:1;}
+.resumen-hero .nivel-alcanzado{display:inline-block;margin-top:10px;background:rgba(255,255,255,.12);padding:6px 18px;border-radius:30px;font-weight:700;font-size:.95em;}
+.resumen-hero .mensaje-motivacional{max-width:560px;margin:16px auto 0;color:#E4ECFA;font-style:italic;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:24px 0;}
+.stat-caja{background:var(--blanco);border-radius:var(--radius-sm);padding:18px;text-align:center;border:1px solid var(--gris-medio);box-shadow:var(--shadow-sm);}
+.stat-caja .valor{font-family:var(--font-display);font-size:1.7em;font-weight:800;color:var(--azul-oscuro);}
+.stat-caja .etiqueta-stat{font-size:.8em;color:var(--gris-texto);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+
+.donut-wrap{display:flex;align-items:center;gap:26px;flex-wrap:wrap;justify-content:center;}
+.donut{width:170px;height:170px;border-radius:50%;position:relative;flex-shrink:0;}
+.donut .centro{
+  position:absolute;inset:18px;background:var(--blanco);border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px var(--gris-medio);
+}
+.donut .centro b{font-size:1.5em;color:var(--azul-oscuro);font-family:var(--font-display);}
+.donut .centro span{font-size:.72em;color:var(--gris-texto);}
+.leyenda-donut{display:flex;flex-direction:column;gap:8px;}
+.leyenda-donut .item{display:flex;align-items:center;gap:8px;font-size:.92em;}
+.leyenda-donut .punto{width:12px;height:12px;border-radius:3px;}
+
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:16px;}
+.badge{
+  background:var(--blanco);border-radius:var(--radius-sm);padding:16px;text-align:center;border:1.5px solid var(--gris-medio);
+  opacity:.35;filter:grayscale(1);transition:.3s;
+}
+.badge.desbloqueada{opacity:1;filter:none;border-color:var(--dorado);box-shadow:0 4px 14px rgba(245,166,35,.25);animation:pop .4s ease;}
+@keyframes pop{0%{transform:scale(.7);}70%{transform:scale(1.08);}100%{transform:scale(1);}}
+.badge .icono-badge{font-size:2em;margin-bottom:6px;}
+.badge .nombre-badge{font-size:.82em;font-weight:700;color:var(--azul-oscuro);}
+
+.bloque-fortalezas{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:600px){.bloque-fortalezas{grid-template-columns:1fr;}}
+.lista-simple{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px;}
+.lista-simple li{display:flex;gap:8px;align-items:flex-start;font-size:.92em;}
+
+.revision-item{background:var(--blanco);border:1px solid var(--gris-medio);border-radius:var(--radius);padding:22px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+.revision-cabecera{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.estado-resultado{font-size:.78em;font-weight:800;padding:5px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px;}
+.estado-resultado.ok{background:var(--verde-bg);color:var(--verde);}
+.estado-resultado.no{background:var(--rojo-bg);color:var(--rojo);}
+.caja-explicacion{background:var(--gris-claro);border-radius:10px;padding:14px 16px;margin-top:10px;font-size:.92em;}
+.caja-explicacion b{color:var(--azul-oscuro);}
+
+.acciones-finales{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:30px 0;}
+
+/* Barras subtemáticas */
+.barra-sub-fila{margin-bottom:12px;}
+.barra-sub-top{display:flex;justify-content:space-between;font-size:.86em;font-weight:600;margin-bottom:4px;}
+.barra-sub-fondo{height:16px;background:var(--gris-medio);border-radius:10px;overflow:hidden;}
+.barra-sub-relleno{height:100%;border-radius:10px;transition:width .6s ease;}
+
+footer.pie{text-align:center;color:var(--gris-texto);font-size:.82em;padding:20px;}
+
+@media (max-width:640px){
+  .hero{padding:30px 22px;}
+  .hero h1{font-size:1.5em;}
+  .tarjeta-pregunta{padding:20px;}
+  .resumen-hero .puntaje-grande{font-size:2.6em;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="marca">
+    <div class="icono-escudo" aria-hidden="true">🏛️</div>
+    <div>
+      Simulador ICFES · Nivel 5
+      <small>Competencias Ciudadanas y Lengua Extranjera</small>
+    </div>
+  </div>
+  <div id="barra-superior-extra"></div>
+</div>
+
+<main class="contenedor" id="contenedor-principal">
+
+<!-- ============================================================
+     PANTALLA 1: INICIO
+     ============================================================ -->
+<section id="pantalla-inicio" class="pantalla">
+  <div class="hero">
+    <span class="etiqueta-nivel">Temática 2 · Constitución y ciudadanía</span>
+    <h1>Simulador interactivo tipo ICFES: Constitución Política y Ciudadanía</h1>
+    <p class="lead">Evalúa tu capacidad para analizar situaciones ciudadanas y comprender el funcionamiento del Estado colombiano, los derechos humanos, la democracia y la participación ciudadana, aplicando estos conocimientos en contextos cotidianos.</p>
+  </div>
+
+  <div class="panel">
+    <h2>⚖️ Competencia evaluada</h2>
+    <p>Analizar situaciones ciudadanas y comprender el funcionamiento del Estado colombiano, los derechos humanos, la democracia y la participación ciudadana, aplicando estos conocimientos en contextos cotidianos y en situaciones propias de las pruebas ICFES.</p>
+  </div>
+
+  <div class="panel">
+    <h2>🎯 Objetivos del simulacro</h2>
+    <ul class="lista-objetivos">
+      <li><span class="chip">1</span> Interpretar casos, noticias, tablas y gráficos relacionados con la Constitución y la ciudadanía.</li>
+      <li><span class="chip">2</span> Reconocer derechos, deberes y mecanismos de participación en situaciones cotidianas.</li>
+      <li><span class="chip">3</span> Analizar el funcionamiento del Estado colombiano y sus organismos.</li>
+      <li><span class="chip">4</span> Argumentar soluciones a conflictos ciudadanos desde una perspectiva democrática y pacífica.</li>
+      <li><span class="chip">5</span> Ejercer un pensamiento crítico frente a la ciudadanía digital y la desinformación.</li>
+    </ul>
+  </div>
+
+  <div class="tarjetas-info">
+    <div class="tarjeta"><div class="icono">📝</div><h3>30 preguntas</h3><p>Selección aleatoria y equilibrada de las 10 subtemáticas.</p></div>
+    <div class="tarjeta"><div class="icono">⏱️</div><h3 id="texto-tiempo-tarjeta">45 minutos</h3><p>Temporizador visible durante toda la prueba.</p></div>
+    <div class="tarjeta"><div class="icono">🔀</div><h3>Intentos únicos</h3><p>Preguntas y opciones se mezclan en cada intento.</p></div>
+    <div class="tarjeta"><div class="icono">🏆</div><h3>Logros y rachas</h3><p>Insignias y bonificaciones por desempeño consecutivo.</p></div>
+  </div>
+
+  <div class="panel">
+    <h2>⚙️ Configuración</h2>
+    <div class="fila-config">
+      <div class="campo-config">
+        <label for="input-minutos">Tiempo disponible (minutos)</label>
+        <input type="number" id="input-minutos" min="5" max="120" value="45">
+      </div>
+      <div class="interruptor">
+        <input type="checkbox" id="check-sonido" checked>
+        <label for="check-sonido" id="label-sonido-switch">
+          <span class="pista" aria-hidden="true"></span>
+        </label>
+        <label for="check-sonido">🔊 Sonidos activados</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="centrado" style="margin-top:30px;">
+    <button class="btn btn-primario" id="btn-iniciar">🚀 Iniciar simulacro</button>
+  </div>
+</section>
+
+<!-- ============================================================
+     PANTALLA 2: EXAMEN
+     ============================================================ -->
+<section id="pantalla-examen" class="pantalla oculto" aria-live="polite">
+
+  <div class="barra-examen">
+    <div class="temporizador" id="caja-temporizador">
+      <span aria-hidden="true">⏱️</span>
+      <span id="texto-temporizador">45:00</span>
+    </div>
+    <div class="contador-preguntas" id="texto-contador">Pregunta 1 de 30</div>
+    <div class="racha-indicador" id="caja-racha">🔥 Racha: 0</div>
+    <button class="btn btn-fantasma" id="btn-finalizar-anticipado" style="padding:9px 18px;font-size:.85em;">Finalizar simulacro</button>
+  </div>
+
+  <div class="progreso-wrap">
+    <div class="progreso-textos">
+      <span id="texto-avance">0% completado</span>
+      <span id="texto-resp-pend">0 respondidas · 30 pendientes</span>
+    </div>
+    <div class="barra-progreso-fondo"><div class="barra-progreso-relleno" id="barra-progreso" style="width:0%"></div></div>
+    <div class="grid-navegador" id="grid-navegador" role="navigation" aria-label="Navegador de preguntas"></div>
+  </div>
+
+  <div class="tarjeta-pregunta" id="tarjeta-pregunta">
+    <div class="meta-pregunta" id="meta-pregunta"></div>
+    <h2 class="enunciado" id="texto-enunciado"></h2>
+    <div class="estimulo oculto" id="caja-estimulo"></div>
+    <div class="opciones" id="lista-opciones" role="radiogroup"></div>
+  </div>
+
+  <div class="nav-examen">
+    <button class="btn btn-secundario" id="btn-anterior">← Anterior</button>
+    <div class="grupo-der">
+      <button class="btn btn-secundario oculto" id="btn-siguiente">Siguiente →</button>
+      <button class="btn btn-primario oculto" id="btn-terminar">Finalizar y ver resultados 🏁</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PANTALLA 3: RESULTADOS
+     ============================================================ -->
+<section id="pantalla-resultados" class="pantalla oculto">
+
+  <div class="resumen-hero">
+    <div class="puntaje-grande" id="res-porcentaje">0%</div>
+    <div>Puntaje obtenido en el simulacro</div>
+    <div class="nivel-alcanzado" id="res-nivel">Nivel: —</div>
+    <p class="mensaje-motivacional" id="res-mensaje-motivacional"></p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-caja"><div class="valor" id="res-correctas">0</div><div class="etiqueta-stat">Correctas</div></div>
+    <div class="stat-caja"><div class="valor" id="res-incorrectas">0</div><div class="etiqueta-stat">Incorrectas</div></div>
+    <div class="stat-caja"><div class="valor" id="res-tiempo">0:00</div><div class="etiqueta-stat">Tiempo empleado</div></div>
+    <div class="stat-caja"><div class="valor" id="res-racha-max">0</div><div class="etiqueta-stat">Mejor racha</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>📊 Distribución general</h2>
+    <div class="donut-wrap">
+      <div class="donut" id="donut-general" role="img" aria-label="Gráfico circular de resultados"><div class="centro"><b id="donut-centro-texto">0%</b><span>de acierto</span></div></div>
+      <div class="leyenda-donut">
+        <div class="item"><span class="punto" style="background:var(--verde)"></span> Respuestas correctas</div>
+        <div class="item"><span class="punto" style="background:var(--rojo)"></span> Respuestas incorrectas</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>📚 Rendimiento por subtemática</h2>
+    <div id="barras-subtematicas"></div>
+  </div>
+
+  <div class="panel">
+    <div class="bloque-fortalezas">
+      <div>
+        <h2>💪 Fortalezas identificadas</h2>
+        <ul class="lista-simple" id="lista-fortalezas"></ul>
+      </div>
+      <div>
+        <h2>📈 Aspectos por mejorar</h2>
+        <ul class="lista-simple" id="lista-mejoras"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>🏅 Insignias obtenidas</h2>
+    <div class="badges-grid" id="grid-badges"></div>
+  </div>
+
+  <div class="acciones-finales">
+    <button class="btn btn-primario" id="btn-ver-revision">📋 Ver revisión detallada de las 30 preguntas</button>
+    <button class="btn btn-secundario" id="btn-reiniciar">🔄 Reiniciar simulacro</button>
+  </div>
+
+  <div id="bloque-revision" class="oculto">
+    <h2 style="margin-top:20px;">📋 Revisión pregunta por pregunta</h2>
+    <div id="contenedor-revision"></div>
+  </div>
+
+  <div class="acciones-finales">
+    <button class="btn btn-secundario" id="btn-reiniciar-2">🔄 Reiniciar simulacro</button>
+  </div>
+</section>
+
+</main>
+
+<!-- Toast de racha / logro -->
+<div class="toast" id="toast" role="status" aria-live="assertive"></div>
+
+<!-- Modal de confirmación (finalizar anticipado) -->
+<div class="modal-fondo oculto" id="modal-confirmar">
+  <div class="modal-caja">
+    <h3>¿Finalizar el simulacro?</h3>
+    <p id="modal-texto">Aún tienes preguntas sin responder. Si finalizas ahora, no podrás modificar tus respuestas y se calculará tu puntaje con lo que has contestado hasta el momento.</p>
+    <div class="modal-botones">
+      <button class="btn btn-fantasma" id="modal-cancelar">Cancelar</button>
+      <button class="btn btn-peligro" id="modal-confirmar-btn">Sí, finalizar</button>
+    </div>
+  </div>
+</div>
+
+<footer class="pie">Simulador ICFES · Nivel 5 · Competencias Ciudadanas y Lengua Extranjera · Temática 2: Constitución y ciudadanía</footer>
+
+<div style="text-align:center;padding:30px 20px;">
+<a id="btn-volver"
+   href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=838"
+   style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+  🏫 Regresar al Aula Virtual
+</a>
+<script>
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=838';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=838';
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (esMóvil) {
+    btn.href = appUrl;
+  }
+</script>
+</div>
+
+<script>
+/* ================================================================
+   SIMULADOR ICFES — CONSTITUCIÓN Y CIUDADANÍA — NIVEL 5
+   JavaScript puro (sin librerías ni dependencias externas).
+   ================================================================ */
+(function(){
+"use strict";
+
+/* ----------------------------------------------------------------
+   1. BANCO DE PREGUNTAS
+   Cada subtemática cuenta con 6 preguntas (2 básicas, 2 intermedias,
+   2 avanzadas) para garantizar aleatoriedad real entre intentos.
+   opts[0] es SIEMPRE la respuesta correcta en el código fuente;
+   el motor de renderizado mezcla el orden en cada intento.
+   ---------------------------------------------------------------- */
+const SUBTEMAS = {
+  1:"La Constitución Política de Colombia",
+  2:"Derechos humanos, fundamentales y deberes ciudadanos",
+  3:"Democracia y participación ciudadana",
+  4:"Organización del Estado colombiano",
+  5:"Convivencia y resolución pacífica de conflictos",
+  6:"Diversidad, inclusión y respeto por los derechos",
+  7:"Ciudadanía responsable y participación social",
+  8:"Ciudadanía digital y uso responsable de la información",
+  9:"Análisis de situaciones ciudadanas",
+  10:"Competencias ciudadanas tipo ICFES (integración)"
+};
+
+const COMP = {
+  1:"Comprende el concepto, la importancia y los principios fundamentales de la Constitución Política.",
+  2:"Reconoce derechos humanos, derechos fundamentales, DESC, derechos colectivos y deberes ciudadanos.",
+  3:"Analiza el funcionamiento de la democracia y los mecanismos de participación ciudadana.",
+  4:"Comprende la organización del Estado colombiano y la separación de poderes.",
+  5:"Aplica estrategias de convivencia y resolución pacífica de conflictos.",
+  6:"Valora la diversidad, la inclusión y el respeto por las diferencias.",
+  7:"Ejerce una ciudadanía responsable orientada al bien común.",
+  8:"Ejerce una ciudadanía digital responsable y crítica frente a la información.",
+  9:"Analiza situaciones ciudadanas complejas y argumenta soluciones responsables.",
+  10:"Integra conceptos de Constitución, democracia y ciudadanía en contextos tipo ICFES."
+};
+
+const QB = [
+
+/* ---------------- SUBTEMÁTICA 1 ---------------- */
+{id:"s1q1",sub:1,diff:"basico",tipo:"Selección múltiple",
+ q:"Un profesor explica a sus estudiantes que la Constitución Política es la norma que está por encima de todas las demás leyes, decretos y actos del país, de modo que ninguno puede contradecirla. Esta característica se conoce como:",
+ opts:["Supremacía constitucional","Autonomía territorial","Separación de poderes","Soberanía popular"],
+ exp:"La supremacía constitucional implica que ninguna ley, decreto o acto puede contradecir la Constitución; si lo hace, pierde validez jurídica mediante el control de constitucionalidad. La autonomía territorial se refiere a la gestión de intereses propios de las entidades territoriales, la separación de poderes distribuye funciones entre las ramas del Estado, y la soberanía popular indica que el poder reside en el pueblo; ninguna de estas explica por qué la Constitución prevalece sobre las demás normas."},
+
+{id:"s1q2",sub:1,diff:"basico",tipo:"Selección múltiple",
+ q:"Colombia se define en su Constitución como un Estado Social de Derecho. Esto significa principalmente que el Estado debe:",
+ opts:["Garantizar tanto derechos civiles y políticos como condiciones materiales mínimas de vida digna",
+       "Limitarse a proteger el orden público y la seguridad nacional",
+       "Dejar en manos del mercado la satisfacción de las necesidades sociales",
+       "Priorizar el crecimiento económico por encima de los derechos de las personas"],
+ exp:"El Estado Social de Derecho combina el respeto por las libertades individuales con la obligación estatal de intervenir activamente para garantizar condiciones de vida digna, como salud, educación y vivienda. Un Estado que solo protegiera el orden público, dejara todo al mercado o priorizara la economía sería un Estado meramente liberal o de derecho formal, que no responde al modelo social consagrado en la Constitución."},
+
+{id:"s1q3",sub:1,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"En un municipio, la alcaldía construyó un parque recreativo en terrenos declarados de alto riesgo ambiental, argumentando que la obra impulsaría el turismo local. Un grupo de vecinos considera que esta decisión desconoce uno de los fines esenciales del Estado. ¿Cuál se estaría vulnerando principalmente?",
+ opts:["Garantizar la efectividad de los derechos, incluido el derecho a un ambiente sano",
+       "Facilitar la participación de todos en las decisiones económicas del país",
+       "Defender la independencia nacional y la integridad territorial",
+       "Mantener únicamente el orden público mediante la fuerza"],
+ exp:"Entre los fines esenciales del Estado está garantizar la efectividad de los principios y derechos constitucionales, entre ellos el derecho colectivo a gozar de un ambiente sano. Construir sobre una zona de alto riesgo ambiental sin evaluar ese impacto desconoce dicho fin. Los demás fines mencionados (participación económica, independencia nacional, orden público por la fuerza) no son el eje central del conflicto planteado."},
+
+{id:"s1q4",sub:1,diff:"intermedio",tipo:"Aplicación de la Constitución",
+ q:"«Fragmento simulado: son fines esenciales del Estado servir a la comunidad, promover la prosperidad general y garantizar la efectividad de los principios, derechos y deberes consagrados en la Constitución.» Un municipio rural utiliza sus recursos para llevar agua potable a veredas que nunca habían tenido este servicio. ¿Qué relación tiene esta acción con el fragmento anterior?",
+ opts:["Es una aplicación directa del fin esencial de servir a la comunidad y promover la prosperidad general",
+       "Es una decisión que corresponde exclusivamente a la empresa privada, no al Estado",
+       "No tiene relación con los fines esenciales del Estado, pues estos solo aplican a nivel nacional",
+       "Contradice el principio de autonomía territorial al centralizar un servicio público"],
+ exp:"Llevar agua potable a una comunidad que carecía de ella es una manifestación concreta de los fines esenciales del Estado: servir a la comunidad y promover la prosperidad general. Estos fines aplican en todos los niveles territoriales, no solo el nacional, y la provisión de servicios públicos esenciales es una función estatal, no exclusivamente privada; tampoco contradice la autonomía territorial, pues es el propio municipio quien decide invertir en ello."},
+
+{id:"s1q5",sub:1,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"El Congreso aprueba una ley que autoriza a las autoridades a allanar viviendas sin orden judicial en casos de sospecha de actividades ilegales. La Corte Constitucional declara la ley inexequible por vulnerar la inviolabilidad del domicilio. ¿Qué principio constitucional sustenta principalmente esta decisión?",
+ opts:["La supremacía constitucional, que impide que una ley vulnere derechos fundamentales consagrados en la Constitución",
+       "La soberanía popular, pues el Congreso representa la voluntad del pueblo y su decisión no puede revisarse",
+       "La autonomía territorial, que protege las decisiones de los entes locales frente al Gobierno nacional",
+       "El principio de legalidad, según el cual toda ley aprobada por el Congreso es automáticamente válida"],
+ exp:"Aunque el Congreso represente la voluntad popular, ninguna ley puede contradecir la Constitución; esto es precisamente la supremacía constitucional, garantizada mediante el control de constitucionalidad que ejerce la Corte. La soberanía popular no hace inmune al Congreso frente a la Constitución, la autonomía territorial no está relacionada con este caso, y el principio de legalidad no implica que toda ley sea automáticamente válida si contradice la norma superior."},
+
+{id:"s1q6",sub:1,diff:"avanzado",tipo:"Interpretación de tabla",
+ stim:'<b>Tabla: Fines esenciales del Estado y acciones asociadas</b><table><tr><th>Fin esencial</th><th>Acción del Estado</th></tr>'
+   +'<tr><td>Servir a la comunidad</td><td>Construcción de un centro de salud en zona rural</td></tr>'
+   +'<tr><td>Defender la independencia nacional</td><td>Firma de un contrato comercial exclusivo que beneficia únicamente a una empresa privada extranjera</td></tr>'
+   +'<tr><td>Garantizar la efectividad de los derechos</td><td>Programa de alfabetización para personas adultas</td></tr>'
+   +'<tr><td>Facilitar la participación</td><td>Consulta previa a una comunidad indígena sobre un proyecto minero</td></tr></table>',
+ q:"Según la tabla, ¿cuál fila relaciona INCORRECTAMENTE el fin esencial del Estado con la acción descrita?",
+ opts:["Defender la independencia nacional — firma de un contrato comercial exclusivo que beneficia a una empresa privada extranjera",
+       "Servir a la comunidad — construcción de un centro de salud en zona rural",
+       "Garantizar la efectividad de los derechos — programa de alfabetización para personas adultas",
+       "Facilitar la participación — consulta previa a una comunidad indígena sobre un proyecto minero"],
+ exp:"Defender la independencia nacional se relaciona con la soberanía y la integridad territorial frente a otros Estados, no con firmar contratos que benefician a un único actor privado extranjero; esa acción, además, podría comprometer el interés general. Las otras tres filas sí ilustran correctamente sus respectivos fines esenciales: servicio a la comunidad, efectividad de derechos y participación ciudadana."},
+
+/* ---------------- SUBTEMÁTICA 2 ---------------- */
+{id:"s2q1",sub:2,diff:"basico",tipo:"Selección múltiple",
+ q:"El derecho a la vida puede protegerse de forma inmediata mediante la acción de tutela, mientras que el derecho a la vivienda digna suele depender de políticas públicas que se desarrollan progresivamente. Esta diferencia corresponde a la distinción entre:",
+ opts:["Derechos fundamentales y derechos económicos, sociales y culturales (DESC)",
+       "Derechos colectivos y derechos individuales",
+       "Deberes ciudadanos y derechos humanos",
+       "Derechos de las minorías y derechos de las mayorías"],
+ exp:"Los derechos fundamentales, como la vida, son exigibles de manera directa e inmediata; los derechos económicos, sociales y culturales (DESC), como la vivienda, suelen requerir políticas públicas de desarrollo progresivo por parte del Estado. Las demás opciones describen clasificaciones distintas de derechos que no explican esta diferencia específica de exigibilidad."},
+
+{id:"s2q2",sub:2,diff:"basico",tipo:"Selección múltiple",
+ q:"Pagar los impuestos correspondientes, respetar los derechos de los demás y participar en la vida cívica del país son ejemplos de:",
+ opts:["Deberes ciudadanos consagrados en la Constitución",
+       "Derechos fundamentales de aplicación inmediata",
+       "Mecanismos de participación ciudadana",
+       "Funciones exclusivas de la rama ejecutiva"],
+ exp:"La Constitución establece deberes ciudadanos como contribuir al financiamiento del Estado, respetar los derechos ajenos y participar en la vida cívica, política y comunitaria. Estas conductas no son derechos exigibles ni mecanismos de participación en sí mismos, y tampoco son funciones exclusivas del Gobierno, sino responsabilidades de cada persona."},
+
+{id:"s2q3",sub:2,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Una empresa no afilia a sus trabajadores al sistema de salud y pensiones. Uno de ellos enferma gravemente y la EPS le niega la atención por no figurar afiliado. ¿Qué derecho fue vulnerado principalmente y qué mecanismo constitucional podría usar el trabajador para su protección inmediata?",
+ opts:["El derecho fundamental a la seguridad social en salud; puede interponer una acción de tutela",
+       "El derecho al buen nombre; debe presentar una acción de cumplimiento",
+       "El derecho de asociación; debe acudir a una acción popular",
+       "El derecho al trabajo exclusivamente; solo puede iniciar un proceso laboral ordinario, sin otra opción"],
+ exp:"La falta de afiliación que impide la atención médica urgente vulnera el derecho fundamental a la salud y la seguridad social; ante una amenaza inminente, la acción de tutela permite una protección inmediata. El buen nombre y la asociación no son los derechos centrales del caso, y aunque puede existir un proceso laboral, la urgencia de la situación hace que la tutela sea la vía más adecuada para la protección inmediata."},
+
+{id:"s2q4",sub:2,diff:"intermedio",tipo:"Interpretación de noticia simulada",
+ stim:'<b>Noticia simulada:</b> «Habitantes de la vereda El Roble denuncian que una empresa agroindustrial viene vertiendo residuos químicos al río que abastece a toda la comunidad desde hace más de un año, afectando la pesca y el agua para el consumo.»',
+ q:"Según la noticia, ¿qué tipo de derecho está siendo vulnerado y cuál sería el mecanismo más adecuado para que la comunidad, como colectivo, exija su protección?",
+ opts:["Un derecho colectivo al ambiente sano; el mecanismo más adecuado es la acción popular",
+       "Un derecho fundamental individual; el mecanismo más adecuado es el derecho de petición",
+       "Un deber ciudadano; no existe mecanismo judicial aplicable a este caso",
+       "Un derecho político; el mecanismo más adecuado es el voto en las próximas elecciones"],
+ exp:"La contaminación de una fuente hídrica que afecta a toda una comunidad vulnera un derecho colectivo, el ambiente sano, cuya protección corresponde principalmente a la acción popular, diseñada justamente para la defensa de derechos e intereses colectivos. El derecho de petición sirve para solicitar información, no para exigir el cese de un daño ambiental, y el voto no es un mecanismo judicial de protección de derechos."},
+
+{id:"s2q5",sub:2,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"Una persona difunde en redes sociales información falsa y ofensiva sobre un vecino, argumentando que actúa amparada en su libertad de expresión. El vecino afectado considera que se ha vulnerado su derecho al buen nombre. ¿Cuál es el análisis más adecuado de esta situación desde la perspectiva de los derechos y deberes ciudadanos?",
+ opts:["La libertad de expresión no es absoluta y debe armonizarse con el deber de respetar los derechos de los demás, como el buen nombre y la honra",
+       "La libertad de expresión permite difundir cualquier tipo de información sin ninguna consecuencia jurídica",
+       "El derecho al buen nombre no aplica en entornos digitales como las redes sociales",
+       "Solo el Estado puede limitar la libertad de expresión mediante censura previa a los contenidos"],
+ exp:"Todos los derechos, incluida la libertad de expresión, tienen límites que surgen de los derechos de las demás personas y de los deberes ciudadanos; difundir información falsa que daña la honra de otro no está protegido como ejercicio legítimo de ese derecho. El buen nombre sí aplica en entornos digitales, y la Constitución colombiana prohíbe la censura previa, pero eso no significa que no existan consecuencias posteriores por abusos en el ejercicio de un derecho."},
+
+{id:"s2q6",sub:2,diff:"avanzado",tipo:"Interpretación de tabla",
+ stim:'<b>Tabla: Mecanismos de protección de derechos</b><table><tr><th>Mecanismo</th><th>Objetivo</th></tr>'
+   +'<tr><td>Acción de tutela</td><td>Protección inmediata de derechos fundamentales vulnerados o amenazados</td></tr>'
+   +'<tr><td>Acción popular</td><td>Protección de derechos colectivos, como el ambiente o el espacio público</td></tr>'
+   +'<tr><td>Acción de cumplimiento</td><td>Exigir el cumplimiento de una ley o un acto administrativo</td></tr>'
+   +'<tr><td>Derecho de petición</td><td>Solicitar información o una respuesta de una autoridad</td></tr></table>'
+   +'<p style="margin-top:10px;"><b>Caso:</b> A un adulto mayor, la EPS le niega una cirugía de urgencia que ya había sido autorizada por su médico tratante, y su condición de salud se deteriora rápidamente.</p>',
+ q:"Según la tabla y el caso descrito, ¿cuál es el mecanismo más adecuado que debería usar el adulto mayor?",
+ opts:["Acción de tutela","Acción popular","Acción de cumplimiento","Derecho de petición"],
+ exp:"Ante la vulneración de un derecho fundamental (la salud) con una amenaza inminente para la vida, la acción de tutela es el mecanismo diseñado para obtener protección inmediata. La acción popular protege derechos colectivos, no individuales; la acción de cumplimiento exige el cumplimiento de normas ya existentes de carácter general, y el derecho de petición no ordena una atención médica urgente, solo solicita información o respuesta."},
+
+/* ---------------- SUBTEMÁTICA 3 ---------------- */
+{id:"s3q1",sub:3,diff:"basico",tipo:"Selección múltiple",
+ q:"Cuando los ciudadanos eligen representantes que toman las decisiones políticas en su nombre, se habla de una democracia de tipo:",
+ opts:["Representativa","Participativa","Autoritaria","Tecnocrática"],
+ exp:"La democracia representativa se caracteriza porque los ciudadanos eligen representantes (congresistas, alcaldes, presidente) que ejercen el poder en su nombre. La democracia participativa complementa este modelo con mecanismos de intervención directa, mientras que una democracia autoritaria o tecnocrática no se basan en la elección libre y representativa del pueblo."},
+
+{id:"s3q2",sub:3,diff:"basico",tipo:"Selección múltiple",
+ q:"El voto en Colombia es, a la vez, un derecho y un deber ciudadano que se ejerce mediante un sufragio que debe ser:",
+ opts:["Universal, secreto y libre","Exclusivo para mayores de 25 años","Obligatorio, con sanciones penales por no votar","Decidido únicamente por los partidos políticos"],
+ exp:"El voto en Colombia es universal (para todos los mayores de edad), secreto (nadie puede conocer por quién votó otra persona) y libre (sin coacción). No existe una restricción de edad de 25 años para votar, el voto no es obligatorio con sanciones penales, y la decisión final siempre corresponde a cada ciudadano, no a los partidos."},
+
+{id:"s3q3",sub:3,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Un grupo de ciudadanos desea recolectar firmas de apoyo para presentar formalmente un proyecto de ley ante el Congreso sobre protección de humedales urbanos. ¿Qué mecanismo de participación ciudadana están utilizando?",
+ opts:["Iniciativa popular legislativa","Referendo","Consulta popular","Cabildo abierto"],
+ exp:"La iniciativa popular legislativa permite que un grupo de ciudadanos, mediante la recolección de firmas, presente proyectos de ley o de reforma ante las corporaciones públicas. El referendo somete una norma ya existente o un proyecto a votación popular directa; la consulta popular pregunta a la ciudadanía sobre un asunto de trascendencia, y el cabildo abierto es una reunión pública del concejo o la asamblea para que la comunidad participe directamente, no un mecanismo de firmas para proponer leyes."},
+
+{id:"s3q4",sub:3,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"La Junta de Acción Comunal de un barrio convoca una reunión pública en la que los vecinos pueden intervenir directamente ante el concejo municipal para exponer el problema del alcantarillado del sector. ¿Qué mecanismo de participación ciudadana se está aplicando?",
+ opts:["Cabildo abierto","Plebiscito","Revocatoria del mandato","Iniciativa popular legislativa"],
+ exp:"El cabildo abierto es una sesión pública de los concejos o asambleas en la que la comunidad puede participar e intervenir directamente sobre asuntos que le interesan, como en este caso. El plebiscito consulta al pueblo sobre una decisión del Ejecutivo, la revocatoria del mandato busca destituir a un gobernante elegido popularmente, y la iniciativa popular legislativa consiste en presentar un proyecto de ley mediante firmas, no en una reunión pública deliberativa."},
+
+{id:"s3q5",sub:3,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"En un municipio, la participación electoral de los jóvenes ha disminuido notablemente en las últimas elecciones, aunque muchos de ellos participan activamente en redes sociales opinando sobre temas públicos. ¿Cuál es la interpretación más adecuada de esta situación desde la perspectiva de la cultura democrática?",
+ opts:["Fortalecer la cultura democrática implica promover la participación en todas sus formas, no solo el voto el día de las elecciones",
+       "La baja participación electoral demuestra que los jóvenes no tienen ningún interés en los asuntos públicos",
+       "La opinión en redes sociales no tiene ninguna relación con la participación ciudadana",
+       "El voto es la única forma legítima de participación democrática reconocida por la Constitución"],
+ exp:"La cultura democrática abarca múltiples formas de participación (deliberación, veedurías, redes sociales, organizaciones comunitarias), no se limita al voto. El hecho de que los jóvenes opinen activamente en redes sobre temas públicos muestra interés cívico, aunque no se traduzca en participación electoral; por ello, la conclusión más acertada es que se deben fortalecer distintos canales de participación, no descartar el interés juvenil ni reducir la democracia al solo acto de votar."},
+
+{id:"s3q6",sub:3,diff:"avanzado",tipo:"Interpretación de gráfico",
+ stim:'<b>Resultados simulados de elección local</b>'
+   +'<div class="mini-barra-fila"><span>Votos válidos</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:38%"></div></div><b>38%</b></div>'
+   +'<div class="mini-barra-fila"><span>Abstención</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:58%;background:linear-gradient(90deg,#D64545,#C9820A);"></div></div><b>58%</b></div>'
+   +'<div class="mini-barra-fila"><span>Votos nulos/blancos</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:4%"></div></div><b>4%</b></div>',
+ q:"Según el gráfico, la elección tuvo una abstención del 58%. ¿Qué implicación tiene este dato para la democracia participativa del municipio?",
+ opts:["Una abstención tan alta puede debilitar la legitimidad democrática y evidencia la necesidad de fortalecer otros mecanismos de participación",
+       "El resultado es completamente válido y no requiere ningún tipo de análisis adicional sobre la participación ciudadana",
+       "La abstención no tiene ninguna relación con la legitimidad de las autoridades elegidas",
+       "Una abstención alta demuestra que el sistema democrático del municipio funciona de manera óptima"],
+ exp:"Una abstención mayoritaria reduce el respaldo social real de las autoridades electas y puede señalar desconfianza, desinformación o falta de mecanismos accesibles de participación; por ello es necesario fortalecer la cultura democrática más allá del día de las elecciones. Afirmar que no tiene relación con la legitimidad o que demuestra un funcionamiento óptimo desconoce el papel central que tiene la participación ciudadana en la democracia."},
+
+/* ---------------- SUBTEMÁTICA 4 ---------------- */
+{id:"s4q1",sub:4,diff:"basico",tipo:"Selección múltiple",
+ q:"La rama del poder público encargada de crear, modificar y derogar las leyes en Colombia es la rama:",
+ opts:["Legislativa","Ejecutiva","Judicial","De control"],
+ exp:"La rama Legislativa, representada por el Congreso de la República (Senado y Cámara de Representantes), tiene como función principal expedir, modificar y derogar leyes. La rama Ejecutiva administra y ejecuta políticas, la Judicial administra justicia, y los organismos de control vigilan la gestión pública, pero ninguna de estas crea leyes."},
+
+{id:"s4q2",sub:4,diff:"basico",tipo:"Selección múltiple",
+ q:"El presidente de la República, los gobernadores y los alcaldes hacen parte de la rama del poder público llamada:",
+ opts:["Ejecutiva","Legislativa","Judicial","Organismos de control"],
+ exp:"La rama Ejecutiva está integrada por el presidente a nivel nacional, los gobernadores a nivel departamental y los alcaldes a nivel municipal, quienes administran y ejecutan las políticas públicas. La Legislativa corresponde al Congreso, la Judicial a los jueces y tribunales, y los organismos de control cumplen funciones de vigilancia, no de administración."},
+
+{id:"s4q3",sub:4,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Un ciudadano descubre que el alcalde de su municipio ha manejado de forma irregular los recursos públicos destinados a la construcción de un colegio, sin que la obra se haya ejecutado. Si el ciudadano quiere que se investigue específicamente el manejo de los recursos y bienes públicos, ¿ante qué organismo de control fiscal debería presentar su denuncia?",
+ opts:["La Contraloría General de la República","La Registraduría Nacional del Estado Civil","El Consejo Nacional Electoral","El Banco de la República"],
+ exp:"La Contraloría es el organismo encargado del control fiscal, es decir, de vigilar el manejo de los recursos y bienes públicos, por lo que es la entidad competente para investigar irregularidades en el uso de dinero público. La Registraduría organiza procesos electorales, el Consejo Nacional Electoral vigila la actividad de los partidos y las elecciones, y el Banco de la República gestiona la política monetaria; ninguno ejerce control fiscal sobre alcaldías."},
+
+{id:"s4q4",sub:4,diff:"intermedio",tipo:"Análisis causa-efecto",
+ q:"El Congreso intenta remover de su cargo a un juez porque este emitió un fallo que consideró desfavorable para uno de sus miembros. Diversos sectores rechazan esta intención por considerarla una afectación grave al Estado de derecho. ¿Qué principio constitucional busca evitar precisamente este tipo de situaciones?",
+ opts:["La separación de poderes, que evita la concentración del poder y garantiza controles y contrapesos entre las ramas",
+       "La soberanía popular, que otorga al Congreso la facultad de remover a cualquier funcionario público",
+       "La autonomía territorial, que protege a los jueces frente a las decisiones del Gobierno nacional",
+       "El principio de mayorías, según el cual las decisiones del Congreso siempre deben prevalecer"],
+ exp:"La separación de poderes busca que ninguna rama concentre poder excesivo ni interfiera indebidamente en las funciones de otra, precisamente para evitar que el Legislativo presione o remueva jueces por decisiones judiciales que no le favorezcan. La soberanía popular no otorga al Congreso poder ilimitado sobre otras ramas, la autonomía territorial no aplica a este caso, y el principio de mayorías no puede utilizarse para vulnerar la independencia judicial."},
+
+{id:"s4q5",sub:4,diff:"avanzado",tipo:"Aplicación de la Constitución",
+ q:"Un municipio decide, en ejercicio de su autonomía territorial, destinar recursos propios a un programa cultural específico de su región. El Gobierno nacional considera que esa decisión no se ajusta a sus prioridades de política pública, pero no puede impedirla porque no contradice ninguna norma superior. ¿Qué principio constitucional explica esta situación?",
+ opts:["La autonomía territorial dentro del marco de un Estado unitario, que permite a las entidades territoriales gestionar sus propios intereses sin contradecir la Constitución y la ley",
+       "La soberanía nacional, que otorga a los municipios el poder de separarse del Estado colombiano",
+       "La separación de poderes, que impide cualquier tipo de coordinación entre la Nación y los municipios",
+       "El centralismo absoluto, según el cual todas las decisiones locales dependen exclusivamente del Gobierno nacional"],
+ exp:"Colombia es un Estado unitario, pero con autonomía de sus entidades territoriales; esto significa que departamentos y municipios pueden gestionar sus propios intereses, incluidas decisiones culturales, siempre que no contradigan la Constitución y la ley, aunque no coincidan con las prioridades del Gobierno nacional. La soberanía nacional no otorga poder de secesión, la separación de poderes no se refiere a la relación Nación-territorio, y el centralismo absoluto contradice justamente el principio de autonomía territorial reconocido en la Constitución."},
+
+{id:"s4q6",sub:4,diff:"avanzado",tipo:"Interpretación de tabla",
+ stim:'<b>Tabla: Ramas del poder público y sus funciones</b><table><tr><th>Rama</th><th>Función principal</th></tr>'
+   +'<tr><td>Legislativa</td><td>Expedir, reformar y derogar leyes</td></tr>'
+   +'<tr><td>Ejecutiva</td><td>Administrar y ejecutar políticas públicas</td></tr>'
+   +'<tr><td>Judicial</td><td>Administrar justicia y ejercer el control de constitucionalidad</td></tr></table>'
+   +'<p style="margin-top:10px;"><b>Hecho:</b> La Corte Constitucional declara inexequible (contraria a la Constitución) una ley aprobada por el Congreso que limitaba el derecho de reunión pacífica.</p>',
+ q:"Según la tabla, ¿qué rama del poder público actuó en el hecho descrito y qué función ejerció?",
+ opts:["La rama Judicial, ejerciendo el control de constitucionalidad sobre una ley del Congreso",
+       "La rama Legislativa, ejerciendo su función de administrar justicia",
+       "La rama Ejecutiva, ejerciendo su función de expedir leyes",
+       "La rama Judicial, ejerciendo su función de administrar políticas públicas"],
+ exp:"La Corte Constitucional pertenece a la rama Judicial y su función de declarar inexequible una ley corresponde exactamente al control de constitucionalidad, un mecanismo que protege la supremacía de la Constitución frente a leyes del Congreso. Las demás opciones asignan funciones equivocadas a las ramas: el Legislativo no administra justicia, el Ejecutivo no expide leyes, y la Judicial no administra políticas públicas."},
+
+/* ---------------- SUBTEMÁTICA 5 ---------------- */
+{id:"s5q1",sub:5,diff:"basico",tipo:"Selección múltiple",
+ q:"Cuando dos personas expresan sus puntos de vista de manera clara, respetuosa y sin agredir a la otra, buscando ser escuchadas y comprendidas, están practicando:",
+ opts:["Comunicación asertiva","Imposición autoritaria","Evasión del conflicto","Indiferencia social"],
+ exp:"La comunicación asertiva permite expresar ideas y sentimientos de forma clara y respetuosa, sin agredir ni someterse pasivamente, lo cual favorece la resolución pacífica de conflictos. La imposición autoritaria busca que una parte se someta a la otra, la evasión evita enfrentar el problema, y la indiferencia social implica desinterés, ninguna de las cuales facilita el diálogo constructivo."},
+
+{id:"s5q2",sub:5,diff:"basico",tipo:"Selección múltiple",
+ q:"Cuando un tercero neutral ayuda a dos personas en conflicto a dialogar y llegar por sí mismas a un acuerdo, sin imponer una decisión, se está aplicando:",
+ opts:["Mediación","Sentencia judicial","Sanción disciplinaria","Votación mayoritaria"],
+ exp:"La mediación es un mecanismo de resolución pacífica de conflictos en el que un tercero neutral facilita el diálogo entre las partes para que ellas mismas construyan un acuerdo, sin imponer la solución. Una sentencia judicial sí impone una decisión obligatoria, una sanción disciplinaria también es impuesta por una autoridad, y una votación mayoritaria decide por conteo de votos, no por acuerdo dialogado entre las partes."},
+
+{id:"s5q3",sub:5,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Dos vecinos tienen un conflicto recurrente por el ruido de una fiesta semanal. En lugar de acudir directamente a la Policía, deciden buscar a un líder comunitario capacitado para que los ayude a dialogar y llegar a un acuerdo sobre horarios. ¿Qué estrategia de resolución de conflictos están utilizando?",
+ opts:["Mediación comunitaria","Negociación colectiva laboral","Sanción penal","Silencio administrativo"],
+ exp:"Acudir a un tercero de la comunidad, capacitado y neutral, para facilitar el diálogo entre las partes en conflicto es un ejemplo de mediación comunitaria, una estrategia de convivencia pacífica. La negociación colectiva laboral se refiere a relaciones entre empleadores y trabajadores, la sanción penal es una consecuencia jurídica impuesta por el Estado, y el silencio administrativo es un concepto jurídico sobre la falta de respuesta de una entidad, no una estrategia de resolución de conflictos."},
+
+{id:"s5q4",sub:5,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"En un colegio, un docente identifica una situación de acoso escolar entre dos estudiantes. En lugar de sancionar de inmediato, organiza un espacio de diálogo guiado entre ambos, con acompañamiento psicosocial, para reconstruir la confianza y establecer compromisos de convivencia. ¿Qué principio de convivencia está aplicando el docente?",
+ opts:["La construcción de acuerdos mediante el diálogo, propia de una cultura de paz",
+       "La imposición de una sanción ejemplarizante sin posibilidad de diálogo",
+       "La exclusión inmediata de ambos estudiantes de la institución",
+       "La resolución del conflicto exclusivamente por la vía judicial"],
+ exp:"Promover el diálogo guiado y la construcción de acuerdos entre las partes, con acompañamiento adecuado, es una estrategia propia de la cultura de paz y la resolución pacífica de conflictos escolares. Sancionar sin diálogo, excluir de inmediato o judicializar el caso sin agotar otras alternativas no corresponden a las estrategias pedagógicas de convivencia que promueve este enfoque."},
+
+{id:"s5q5",sub:5,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"En una empresa, dos equipos de trabajo tienen un conflicto recurrente por la distribución de tareas, lo que ha afectado el ambiente laboral. El jefe puede optar por imponer una nueva distribución de forma unilateral, o por facilitar un proceso de negociación donde ambos equipos expongan sus necesidades y construyan una solución conjunta. ¿Cuál estrategia es más coherente con los principios de convivencia y resolución pacífica de conflictos?",
+ opts:["Facilitar la negociación conjunta, porque permite que las partes construyan una solución sostenible basada en sus propias necesidades",
+       "Imponer la decisión de forma unilateral, porque es la forma más rápida de resolver cualquier conflicto laboral",
+       "Ignorar el conflicto, esperando que se resuelva por sí solo con el paso del tiempo",
+       "Trasladar automáticamente el caso a instancias judiciales sin intentar el diálogo interno"],
+ exp:"La negociación conjunta reconoce a ambas partes como interlocutores válidos y busca acuerdos sostenibles basados en sus necesidades reales, lo cual es coherente con la cultura de paz. Imponer una decisión unilateral puede resolver el conflicto en apariencia, pero no atiende sus causas; ignorarlo suele agravar la situación, y acudir directamente a instancias judiciales sin agotar el diálogo desconoce el principio de resolución pacífica en el ámbito más cercano posible."},
+
+{id:"s5q6",sub:5,diff:"avanzado",tipo:"Interpretación de caso",
+ q:"Una comunidad que vivió un largo periodo de conflicto interno decide organizar espacios de memoria, reconciliación y construcción conjunta de proyectos productivos entre antiguos bandos enfrentados. ¿Qué elemento es más determinante para consolidar una auténtica cultura de paz en este proceso?",
+ opts:["La construcción de acuerdos sostenidos en el tiempo, basados en el reconocimiento mutuo y la reparación, más allá del cese de la violencia",
+       "La simple ausencia de enfrentamientos armados, sin necesidad de ningún otro proceso social",
+       "El olvido total de lo ocurrido, evitando cualquier espacio de memoria colectiva",
+       "La imposición de una única versión de los hechos por parte de una de las partes involucradas"],
+ exp:"Una cultura de paz duradera requiere acuerdos sostenidos, reconocimiento mutuo y procesos de reparación, no solo la ausencia de violencia armada (paz negativa). El olvido total impide la reconciliación genuina, y la imposición de una sola versión de los hechos por una de las partes reproduce dinámicas de dominación en lugar de construir una convivencia basada en la verdad y el respeto mutuo."},
+
+/* ---------------- SUBTEMÁTICA 6 ---------------- */
+{id:"s6q1",sub:6,diff:"basico",tipo:"Selección múltiple",
+ q:"Colombia reconoce constitucionalmente la existencia de pueblos indígenas, comunidades afrodescendientes, raizales, palenqueras y ROM, entre otros. Este reconocimiento corresponde al principio de:",
+ opts:["Diversidad étnica y cultural de la Nación","Uniformidad cultural obligatoria","Superioridad de una cultura sobre las demás","Asimilación forzada de las minorías"],
+ exp:"La Constitución reconoce y protege la diversidad étnica y cultural de la Nación colombiana como principio fundamental. Este reconocimiento es opuesto a la uniformidad cultural obligatoria, a cualquier idea de superioridad entre culturas y a la asimilación forzada, prácticas históricamente asociadas a la discriminación."},
+
+{id:"s6q2",sub:6,diff:"basico",tipo:"Selección múltiple",
+ q:"Negarle un empleo a una persona únicamente por su edad, género, religión o condición de discapacidad, sin relación con su capacidad para el cargo, constituye una vulneración al principio de:",
+ opts:["No discriminación e igualdad","Autonomía territorial","Separación de poderes","Soberanía popular"],
+ exp:"El principio de igualdad y no discriminación establece que todas las personas deben recibir el mismo trato ante la ley, sin distinciones arbitrarias basadas en características como la edad, el género, la religión o la discapacidad cuando no tienen relación con la capacidad para desempeñar un cargo. Los demás conceptos (autonomía territorial, separación de poderes, soberanía popular) no se relacionan con este tipo de discriminación."},
+
+{id:"s6q3",sub:6,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Una empresa rechaza la solicitud de empleo de una persona con discapacidad física, aunque cumple con todos los requisitos técnicos del cargo, argumentando que \"podría generar incomodidades en el equipo de trabajo\". ¿Qué derecho fundamental se está vulnerando principalmente?",
+ opts:["El derecho a la igualdad y a la no discriminación por condición de discapacidad",
+       "El derecho a la libre asociación de la empresa",
+       "El derecho al libre desarrollo de la personalidad de los demás empleados",
+       "El derecho a la propiedad privada de la empresa"],
+ exp:"Excluir a una persona calificada únicamente por su discapacidad, sin relación real con su desempeño laboral, vulnera el derecho a la igualdad y a la no discriminación. La libertad de asociación no ampara decisiones discriminatorias, el libre desarrollo de la personalidad de otros empleados no está en juego en este caso, y el derecho a la propiedad privada no justifica prácticas discriminatorias en la contratación."},
+
+{id:"s6q4",sub:6,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Un colegio recibe a un estudiante indígena que llega de su territorio ancestral. La institución adapta algunas prácticas pedagógicas y permite que el estudiante use su vestimenta tradicional en ciertas actividades culturales, sin exigirle que abandone sus costumbres. ¿Qué principio ciudadano refleja esta actuación del colegio?",
+ opts:["La inclusión y el respeto por la diversidad étnica y cultural","La asimilación cultural obligatoria","La discriminación positiva excluyente","La homogeneización curricular estricta"],
+ exp:"Adaptar prácticas institucionales para respetar la identidad cultural de un estudiante, sin obligarlo a abandonar sus costumbres, refleja inclusión y respeto por la diversidad. Esto es opuesto a la asimilación forzada; el término \"discriminación positiva excluyente\" es contradictorio en sí mismo y no describe la situación, y la homogeneización curricular estricta sería justamente lo contrario de lo que hace el colegio."},
+
+{id:"s6q5",sub:6,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"En una red social, un usuario publica comentarios que ridiculizan y generalizan negativamente a un grupo étnico específico, alegando que solo está ejerciendo su libertad de opinión. Varias personas denuncian el contenido por considerarlo discriminatorio. ¿Cuál es el análisis más adecuado desde la perspectiva de los derechos y la convivencia intercultural?",
+ opts:["La libertad de expresión no ampara discursos que promuevan la discriminación o el odio hacia un grupo por su identidad étnica",
+       "Toda opinión publicada en redes sociales está protegida sin ninguna excepción, sin importar su contenido",
+       "Los comentarios discriminatorios en internet no tienen ningún efecto real sobre las personas afectadas",
+       "Solo las autoridades pueden opinar sobre asuntos étnicos, por lo que la denuncia ciudadana no es válida"],
+ exp:"La libertad de expresión, aunque es un derecho fundamental, no protege discursos discriminatorios o de odio contra un grupo por su identidad étnica, pues estos vulneran la dignidad y la igualdad de las personas afectadas. Afirmar que toda opinión está protegida sin excepción desconoce estos límites, minimizar el efecto de la discriminación digital ignora su impacto real, y la denuncia ciudadana ante contenidos discriminatorios es un ejercicio legítimo de participación."},
+
+{id:"s6q6",sub:6,diff:"avanzado",tipo:"Interpretación de gráfico",
+ stim:'<b>Composición étnica simulada de un departamento colombiano</b>'
+   +'<div class="mini-barra-fila"><span>Población mestiza</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:62%"></div></div><b>62%</b></div>'
+   +'<div class="mini-barra-fila"><span>Población afrodescendiente</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:24%;background:linear-gradient(90deg,#1C9A5B,#123C69);"></div></div><b>24%</b></div>'
+   +'<div class="mini-barra-fila"><span>Población indígena</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:11%;background:linear-gradient(90deg,#F5A623,#C9820A);"></div></div><b>11%</b></div>'
+   +'<div class="mini-barra-fila"><span>Otras identidades</span><div class="mini-barra-fondo"><div class="mini-barra-relleno" style="width:3%"></div></div><b>3%</b></div>',
+ q:"Según el gráfico, un departamento con una composición étnica diversa como la mostrada debería orientar sus políticas públicas educativas principalmente hacia:",
+ opts:["Un enfoque intercultural que reconozca y valore las particularidades de cada grupo étnico presente en el territorio",
+       "Un enfoque homogéneo que aplique el mismo currículo sin ninguna adaptación cultural",
+       "La atención exclusiva del grupo mayoritario, dejando de lado a las minorías étnicas",
+       "La eliminación de las prácticas culturales tradicionales en las instituciones educativas"],
+ exp:"Ante una composición poblacional diversa, las políticas educativas deben adoptar un enfoque intercultural que reconozca y respete las particularidades de cada grupo étnico presente, evitando la exclusión de las minorías. Un enfoque homogéneo, la atención exclusiva a la mayoría o la eliminación de prácticas culturales tradicionales contradicen los principios constitucionales de diversidad e inclusión."},
+
+/* ---------------- SUBTEMÁTICA 7 ---------------- */
+{id:"s7q1",sub:7,diff:"basico",tipo:"Selección múltiple",
+ q:"Cuando una decisión beneficia al conjunto de la sociedad y no solo a un grupo particular de personas, se dice que está orientada hacia:",
+ opts:["El bien común","El interés particular","El beneficio exclusivo de una empresa","La ventaja de un solo partido político"],
+ exp:"El bien común hace referencia a las condiciones y beneficios que favorecen a toda la sociedad, no a un interés particular, empresarial o partidista. La ciudadanía responsable implica orientar las decisiones y acciones hacia ese bienestar colectivo."},
+
+{id:"s7q2",sub:7,diff:"basico",tipo:"Selección múltiple",
+ q:"Cuidar un parque público, no dañar el mobiliario urbano y reportar daños en la infraestructura de un barrio son ejemplos de:",
+ opts:["Cuidado responsable de los bienes públicos","Ejercicio exclusivo de derechos fundamentales","Funciones que corresponden solo a la Policía","Actividades sin ninguna relación con la ciudadanía"],
+ exp:"El cuidado de los bienes públicos, como parques y mobiliario urbano, es una expresión concreta de la ciudadanía responsable y la solidaridad social, no un ejercicio de derechos fundamentales ni una función exclusiva de la Policía; es una responsabilidad compartida por toda la comunidad."},
+
+{id:"s7q3",sub:7,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Un joven de un barrio organiza, sin recibir ningún pago, una jornada mensual de limpieza y embellecimiento de una zona verde comunitaria, invitando a otros vecinos a participar. ¿Qué característica de la ciudadanía responsable representa mejor esta acción?",
+ opts:["El liderazgo ciudadano orientado al bien común","La búsqueda exclusiva de un beneficio económico personal","El cumplimiento de una obligación legal impuesta por el municipio","Una función exclusiva de las autoridades ambientales"],
+ exp:"Organizar voluntariamente actividades que benefician a la comunidad, motivando a otros a participar, es un ejemplo claro de liderazgo ciudadano orientado al bien común. No busca un beneficio económico personal, no responde a una obligación legal impuesta, ni es una función exclusiva de las autoridades, sino una iniciativa ciudadana."},
+
+{id:"s7q4",sub:7,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"En un conjunto residencial, los vecinos deciden turnarse voluntariamente para cuidar y regar las zonas verdes comunes, en lugar de esperar que solo la administración se encargue de ello. ¿Qué valores ciudadanos se reflejan principalmente en esta práctica?",
+ opts:["Solidaridad y corresponsabilidad en el cuidado del bien común","Individualismo y desinterés por los espacios compartidos","Delegación total de responsabilidades en la administración","Competencia entre vecinos por el reconocimiento público"],
+ exp:"Turnarse voluntariamente para cuidar espacios comunes refleja solidaridad y corresponsabilidad, valores centrales de la ciudadanía responsable frente al bien común. Esto es opuesto al individualismo, a delegar toda la responsabilidad en un tercero, o a competir por reconocimiento, actitudes que no describen la situación planteada."},
+
+{id:"s7q5",sub:7,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"Un ciudadano descubre que participar en un proyecto social comunitario le exigiría dedicar tiempo que preferiría usar en actividades personales, pero reconoce que su aporte sería valioso para la comunidad. ¿Cuál es la reflexión más coherente con una ciudadanía responsable frente a este dilema?",
+ opts:["Puede valorar libremente su tiempo personal, pero una ciudadanía responsable implica sopesar el aporte al bien común sin que ello anule por completo sus proyectos individuales",
+       "Debe renunciar completamente a su tiempo personal siempre que exista una necesidad comunitaria",
+       "No tiene ninguna responsabilidad frente a la comunidad si no recibe un pago por su participación",
+       "El bien común siempre debe imponerse por la fuerza sobre las decisiones individuales de las personas"],
+ exp:"Una ciudadanía responsable no exige anular por completo los proyectos personales, pero sí invita a considerar el aporte al bien común como parte de la vida en comunidad, buscando un equilibrio razonable. Exigir la renuncia total al tiempo personal, negar cualquier responsabilidad por falta de pago, o imponer el bien común por la fuerza no son posturas coherentes con el ejercicio libre y responsable de la ciudadanía."},
+
+{id:"s7q6",sub:7,diff:"avanzado",tipo:"Interpretación de caso",
+ q:"En una junta de acción comunal, varios vecinos sospechan que el tesorero ha manejado de forma poco transparente los recursos recolectados para arreglar la vía de acceso al barrio. En lugar de acusarlo públicamente sin pruebas, deciden conformar un comité de veeduría ciudadana para revisar las cuentas y solicitar informes detallados. ¿Qué principio de ciudadanía responsable ilustra mejor esta decisión?",
+ opts:["El ejercicio del control social y la veeduría ciudadana sobre el manejo de los recursos comunitarios",
+       "La resolución del conflicto exclusivamente mediante la violencia física",
+       "La indiferencia total frente al posible manejo irregular de los recursos",
+       "La expulsión inmediata del tesorero sin ningún proceso de verificación"],
+ exp:"Conformar un comité de veeduría para revisar cuentas y solicitar informes es un ejercicio legítimo de control social, una herramienta de la ciudadanía responsable para vigilar el manejo transparente de los recursos comunitarios, actuando con base en evidencia y no en acusaciones sin sustento. La violencia, la indiferencia o una expulsión sin proceso de verificación vulnerarían el debido proceso y no reflejan una ciudadanía responsable."},
+
+/* ---------------- SUBTEMÁTICA 8 ---------------- */
+{id:"s8q1",sub:8,diff:"basico",tipo:"Selección múltiple",
+ q:"El conjunto de derechos y deberes que tienen las personas al usar internet y las redes sociales, como respetar la privacidad ajena y no difundir información falsa, se conoce como:",
+ opts:["Ciudadanía digital","Soberanía tecnológica","Autonomía territorial digital","Neutralidad de red exclusivamente"],
+ exp:"La ciudadanía digital comprende los derechos y deberes que tienen las personas en entornos digitales, incluyendo el respeto por la privacidad y la veracidad de la información compartida. Los otros términos no corresponden a este concepto: la soberanía tecnológica y la autonomía territorial digital no son categorías constitucionales estándar en este contexto, y la neutralidad de red es un principio técnico distinto."},
+
+{id:"s8q2",sub:8,diff:"basico",tipo:"Selección múltiple",
+ q:"Compartir datos personales de otra persona, como su dirección o número de teléfono, sin su consentimiento, en un grupo público de redes sociales, vulnera principalmente el derecho a:",
+ opts:["La privacidad y la protección de datos personales","La libertad de expresión de quien comparte la información","El derecho a la información pública sin restricciones","El derecho de petición del titular de los datos"],
+ exp:"Divulgar datos personales de otra persona sin su consentimiento vulnera el derecho a la privacidad y a la protección de datos personales, un derecho fundamental en el entorno digital. Esto no puede justificarse como libertad de expresión de quien comparte la información, ni se trata de información pública de libre acceso, y el derecho de petición no es el derecho vulnerado en este caso."},
+
+{id:"s8q3",sub:8,diff:"intermedio",tipo:"Interpretación de noticia simulada",
+ stim:'<b>Publicación simulada en redes sociales:</b> «¡Alerta! Dicen que a partir del próximo mes cerrarán todos los hospitales públicos del país. Compártelo antes de que lo borren.» La publicación no cita ninguna fuente oficial ni entidad verificable.',
+ q:"Ante una publicación como la anterior, ¿cuál sería la actitud más coherente con una ciudadanía digital responsable?",
+ opts:["Verificar la información en fuentes oficiales antes de compartirla, evitando difundir posibles noticias falsas",
+       "Compartirla de inmediato con el mayor número de contactos posible, para \"prevenir\" a la comunidad",
+       "Ignorar por completo el uso de internet para evitar cualquier tipo de desinformación",
+       "Confiar en la información simplemente porque tiene muchas reacciones y comentarios"],
+ exp:"El pensamiento crítico frente a la información implica verificar la veracidad de un contenido en fuentes oficiales antes de compartirlo, especialmente cuando no cita ninguna entidad verificable, para evitar contribuir a la desinformación. Compartir sin verificar, evitar totalmente el uso de internet, o confiar en un contenido solo por su popularidad no corresponden a una ciudadanía digital responsable."},
+
+{id:"s8q4",sub:8,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"Un estudiante recibe constantemente mensajes ofensivos y humillantes de un grupo de compañeros a través de una red social, quienes además crean memes para ridiculizarlo públicamente. ¿Qué fenómeno describe esta situación y qué actitud sería más adecuada por parte de la institución educativa?",
+ opts:["Ciberacoso; la institución debe intervenir, brindar acompañamiento y activar las rutas de atención correspondientes",
+       "Libertad de expresión legítima; la institución no debe intervenir en asuntos ocurridos fuera del aula",
+       "Un conflicto normal entre estudiantes que se resuelve solo, sin necesidad de intervención alguna",
+       "Un derecho de los estudiantes a burlarse libremente de sus compañeros en internet"],
+ exp:"El ciberacoso constituye una forma de violencia que vulnera la dignidad de la persona afectada; aunque ocurra fuera del aula física, la institución educativa tiene la responsabilidad de intervenir, brindar acompañamiento y activar las rutas de atención frente al acoso escolar. No puede justificarse como libertad de expresión, ni considerarse un conflicto menor que se resuelve solo, ni mucho menos un derecho de quienes ejercen la agresión."},
+
+{id:"s8q5",sub:8,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"Una persona encuentra en internet fotografías privadas de un excompañero sentimental y decide compartirlas en un grupo de chat sin su consentimiento, argumentando que \"ya eran de dominio público\" porque circulaban entre algunos conocidos. ¿Cuál es el análisis más adecuado de esta situación desde la ciudadanía digital?",
+ opts:["Compartir contenido íntimo sin consentimiento vulnera la privacidad de la persona, sin importar cuántas personas ya lo hayan visto previamente",
+       "Una vez que un contenido circula entre algunas personas, deja automáticamente de ser privado y puede difundirse libremente",
+       "El consentimiento inicial para tomar una fotografía privada implica autorización permanente para su difusión posterior",
+       "Este tipo de situaciones no tiene ninguna consecuencia ética ni legal en el entorno digital"],
+ exp:"La difusión de contenido íntimo sin consentimiento vulnera la privacidad y la dignidad de la persona afectada, sin importar que haya circulado previamente entre algunas personas; la circulación indebida no legitima una difusión mayor. Tampoco existe una autorización permanente por el solo hecho de haber existido consentimiento para la toma inicial de la imagen, y este tipo de conductas sí puede tener consecuencias éticas y legales."},
+
+{id:"s8q6",sub:8,diff:"avanzado",tipo:"Interpretación de tabla",
+ stim:'<b>Tabla: Señales de alerta frente a una posible noticia falsa</b><table><tr><th>Señal</th><th>Ejemplo</th></tr>'
+   +'<tr><td>Ausencia de fuente verificable</td><td>No menciona ninguna entidad oficial ni autor identificable</td></tr>'
+   +'<tr><td>Lenguaje alarmista</td><td>Uso de mayúsculas y expresiones como "¡Urgente!" o "Antes de que lo borren"</td></tr>'
+   +'<tr><td>Apela a la emoción antes que a los datos</td><td>Busca generar miedo o indignación inmediata</td></tr></table>',
+ q:"Según la tabla, ¿cuál sería la estrategia más adecuada para ejercer un pensamiento crítico frente a una publicación que presenta estas tres señales de alerta?",
+ opts:["Contrastar la información con fuentes oficiales y verificadas antes de darle credibilidad o compartirla",
+       "Compartir la publicación inmediatamente, ya que el tono urgente indica que la información es confiable",
+       "Asumir que toda información con lenguaje emotivo es necesariamente verdadera",
+       "Ignorar por completo la posibilidad de verificar cualquier información que circule en redes sociales"],
+ exp:"Frente a señales como la falta de fuente verificable y el lenguaje alarmista, la estrategia adecuada es contrastar la información con fuentes oficiales antes de creerla o compartirla, ejerciendo pensamiento crítico. El tono urgente o emotivo no es garantía de veracidad; por el contrario, suele ser una técnica usada en la desinformación, y renunciar a verificar cualquier información deja a la persona expuesta a la desinformación."},
+
+/* ---------------- SUBTEMÁTICA 9 ---------------- */
+{id:"s9q1",sub:9,diff:"basico",tipo:"Interpretación de caso",
+ q:"En una tienda de barrio, el dueño se niega a atender a un cliente porque pertenece a otra región del país y \"no le gusta cómo habla\". ¿Qué derecho está siendo vulnerado en esta situación?",
+ opts:["El derecho a la igualdad y a la no discriminación","El derecho a la propiedad privada del comerciante","El derecho al libre desarrollo de la personalidad del comerciante","El derecho a la libertad de empresa sin ninguna limitación"],
+ exp:"Negar un servicio a una persona por su origen regional o su forma de hablar constituye una discriminación que vulnera el derecho a la igualdad. Si bien el comerciante tiene derecho a la propiedad y a la libertad de empresa, estos derechos no son absolutos y no pueden ejercerse de forma discriminatoria hacia los clientes."},
+
+{id:"s9q2",sub:9,diff:"basico",tipo:"Toma de decisiones",
+ q:"Un estudiante encuentra el celular de un compañero olvidado en el salón de clases. ¿Cuál sería la decisión más responsable desde una perspectiva ciudadana?",
+ opts:["Entregarlo al docente o directamente a su compañero, respetando el derecho a la propiedad ajena","Quedarse con el celular, ya que fue encontrado por casualidad","Revisarlo y compartir su contenido con otros compañeros por curiosidad","Venderlo, argumentando que su compañero fue descuidado al perderlo"],
+ exp:"Entregar el objeto encontrado a su dueño o a una autoridad competente (como el docente) respeta el derecho a la propiedad ajena y refleja honestidad, un valor ciudadano fundamental. Quedarse con el objeto, revisar su contenido sin autorización o venderlo constituyen conductas que vulneran los derechos de la otra persona."},
+
+{id:"s9q3",sub:9,diff:"intermedio",tipo:"Interpretación de caso",
+ q:"En un barrio, algunos vecinos quieren construir una cancha deportiva en un lote comunitario, mientras que otros prefieren usar ese mismo espacio para ampliar una huerta comunitaria que provee alimentos a varias familias. Ambos grupos consideran que su propuesta beneficia a la comunidad. ¿Cuál sería la estrategia más adecuada para resolver esta situación desde la ciudadanía responsable?",
+ opts:["Organizar un espacio de diálogo comunitario donde ambos grupos expongan sus argumentos y busquen una decisión concertada",
+       "Permitir que el grupo con más integrantes imponga su decisión sin escuchar al otro grupo",
+       "Dejar que la autoridad municipal decida de forma unilateral, sin consultar a ninguno de los dos grupos",
+       "Cancelar cualquier proyecto en el lote para evitar por completo el conflicto"],
+ exp:"Ante intereses comunitarios legítimos mediante en conflicto, la estrategia más coherente con la ciudadanía responsable y la democracia participativa es el diálogo y la construcción concertada de una decisión, considerando ambas propuestas. Imponer por número, delegar todo en la autoridad sin consulta, o cancelar cualquier proyecto evade el ejercicio genuino de la participación ciudadana."},
+
+{id:"s9q4",sub:9,diff:"intermedio",tipo:"Evaluación de perspectivas",
+ q:"En un municipio se debate la construcción de una vía que conectaría dos veredas, pero que atravesaría una reserva natural protegida. Un sector defiende la vía por razones económicas y de movilidad; otro sector defiende la protección ambiental por su impacto en el ecosistema y las fuentes de agua. ¿Cuál es el enfoque más adecuado para analizar este dilema desde una perspectiva ciudadana integral?",
+ opts:["Reconocer la validez de ambas perspectivas y buscar alternativas técnicas que concilien el desarrollo económico con la protección ambiental",
+       "Descartar por completo cualquier preocupación ambiental, priorizando siempre el desarrollo económico",
+       "Descartar por completo el argumento económico, sin considerar las necesidades de movilidad de la comunidad",
+       "Asumir que este tipo de decisiones no debe involucrar ninguna participación ciudadana"],
+ exp:"Un análisis ciudadano integral reconoce la legitimidad de distintas perspectivas (económica y ambiental) y busca alternativas que las concilien, como trazados alternativos o estudios de impacto ambiental, en lugar de descartar de forma absoluta alguna de las dos. Además, este tipo de decisiones que afectan a la comunidad deben incluir mecanismos de participación ciudadana, no excluirla."},
+
+{id:"s9q5",sub:9,diff:"avanzado",tipo:"Análisis de dilema ético",
+ q:"Una funcionaria pública descubre que su jefe directo está exigiendo sobornos a contratistas a cambio de adjudicar contratos del municipio. Denunciar podría implicar represalias laborales para ella, pero callar significaría permitir que continúe el desvío de recursos que deberían beneficiar a la comunidad. ¿Cuál es el análisis más coherente con los principios ciudadanos y constitucionales?",
+ opts:["Denunciar los hechos ante las autoridades competentes, ya que el deber de defender el interés general y combatir la corrupción prevalece sobre el riesgo personal, sin desconocer que existen mecanismos de protección al denunciante",
+       "Guardar silencio, priorizando exclusivamente la estabilidad laboral personal sobre cualquier otra consideración",
+       "Resolver el problema por su cuenta, tomando represalias directas contra su jefe sin acudir a ninguna autoridad",
+       "Ignorar la situación, ya que la lucha contra la corrupción es responsabilidad exclusiva de los organismos de control"],
+ exp:"El interés general y el deber ciudadano de combatir la corrupción justifican la denuncia ante las autoridades competentes; el ordenamiento jurídico colombiano contempla mecanismos de protección para quienes denuncian actos de corrupción. Guardar silencio prioriza un interés particular por encima del bien común, tomar represalias por cuenta propia desconoce el debido proceso, y considerar que solo los organismos de control tienen responsabilidad ignora el papel activo que cumple la ciudadanía en la denuncia."},
+
+{id:"s9q6",sub:9,diff:"avanzado",tipo:"Interpretación de caso con tabla",
+ stim:'<b>Posiciones de los actores en un conflicto comunitario simulado</b><table><tr><th>Actor</th><th>Posición</th></tr>'
+   +'<tr><td>Vendedores informales</td><td>Necesitan el espacio público para generar ingresos y sostener a sus familias</td></tr>'
+   +'<tr><td>Vecinos del sector</td><td>El uso permanente del andén dificulta la movilidad peatonal, especialmente de personas con discapacidad</td></tr>'
+   +'<tr><td>Alcaldía municipal</td><td>Debe garantizar tanto el espacio público como alternativas económicas dignas</td></tr></table>',
+ q:"Considerando las tres posiciones de la tabla, ¿cuál sería la solución más equilibrada desde una perspectiva de derechos y ciudadanía?",
+ opts:["Diseñar, con participación de las tres partes, una política de reubicación concertada que garantice el espacio público y ofrezca alternativas económicas dignas a los vendedores",
+       "Desalojar de inmediato a los vendedores informales sin ofrecerles ninguna alternativa económica",
+       "Permitir que el comercio informal ocupe el espacio público de forma indefinida, sin ninguna regulación",
+       "Ignorar por completo las necesidades de movilidad de las personas con discapacidad"],
+ exp:"Una solución equilibrada reconoce los derechos en tensión (espacio público, movilidad e ingresos dignos) y busca una salida concertada con participación de todos los actores, como reubicaciones planificadas con alternativas económicas. Desalojar sin alternativas desconoce el derecho al mínimo vital de los vendedores, permitir la ocupación indefinida vulnera el espacio público y la movilidad, e ignorar a las personas con discapacidad desconoce sus derechos fundamentales."},
+
+/* ---------------- SUBTEMÁTICA 10 (INTEGRADORAS) ---------------- */
+{id:"s10q1",sub:10,diff:"basico",tipo:"Selección múltiple",
+ q:"Un ciudadano ejerce su derecho al voto, respeta las diferencias culturales de sus vecinos y participa en una jornada de limpieza comunitaria. Estas tres acciones reflejan, en conjunto:",
+ opts:["El ejercicio integral de una ciudadanía democrática y responsable","El cumplimiento exclusivo de obligaciones tributarias","Funciones exclusivas de las autoridades locales","Actividades sin ninguna relación con la Constitución"],
+ exp:"Votar, respetar la diversidad y participar en el bien común son expresiones articuladas de una ciudadanía democrática y responsable, que integra derechos, deberes y valores constitucionales. Estas acciones no son obligaciones tributarias, ni funciones exclusivas de las autoridades, y sí tienen una relación directa con los principios constitucionales."},
+
+{id:"s10q2",sub:10,diff:"basico",tipo:"Relación causa-efecto",
+ q:"Cuando los ciudadanos de un municipio participan activamente en las elecciones, en las veedurías ciudadanas y en los espacios de diálogo comunitario, el efecto más probable sobre la gestión pública local es:",
+ opts:["Una mayor transparencia y capacidad de control social sobre las decisiones de las autoridades","Una menor eficiencia de la administración, sin ningún beneficio adicional","Ninguna consecuencia, ya que la participación ciudadana no influye en la gestión pública","Un aumento automático e inmediato del presupuesto municipal"],
+ exp:"La participación activa en elecciones, veedurías y espacios de diálogo fortalece el control social sobre la gestión pública, promoviendo mayor transparencia y rendición de cuentas. No implica necesariamente menor eficiencia, sí tiene consecuencias reales sobre la gestión, y no genera de forma automática un aumento presupuestal, que depende de otros factores fiscales."},
+
+{id:"s10q3",sub:10,diff:"intermedio",tipo:"Interpretación de caso integrador",
+ q:"En un municipio se convoca una consulta popular para decidir si se permite o no la explotación minera en una zona cercana a fuentes hídricas que abastecen a varias veredas. La votación se realiza de forma libre y secreta, tras un proceso de información a la comunidad. ¿Qué elementos constitucionales se están integrando en esta situación?",
+ opts:["Un mecanismo de participación democrática directa junto con la protección del derecho colectivo a un ambiente sano",
+       "Una decisión exclusiva de la rama ejecutiva, sin ninguna participación ciudadana",
+       "Un mecanismo de participación que no tiene relación alguna con los derechos colectivos",
+       "Una votación que contradice el principio de soberanía popular"],
+ exp:"La consulta popular es un mecanismo de participación democrática directa que, en este caso, se relaciona con la protección de un derecho colectivo (el ambiente sano y el acceso al agua), integrando así democracia participativa y derechos colectivos. No es una decisión exclusiva del Ejecutivo, sí tiene relación directa con los derechos colectivos, y precisamente materializa, en lugar de contradecir, el principio de soberanía popular."},
+
+{id:"s10q4",sub:10,diff:"intermedio",tipo:"Interpretación de caso integrador",
+ q:"En una institución educativa con estudiantes de distintas regiones y culturas del país, se presenta un conflicto por comentarios discriminatorios hacia un estudiante afrodescendiente. La institución decide activar su protocolo de convivencia, que incluye diálogo entre las partes, sensibilización sobre diversidad y seguimiento del caso. ¿Qué subtemáticas de la ciudadanía se están integrando en esta respuesta institucional?",
+ opts:["Diversidad e inclusión, convivencia y resolución pacífica de conflictos, y protección de derechos fundamentales",
+       "Únicamente la organización del Estado colombiano, sin relación con otros aspectos",
+       "Exclusivamente la ciudadanía digital, ya que el conflicto surgió por comentarios",
+       "Solamente el sistema electoral, sin ninguna relación con la convivencia escolar"],
+ exp:"La respuesta institucional integra varias subtemáticas: la diversidad e inclusión (por el trasfondo discriminatorio), la convivencia y resolución pacífica de conflictos (por el protocolo de diálogo) y la protección de derechos fundamentales (como la igualdad y la dignidad). No se trata de un asunto de organización del Estado, de ciudadanía digital ni del sistema electoral, pues el conflicto no se originó ni se resolvió en esos ámbitos."},
+
+{id:"s10q5",sub:10,diff:"avanzado",tipo:"Caso integrador tipo ICFES",
+ stim:'<b>Caso integrador:</b> El concejo de un municipio aprueba una norma que prohíbe las manifestaciones públicas pacíficas en el parque central "para evitar desórdenes". Un grupo de ciudadanos, inconforme, organiza una protesta pacífica en dicho parque para exigir mejoras en el servicio de agua potable. La Policía intenta dispersarlos citando la norma municipal. Un ciudadano interpone una acción de tutela alegando la vulneración de sus derechos.',
+ q:"Desde una perspectiva constitucional integral, ¿cuál es el análisis más adecuado de esta situación?",
+ opts:["La norma municipal, al prohibir de forma general la protesta pacífica, podría ser inconstitucional por vulnerar el derecho fundamental a la reunión y manifestación pública pacífica, protegido incluso frente a normas de menor jerarquía",
+       "La norma municipal es válida en cualquier caso, porque los concejos tienen autoridad absoluta para regular el uso de los parques sin ninguna limitación",
+       "Los ciudadanos no tienen ningún derecho a manifestarse, ya que ese derecho no está reconocido en la Constitución",
+       "La acción de tutela no es un mecanismo aplicable a este tipo de situaciones relacionadas con el espacio público"],
+ exp:"La Constitución protege el derecho a la reunión y manifestación pública pacífica; una norma municipal que lo prohíba de manera general, sin justificación proporcional, puede resultar inconstitucional por la supremacía constitucional, que exige que ninguna norma de inferior jerarquía contradiga los derechos fundamentales. La autoridad de los concejos no es absoluta, el derecho a manifestarse sí está reconocido constitucionalmente, y la tutela sí es un mecanismo aplicable cuando se amenaza o vulnera un derecho fundamental como este."},
+
+{id:"s10q6",sub:10,diff:"avanzado",tipo:"Caso integrador tipo ICFES",
+ stim:'<b>Caso integrador:</b> Una comunidad rural convoca un cabildo abierto para discutir la construcción de una planta de tratamiento de aguas residuales. Durante la reunión, algunos participantes proponen excluir del debate a las familias migrantes recientemente asentadas en la zona, argumentando que "no son de aquí". El alcalde, presente en la sesión, decide garantizar la participación de todas las familias, incluidas las migrantes, y promueve un espacio de diálogo intercultural antes de tomar la decisión final.',
+ q:"¿Qué principios constitucionales y ciudadanos integra de manera más completa la actuación del alcalde?",
+ opts:["La democracia participativa, el principio de igualdad y no discriminación, y el respeto por la diversidad, al garantizar la participación de todas las personas sin exclusión por su origen",
+       "Únicamente el principio de autonomía territorial, sin relación con la igualdad o la participación",
+       "Solo el derecho a la vivienda, ya que se trata de familias migrantes recién asentadas",
+       "Exclusivamente la organización administrativa del municipio, sin ninguna relación con los derechos ciudadanos"],
+ exp:"La decisión del alcalde de incluir a todas las familias, sin discriminar por su origen, en un espacio de participación (cabildo abierto), integra de forma completa la democracia participativa, la igualdad y no discriminación, y el respeto por la diversidad. No se limita a la autonomía territorial ni al derecho a la vivienda, y sí tiene una relación directa con los derechos ciudadanos, no solo con aspectos administrativos."}
+];
+
+/* ----------------------------------------------------------------
+   2. UTILIDADES
+   ---------------------------------------------------------------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function formatTiempo(segTotal){
+  const m = Math.floor(segTotal/60);
+  const s = segTotal%60;
+  return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+}
+
+const LETRAS = ["A","B","C","D"];
+
+/* ----------------------------------------------------------------
+   3. ESTADO GLOBAL DEL SIMULACRO
+   ---------------------------------------------------------------- */
+let estado = {
+  preguntas:[],        // 30 preguntas seleccionadas, cada una con opciones ya mezcladas
+  respuestas:[],        // índice de opción elegida (mezclada) por pregunta, o null
+  actual:0,
+  tiempoTotalSeg:45*60,
+  tiempoRestante:45*60,
+  temporizadorId:null,
+  rachaActual:0,
+  rachaMax:0,
+  sonidoActivo:true,
+  horaInicio:null,
+  segundosEmpleados:0,
+  logrosDesbloqueados:new Set(),
+  rachaHitos:new Set()
+};
+
+/* ----------------------------------------------------------------
+   4. SELECCIÓN ALEATORIA Y EQUILIBRADA DE PREGUNTAS
+   Garantiza: 3 preguntas por cada una de las 10 subtemáticas,
+   y una distribución global aproximada de 30% básico / 40%
+   intermedio / 30% avanzado.
+   ---------------------------------------------------------------- */
+function seleccionarPreguntas(){
+  const objetivos = {basico:9, intermedio:12, avanzado:9};
+  let poolDificultad = [];
+  Object.keys(objetivos).forEach(d=>{
+    for(let i=0;i<objetivos[d];i++) poolDificultad.push(d);
+  });
+  poolDificultad = shuffle(poolDificultad);
+
+  const usados = new Set();
+  const seleccionadas = [];
+
+  for(let s=1;s<=10;s++){
+    const asignadas = poolDificultad.slice((s-1)*3, s*3);
+    const poolSub = QB.filter(q=>q.sub===s);
+    asignadas.forEach(dif=>{
+      let candidatas = poolSub.filter(q=> q.diff===dif && !usados.has(q.id));
+      if(candidatas.length===0){
+        candidatas = poolSub.filter(q=> !usados.has(q.id));
+      }
+      const elegida = candidatas[Math.floor(Math.random()*candidatas.length)];
+      usados.add(elegida.id);
+      seleccionadas.push(elegida);
+    });
+  }
+
+  const mezcladas = shuffle(seleccionadas);
+
+  // Mezclar opciones de cada pregunta y recordar el índice correcto
+  return mezcladas.map(orig=>{
+    const indices = shuffle([0,1,2,3]);
+    const opcionesMezcladas = indices.map(i=>orig.opts[i]);
+    const indiceCorrecto = indices.indexOf(0);
+    return Object.assign({}, orig, {
+      opcionesMezcladas:opcionesMezcladas,
+      indiceCorrecto:indiceCorrecto
+    });
+  });
+}
+
+/* ----------------------------------------------------------------
+   5. SONIDO (sintetizado con Web Audio API — sin archivos externos)
+   ---------------------------------------------------------------- */
+let audioCtx = null;
+function obtenerAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ audioCtx = null; }
+  }
+  return audioCtx;
+}
+function reproducirTono(frecuencias, duracion){
+  if(!estado.sonidoActivo) return;
+  const ctx = obtenerAudioCtx();
+  if(!ctx) return;
+  frecuencias.forEach((f,idx)=>{
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+    const inicio = ctx.currentTime + idx*0.09;
+    gain.gain.linearRampToValueAtTime(0.16, inicio+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, inicio+duracion);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(inicio);
+    osc.stop(inicio+duracion+0.05);
+  });
+}
+const sonidoCorrecta = ()=>reproducirTono([523.25,659.25,783.99],0.22);
+const sonidoIncorrecta = ()=>reproducirTono([220,174.6],0.28);
+const sonidoLogro = ()=>reproducirTono([392,523.25,659.25,987.77],0.3);
+const sonidoFinal = ()=>reproducirTono([523.25,659.25,783.99,1046.5],0.35);
+
+/* ----------------------------------------------------------------
+   6. REFERENCIAS DOM
+   ---------------------------------------------------------------- */
+const $ = id=>document.getElementById(id);
+const pantallaInicio = $("pantalla-inicio");
+const pantallaExamen = $("pantalla-examen");
+const pantallaResultados = $("pantalla-resultados");
+
+/* ----------------------------------------------------------------
+   7. PANTALLA DE INICIO → INICIAR SIMULACRO
+   ---------------------------------------------------------------- */
+$("input-minutos").addEventListener("input",function(){
+  const v = Math.max(5, Math.min(120, parseInt(this.value||45,10)));
+  $("texto-tiempo-tarjeta").textContent = v+" minutos";
+});
+$("check-sonido").addEventListener("change",function(){
+  estado.sonidoActivo = this.checked;
+});
+
+$("btn-iniciar").addEventListener("click", iniciarSimulacro);
+
+function iniciarSimulacro(){
+  const minutos = Math.max(5, Math.min(120, parseInt($("input-minutos").value||45,10)));
+  estado = {
+    preguntas: seleccionarPreguntas(),
+    respuestas: new Array(30).fill(null),
+    actual: 0,
+    tiempoTotalSeg: minutos*60,
+    tiempoRestante: minutos*60,
+    temporizadorId: null,
+    rachaActual: 0,
+    rachaMax: 0,
+    sonidoActivo: $("check-sonido").checked,
+    horaInicio: Date.now(),
+    segundosEmpleados: 0,
+    logrosDesbloqueados: new Set(),
+    rachaHitos: new Set()
+  };
+
+  pantallaInicio.classList.add("oculto");
+  pantallaExamen.classList.remove("oculto");
+  pantallaResultados.classList.add("oculto");
+  $("bloque-revision").classList.add("oculto");
+
+  construirGridNavegador();
+  renderPregunta();
+  iniciarTemporizador();
+}
+
+/* ----------------------------------------------------------------
+   8. TEMPORIZADOR
+   ---------------------------------------------------------------- */
+function iniciarTemporizador(){
+  actualizarTextoTemporizador();
+  estado.temporizadorId = setInterval(()=>{
+    estado.tiempoRestante--;
+    actualizarTextoTemporizador();
+    if(estado.tiempoRestante<=0){
+      clearInterval(estado.temporizadorId);
+      finalizarSimulacro(true);
+    }
+  },1000);
+}
+function actualizarTextoTemporizador(){
+  $("texto-temporizador").textContent = formatTiempo(Math.max(0,estado.tiempoRestante));
+  const caja = $("caja-temporizador");
+  if(estado.tiempoRestante<=60){ caja.classList.add("alerta"); }
+  else { caja.classList.remove("alerta"); }
+}
+
+/* ----------------------------------------------------------------
+   9. RENDERIZADO DE PREGUNTA
+   ---------------------------------------------------------------- */
+function construirGridNavegador(){
+  const grid = $("grid-navegador");
+  grid.innerHTML = "";
+  estado.preguntas.forEach((p,idx)=>{
+    const b = document.createElement("button");
+    b.className = "punto-nav";
+    b.type = "button";
+    b.textContent = idx+1;
+    b.setAttribute("aria-label","Ir a la pregunta "+(idx+1));
+    b.addEventListener("click",()=>{ estado.actual = idx; renderPregunta(); });
+    grid.appendChild(b);
+  });
+}
+
+function actualizarGridNavegador(){
+  const puntos = document.querySelectorAll("#grid-navegador .punto-nav");
+  puntos.forEach((b,idx)=>{
+    b.classList.toggle("respondida", estado.respuestas[idx]!==null);
+    b.classList.toggle("actual", idx===estado.actual);
+  });
+}
+
+function actualizarProgreso(){
+  const respondidas = estado.respuestas.filter(r=>r!==null).length;
+  const pendientes = estado.preguntas.length - respondidas;
+  const pct = Math.round((respondidas/estado.preguntas.length)*100);
+  $("texto-avance").textContent = pct+"% completado";
+  $("texto-resp-pend").textContent = respondidas+" respondidas · "+pendientes+" pendientes";
+  $("barra-progreso").style.width = pct+"%";
+  $("texto-contador").textContent = "Pregunta "+(estado.actual+1)+" de "+estado.preguntas.length;
+  actualizarGridNavegador();
+}
+
+const ETQ_DIF = {basico:"Nivel básico", intermedio:"Nivel intermedio", avanzado:"Nivel avanzado"};
+
+function renderPregunta(){
+  const p = estado.preguntas[estado.actual];
+
+  // Meta (subtemática, dificultad, tipo)
+  $("meta-pregunta").innerHTML =
+    '<span class="etiqueta sub">Subtemática '+p.sub+': '+SUBTEMAS[p.sub]+'</span>'+
+    '<span class="etiqueta dif-'+p.diff+'">'+ETQ_DIF[p.diff]+'</span>'+
+    '<span class="etiqueta tipo">'+p.tipo+'</span>';
+
+  $("texto-enunciado").textContent = p.q;
+
+  const cajaEstimulo = $("caja-estimulo");
+  if(p.stim){
+    cajaEstimulo.innerHTML = p.stim;
+    cajaEstimulo.classList.remove("oculto");
+  } else {
+    cajaEstimulo.classList.add("oculto");
+    cajaEstimulo.innerHTML = "";
+  }
+
+  const lista = $("lista-opciones");
+  lista.innerHTML = "";
+  const seleccionActual = estado.respuestas[estado.actual];
+
+  p.opcionesMezcladas.forEach((texto,idx)=>{
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "opcion";
+    btn.setAttribute("role","radio");
+    btn.setAttribute("aria-checked", seleccionActual===idx ? "true":"false");
+    btn.innerHTML = '<span class="letra">'+LETRAS[idx]+'</span><span>'+texto+'</span>';
+
+    if(seleccionActual!==null){
+      if(idx===p.indiceCorrecto) btn.classList.add("correcta");
+      if(idx===seleccionActual && seleccionActual!==p.indiceCorrecto) btn.classList.add("incorrecta");
+      if(idx===seleccionActual) btn.classList.add("seleccionada");
+    }
+
+    btn.addEventListener("click",()=>seleccionarOpcion(idx));
+    lista.appendChild(btn);
+  });
+
+  // Navegación
+  $("btn-anterior").disabled = estado.actual===0;
+  const esUltima = estado.actual===estado.preguntas.length-1;
+  $("btn-siguiente").classList.toggle("oculto", esUltima);
+  $("btn-terminar").classList.toggle("oculto", !esUltima);
+
+  $("caja-racha").textContent = "🔥 Racha: "+estado.rachaActual;
+
+  actualizarProgreso();
+}
+
+function seleccionarOpcion(idx){
+  const p = estado.preguntas[estado.actual];
+  const previa = estado.respuestas[estado.actual];
+  estado.respuestas[estado.actual] = idx;
+
+  const esCorrecta = idx===p.indiceCorrecto;
+
+  // Solo actualizar racha si es una respuesta nueva (no un cambio posterior)
+  if(previa===null){
+    if(esCorrecta){
+      estado.rachaActual++;
+      estado.rachaMax = Math.max(estado.rachaMax, estado.rachaActual);
+      sonidoCorrecta();
+      revisarHitosRacha();
+    } else {
+      estado.rachaActual = 0;
+      sonidoIncorrecta();
+    }
+  }
+
+  renderPregunta();
+}
+
+function revisarHitosRacha(){
+  const hitos = [3,5,10];
+  hitos.forEach(h=>{
+    if(estado.rachaActual===h && !estado.rachaHitos.has(h)){
+      estado.rachaHitos.add(h);
+      mostrarToast("🔥 ¡Racha de "+h+" respuestas correctas seguidas! Sigue así.");
+      sonidoLogro();
+    }
+  });
+}
+
+/* ----------------------------------------------------------------
+   10. TOAST DE NOTIFICACIONES
+   ---------------------------------------------------------------- */
+let toastTimeout = null;
+function mostrarToast(mensaje){
+  const t = $("toast");
+  t.textContent = mensaje;
+  t.classList.add("visible");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(()=>t.classList.remove("visible"), 3200);
+}
+
+/* ----------------------------------------------------------------
+   11. NAVEGACIÓN ENTRE PREGUNTAS
+   ---------------------------------------------------------------- */
+$("btn-anterior").addEventListener("click",()=>{
+  if(estado.actual>0){ estado.actual--; renderPregunta(); }
+});
+$("btn-siguiente").addEventListener("click",()=>{
+  if(estado.actual<estado.preguntas.length-1){ estado.actual++; renderPregunta(); }
+});
+$("btn-terminar").addEventListener("click",()=>abrirModalConfirmacion(false));
+$("btn-finalizar-anticipado").addEventListener("click",()=>abrirModalConfirmacion(true));
+
+function abrirModalConfirmacion(anticipado){
+  const pendientes = estado.respuestas.filter(r=>r===null).length;
+  $("modal-texto").textContent = anticipado
+    ? "Tienes "+pendientes+" pregunta(s) sin responder. Si finalizas ahora, no podrás modificar tus respuestas y se calculará tu puntaje con lo contestado hasta el momento. ¿Deseas continuar?"
+    : (pendientes>0
+        ? "Aún tienes "+pendientes+" pregunta(s) sin responder. Si finalizas ahora, esas preguntas se contarán como no respondidas. ¿Deseas continuar?"
+        : "Has respondido todas las preguntas. ¿Deseas finalizar el simulacro y ver tus resultados?");
+  $("modal-confirmar").classList.remove("oculto");
+}
+$("modal-cancelar").addEventListener("click",()=>$("modal-confirmar").classList.add("oculto"));
+$("modal-confirmar-btn").addEventListener("click",()=>{
+  $("modal-confirmar").classList.add("oculto");
+  finalizarSimulacro(false);
+});
+
+/* Navegación por teclado: números 1-4 para elegir opción, flechas para avanzar/retroceder */
+document.addEventListener("keydown",function(e){
+  if(pantallaExamen.classList.contains("oculto")) return;
+  if(document.activeElement && ["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) return;
+  if(["1","2","3","4"].includes(e.key)){
+    const idx = parseInt(e.key,10)-1;
+    const p = estado.preguntas[estado.actual];
+    if(p && idx < p.opcionesMezcladas.length){ seleccionarOpcion(idx); }
+  } else if(e.key==="ArrowRight"){
+    if(estado.actual<estado.preguntas.length-1){ estado.actual++; renderPregunta(); }
+  } else if(e.key==="ArrowLeft"){
+    if(estado.actual>0){ estado.actual--; renderPregunta(); }
+  }
+});
+
+/* ----------------------------------------------------------------
+   12. FINALIZACIÓN Y CÁLCULO DE RESULTADOS
+   ---------------------------------------------------------------- */
+function finalizarSimulacro(porTiempo){
+  if(estado.temporizadorId){ clearInterval(estado.temporizadorId); }
+  estado.segundosEmpleados = estado.tiempoTotalSeg - Math.max(0,estado.tiempoRestante);
+  sonidoFinal();
+
+  pantallaExamen.classList.add("oculto");
+  pantallaResultados.classList.remove("oculto");
+  $("bloque-revision").classList.add("oculto");
+
+  if(porTiempo){
+    mostrarToast("⏰ ¡Tiempo agotado! Calculando tus resultados...");
+  }
+
+  calcularYMostrarResultados();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function calcularYMostrarResultados(){
+  const total = estado.preguntas.length;
+  let correctas = 0;
+  const porSub = {};
+  for(let s=1;s<=10;s++){ porSub[s] = {correctas:0, total:0}; }
+
+  estado.preguntas.forEach((p,idx)=>{
+    porSub[p.sub].total++;
+    if(estado.respuestas[idx]===p.indiceCorrecto){
+      correctas++;
+      porSub[p.sub].correctas++;
+    }
+  });
+
+  const incorrectas = total - correctas;
+  const pct = Math.round((correctas/total)*100);
+
+  // --- Encabezado de resultados ---
+  $("res-porcentaje").textContent = pct+"%";
+  $("res-correctas").textContent = correctas;
+  $("res-incorrectas").textContent = incorrectas;
+  $("res-tiempo").textContent = formatTiempo(estado.segundosEmpleados);
+  $("res-racha-max").textContent = estado.rachaMax;
+
+  let nivel, mensaje;
+  if(pct<50){ nivel="Nivel inicial"; mensaje="La ciudadanía se fortalece comprendiendo los derechos, los deberes y el respeto por los demás. Continúa practicando y desarrollando tu pensamiento crítico."; }
+  else if(pct<70){ nivel="Nivel básico consolidado"; mensaje="Has construido una buena base en competencias ciudadanas. Sigue fortaleciendo tu capacidad para analizar situaciones y tomar decisiones responsables."; }
+  else if(pct<90){ nivel="Nivel satisfactorio"; mensaje="Muy buen desempeño. Demuestras una sólida comprensión de la Constitución, la democracia y la convivencia ciudadana."; }
+  else { nivel="Nivel avanzado"; mensaje="¡Excelente trabajo! Has demostrado un dominio sobresaliente de las competencias ciudadanas evaluadas en las pruebas tipo ICFES."; }
+  $("res-nivel").textContent = "Nivel alcanzado: "+nivel;
+  $("res-mensaje-motivacional").textContent = mensaje;
+
+  // --- Donut de resultados (conic-gradient CSS puro) ---
+  const gradoCorrecto = total>0 ? (correctas/total)*360 : 0;
+  $("donut-general").style.background = "conic-gradient(var(--verde) 0deg "+gradoCorrecto+"deg, var(--rojo) "+gradoCorrecto+"deg 360deg)";
+  $("donut-centro-texto").textContent = pct+"%";
+
+  // --- Barras por subtemática ---
+  const contBarras = $("barras-subtematicas");
+  contBarras.innerHTML = "";
+  const fortalezas = [];
+  const mejoras = [];
+  for(let s=1;s<=10;s++){
+    const dat = porSub[s];
+    const pctSub = dat.total>0 ? Math.round((dat.correctas/dat.total)*100) : 0;
+    const color = pctSub>=70 ? "linear-gradient(90deg,var(--verde),#0E7A46)" : (pctSub>=40 ? "linear-gradient(90deg,var(--dorado),var(--dorado-oscuro))" : "linear-gradient(90deg,var(--rojo),#A83232)");
+    const fila = document.createElement("div");
+    fila.className = "barra-sub-fila";
+    fila.innerHTML =
+      '<div class="barra-sub-top"><span>'+s+'. '+SUBTEMAS[s]+'</span><span>'+dat.correctas+'/'+dat.total+' ('+pctSub+'%)</span></div>'+
+      '<div class="barra-sub-fondo"><div class="barra-sub-relleno" style="width:'+pctSub+'%;background:'+color+';"></div></div>';
+    contBarras.appendChild(fila);
+
+    if(pctSub>=70) fortalezas.push(SUBTEMAS[s]);
+    else if(pctSub<50) mejoras.push(SUBTEMAS[s]);
+  }
+
+  const listaF = $("lista-fortalezas");
+  listaF.innerHTML = fortalezas.length
+    ? fortalezas.map(f=>'<li>✅ '+f+'</li>').join("")
+    : '<li>Aún no se identifican fortalezas destacadas en esta oportunidad. ¡Sigue practicando!</li>';
+
+  const listaM = $("lista-mejoras");
+  listaM.innerHTML = mejoras.length
+    ? mejoras.map(m=>'<li>📌 '+m+'</li>').join("")
+    : '<li>No se identificaron subtemáticas críticas: buen desempeño general.</li>';
+
+  // --- Insignias / logros ---
+  calcularLogros(porSub, pct);
+  renderBadges();
+
+  // --- Revisión detallada ---
+  renderRevision();
+}
+
+/* ----------------------------------------------------------------
+   13. SISTEMA DE LOGROS
+   ---------------------------------------------------------------- */
+const DEF_BADGES = [
+  {id:"b1", icono:"📜", nombre:"Conocedor de la Constitución", cond:(ps)=> pctOf(ps[1])>=80},
+  {id:"b2", icono:"⚖️", nombre:"Defensor de los Derechos", cond:(ps)=> pctOf(ps[2])>=80},
+  {id:"b3", icono:"🗳️", nombre:"Ciudadano Participativo", cond:(ps)=> pctOf(ps[3])>=80},
+  {id:"b4", icono:"🏛️", nombre:"Analista Democrático", cond:(ps)=> ((ps[4].correctas+ps[9].correctas+ps[10].correctas)/(ps[4].total+ps[9].total+ps[10].total||1))*100 >=75},
+  {id:"b5", icono:"🤝", nombre:"Constructor de Paz", cond:(ps)=> pctOf(ps[5])>=80},
+  {id:"b6", icono:"🌍", nombre:"Promotor de la Diversidad", cond:(ps)=> pctOf(ps[6])>=80},
+  {id:"b7", icono:"💻", nombre:"Ciudadano Digital Responsable", cond:(ps)=> pctOf(ps[8])>=80},
+  {id:"b8", icono:"🏆", nombre:"Maestro de Competencias Ciudadanas", cond:(ps,pctGlobal)=> pctGlobal>=90}
+];
+function pctOf(dat){ return dat.total>0 ? (dat.correctas/dat.total)*100 : 0; }
+
+function calcularLogros(porSub, pctGlobal){
+  estado.logrosDesbloqueados = new Set();
+  DEF_BADGES.forEach(b=>{
+    if(b.cond(porSub, pctGlobal)) estado.logrosDesbloqueados.add(b.id);
+  });
+}
+function renderBadges(){
+  const grid = $("grid-badges");
+  grid.innerHTML = "";
+  DEF_BADGES.forEach(b=>{
+    const desbloqueada = estado.logrosDesbloqueados.has(b.id);
+    const div = document.createElement("div");
+    div.className = "badge"+(desbloqueada ? " desbloqueada":"");
+    div.innerHTML = '<div class="icono-badge">'+b.icono+'</div><div class="nombre-badge">'+b.nombre+'</div>';
+    grid.appendChild(div);
+  });
+  if(estado.logrosDesbloqueados.size>0){ sonidoLogro(); }
+}
+
+/* ----------------------------------------------------------------
+   14. REVISIÓN DETALLADA DE LAS 30 PREGUNTAS
+   ---------------------------------------------------------------- */
+$("btn-ver-revision").addEventListener("click",()=>{
+  const bloque = $("bloque-revision");
+  bloque.classList.toggle("oculto");
+  if(!bloque.classList.contains("oculto")){
+    bloque.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+});
+
+function renderRevision(){
+  const cont = $("contenedor-revision");
+  cont.innerHTML = "";
+  estado.preguntas.forEach((p,idx)=>{
+    const seleccion = estado.respuestas[idx];
+    const correcta = seleccion===p.indiceCorrecto;
+    const textoSeleccion = seleccion===null ? "No respondida" : (LETRAS[seleccion]+". "+p.opcionesMezcladas[seleccion]);
+    const textoCorrecta = LETRAS[p.indiceCorrecto]+". "+p.opcionesMezcladas[p.indiceCorrecto];
+
+    const div = document.createElement("div");
+    div.className = "revision-item";
+    div.innerHTML =
+      '<div class="revision-cabecera">'+
+        '<div><strong>Pregunta '+(idx+1)+'.</strong> '+p.q+'</div>'+
+        '<span class="estado-resultado '+(correcta?"ok":"no")+'">'+(correcta?"Correcta":(seleccion===null?"Sin responder":"Incorrecta"))+'</span>'+
+      '</div>'+
+      (p.stim ? '<div class="estimulo" style="margin-bottom:12px;">'+p.stim+'</div>' : '')+
+      '<div><b>Tu respuesta:</b> '+textoSeleccion+'</div>'+
+      '<div><b>Respuesta correcta:</b> '+textoCorrecta+'</div>'+
+      '<div class="caja-explicacion">'+
+        '<div><b>Explicación y justificación:</b> '+p.exp+'</div>'+
+        '<div style="margin-top:8px;"><b>Competencia evaluada:</b> '+COMP[p.sub]+'</div>'+
+        '<div style="margin-top:4px;"><b>Subtemática:</b> '+p.sub+'. '+SUBTEMAS[p.sub]+'</div>'+
+      '</div>';
+    cont.appendChild(div);
+  });
+}
+
+/* ----------------------------------------------------------------
+   15. REINICIO DEL SIMULACRO
+   ---------------------------------------------------------------- */
+function reiniciarSimulacro(){
+  pantallaResultados.classList.add("oculto");
+  pantallaExamen.classList.add("oculto");
+  pantallaInicio.classList.remove("oculto");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+$("btn-reiniciar").addEventListener("click", reiniciarSimulacro);
+$("btn-reiniciar-2").addEventListener("click", reiniciarSimulacro);
+
+/* ----------------------------------------------------------------
+   16. INICIALIZACIÓN
+   ---------------------------------------------------------------- */
+$("texto-tiempo-tarjeta").textContent = $("input-minutos").value+" minutos";
+
+})();
+</script>
+
+</body>
+</html>

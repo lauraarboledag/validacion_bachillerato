@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Conflictos y Sociedad · Nivel 5</title>
+<style>
+/* ============================================================
+   SIMULADOR ICFES — CONFLICTOS Y SOCIEDAD — NIVEL 5
+   HTML5 + CSS3 + JavaScript puro. Sin dependencias externas.
+   ============================================================ */
+
+@font-face { font-family: 'DM Sans Fallback'; src: local('Arial'); }
+
+:root{
+  /* Paleta institucional */
+  --azul-oscuro: #0B2545;
+  --azul-medio: #13315C;
+  --azul-claro: #1B4079;
+  --dorado: #F5A623;
+  --dorado-claro: #FFD873;
+  --blanco: #FFFFFF;
+  --gris-100: #F5F7FA;
+  --gris-200: #E8ECF1;
+  --gris-400: #B9C2CE;
+  --gris-600: #6B7686;
+  --gris-800: #2E3542;
+  --verde-ok: #1E8E5A;
+  --rojo-error: #C6402B;
+  --sombra: 0 10px 30px rgba(11,37,69,0.12);
+  --radio: 18px;
+  --radio-sm: 10px;
+  --fuente: 'DM Sans', 'Poppins', 'DM Sans Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family: var(--fuente);
+  background: linear-gradient(180deg, var(--gris-100) 0%, #EEF2F7 100%);
+  color: var(--gris-800);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--fuente); margin:0 0 .5em 0; color:var(--azul-oscuro);}
+p{margin:0 0 1em 0;}
+button{font-family:var(--fuente); cursor:pointer;}
+:focus-visible{outline:3px solid var(--dorado); outline-offset:2px;}
+
+.app-shell{max-width:980px; margin:0 auto; padding:20px 16px 60px;}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  background: var(--azul-oscuro);
+  color:#fff; padding:14px 20px; border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  margin-bottom:20px; gap:12px; flex-wrap:wrap;
+}
+.topbar .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px;}
+.topbar .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--dorado);}
+.sound-toggle{
+  display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.08);
+  padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18);
+  color:#fff; font-size:.85em;
+}
+.sound-toggle button{
+  background:transparent; border:none; color:#fff; font-size:1.1em; padding:2px 6px; border-radius:8px;
+}
+.sound-toggle button[aria-pressed="true"]{background:var(--dorado); color:var(--azul-oscuro);}
+
+/* ---------- Cards ---------- */
+.card{
+  background:#fff; border-radius: var(--radio); box-shadow: var(--sombra);
+  padding:28px; margin-bottom:20px; border:1px solid var(--gris-200);
+}
+.badge{
+  display:inline-flex; align-items:center; gap:6px;
+  background: var(--gris-200); color:var(--azul-oscuro); font-weight:700;
+  font-size:.75em; padding:6px 12px; border-radius:999px; letter-spacing:.4px; text-transform:uppercase;
+}
+.badge.gold{background: linear-gradient(135deg,var(--dorado-claro),var(--dorado)); color:var(--azul-oscuro);}
+
+/* ---------- Pantalla inicial ---------- */
+.hero{
+  background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-claro) 100%);
+  color:#fff; border-radius: var(--radio); padding:42px 34px; box-shadow: var(--sombra);
+  position:relative; overflow:hidden; margin-bottom:20px;
+}
+.hero::after{
+  content:""; position:absolute; right:-60px; top:-60px; width:260px; height:260px;
+  background: radial-gradient(circle, rgba(245,166,35,.35), transparent 70%);
+  border-radius:50%;
+}
+.hero .eyebrow{color:var(--dorado-claro); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.78em; margin-bottom:10px;}
+.hero h1{color:#fff; font-size:1.9em; margin-bottom:6px;}
+.hero .sub{color:#D9E4F5; font-size:1.05em; max-width:640px;}
+.hero-icons{display:flex; gap:14px; margin-top:22px; flex-wrap:wrap;}
+.hero-icons span{
+  display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1);
+  padding:9px 14px; border-radius:999px; font-size:.85em; border:1px solid rgba(255,255,255,.2);
+}
+
+.info-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin:22px 0;}
+.info-tile{
+  background: var(--gris-100); border-radius: var(--radio-sm); padding:18px;
+  border-left:5px solid var(--dorado); 
+}
+.info-tile .num{font-size:1.7em; font-weight:800; color:var(--azul-oscuro);}
+.info-tile .lbl{font-size:.85em; color:var(--gris-600); font-weight:600;}
+
+.subtopics-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin:16px 0 6px;}
+.subtopics-list div{
+  background:#fff; border:1px solid var(--gris-200); border-radius:var(--radio-sm);
+  padding:10px 14px; font-size:.86em; display:flex; gap:8px; align-items:flex-start;
+}
+.subtopics-list div b{color:var(--azul-oscuro); flex-shrink:0;}
+
+.timer-config{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--gris-100);
+  padding:16px 18px; border-radius: var(--radio-sm); margin:18px 0;
+}
+.timer-config label{font-weight:700; color:var(--azul-oscuro); font-size:.9em;}
+.timer-config input[type="number"]{
+  width:80px; padding:8px 10px; border-radius:8px; border:1.5px solid var(--gris-400); font-size:1em;
+}
+
+.btn-primary{
+  background: linear-gradient(135deg, var(--dorado-claro), var(--dorado));
+  color: var(--azul-oscuro); border:none; font-weight:800; font-size:1.05em;
+  padding:16px 38px; border-radius:999px; box-shadow:0 6px 20px rgba(245,166,35,.4);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(245,166,35,.5);}
+.btn-primary:active{transform:translateY(0);}
+.btn-secondary{
+  background:#fff; color:var(--azul-oscuro); border:2px solid var(--azul-oscuro); font-weight:700;
+  padding:12px 26px; border-radius:999px; transition:.15s ease;
+}
+.btn-secondary:hover{background:var(--azul-oscuro); color:#fff;}
+.btn-ghost{
+  background:transparent; border:2px solid var(--gris-400); color:var(--gris-800); font-weight:700;
+  padding:10px 20px; border-radius:999px;
+}
+.btn-ghost:hover{border-color:var(--azul-oscuro); color:var(--azul-oscuro);}
+.btn-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px;}
+
+/* ---------- Examen ---------- */
+.exam-header{
+  display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+  background:#fff; padding:16px 22px; border-radius:var(--radio); box-shadow:var(--sombra); margin-bottom:16px;
+  position:sticky; top:10px; z-index:20;
+}
+.timer-box{
+  display:flex; align-items:center; gap:10px; background:var(--azul-oscuro); color:#fff;
+  padding:10px 18px; border-radius:999px; font-weight:800; font-size:1.15em; letter-spacing:.5px;
+  min-width:120px; justify-content:center;
+}
+.timer-box.warn{background:var(--rojo-error); animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.progress-wrap{flex:1; min-width:220px;}
+.progress-labels{display:flex; justify-content:space-between; font-size:.8em; color:var(--gris-600); margin-bottom:6px; font-weight:600;}
+.progress-track{height:12px; background:var(--gris-200); border-radius:999px; overflow:hidden;}
+.progress-fill{height:100%; background:linear-gradient(90deg,var(--dorado),var(--dorado-claro)); border-radius:999px; transition:width .3s ease;}
+.progress-meta{display:flex; gap:14px; margin-top:8px; font-size:.78em; color:var(--gris-600); flex-wrap:wrap;}
+.progress-meta b{color:var(--azul-oscuro);}
+
+.streak-banner{
+  display:none; align-items:center; gap:10px; background:linear-gradient(135deg,var(--dorado-claro),var(--dorado));
+  color:var(--azul-oscuro); padding:12px 20px; border-radius:var(--radio-sm); font-weight:800; margin-bottom:14px;
+  animation: slideIn .4s ease;
+}
+@keyframes slideIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+
+.question-card{animation: fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+.q-meta{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.q-text{font-size:1.12em; color:var(--gris-800); margin-bottom:20px; line-height:1.65;}
+.q-text table{border-collapse:collapse; width:100%; margin:14px 0; font-size:.92em;}
+.q-text table th, .q-text table td{border:1px solid var(--gris-400); padding:8px 12px; text-align:center;}
+.q-text table th{background:var(--azul-oscuro); color:#fff;}
+.q-text table tr:nth-child(even) td{background:var(--gris-100);}
+
+.options{display:flex; flex-direction:column; gap:12px;}
+.option{
+  display:flex; align-items:flex-start; gap:14px; text-align:left; background:var(--gris-100);
+  border:2px solid var(--gris-200); border-radius:var(--radio-sm); padding:14px 18px; font-size:1em;
+  color:var(--gris-800); transition:.15s ease; width:100%;
+}
+.option:hover{border-color:var(--azul-claro); background:#EEF3FA;}
+.option .letter{
+  flex-shrink:0; width:30px; height:30px; border-radius:50%; background:var(--azul-oscuro); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9em;
+}
+.option.selected{border-color:var(--dorado); background:#FFF6E4;}
+.option.selected .letter{background:var(--dorado); color:var(--azul-oscuro);}
+
+.nav-row{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:24px; flex-wrap:wrap;}
+.nav-row .right-group{display:flex; gap:10px; flex-wrap:wrap;}
+
+.map-toggle-wrap{margin-top:18px;}
+.qmap{display:grid; grid-template-columns:repeat(auto-fill,minmax(42px,1fr)); gap:8px; margin-top:10px;}
+.qmap button{
+  aspect-ratio:1; border-radius:10px; border:2px solid var(--gris-400); background:#fff; font-weight:700; color:var(--gris-600);
+  font-size:.85em;
+}
+.qmap button.answered{background:var(--verde-ok); border-color:var(--verde-ok); color:#fff;}
+.qmap button.current{border-color:var(--dorado); box-shadow:0 0 0 3px rgba(245,166,35,.35);}
+
+/* ---------- Resultados ---------- */
+.score-hero{
+  text-align:center; background:linear-gradient(135deg,var(--azul-oscuro),var(--azul-claro)); color:#fff;
+  border-radius:var(--radio); padding:40px 24px; box-shadow:var(--sombra); margin-bottom:20px;
+}
+.score-hero .big-score{font-size:3.4em; font-weight:900; color:var(--dorado-claro); line-height:1;}
+.score-hero .sub-score{font-size:1.1em; color:#D9E4F5; margin-top:6px;}
+.score-hero .msg{max-width:640px; margin:18px auto 0; font-size:1.02em; color:#fff;}
+
+.stats-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:20px;}
+.stat-card{background:#fff; border-radius:var(--radio-sm); padding:18px; text-align:center; box-shadow:var(--sombra); border:1px solid var(--gris-200);}
+.stat-card .val{font-size:1.7em; font-weight:800; color:var(--azul-oscuro);}
+.stat-card .lbl{font-size:.8em; color:var(--gris-600); font-weight:600; margin-top:2px;}
+
+.chart-wrap{display:flex; flex-direction:column; gap:12px; margin-top:8px;}
+.chart-row{display:grid; grid-template-columns:230px 1fr 50px; align-items:center; gap:12px; font-size:.86em;}
+.chart-row .name{color:var(--gris-800); font-weight:600;}
+.chart-track{height:16px; background:var(--gris-200); border-radius:999px; overflow:hidden;}
+.chart-fill{height:100%; border-radius:999px; transition:width .8s ease;}
+.chart-fill.low{background:linear-gradient(90deg,#E4593E,#C6402B);}
+.chart-fill.mid{background:linear-gradient(90deg,var(--dorado-claro),var(--dorado));}
+.chart-fill.high{background:linear-gradient(90deg,#3FBF7F,var(--verde-ok));}
+.chart-row .pct{font-weight:800; color:var(--azul-oscuro); text-align:right;}
+
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+.pill-list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;}
+.pill-list li{background:var(--gris-100); border-radius:var(--radio-sm); padding:10px 14px; font-size:.9em; display:flex; gap:8px;}
+
+.badges-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin-top:10px;}
+.achievement{
+  background:#fff; border:2px solid var(--gris-200); border-radius:var(--radio-sm); padding:16px; text-align:center;
+  opacity:.35; filter:grayscale(1);
+}
+.achievement.unlocked{opacity:1; filter:none; border-color:var(--dorado); box-shadow:0 4px 14px rgba(245,166,35,.3); animation:pop .4s ease;}
+@keyframes pop{0%{transform:scale(.85);}60%{transform:scale(1.06);}100%{transform:scale(1);}}
+.achievement .emoji{font-size:2em;}
+.achievement .name{font-weight:700; font-size:.85em; color:var(--azul-oscuro); margin-top:6px;}
+
+.review-item{border:1px solid var(--gris-200); border-radius:var(--radio-sm); padding:18px; margin-bottom:14px;}
+.review-item.correct{border-left:5px solid var(--verde-ok);}
+.review-item.incorrect{border-left:5px solid var(--rojo-error);}
+.review-tags{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.review-answer{padding:8px 12px; border-radius:8px; font-size:.9em; margin:6px 0;}
+.review-answer.your-correct{background:#E6F6EC; color:var(--verde-ok);}
+.review-answer.your-incorrect{background:#FCEAE7; color:var(--rojo-error);}
+.review-answer.the-correct{background:#E6F6EC; color:var(--verde-ok);}
+.explain-box{background:var(--gris-100); border-radius:var(--radio-sm); padding:14px 16px; margin-top:10px; font-size:.92em;}
+.explain-box h4{font-size:.85em; text-transform:uppercase; letter-spacing:.5px; color:var(--azul-claro); margin-bottom:4px;}
+
+.hidden{display:none !important;}
+
+/* ---------- Modal confirmación ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(11,37,69,.55); display:flex; align-items:center; justify-content:center;
+  z-index:100; padding:20px;
+}
+.modal-box{background:#fff; border-radius:var(--radio); padding:28px; max-width:420px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3);}
+.modal-box h3{color:var(--azul-oscuro);}
+.modal-actions{display:flex; gap:12px; justify-content:center; margin-top:18px;}
+
+footer.final-cta{text-align:center; margin-top:30px;}
+
+@media(max-width:600px){
+  .hero{padding:28px 20px;}
+  .card{padding:20px;}
+  .score-hero .big-score{font-size:2.6em;}
+  .chart-row{grid-template-columns:1fr; text-align:left;}
+  .chart-row .pct{text-align:left;}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span> Instituto Innova · Competencias Ciudadanas</div>
+    <div class="sound-toggle">
+      🔊 Sonido
+      <button id="soundBtn" aria-pressed="true" title="Activar o desactivar sonido">ON</button>
+    </div>
+  </div>
+
+  <!-- ================= PANTALLA INICIAL ================= -->
+  <section id="screen-intro">
+    <div class="hero">
+      <div class="eyebrow">Nivel 5 · Competencias Ciudadanas y Lengua Extranjera</div>
+      <h1>Simulador ICFES: Conflictos y Sociedad 🕊️</h1>
+      <p class="sub">Un espacio de práctica para analizar conflictos sociales y situaciones de convivencia desde una mirada democrática, ética y de derechos humanos, aplicando estrategias de resolución pacífica y pensamiento crítico.</p>
+      <div class="hero-icons">
+        <span>🤝 Convivencia</span>
+        <span>⚖️ Derechos Humanos</span>
+        <span>🌍 Diversidad</span>
+        <span>💬 Diálogo</span>
+        <span>🏘️ Participación</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Competencia evaluada</h2>
+      <p>Analizar conflictos sociales y situaciones de convivencia desde una perspectiva democrática, ética y de derechos humanos, aplicando estrategias de resolución pacífica y pensamiento crítico en contextos cotidianos y propios de las pruebas ICFES.</p>
+
+      <h3>Objetivos del simulacro</h3>
+      <ul class="pill-list">
+        <li>🔎 Interpretar situaciones de conflicto y convivencia en contextos escolares, familiares y comunitarios.</li>
+        <li>⚖️ Identificar derechos vulnerados y aplicar principios democráticos en la toma de decisiones.</li>
+        <li>💬 Reconocer estrategias de resolución pacífica: diálogo, negociación, mediación y conciliación.</li>
+        <li>🧩 Argumentar decisiones éticas frente a dilemas ciudadanos, considerando distintas perspectivas.</li>
+      </ul>
+
+      <div class="info-grid">
+        <div class="info-tile"><div class="num">30</div><div class="lbl">Preguntas de selección múltiple</div></div>
+        <div class="info-tile"><div class="num" id="tiempoDisplayTile">45 min</div><div class="lbl">Tiempo disponible</div></div>
+        <div class="info-tile"><div class="num">10</div><div class="lbl">Subtemáticas evaluadas</div></div>
+        <div class="info-tile"><div class="num">4</div><div class="lbl">Opciones por pregunta</div></div>
+      </div>
+
+      <h3>Subtemáticas incluidas</h3>
+      <div class="subtopics-list">
+        <div><b>1.</b> El conflicto como fenómeno social</div>
+        <div><b>2.</b> Resolución pacífica de conflictos</div>
+        <div><b>3.</b> Derechos humanos y resolución de conflictos</div>
+        <div><b>4.</b> Diversidad y convivencia</div>
+        <div><b>5.</b> Participación ciudadana</div>
+        <div><b>6.</b> Conflictos ambientales y territoriales</div>
+        <div><b>7.</b> Medios, redes sociales y conflictos</div>
+        <div><b>8.</b> Análisis de problemáticas sociales</div>
+        <div><b>9.</b> Interpretación de casos y dilemas</div>
+        <div><b>10.</b> Competencias ciudadanas tipo ICFES</div>
+      </div>
+
+      <div class="timer-config">
+        <label for="tiempoInput">⏱️ Tiempo del simulacro (minutos):</label>
+        <input type="number" id="tiempoInput" min="5" max="120" value="45">
+        <span style="font-size:.82em; color:var(--gris-600);">Valor predeterminado: 45 minutos. Puedes ajustarlo antes de iniciar.</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="btnIniciar">🚀 Iniciar simulacro</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PANTALLA EXAMEN ================= -->
+  <section id="screen-exam" class="hidden">
+    <div class="exam-header">
+      <div class="timer-box" id="timerBox">45:00</div>
+      <div class="progress-wrap">
+        <div class="progress-labels">
+          <span>Pregunta <b id="qActual">1</b> de <b>30</b></span>
+          <span id="pctAvance">0% completado</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-meta">
+          <span>✅ Respondidas: <b id="metaRespondidas">0</b></span>
+          <span>⏳ Pendientes: <b id="metaPendientes">30</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="streak-banner" id="streakBanner">🔥 ¡Racha de respuestas correctas!</div>
+
+    <div class="card question-card" id="questionCard">
+      <!-- contenido dinámico -->
+    </div>
+
+    <div class="card">
+      <strong style="font-size:.85em; color:var(--gris-600); text-transform:uppercase; letter-spacing:.4px;">Mapa de preguntas</strong>
+      <div class="qmap" id="qmap"></div>
+    </div>
+
+    <footer class="final-cta">
+      <button class="btn-ghost" id="btnFinalizarAnticipado">🏁 Finalizar simulacro anticipadamente</button>
+    </footer>
+  </section>
+
+  <!-- ================= PANTALLA RESULTADOS ================= -->
+  <section id="screen-results" class="hidden">
+    <div class="score-hero">
+      <div class="eyebrow" style="color:var(--dorado-claro); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.78em;">Informe final</div>
+      <div class="big-score" id="scorePct">0%</div>
+      <div class="sub-score" id="scoreFraction">0 de 30 respuestas correctas</div>
+      <p class="msg" id="motivationalMsg"></p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="val" id="statCorrectas">0</div><div class="lbl">Correctas</div></div>
+      <div class="stat-card"><div class="val" id="statIncorrectas">0</div><div class="lbl">Incorrectas</div></div>
+      <div class="stat-card"><div class="val" id="statTiempo">0:00</div><div class="lbl">Tiempo empleado</div></div>
+      <div class="stat-card"><div class="val" id="statNivel">-</div><div class="lbl">Nivel alcanzado</div></div>
+      <div class="stat-card"><div class="val" id="statRacha">0</div><div class="lbl">Mejor racha</div></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Rendimiento por subtemática</h2>
+      <div class="chart-wrap" id="chartWrap"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>💪 Fortalezas identificadas</h3>
+        <ul class="pill-list" id="fortalezasList"></ul>
+      </div>
+      <div class="card">
+        <h3>📈 Aspectos por mejorar</h3>
+        <ul class="pill-list" id="mejorasList"></ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏅 Insignias obtenidas</h2>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </div>
+
+    <div class="card">
+      <h2>📝 Revisión detallada de las 30 preguntas</h2>
+      <div id="reviewList"></div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center; margin-bottom:10px;">
+      <button class="btn-primary" id="btnReiniciar">🔄 Reiniciar simulacro</button>
+    </div>
+  </section>
+
+  <!-- Botón regresar al Aula Virtual -->
+  <footer style="text-align:center; margin-top:10px;">
+<a id="btn-volver"
+   href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=849"
+   style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+  🏫 Regresar al Aula Virtual
+</a>
+<script>
+  const btn = document.getElementById('btn-volver');
+  const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=849';
+  const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=849';
+  const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (esMóvil) {
+    btn.href = appUrl;
+  }
+</script>
+  </footer>
+
+</div>
+
+<!-- Modal de confirmación (finalizar anticipado) -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal-box">
+    <h3 id="modalTitle">¿Finalizar el simulacro?</h3>
+    <p id="modalText">Aún tienes preguntas sin responder. Esta acción calculará tu puntaje con las respuestas actuales y no podrás modificarlas después.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="modalCancel">Cancelar</button>
+      <button class="btn-primary" id="modalConfirm">Sí, finalizar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   MOTOR DEL SIMULADOR — JavaScript puro, sin dependencias
+   ============================================================ */
+(function(){
+  "use strict";
+
+  /* --------------------------------------------------------
+     1. BANCO DE PREGUNTAS (40 preguntas -> se seleccionan 30
+        por intento, respetando distribución 30/40/30 %)
+     -------------------------------------------------------- */
+  const SUBTEMAS = {
+    1:"El conflicto como fenómeno social",
+    2:"Resolución pacífica de conflictos",
+    3:"Derechos humanos y resolución de conflictos",
+    4:"Diversidad y convivencia",
+    5:"Participación ciudadana en la solución de conflictos",
+    6:"Conflictos ambientales y territoriales",
+    7:"Medios de comunicación, redes sociales y conflictos",
+    8:"Análisis de problemáticas sociales",
+    9:"Interpretación de casos y dilemas ciudadanos",
+    10:"Competencias ciudadanas tipo ICFES"
+  };
+
+  const BANCO = [
+  {id:1, sub:1, diff:"basico", type:"Análisis de caso", comp:"Interpretación de situaciones sociales",
+   text:"En el colegio, dos estudiantes se disputan el uso del único computador disponible en la biblioteca porque ambos tienen una tarea urgente para entregar en la próxima hora. Ninguno quiere ceder el turno.",
+   options:["Esta situación no es un conflicto porque no hay agresión física entre los estudiantes.","Es un conflicto, pues existe una incompatibilidad de intereses entre dos personas por un recurso limitado.","Es un conflicto solo si uno de los dos estudiantes decide no entregar la tarea.","No es un conflicto porque ambos estudiantes tienen el mismo objetivo académico."],
+   correct:1,
+   explanation:"El conflicto se define por la incompatibilidad de intereses o necesidades entre las partes, no por la presencia de violencia. Aquí dos personas necesitan el mismo recurso escaso al mismo tiempo, lo cual constituye la esencia de un conflicto social, independientemente de que se resuelva pacíficamente o no.",
+   justification:"Reconocer el conflicto sin violencia como fenómeno legítimo permite abordarlo tempranamente mediante el diálogo, evitando que escale, y respeta la dignidad de ambas partes al no minimizar sus necesidades."},
+
+  {id:2, sub:1, diff:"intermedio", type:"Análisis de caso", comp:"Relación causa-efecto",
+   text:"Una familia decide mudarse de ciudad por motivos laborales. El hijo mayor, adolescente, se opone porque debe dejar a sus amigos y su equipo deportivo; los padres insisten en que la decisión ya está tomada. Con el paso de los días, el ambiente en casa se tensiona y las conversaciones se reducen a reclamos.",
+   options:["Es un conflicto exclusivamente económico, pues se origina en el trabajo de los padres.","Es un conflicto familiar que combina causas relacionadas con la comunicación y con la falta de participación del hijo en una decisión que lo afecta directamente.","No es realmente un conflicto, sino una etapa normal de la adolescencia que se resolverá sola.","Es un conflicto que solo compete a los padres, porque son quienes tienen la autoridad legal."],
+   correct:1,
+   explanation:"El conflicto tiene causas entrelazadas: la decisión unilateral, la ruptura en la comunicación y el impacto emocional en el hijo. Reducirlo a lo económico o a la autoridad legal ignora la dimensión relacional y comunicativa propia de los conflictos familiares.",
+   justification:"Comprender la multicausalidad de los conflictos familiares permite buscar soluciones que incluyan la escucha de todos los afectados, incluidos los menores, en decisiones que inciden en su vida."},
+
+  {id:3, sub:1, diff:"intermedio", type:"Interpretación de caso", comp:"El conflicto como oportunidad de aprendizaje",
+   text:"Tras un conflicto entre dos vecinos por el ruido de una fiesta, ambos se sientan a conversar, expresan cómo se sintieron y acuerdan un horario límite para futuras reuniones. Semanas después, la relación entre ellos mejoró.",
+   options:["El conflicto fue negativo en su totalidad, pues generó malestar inicial entre los vecinos.","El conflicto permitió fortalecer la convivencia, porque el diálogo posterior generó aprendizaje y acuerdos duraderos.","El conflicto se resolvió por casualidad y no tiene relación con el diálogo sostenido.","El conflicto solo benefició al vecino que se quejó del ruido."],
+   correct:1,
+   explanation:"Este caso ilustra que los conflictos, cuando se abordan mediante el diálogo, pueden convertirse en oportunidades de aprendizaje y fortalecimiento de la convivencia, generando acuerdos que benefician a ambas partes.",
+   justification:"Valorar el conflicto como oportunidad de aprendizaje, en lugar de evitarlo, promueve una cultura ciudadana basada en el diálogo y la mejora continua de las relaciones sociales."},
+
+  {id:4, sub:1, diff:"avanzado", type:"Toma de decisiones", comp:"Evaluación de soluciones ciudadanas",
+   text:"En un barrio conviven familias de distintas generaciones. Los adultos mayores solicitan silencio después de las 9 p.m., mientras que un grupo de jóvenes usa el parque comunitario para ensayar música hasta más tarde, señalando que es su único espacio de recreación. La junta de acción comunal debe proponer una solución.",
+   options:["Prohibir totalmente el uso del parque en horas nocturnas, sin consultar a los jóvenes, para evitar cualquier molestia.","Ignorar la solicitud de los adultos mayores, priorizando el derecho de los jóvenes a la recreación.","Facilitar un espacio de diálogo entre ambos grupos para acordar horarios y condiciones que respeten el descanso de unos y la recreación de otros.","Trasladar el conflicto a la policía para que sea resuelto mediante sanciones económicas."],
+   correct:2,
+   explanation:"La solución más democrática y sostenible reconoce los derechos e intereses legítimos de ambos grupos y busca un acuerdo negociado, en lugar de imponer una solución unilateral o judicializar el conflicto sin agotar el diálogo comunitario.",
+   justification:"La construcción de acuerdos mediante la participación de todos los actores involucrados refleja los principios de convivencia democrática y respeto mutuo, evitando que un grupo imponga su interés sobre el otro."},
+
+  {id:5, sub:2, diff:"basico", type:"Análisis de caso", comp:"Comunicación asertiva",
+   text:"Mariana está molesta porque su compañero de equipo entregó tarde su parte del trabajo. En lugar de gritarle, le dice: \"Me sentí preocupada cuando no recibí tu parte a tiempo, porque afecta la nota del grupo. ¿Podemos hablar de cómo organizarnos mejor?\"",
+   options:["Mariana actuó de forma pasiva, pues no expresó su molestia.","Mariana utilizó comunicación asertiva, expresando su sentir sin agredir y proponiendo una solución.","Mariana fue agresiva, porque culpó directamente a su compañero.","Mariana evitó el conflicto al no mencionar el problema."],
+   correct:1,
+   explanation:"La comunicación asertiva se caracteriza por expresar sentimientos y necesidades de manera clara y respetuosa, sin agredir ni callar. Mariana nombra el hecho, expresa su emoción y propone una solución conjunta.",
+   justification:"La asertividad favorece relaciones basadas en el respeto mutuo y permite resolver conflictos sin recurrir a la agresión ni a la evasión, fortaleciendo la convivencia."},
+
+  {id:6, sub:2, diff:"basico", type:"Análisis de caso", comp:"Escucha activa",
+   text:"Durante una reunión de curso, un estudiante expone su desacuerdo con la fecha de un examen. El profesor lo mira, no lo interrumpe, y al final le repite con sus propias palabras lo que entendió antes de responder.",
+   options:["El profesor practicó la escucha activa, al prestar atención y confirmar su comprensión antes de opinar.","El profesor ignoró al estudiante, ya que no respondió inmediatamente.","El profesor fue indiferente, porque debía cambiar la fecha del examen de inmediato.","El profesor solo fingió escuchar para parecer respetuoso."],
+   correct:0,
+   explanation:"La escucha activa implica prestar atención genuina, no interrumpir y verificar la comprensión del mensaje antes de responder, tal como lo hizo el profesor al parafrasear lo dicho por el estudiante.",
+   justification:"Practicar la escucha activa en los espacios educativos fortalece la confianza y el respeto entre estudiantes y docentes, sentando las bases para acuerdos legítimos."},
+
+  {id:7, sub:2, diff:"intermedio", type:"Interpretación de caso", comp:"Mediación y negociación",
+   text:"Dos comerciantes de un mismo sector tienen un desacuerdo sobre el uso del espacio público frente a sus locales. Deciden acudir a un tercero imparcial, capacitado, que no toma decisiones por ellos, sino que facilita el diálogo para que lleguen a su propio acuerdo.",
+   options:["Este proceso corresponde a una negociación directa entre las partes.","Este proceso corresponde a una mediación, pues un tercero neutral facilita el diálogo sin imponer una decisión.","Este proceso corresponde a un litigio judicial formal.","Este proceso corresponde a una conciliación con fuerza de sentencia."],
+   correct:1,
+   explanation:"La mediación se distingue por la presencia de un tercero imparcial que facilita la comunicación entre las partes, sin tomar decisiones ni imponer soluciones; son las partes quienes construyen el acuerdo.",
+   justification:"Distinguir los mecanismos de resolución pacífica permite a la ciudadanía elegir la herramienta más adecuada según el contexto, favoreciendo soluciones autónomas y sostenibles."},
+
+  {id:8, sub:2, diff:"avanzado", type:"Evaluación de soluciones", comp:"Cultura de paz",
+   text:"En una institución educativa se presentan conflictos recurrentes entre estudiantes por diferencias de opinión en redes sociales que luego se trasladan al aula. El comité de convivencia escolar propone implementar un programa permanente de mediación entre pares, capacitando a estudiantes líderes para acompañar la resolución de conflictos cotidianos.",
+   options:["Esta estrategia es innecesaria, pues los conflictos escolares deben resolverse únicamente con sanciones disciplinarias.","Esta estrategia refleja la construcción de una cultura de paz, al formar capacidades para la resolución pacífica y sostenida de los conflictos.","Esta estrategia traslada la responsabilidad del colegio a los propios estudiantes, lo cual es inadecuado.","Esta estrategia solo debe aplicarse si los conflictos involucran agresión física."],
+   correct:1,
+   explanation:"La construcción de una cultura de paz implica desarrollar capacidades permanentes —como la mediación entre pares— para prevenir y transformar los conflictos de manera constructiva, más allá de aplicar sanciones puntuales.",
+   justification:"Fortalecer competencias ciudadanas en los propios estudiantes para la resolución pacífica promueve la autonomía, la corresponsabilidad y una convivencia escolar sostenible en el tiempo."},
+
+  {id:9, sub:3, diff:"basico", type:"Identificación de derechos vulnerados", comp:"Igualdad y no discriminación",
+   text:"En un conjunto residencial, la administración prohíbe el ingreso de una persona en silla de ruedas a la piscina comunal, argumentando \"razones de seguridad\" sin ofrecer ninguna alternativa ni justificación técnica.",
+   options:["La administración actuó correctamente, pues la seguridad está por encima de cualquier derecho.","Se está vulnerando el derecho a la igualdad y a la no discriminación de la persona con discapacidad.","No hay ningún derecho vulnerado, ya que la administración tiene autonomía total sobre sus instalaciones.","El problema es exclusivamente de infraestructura y no involucra derechos humanos."],
+   correct:1,
+   explanation:"Negar el acceso a un espacio común sin una justificación técnica válida constituye una discriminación por motivo de discapacidad, vulnerando el derecho a la igualdad de trato y de oportunidades.",
+   justification:"La protección de la dignidad de las personas con discapacidad exige eliminar barreras de acceso, no imponerlas bajo pretextos no sustentados; el respeto a la diferencia es un pilar de la convivencia democrática."},
+
+  {id:10, sub:3, diff:"intermedio", type:"Identificación de derechos vulnerados", comp:"Derechos humanos en situaciones de conflicto",
+   text:"Durante una protesta pacífica en una plaza pública, la policía dispersa a los manifestantes utilizando la fuerza, a pesar de que estos no representaban un riesgo para terceros y contaban con el permiso correspondiente.",
+   options:["La actuación de la policía es válida porque toda protesta debe ser controlada de inmediato.","La actuación de la policía vulnera el derecho a la protesta pacífica y a la libre expresión, garantizados constitucionalmente.","No existe vulneración de derechos, pues la policía siempre actúa conforme a la ley.","La vulneración solo existiría si hubiera heridos de gravedad."],
+   correct:1,
+   explanation:"El derecho a la protesta pacífica y a la libertad de expresión están protegidos constitucionalmente cuando se ejercen sin violencia y con los permisos correspondientes; el uso desproporcionado de la fuerza constituye una vulneración de derechos fundamentales.",
+   justification:"La protección de la protesta social pacífica es esencial para el ejercicio democrático de la ciudadanía y el control social sobre las decisiones que afectan a la comunidad."},
+
+  {id:11, sub:3, diff:"intermedio", type:"Análisis de caso", comp:"Justicia y equidad",
+   text:"Un grupo de trabajadores informales es desalojado de una zona donde han vendido productos por años, sin previo aviso ni alternativa de reubicación, para dar paso a un proyecto de embellecimiento urbano.",
+   options:["El desalojo es aceptable porque el espacio público debe estar libre de cualquier actividad comercial.","El desalojo, realizado sin aviso previo ni alternativas, vulnera derechos económicos y el debido proceso de estas personas.","No hay vulneración de derechos porque la venta informal no está protegida legalmente.","El conflicto no involucra derechos humanos, sino solo normas de tránsito."],
+   correct:1,
+   explanation:"Aunque las autoridades pueden regular el uso del espacio público, deben hacerlo respetando el debido proceso, brindando aviso previo y considerando alternativas para quienes dependen de esas actividades para su subsistencia.",
+   justification:"Equilibrar el ordenamiento urbano con la protección de los derechos de poblaciones vulnerables refleja un enfoque de justicia social y respeto por la dignidad humana en la gestión pública."},
+
+  {id:12, sub:3, diff:"avanzado", type:"Toma de decisiones", comp:"Resolución de conflictos desde los derechos",
+   text:"Una comunidad indígena denuncia que un proyecto minero se instaló en su territorio ancestral sin haber realizado la consulta previa establecida por la ley. La empresa argumenta que cuenta con todos los permisos ambientales nacionales.",
+   options:["Basta con los permisos ambientales nacionales, ya que la consulta previa es solo un trámite opcional.","Se ha vulnerado el derecho a la consulta previa de la comunidad, un derecho fundamental que no se sustituye con otros permisos administrativos.","La comunidad no tiene ningún derecho sobre el territorio si este pertenece legalmente al Estado.","El conflicto se resuelve automáticamente a favor de quien invierte más recursos económicos."],
+   correct:1,
+   explanation:"La consulta previa, libre e informada es un derecho fundamental de las comunidades étnicas reconocido constitucional e internacionalmente; no puede ser reemplazada por otros permisos administrativos.",
+   justification:"El reconocimiento de los derechos de los pueblos indígenas evidencia el compromiso con la equidad y la justicia hacia comunidades históricamente vulneradas, más allá de intereses económicos particulares."},
+
+  {id:13, sub:4, diff:"basico", type:"Análisis de caso", comp:"Respeto por las diferencias",
+   text:"En un salón de clases llegan dos nuevos estudiantes: uno proveniente de Venezuela y otro de una comunidad indígena de la Amazonía. Algunos compañeros hacen comentarios burlones sobre su acento y sus costumbres.",
+   options:["Es normal burlarse un poco, ya que ayuda a que los nuevos estudiantes se \"acostumbren\" más rápido.","Los comentarios burlones constituyen una falta de respeto a la diversidad cultural y étnica de los nuevos estudiantes.","No hay ningún problema, pues las burlas son parte de la convivencia escolar habitual.","El problema solo existiría si los comentarios fueran dichos por un profesor."],
+   correct:1,
+   explanation:"Burlarse del acento o las costumbres de otra persona por su origen cultural o étnico constituye una forma de discriminación que afecta la convivencia y el respeto por la diversidad, sin importar quién lo diga.",
+   justification:"Promover el respeto por la diversidad cultural y étnica desde la infancia previene la discriminación y construye entornos escolares inclusivos para todos los estudiantes."},
+
+  {id:14, sub:4, diff:"intermedio", type:"Análisis de caso", comp:"Inclusión social",
+   text:"En una empresa, un grupo de empleados solicita un espacio para practicar su religión durante la hora de almuerzo. Algunos compañeros consideran que esto \"no es necesario\" porque la mayoría no lo requiere.",
+   options:["La solicitud debe negarse porque solo debe atenderse lo que necesita la mayoría de los empleados.","La solicitud es legítima, pues la libertad religiosa debe garantizarse independientemente de que sea una práctica minoritaria.","Solo se debería permitir si todos los empleados practican la misma religión.","Este tema no corresponde a la empresa, sino únicamente a la vida privada de cada persona."],
+   correct:1,
+   explanation:"La libertad religiosa es un derecho individual que debe respetarse independientemente de si es practicada por la mayoría o la minoría; una convivencia inclusiva reconoce y facilita el ejercicio de derechos de todos los grupos.",
+   justification:"La inclusión efectiva de la diversidad religiosa en espacios laborales y sociales refleja el principio de igualdad y el respeto por la pluralidad propia de una sociedad democrática."},
+
+  {id:15, sub:4, diff:"avanzado", type:"Toma de decisiones", comp:"Convivencia democrática",
+   text:"Un municipio debe decidir sobre la construcción de un centro cultural. Un sector de la población propone que represente exclusivamente la tradición religiosa mayoritaria; otro sector, integrado por comunidades afrodescendientes, indígenas y migrantes, solicita que el espacio refleje la pluralidad cultural del municipio.",
+   options:["Se debe priorizar la propuesta de la tradición mayoritaria, ya que representa a más habitantes.","Se debe descartar cualquier propuesta que incluya elementos religiosos para evitar conflictos.","Se debe construir un espacio que integre y represente la pluralidad cultural del municipio, mediante un proceso participativo con todos los sectores.","La decisión debe tomarla únicamente el alcalde, sin necesidad de consultar a la comunidad."],
+   correct:2,
+   explanation:"En una sociedad diversa, los espacios públicos deben reflejar la pluralidad cultural de toda la comunidad, no solo de la mayoría, y su construcción debe basarse en procesos participativos que garanticen la inclusión de todos los grupos.",
+   justification:"La convivencia democrática exige equilibrar los intereses de mayorías y minorías mediante la participación, evitando que unas identidades culturales se impongan sobre otras."},
+
+  {id:16, sub:4, diff:"avanzado", type:"Interpretación de tabla", comp:"Prevención de la discriminación",
+   text:"Analiza la siguiente tabla, resultado de una encuesta aplicada en un barrio sobre percepciones de discriminación:<br><table><tr><th>Grupo</th><th>% que reporta haber sido discriminado</th></tr><tr><td>Migrantes</td><td>62%</td></tr><tr><td>Comunidad LGBTIQ+</td><td>55%</td></tr><tr><td>Personas con discapacidad</td><td>48%</td></tr><tr><td>Adultos mayores</td><td>30%</td></tr></table>A partir de estos datos, la junta comunal debe diseñar una estrategia de convivencia inclusiva.",
+   options:["La estrategia debe enfocarse únicamente en los migrantes, pues presentan el porcentaje más alto.","No es necesario diseñar ninguna estrategia, pues ningún grupo supera el 70%.","La estrategia debe ser integral, atendiendo las causas comunes de discriminación que afectan a los distintos grupos, sin excluir a ninguno.","La estrategia debe priorizar solo a un grupo por año, comenzando por el de menor porcentaje."],
+   correct:2,
+   explanation:"Los datos muestran que la discriminación afecta a múltiples grupos poblacionales de manera significativa; una estrategia efectiva debe abordar las causas estructurales de la discriminación de forma integral, sin jerarquizar la importancia de unos grupos sobre otros.",
+   justification:"Interpretar datos sociales de forma crítica permite diseñar políticas públicas equitativas que respondan a las necesidades reales de todos los sectores vulnerables de una comunidad."},
+
+  {id:17, sub:5, diff:"basico", type:"Análisis de caso", comp:"Construcción del bien común",
+   text:"Un grupo de vecinos se organiza para limpiar y recuperar un parque abandonado en su barrio, gestionando ante la alcaldía recursos para sembrar árboles y colocar juegos infantiles.",
+   options:["Esta acción no constituye participación ciudadana, pues no involucra procesos electorales.","Esta acción es un ejemplo de participación ciudadana orientada a la construcción del bien común.","Esta acción solo beneficia a quienes participaron directamente en la limpieza.","Esta acción debería ser responsabilidad exclusiva de la alcaldía, sin intervención de los vecinos."],
+   correct:1,
+   explanation:"La participación ciudadana no se limita al voto; incluye acciones colectivas orientadas al bienestar común, como la recuperación de espacios públicos, que fortalecen el tejido social y la corresponsabilidad entre ciudadanía y Estado.",
+   justification:"Reconocer estas formas de participación motiva a la ciudadanía a involucrarse activamente en la solución de problemas comunes, más allá de los mecanismos electorales tradicionales."},
+
+  {id:18, sub:5, diff:"basico", type:"Análisis de caso", comp:"Liderazgo ciudadano",
+   text:"En una junta de acción comunal, se elige democráticamente a un nuevo representante mediante votación abierta, y quienes no resultaron elegidos aceptan el resultado y se comprometen a colaborar con la nueva directiva.",
+   options:["Este proceso refleja un ejercicio de liderazgo ciudadano y participación democrática.","Este proceso es innecesario, pues las decisiones comunitarias deberían tomarlas solo los líderes actuales.","Aceptar el resultado de la votación evidencia debilidad de quienes no ganaron.","La democracia comunitaria solo aplica a las elecciones nacionales, no a las juntas vecinales."],
+   correct:0,
+   explanation:"La elección democrática de representantes comunitarios y la aceptación respetuosa de los resultados son expresiones concretas de liderazgo ciudadano y de una cultura democrática aplicada a la vida cotidiana.",
+   justification:"Fortalecer las prácticas democráticas en espacios locales, como las juntas comunales, contribuye a la formación de una ciudadanía activa y respetuosa de las decisiones colectivas."},
+
+  {id:19, sub:5, diff:"intermedio", type:"Análisis de caso", comp:"Resolución colectiva de problemas",
+   text:"Una comunidad identifica que el principal problema de su barrio es la falta de alumbrado público, lo que genera inseguridad. En lugar de esperar pasivamente la intervención estatal, organizan mesas de trabajo, documentan el problema con fotografías y datos, y presentan una propuesta formal ante el concejo municipal.",
+   options:["Esta es una forma inadecuada de participación, pues corresponde exclusivamente al Estado identificar los problemas.","Esta es una forma de resolución colectiva de problemas que fortalece la democracia participativa mediante la organización comunitaria.","Esta acción es innecesaria si ya existe una autoridad municipal encargada del alumbrado público.","Esta acción solo tiene valor si logra una respuesta inmediata del concejo municipal."],
+   correct:1,
+   explanation:"La organización comunitaria para documentar problemas y presentar propuestas formales ante las autoridades constituye un ejercicio legítimo de participación democrática, que complementa la labor estatal y fortalece la resolución colectiva de problemas.",
+   justification:"La ciudadanía activa no depende únicamente de la respuesta inmediata de las autoridades; su valor radica en el ejercicio mismo de la organización, la exigencia de derechos y la construcción de propuestas."},
+
+  {id:20, sub:5, diff:"intermedio", type:"Análisis de caso", comp:"Participación democrática",
+   text:"En un colegio, el personero estudiantil convoca a una asamblea para discutir la propuesta de cambiar el reglamento de convivencia. Algunos estudiantes se muestran indiferentes y prefieren no asistir, argumentando que \"de todas formas los profesores deciden\".",
+   options:["La actitud de indiferencia es razonable, pues los estudiantes no tienen ninguna incidencia real en estas decisiones.","La actitud de indiferencia debilita la participación democrática, que requiere del compromiso activo de todos los miembros de la comunidad educativa.","Solo el personero debería asistir a este tipo de espacios, en representación de todos.","Este tipo de asambleas no forma parte de la participación ciudadana escolar."],
+   correct:1,
+   explanation:"La participación democrática efectiva requiere del compromiso activo de todos los ciudadanos, incluidos los estudiantes; la indiferencia debilita los espacios de decisión colectiva y reduce las posibilidades de que las normas reflejen los intereses de toda la comunidad.",
+   justification:"Fomentar la participación estudiantil en la construcción de normas de convivencia forma ciudadanos comprometidos con los procesos democráticos desde edades tempranas."},
+
+  {id:21, sub:6, diff:"intermedio", type:"Toma de decisiones", comp:"Uso de los recursos naturales",
+   text:"Una empresa agroindustrial solicita permiso para desviar el cauce de un río que abastece a varias veredas, con el fin de ampliar sus cultivos. Los campesinos de la zona se oponen porque dependen de esa agua para el consumo humano y para sus propios cultivos de subsistencia.",
+   options:["El permiso debe otorgarse porque las empresas generan más empleo que la agricultura campesina.","Debe realizarse un análisis que priorice el acceso al agua para consumo humano y evalúe el impacto ambiental antes de cualquier decisión.","El conflicto no tiene solución posible, pues los intereses son irreconciliables.","Los campesinos deben ceder automáticamente, ya que la empresa cuenta con mayor capacidad legal."],
+   correct:1,
+   explanation:"En los conflictos por recursos naturales, el acceso al agua para consumo humano tiene prioridad sobre otros usos según los principios de sostenibilidad; toda decisión debe basarse en estudios de impacto ambiental y en la participación de las comunidades afectadas.",
+   justification:"Priorizar el derecho humano al agua frente a intereses productivos particulares refleja un enfoque de justicia ambiental y responsabilidad compartida en el uso de los recursos naturales."},
+
+  {id:22, sub:6, diff:"intermedio", type:"Interpretación de infografía", comp:"Participación ciudadana en temas ambientales",
+   text:"Observa la siguiente infografía sobre la generación de residuos en un barrio:<br><table><tr><th>Tipo de residuo</th><th>% semanal</th></tr><tr><td>Orgánicos</td><td>45%</td></tr><tr><td>Reciclables</td><td>30%</td></tr><tr><td>No aprovechables</td><td>25%</td></tr></table>Solo el 10% de los residuos reciclables se separa correctamente en la fuente. La junta de acción comunal quiere reducir la contaminación del barrio.",
+   options:["La mejor solución es prohibir la generación de cualquier tipo de residuo en el barrio.","La estrategia más efectiva sería una campaña de educación ambiental y puntos de acopio para mejorar la separación en la fuente, dado el bajo porcentaje actual.","No es necesario hacer nada, pues la mayoría de los residuos ya son orgánicos y se degradan solos.","La solución depende únicamente de que la alcaldía aumente la frecuencia de recolección."],
+   correct:1,
+   explanation:"Los datos muestran que, aunque el 30% de los residuos son reciclables, solo el 10% se separa correctamente, lo que indica que el problema central es la falta de educación y de infraestructura para la separación en la fuente.",
+   justification:"La responsabilidad ambiental compartida entre ciudadanía e instituciones, basada en evidencia, permite diseñar soluciones sostenibles y efectivas frente a las problemáticas ambientales locales."},
+
+  {id:23, sub:6, diff:"avanzado", type:"Toma de decisiones", comp:"Desarrollo sostenible",
+   text:"Una región minera enfrenta un dilema: la extracción de carbón genera empleo e ingresos para el municipio, pero también ha contaminado fuentes hídricas y afectado la salud de las comunidades cercanas, según estudios independientes. El gobierno local debe decidir sobre la renovación de la licencia ambiental.",
+   options:["Renovar la licencia sin condiciones, priorizando el empleo por encima de cualquier otro factor.","Negar la renovación de forma inmediata, sin considerar alternativas económicas para los trabajadores afectados.","Condicionar la renovación a la implementación de medidas de mitigación ambiental verificables y a un plan de transición económica que incluya a las comunidades y trabajadores.","Delegar la decisión completamente a la empresa minera, ya que es la que conoce mejor sus procesos productivos."],
+   correct:2,
+   explanation:"Un enfoque de desarrollo sostenible exige equilibrar los derechos económicos con los derechos ambientales y de salud de las comunidades, mediante condiciones verificables de mitigación y planes de transición, en lugar de decisiones extremas.",
+   justification:"La sostenibilidad implica sopesar responsablemente los beneficios económicos y los costos ambientales y sociales, garantizando que ninguna comunidad cargue desproporcionadamente con los efectos negativos del desarrollo."},
+
+  {id:24, sub:6, diff:"avanzado", type:"Análisis de perspectivas", comp:"Conflictos por el territorio",
+   text:"Dos comunidades vecinas de una zona rural entran en disputa por los límites de un territorio que ambas consideran ancestral, luego de que un nuevo mapa catastral trazara una línea divisoria que no coincide con los usos tradicionales del suelo reconocidos históricamente por ambas.",
+   options:["El conflicto debe resolverse aplicando estrictamente el mapa catastral, sin considerar los usos históricos del territorio.","Debe promoverse un proceso de diálogo intercomunitario que reconozca los usos históricos del territorio junto con la información técnica catastral, buscando un acuerdo consensuado.","El territorio debe entregarse a la comunidad con mayor número de habitantes.","El Estado debe expropiar el territorio en disputa para evitar cualquier conflicto futuro."],
+   correct:1,
+   explanation:"Los conflictos territoriales complejos requieren integrar tanto la información técnica catastral como el reconocimiento de los usos históricos y culturales del territorio, a través de procesos de diálogo que legitimen el acuerdo ante ambas comunidades.",
+   justification:"Respetar la relación histórica y cultural de las comunidades con su territorio, junto con la construcción participativa de acuerdos, es coherente con un enfoque de justicia territorial y convivencia pacífica."},
+
+  {id:25, sub:7, diff:"basico", type:"Análisis de caso", comp:"Uso responsable de las redes sociales",
+   text:"Camilo recibe un mensaje de cadena en su celular que afirma, sin ninguna fuente, que cierto grupo de migrantes está \"quitando el trabajo a los colombianos\" en su ciudad. Camilo lo reenvía de inmediato a sus contactos sin verificar la información.",
+   options:["Camilo actuó correctamente, pues es su deber alertar a sus contactos sobre cualquier información que reciba.","Camilo contribuyó a la desinformación, al difundir información sin verificar su veracidad ni sus fuentes.","El mensaje no representa ningún riesgo, ya que solo fue compartido entre conocidos.","La responsabilidad es únicamente de quien creó el mensaje original, no de quien lo reenvía."],
+   correct:1,
+   explanation:"Reenviar información sin verificar su veracidad, especialmente cuando estigmatiza a un grupo poblacional, contribuye activamente a la desinformación y puede alimentar el discurso de odio, sin importar que la persona no haya creado el mensaje original.",
+   justification:"El uso responsable de las redes sociales exige verificar la información antes de compartirla, reconociendo que cada persona es corresponsable de los efectos de la desinformación en la convivencia social."},
+
+  {id:26, sub:7, diff:"intermedio", type:"Análisis de caso", comp:"Discurso de odio",
+   text:"En un grupo de WhatsApp del colegio, un estudiante comparte una publicación que ridiculiza a otro compañero por su orientación sexual. Varios estudiantes reaccionan con emojis de risa y comentarios burlones adicionales.",
+   options:["No hay ninguna responsabilidad para quienes solo reaccionaron con emojis, pues no escribieron comentarios.","Tanto quien publicó el contenido como quienes reaccionaron y comentaron participan en una situación de ciberacoso que vulnera la dignidad del compañero.","Esta situación es solo un chiste sin consecuencias reales, propio de la comunicación juvenil.","La responsabilidad es exclusivamente de la plataforma digital por permitir este tipo de contenido."],
+   correct:1,
+   explanation:"El ciberacoso incluye no solo la publicación de contenido ofensivo, sino también su viralización mediante reacciones y comentarios burlones, que refuerzan la humillación pública de la persona afectada.",
+   justification:"Reconocer el ciberacoso como una vulneración de derechos, y no como un simple \"chiste\", es fundamental para prevenir el daño psicológico y promover una comunicación digital respetuosa."},
+
+  {id:27, sub:7, diff:"intermedio", type:"Interpretación de estadísticas", comp:"Pensamiento crítico frente a la información",
+   text:"Una encuesta realizada en un colegio muestra que el 70% de los estudiantes admite haber compartido alguna vez una noticia sin verificar su fuente, y solo el 15% afirma contrastar la información con más de una fuente antes de compartirla.",
+   options:["Estos datos indican que la mayoría de los estudiantes tiene un buen manejo del pensamiento crítico frente a la información digital.","Estos datos evidencian la necesidad de fortalecer el pensamiento crítico y la verificación de fuentes entre los estudiantes.","Estos datos no tienen relación con la convivencia escolar ni con los conflictos sociales.","Estos datos solo son relevantes para los docentes de tecnología, no para la formación ciudadana."],
+   correct:1,
+   explanation:"Los datos muestran una baja verificación de fuentes (15%) frente a una alta tasa de difusión sin contraste (70%), lo cual evidencia una debilidad en el pensamiento crítico frente a la información que puede alimentar la desinformación.",
+   justification:"El desarrollo del pensamiento crítico frente a la información digital es una competencia ciudadana esencial para prevenir el discurso de odio y la desinformación en la vida cotidiana."},
+
+  {id:28, sub:7, diff:"avanzado", type:"Toma de decisiones", comp:"Desinformación y noticias falsas",
+   text:"Durante una jornada electoral local, circula en redes sociales un video editado que atribuye declaraciones falsas a uno de los candidatos, generando indignación y llamados a la violencia contra sus simpatizantes. El video se viraliza antes de que los medios de comunicación oficiales puedan verificarlo.",
+   options:["La responsabilidad es exclusivamente del candidato afectado, por no haber respondido a tiempo.","Se debe difundir el video sin restricciones, pues la libertad de expresión permite cualquier tipo de contenido.","Es necesario promover la verificación de la información desde fuentes confiables, denunciar el contenido falso ante las plataformas y rechazar cualquier llamado a la violencia.","El problema se resuelve solo si las autoridades cierran las redes sociales durante el proceso electoral."],
+   correct:2,
+   explanation:"Frente a la desinformación que incita a la violencia, la respuesta ciudadana responsable combina la verificación de fuentes, la denuncia del contenido falso y el rechazo explícito a cualquier llamado violento, sin recurrir a medidas extremas como la censura total.",
+   justification:"La defensa de la verdad y la no violencia frente a la desinformación electoral es esencial para proteger tanto la libertad de expresión como la integridad física y la participación democrática legítima."},
+
+  {id:29, sub:8, diff:"basico", type:"Análisis de problemática social", comp:"Exclusión social",
+   text:"En una ciudad, el número de personas que viven en la calle ha aumentado en los últimos años. Un grupo de estudiantes decide investigar las causas de esta situación para un proyecto escolar.",
+   options:["La situación de habitabilidad en calle se debe únicamente a decisiones personales de quienes la viven, sin relación con factores sociales.","La situación de habitabilidad en calle suele estar relacionada con múltiples factores sociales, como la pobreza, la falta de oportunidades y la exclusión social.","Este tema no corresponde a un análisis de competencias ciudadanas, sino solo a la economía.","No es posible investigar este fenómeno, ya que no existen datos disponibles al respecto."],
+   correct:1,
+   explanation:"Fenómenos como la habitabilidad en calle son problemáticas sociales complejas y multicausales, vinculadas a factores estructurales como la pobreza y la exclusión social, y no pueden explicarse únicamente por decisiones individuales.",
+   justification:"Comprender el carácter estructural de las problemáticas sociales evita estigmatizar a las personas afectadas y favorece la búsqueda de soluciones colectivas y de política pública."},
+
+  {id:30, sub:8, diff:"basico", type:"Análisis de caso", comp:"Migración",
+   text:"En una ciudad fronteriza llegan cientos de familias migrantes buscando mejores condiciones de vida. Algunos comerciantes locales se organizan para donar alimentos y ropa, mientras otros exigen que se les impida el ingreso.",
+   options:["Ambas reacciones son igualmente válidas, pues no existe una postura correcta frente a la migración.","La respuesta solidaria refleja un enfoque de derechos humanos, mientras que impedir el ingreso sin analizar la situación desconoce la protección debida a la población migrante.","Los comerciantes que donan alimentos están equivocados, pues fomentan la dependencia de los migrantes.","La migración no es un tema que competa a la ciudadanía, sino únicamente al gobierno nacional."],
+   correct:1,
+   explanation:"Desde un enfoque de derechos humanos, la población migrante tiene derecho a la protección y a condiciones dignas, por lo que las respuestas solidarias contribuyen a garantizar estos derechos, mientras que el rechazo sin análisis desconoce las causas de la migración.",
+   justification:"La respuesta ciudadana solidaria frente a la migración refleja los principios de dignidad humana y responsabilidad social que sustentan una convivencia justa y empática."},
+
+  {id:31, sub:8, diff:"intermedio", type:"Interpretación de tabla", comp:"Desigualdad",
+   text:"Observa la siguiente tabla sobre el acceso a servicios básicos en dos zonas de una misma ciudad:<br><table><tr><th>Servicio</th><th>Zona A</th><th>Zona B</th></tr><tr><td>Agua potable</td><td>98%</td><td>62%</td></tr><tr><td>Energía eléctrica</td><td>99%</td><td>70%</td></tr><tr><td>Educación secundaria</td><td>95%</td><td>55%</td></tr></table>¿Qué fenómeno social evidencian mejor estos datos?",
+   options:["Evidencian que la Zona B tiene menos habitantes que la Zona A.","Evidencian una situación de desigualdad social en el acceso a servicios básicos entre ambas zonas.","Evidencian que los habitantes de la Zona B no desean acceder a estos servicios.","Los datos no permiten ninguna conclusión relevante sobre la convivencia ciudadana."],
+   correct:1,
+   explanation:"La marcada diferencia en el acceso a servicios básicos esenciales entre ambas zonas evidencia una situación de desigualdad social, que constituye una de las principales causas de exclusión social y de conflictos derivados de la falta de equidad territorial.",
+   justification:"Identificar la desigualdad a partir de datos concretos permite exigir políticas públicas que garanticen el acceso equitativo a derechos básicos para toda la ciudadanía, sin distinción de zona de residencia."},
+
+  {id:32, sub:8, diff:"avanzado", type:"Evaluación de soluciones", comp:"Violencia y pobreza",
+   text:"Un estudio revela que en cierto barrio la tasa de deserción escolar es tres veces mayor que el promedio de la ciudad, coincidiendo con altos niveles de pobreza, violencia intrafamiliar y ausencia de oportunidades laborales para los jóvenes. Un colectivo juvenil propone una intervención integral.",
+   options:["La solución más eficaz sería aumentar exclusivamente el número de policías en el barrio.","La deserción escolar debe atribuirse únicamente a la falta de interés de los estudiantes por educarse.","La intervención debe ser integral, articulando acciones en educación, generación de oportunidades laborales, prevención de la violencia intrafamiliar y participación juvenil, dado el carácter multicausal del problema.","No es posible intervenir, pues estas problemáticas son ajenas a la acción ciudadana y comunitaria."],
+   correct:2,
+   explanation:"Cuando una problemática social como la deserción escolar está asociada a múltiples factores estructurales, la intervención efectiva debe ser integral y articulada, en lugar de centrarse en una sola dimensión o atribuir el problema a decisiones individuales de los jóvenes.",
+   justification:"Abordar las problemáticas sociales desde su complejidad, con participación comunitaria y enfoque de derechos, permite construir soluciones sostenibles y evita culpabilizar a las víctimas de la exclusión social."},
+
+  {id:33, sub:9, diff:"intermedio", type:"Dilema ético", comp:"Resolución ética de dilemas",
+   text:"En un salón de clase, un estudiante encuentra una billetera con dinero en el patio del colegio. Duda entre quedarse con el dinero, ya que necesita comprar materiales escolares que su familia no puede costear, o entregarla en la coordinación.",
+   options:["Debe quedarse con el dinero, pues su necesidad económica justifica la decisión.","Debe entregar la billetera completa en la coordinación, pues la necesidad personal no justifica apropiarse de algo ajeno; puede buscar otras alternativas para resolver su necesidad.","Debe quedarse con una parte del dinero y entregar el resto, como forma de equilibrio.","Debe preguntar a sus compañeros qué harían ellos antes de decidir."],
+   correct:1,
+   explanation:"Aunque la necesidad económica del estudiante es comprensible, no constituye una justificación ética para apropiarse de bienes ajenos; la decisión correcta desde un enfoque de honestidad es devolver la billetera completa y buscar apoyo institucional para su necesidad.",
+   justification:"Este dilema permite distinguir entre comprender las circunstancias de una persona y justificar una acción que vulnera los derechos de otro; la empatía no elimina la responsabilidad ética de actuar con honestidad."},
+
+  {id:34, sub:9, diff:"intermedio", type:"Dilema ético", comp:"Evaluación de alternativas",
+   text:"Un estudiante observa que su mejor amigo está copiando en un examen. Si lo reporta, puede afectar la amistad; si no lo hace, permite una situación de deshonestidad académica que afecta la equidad frente a los demás estudiantes.",
+   options:["Debe ignorar la situación completamente, pues la lealtad a la amistad está por encima de cualquier otra consideración.","Debe conversar directamente con su amigo, expresándole su preocupación por la situación, y de ser necesario, actuar conforme a las normas de convivencia del colegio, priorizando la honestidad y la equidad.","Debe copiarle las respuestas también, para no delatarlo ni sentirse en desventaja.","Debe reportarlo de inmediato ante todo el curso, sin hablar antes con su amigo."],
+   correct:1,
+   explanation:"Este dilema invita a equilibrar el valor de la amistad con el compromiso con la honestidad y la equidad; la mejor alternativa prioriza el diálogo directo con el amigo antes de recurrir a instancias formales, evitando tanto la complicidad como una exposición innecesaria.",
+   justification:"Los dilemas éticos rara vez tienen soluciones simples; requieren sopesar diferentes valores y optar por la alternativa que mejor respete los derechos de todos los involucrados, incluyendo al propio amigo."},
+
+  {id:35, sub:9, diff:"avanzado", type:"Análisis de perspectivas", comp:"Argumentación de decisiones",
+   text:"Analiza el siguiente diálogo entre dos concejales de un municipio:<br><em>Concejal A:</em> \"Debemos destinar todo el presupuesto disponible a la construcción de un nuevo estadio, para atraer inversión y turismo.\"<br><em>Concejal B:</em> \"Considero que ese presupuesto debería priorizarse para mejorar el acceso al agua potable en las veredas, donde varias familias aún no cuentan con este servicio.\"<br>¿Cuál sería el criterio más adecuado, desde un enfoque de derechos humanos, para evaluar esta decisión?",
+   options:["Priorizar la propuesta que genere mayor beneficio económico a corto plazo, sin importar a quién beneficie.","Priorizar la satisfacción de necesidades básicas y derechos fundamentales, como el acceso al agua potable, antes que proyectos de infraestructura no esenciales.","Dividir el presupuesto en partes iguales, sin analizar la urgencia ni el impacto de cada propuesta.","La decisión debe tomarla exclusivamente el concejal con mayor antigüedad en el cargo."],
+   correct:1,
+   explanation:"Desde un enfoque de derechos humanos y justicia social, la inversión pública debe priorizar la garantía de derechos fundamentales y necesidades básicas por encima de proyectos que, aunque atractivos económicamente, no atienden urgencias esenciales de la población.",
+   justification:"Evaluar las decisiones públicas desde la perspectiva de los derechos fundamentales permite identificar cuándo una propuesta puede perpetuar desigualdades si no atiende las necesidades más urgentes de la ciudadanía."},
+
+  {id:36, sub:9, diff:"avanzado", type:"Dilema ético", comp:"Consecuencias de las decisiones",
+   text:"Un docente descubre que un estudiante ha estado faltando frecuentemente a clases. Al indagar, se entera de que el estudiante debe cuidar a sus hermanos menores porque su madre trabaja todo el día y no tiene con quién dejarlos. El reglamento escolar establece sanciones automáticas por inasistencia reiterada.",
+   options:["El docente debe aplicar la sanción automática, sin excepción, pues el reglamento debe cumplirse igual para todos los estudiantes.","El docente debe ignorar la situación completamente, sin registrar las inasistencias.","El docente debe articular con la institución una respuesta que combine el análisis de las circunstancias familiares del estudiante con alternativas de apoyo, en lugar de aplicar una sanción automática que no considera el contexto.","El docente debe resolver el problema personalmente, llevándose al estudiante a su propia casa."],
+   correct:2,
+   explanation:"Este caso exige un análisis contextualizado entre la aplicación uniforme de las normas y la atención a las circunstancias particulares de vulnerabilidad; la respuesta más ética combina el acompañamiento institucional con la búsqueda de soluciones estructurales.",
+   justification:"La justicia no siempre significa aplicar la misma norma de forma idéntica a todos los casos; a veces requiere considerar el contexto y las condiciones de vulnerabilidad para garantizar una respuesta verdaderamente equitativa."},
+
+  {id:37, sub:10, diff:"basico", type:"Pregunta tipo ICFES", comp:"Resolución de conflictos contextualizados",
+   text:"Un estudiante debe resolver una pregunta tipo ICFES que presenta un caso de conflicto vecinal por ruido excesivo. Entre las opciones de respuesta, debe elegir la que refleje mejor un enfoque de resolución pacífica.",
+   options:["Llamar inmediatamente a la policía sin intentar ningún acercamiento previo con el vecino.","Conversar con el vecino de manera respetuosa, exponer cómo afecta el ruido y buscar juntos un acuerdo razonable.","Poner música más fuerte como forma de \"hacerle sentir lo mismo\" al vecino.","Ignorar la situación indefinidamente para evitar cualquier tipo de confrontación."],
+   correct:1,
+   explanation:"Ante conflictos cotidianos de convivencia, el enfoque de resolución pacífica prioriza el diálogo directo y respetuoso como primer paso, antes de recurrir a terceros o a medidas de retaliación, buscando acuerdos que beneficien a ambas partes.",
+   justification:"Este tipo de preguntas evalúa la capacidad de aplicar principios de comunicación asertiva y resolución pacífica en situaciones cotidianas, competencia central de la formación ciudadana."},
+
+  {id:38, sub:10, diff:"intermedio", type:"Pregunta tipo ICFES", comp:"Argumentación basada en derechos humanos",
+   text:"En una prueba tipo ICFES se presenta el siguiente caso: \"Una estudiante de un colegio público denuncia que fue tratada de forma diferente por un docente debido a su condición socioeconómica, recibiendo menos oportunidades de participación en actividades extracurriculares que otros compañeros.\" ¿Qué principio ciudadano se ve vulnerado?",
+   options:["El principio de autoridad docente, que permite tratar de forma diferenciada a los estudiantes según su criterio personal.","El principio de igualdad y no discriminación, que exige un trato equitativo independientemente de la condición socioeconómica.","El principio de libertad de cátedra, que autoriza al docente a decidir quién participa en las actividades.","Ningún principio ciudadano se ve afectado, pues se trata de una decisión pedagógica normal."],
+   correct:1,
+   explanation:"Tratar de forma diferenciada y desfavorable a un estudiante por su condición socioeconómica constituye una vulneración directa del principio de igualdad y no discriminación, que exige garantizar las mismas oportunidades a todos los estudiantes.",
+   justification:"Identificar vulneraciones al principio de igualdad en contextos escolares cotidianos fortalece la capacidad de los estudiantes para reconocer y denunciar la discriminación en su propio entorno."},
+
+  {id:39, sub:10, diff:"intermedio", type:"Interpretación de esquema", comp:"Integración de conceptos de ciudadanía",
+   text:"Una pregunta tipo ICFES presenta el siguiente esquema de un proceso de conciliación comunitaria:<br><table><tr><th>Paso</th><th>Descripción</th></tr><tr><td>1</td><td>Ambas partes presentan su versión del conflicto</td></tr><tr><td>2</td><td>Un conciliador facilita la identificación de intereses comunes</td></tr><tr><td>3</td><td>Las partes proponen alternativas de solución</td></tr><tr><td>4</td><td>Se firma un acta de acuerdo con compromisos verificables</td></tr></table>¿Cuál es el propósito principal del paso 4 en este proceso?",
+   options:["Formalizar los compromisos adquiridos para garantizar su cumplimiento y seguimiento posterior.","Determinar cuál de las partes tuvo la razón en el conflicto.","Sancionar económicamente a la parte que incumplió inicialmente el acuerdo.","Finalizar el proceso sin ningún compromiso concreto entre las partes."],
+   correct:0,
+   explanation:"La firma del acta de acuerdo formaliza los compromisos pactados entre las partes, estableciendo una base clara y verificable para su cumplimiento y seguimiento, sin que esto implique determinar culpables ni aplicar sanciones.",
+   justification:"Comprender la lógica de los procesos de conciliación permite valorar estas herramientas como mecanismos legítimos y efectivos de resolución pacífica de conflictos, alternativos a la vía judicial."},
+
+  {id:40, sub:10, diff:"intermedio", type:"Pregunta tipo ICFES", comp:"Evaluación de diferentes perspectivas",
+   text:"Una pregunta tipo ICFES plantea el siguiente dilema: \"En un consejo estudiantil, la mayoría vota a favor de eliminar el uso del uniforme los viernes, pero un grupo minoritario de estudiantes considera que esto afecta la identidad institucional.\" ¿Cuál sería la actuación más coherente con los principios democráticos?",
+   options:["Imponer la decisión de la mayoría sin ningún espacio de diálogo con la minoría.","Anular la votación y mantener la decisión que prefiera el rector, sin considerar la opinión estudiantil.","Respetar la decisión mayoritaria tomada democráticamente, garantizando que la minoría haya tenido espacio real para expresar su posición durante el debate previo.","Ignorar el resultado de la votación si la minoría se siente inconforme con la decisión."],
+   correct:2,
+   explanation:"Los principios democráticos exigen respetar las decisiones tomadas mediante mecanismos legítimos y participativos, siempre que se haya garantizado un espacio real de expresión y debate para todas las posturas, incluidas las minoritarias.",
+   justification:"Comprender que la democracia implica tanto el respeto a la decisión mayoritaria como la garantía de participación efectiva de las minorías es clave para el ejercicio de una ciudadanía democrática madura."}
+  ];
+
+  /* --------------------------------------------------------
+     2. ESTADO GLOBAL
+     -------------------------------------------------------- */
+  let state = {
+    preguntas: [],        // 30 preguntas seleccionadas y con opciones mezcladas
+    respuestas: [],        // índice de opción elegida por pregunta (o null)
+    actual: 0,
+    tiempoTotal: 45*60,
+    tiempoRestante: 45*60,
+    timerInterval: null,
+    inicioMs: 0,
+    rachaActual: 0,
+    mejorRacha: 0,
+    logros: new Set(),
+    sonidoActivo: true,
+    finalizado: false
+  };
+
+  const LOGROS_DEF = [
+    {id:"paz3", emoji:"🤝", name:"Constructor de Paz", cond:s=>s.mejorRacha>=3},
+    {id:"mediador5", emoji:"🕊️", name:"Mediador Ciudadano", cond:s=>s.mejorRacha>=5},
+    {id:"derechos", emoji:"⚖️", name:"Defensor de los Derechos Humanos", cond:s=>subScorePct(s,3)>=80},
+    {id:"inclusion", emoji:"🌍", name:"Promotor de la Inclusión", cond:s=>subScorePct(s,4)>=80},
+    {id:"dialogo", emoji:"💬", name:"Maestro del Diálogo", cond:s=>subScorePct(s,2)>=80},
+    {id:"analista", emoji:"🧩", name:"Analista de Conflictos", cond:s=>subScorePct(s,9)>=80},
+    {id:"lider", emoji:"🏘️", name:"Líder Comunitario", cond:s=>subScorePct(s,5)>=80},
+    {id:"experto10", emoji:"🏆", name:"Experto en Competencias Ciudadanas", cond:s=>pctGlobal(s)>=90}
+  ];
+
+  /* --------------------------------------------------------
+     3. UTILIDADES
+     -------------------------------------------------------- */
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function seleccionarPreguntas(){
+    const basicos = shuffle(BANCO.filter(q=>q.diff==="basico"));
+    const intermedios = shuffle(BANCO.filter(q=>q.diff==="intermedio"));
+    const avanzados = shuffle(BANCO.filter(q=>q.diff==="avanzado"));
+    const nB = Math.min(9, basicos.length);
+    const nI = Math.min(12, intermedios.length);
+    const nA = 30 - nB - nI;
+    let seleccion = basicos.slice(0,nB).concat(intermedios.slice(0,nI)).concat(avanzados.slice(0,Math.min(nA, avanzados.length)));
+    // Si por algún motivo faltan preguntas, completar con el resto del banco no usado
+    if(seleccion.length < 30){
+      const usados = new Set(seleccion.map(q=>q.id));
+      const restante = shuffle(BANCO.filter(q=>!usados.has(q.id)));
+      seleccion = seleccion.concat(restante.slice(0, 30-seleccion.length));
+    }
+    seleccion = shuffle(seleccion).slice(0,30);
+    // Mezclar opciones de cada pregunta, recalculando el índice correcto
+    return seleccion.map(q=>{
+      const idxs = shuffle([0,1,2,3]);
+      const nuevasOpciones = idxs.map(i=>q.options[i]);
+      const nuevoCorrecto = idxs.indexOf(q.correct);
+      return Object.assign({}, q, {options:nuevasOpciones, correct:nuevoCorrecto, subName:SUBTEMAS[q.sub]});
+    });
+  }
+
+  function subScorePct(s, subId){
+    let total=0, correctas=0;
+    s.preguntas.forEach((q,i)=>{
+      if(q.sub===subId){
+        total++;
+        if(s.respuestas[i]===q.correct) correctas++;
+      }
+    });
+    return total===0 ? 0 : Math.round((correctas/total)*100);
+  }
+
+  function pctGlobal(s){
+    const correctas = s.respuestas.filter((r,i)=> r===s.preguntas[i].correct).length;
+    return Math.round((correctas/s.preguntas.length)*100);
+  }
+
+  function fmtTime(sec){
+    sec = Math.max(0,sec);
+    const m = Math.floor(sec/60);
+    const s = sec%60;
+    return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  }
+
+  /* --------------------------------------------------------
+     4. SONIDO — generado con WebAudio, sin archivos externos
+     -------------------------------------------------------- */
+  let audioCtx = null;
+  function getCtx(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; }
+    }
+    return audioCtx;
+  }
+  function beep(freqs, dur, type){
+    if(!state.sonidoActivo) return;
+    const ctx = getCtx();
+    if(!ctx) return;
+    let t = ctx.currentTime;
+    freqs.forEach((f,i)=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type||"sine";
+      osc.frequency.value = f;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.15, t+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t+dur+0.02);
+      t += dur*0.55;
+    });
+  }
+  function soundCorrect(){ beep([660,880],0.14,"triangle"); }
+  function soundIncorrect(){ beep([220,180],0.22,"sawtooth"); }
+  function soundFinish(){ beep([523,659,784,1046],0.16,"triangle"); }
+  function soundAchievement(){ beep([784,988,1318],0.15,"sine"); }
+
+  /* --------------------------------------------------------
+     5. RENDER — PANTALLA EXAMEN
+     -------------------------------------------------------- */
+  const elQuestionCard = document.getElementById("questionCard");
+  const elQActual = document.getElementById("qActual");
+  const elPctAvance = document.getElementById("pctAvance");
+  const elProgressFill = document.getElementById("progressFill");
+  const elMetaResp = document.getElementById("metaRespondidas");
+  const elMetaPend = document.getElementById("metaPendientes");
+  const elTimerBox = document.getElementById("timerBox");
+  const elQmap = document.getElementById("qmap");
+  const elStreakBanner = document.getElementById("streakBanner");
+
+  function renderPregunta(){
+    const i = state.actual;
+    const q = state.preguntas[i];
+    const letras = ["A","B","C","D"];
+    let html = "";
+    html += `<div class="q-meta">
+      <span class="badge gold">Subtema ${q.sub}: ${q.subName}</span>
+      <span class="badge">${q.type}</span>
+      <span class="badge">Nivel: ${q.diff==="basico"?"Básico":q.diff==="intermedio"?"Intermedio":"Avanzado"}</span>
+    </div>`;
+    html += `<div class="q-text">${q.text}</div>`;
+    html += `<div class="options" role="radiogroup" aria-label="Opciones de respuesta">`;
+    q.options.forEach((opt, oi)=>{
+      const sel = state.respuestas[i]===oi ? " selected" : "";
+      html += `<button class="option${sel}" role="radio" aria-checked="${state.respuestas[i]===oi}" data-idx="${oi}" tabindex="0">
+        <span class="letter">${letras[oi]}</span><span>${opt}</span>
+      </button>`;
+    });
+    html += `</div>`;
+    html += `<div class="nav-row">
+      <button class="btn-secondary" id="btnAnterior" ${i===0?"disabled":""}>← Anterior</button>
+      <div class="right-group">
+        <button class="btn-ghost" id="btnLimpiar">Borrar respuesta</button>
+        <button class="btn-primary" id="btnSiguiente">${i===state.preguntas.length-1 ? "Ir a finalizar" : "Siguiente →"}</button>
+      </div>
+    </div>`;
+    elQuestionCard.innerHTML = html;
+
+    elQuestionCard.querySelectorAll(".option").forEach(btn=>{
+      btn.addEventListener("click", ()=> seleccionarRespuesta(parseInt(btn.dataset.idx,10)));
+      btn.addEventListener("keydown", (e)=>{
+        if(e.key==="Enter"||e.key===" "){ e.preventDefault(); seleccionarRespuesta(parseInt(btn.dataset.idx,10)); }
+      });
+    });
+    document.getElementById("btnAnterior").addEventListener("click", ()=>{ if(state.actual>0){ state.actual--; renderAll(); } });
+    document.getElementById("btnSiguiente").addEventListener("click", ()=>{
+      if(state.actual < state.preguntas.length-1){ state.actual++; renderAll(); }
+      else { intentarFinalizar(); }
+    });
+    document.getElementById("btnLimpiar").addEventListener("click", ()=>{
+      state.respuestas[state.actual] = null;
+      renderAll();
+    });
+  }
+
+  function seleccionarRespuesta(oi){
+    const i = state.actual;
+    const q = state.preguntas[i];
+    const yaRespondida = state.respuestas[i] !== null && state.respuestas[i] !== undefined;
+    state.respuestas[i] = oi;
+
+    if(!yaRespondida){
+      const esCorrecta = oi === q.correct;
+      if(esCorrecta){
+        state.rachaActual++;
+        state.mejorRacha = Math.max(state.mejorRacha, state.rachaActual);
+        soundCorrect();
+        mostrarRacha();
+      } else {
+        state.rachaActual = 0;
+        soundIncorrect();
+      }
+    }
+    renderAll();
+  }
+
+  function mostrarRacha(){
+    const r = state.rachaActual;
+    if(r===3 || r===5 || r===10){
+      elStreakBanner.style.display = "flex";
+      const msgs = {3:"🔥 ¡Racha de 3 respuestas correctas! Vas muy bien.",5:"🚀 ¡Racha de 5! Tu análisis ciudadano está en su mejor momento.",10:"🏆 ¡Racha de 10! Dominio sobresaliente de la resolución pacífica de conflictos."};
+      elStreakBanner.textContent = msgs[r];
+      setTimeout(()=>{ elStreakBanner.style.display="none"; }, 2600);
+    }
+  }
+
+  function renderProgreso(){
+    const total = state.preguntas.length;
+    const respondidas = state.respuestas.filter(r=>r!==null && r!==undefined).length;
+    elQActual.textContent = state.actual+1;
+    const pct = Math.round((respondidas/total)*100);
+    elPctAvance.textContent = pct+"% completado";
+    elProgressFill.style.width = pct+"%";
+    elMetaResp.textContent = respondidas;
+    elMetaPend.textContent = total-respondidas;
+  }
+
+  function renderQmap(){
+    let html = "";
+    state.preguntas.forEach((q,i)=>{
+      const resp = state.respuestas[i];
+      const cls = ["", (resp!==null && resp!==undefined)?"answered":"", i===state.actual?"current":""].join(" ").trim();
+      html += `<button class="${cls}" data-i="${i}" title="Pregunta ${i+1}" aria-label="Ir a la pregunta ${i+1}">${i+1}</button>`;
+    });
+    elQmap.innerHTML = html;
+    elQmap.querySelectorAll("button").forEach(b=>{
+      b.addEventListener("click", ()=>{ state.actual = parseInt(b.dataset.i,10); renderAll(); });
+    });
+  }
+
+  function renderAll(){
+    renderPregunta();
+    renderProgreso();
+    renderQmap();
+  }
+
+  /* --------------------------------------------------------
+     6. TEMPORIZADOR
+     -------------------------------------------------------- */
+  function iniciarTimer(){
+    state.timerInterval = setInterval(()=>{
+      state.tiempoRestante--;
+      elTimerBox.textContent = fmtTime(state.tiempoRestante);
+      if(state.tiempoRestante <= 60){ elTimerBox.classList.add("warn"); } else { elTimerBox.classList.remove("warn"); }
+      if(state.tiempoRestante <= 0){
+        clearInterval(state.timerInterval);
+        finalizarSimulacro(true);
+      }
+    }, 1000);
+  }
+
+  /* --------------------------------------------------------
+     7. FINALIZACIÓN Y CONFIRMACIÓN
+     -------------------------------------------------------- */
+  const modalOverlay = document.getElementById("modalOverlay");
+  function intentarFinalizar(){
+    const pendientes = state.respuestas.filter(r=>r===null||r===undefined).length;
+    document.getElementById("modalTitle").textContent = "¿Finalizar el simulacro?";
+    document.getElementById("modalText").textContent = pendientes>0
+      ? `Tienes ${pendientes} pregunta(s) sin responder. Esta acción calculará tu puntaje con las respuestas actuales y no podrás modificarlas después.`
+      : "Has respondido todas las preguntas. ¿Deseas finalizar y ver tu informe final?";
+    modalOverlay.classList.remove("hidden");
+  }
+  document.getElementById("btnFinalizarAnticipado").addEventListener("click", intentarFinalizar);
+  document.getElementById("modalCancel").addEventListener("click", ()=> modalOverlay.classList.add("hidden"));
+  document.getElementById("modalConfirm").addEventListener("click", ()=>{
+    modalOverlay.classList.add("hidden");
+    finalizarSimulacro(false);
+  });
+
+  function finalizarSimulacro(porTiempo){
+    if(state.finalizado) return;
+    state.finalizado = true;
+    clearInterval(state.timerInterval);
+    soundFinish();
+    document.getElementById("screen-exam").classList.add("hidden");
+    renderResultados(porTiempo);
+    document.getElementById("screen-results").classList.remove("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  /* --------------------------------------------------------
+     8. RESULTADOS
+     -------------------------------------------------------- */
+  function renderResultados(porTiempo){
+    const total = state.preguntas.length;
+    const correctas = state.respuestas.filter((r,i)=> r===state.preguntas[i].correct).length;
+    const incorrectas = total - correctas; // sin descuento, todas las no-correctas cuentan igual (incl. sin responder)
+    const pct = Math.round((correctas/total)*100);
+    const tiempoEmpleado = state.tiempoTotal - state.tiempoRestante;
+
+    document.getElementById("scorePct").textContent = pct+"%";
+    document.getElementById("scoreFraction").textContent = `${correctas} de ${total} respuestas correctas`;
+    document.getElementById("statCorrectas").textContent = correctas;
+    document.getElementById("statIncorrectas").textContent = incorrectas;
+    document.getElementById("statTiempo").textContent = fmtTime(tiempoEmpleado);
+    document.getElementById("statRacha").textContent = state.mejorRacha;
+
+    let nivel = "Inicial";
+    if(pct>=90) nivel="Sobresaliente";
+    else if(pct>=70) nivel="Avanzado";
+    else if(pct>=50) nivel="Satisfactorio";
+    else nivel="En desarrollo";
+    document.getElementById("statNivel").textContent = nivel;
+
+    let msg = "";
+    if(pct<50) msg = "Comprender los conflictos y aprender a resolverlos de manera pacífica es una habilidad que se fortalece con la práctica. Continúa desarrollando tu pensamiento crítico y tu capacidad de diálogo.";
+    else if(pct<70) msg = "Has construido una buena base para analizar conflictos sociales. Sigue fortaleciendo tu capacidad para escuchar diferentes perspectivas y proponer soluciones respetuosas.";
+    else if(pct<90) msg = "Muy buen desempeño. Demuestras una sólida comprensión de la convivencia, los derechos humanos y la resolución pacífica de conflictos.";
+    else msg = "¡Excelente trabajo! Has demostrado un dominio sobresaliente de las competencias relacionadas con el análisis de conflictos y la construcción de una convivencia democrática, tal como lo exige el enfoque de las pruebas ICFES.";
+    if(porTiempo) msg += " (El tiempo del simulacro finalizó automáticamente.)";
+    document.getElementById("motivationalMsg").textContent = msg;
+
+    // Rendimiento por subtemática (gráfico)
+    let chartHtml = "";
+    for(let s=1; s<=10; s++){
+      const p = subScorePct(state, s);
+      const total_s = state.preguntas.filter(q=>q.sub===s).length;
+      const cls = p<50?"low":(p<80?"mid":"high");
+      chartHtml += `<div class="chart-row">
+        <div class="name">${s}. ${SUBTEMAS[s]}</div>
+        <div class="chart-track"><div class="chart-fill ${cls}" style="width:${total_s? p:0}%"></div></div>
+        <div class="pct">${total_s? p+"%":"—"}</div>
+      </div>`;
+    }
+    document.getElementById("chartWrap").innerHTML = chartHtml;
+
+    // Fortalezas / mejoras
+    const desempSub = [];
+    for(let s=1; s<=10; s++){
+      const total_s = state.preguntas.filter(q=>q.sub===s).length;
+      if(total_s>0) desempSub.push({s, nombre:SUBTEMAS[s], pct: subScorePct(state,s)});
+    }
+    desempSub.sort((a,b)=> b.pct - a.pct);
+    const fuertes = desempSub.filter(d=>d.pct>=70).slice(0,4);
+    const debiles = desempSub.filter(d=>d.pct<70).sort((a,b)=>a.pct-b.pct).slice(0,4);
+    const fortalezasList = document.getElementById("fortalezasList");
+    const mejorasList = document.getElementById("mejorasList");
+    fortalezasList.innerHTML = fuertes.length
+      ? fuertes.map(d=>`<li>✅ <b>${d.nombre}</b> — ${d.pct}% de acierto</li>`).join("")
+      : `<li>Continúa practicando para identificar tus primeras fortalezas consolidadas.</li>`;
+    mejorasList.innerHTML = debiles.length
+      ? debiles.map(d=>`<li>📌 <b>${d.nombre}</b> — ${d.pct}% de acierto. Refuerza el análisis de casos en esta subtemática.</li>`).join("")
+      : `<li>¡No se identificaron subtemáticas por debajo del 70%! Buen desempeño general.</li>`;
+
+    // Logros
+    const badgesGrid = document.getElementById("badgesGrid");
+    let nuevosLogros = 0;
+    LOGROS_DEF.forEach(l=>{
+      const desbloqueado = l.cond(state);
+      if(desbloqueado && !state.logros.has(l.id)){ state.logros.add(l.id); nuevosLogros++; }
+    });
+    if(nuevosLogros>0) soundAchievement();
+    badgesGrid.innerHTML = LOGROS_DEF.map(l=>{
+      const unlocked = state.logros.has(l.id);
+      return `<div class="achievement ${unlocked?"unlocked":""}">
+        <div class="emoji">${l.emoji}</div>
+        <div class="name">${l.name}</div>
+      </div>`;
+    }).join("");
+
+    // Revisión detallada
+    const letras = ["A","B","C","D"];
+    let reviewHtml = "";
+    state.preguntas.forEach((q,i)=>{
+      const r = state.respuestas[i];
+      const esCorrecta = r===q.correct;
+      const respondida = r!==null && r!==undefined;
+      reviewHtml += `<div class="review-item ${esCorrecta?"correct":"incorrect"}">
+        <div class="review-tags">
+          <span class="badge gold">Pregunta ${i+1}</span>
+          <span class="badge">Subtema ${q.sub}: ${q.subName}</span>
+          <span class="badge">${q.comp}</span>
+          <span class="badge">${q.diff==="basico"?"Básico":q.diff==="intermedio"?"Intermedio":"Avanzado"}</span>
+        </div>
+        <div class="q-text">${q.text}</div>
+        ${respondida
+          ? `<div class="review-answer ${esCorrecta?"your-correct":"your-incorrect"}">Tu respuesta: <b>${letras[r]}</b>) ${q.options[r]} ${esCorrecta?"✅":"❌"}</div>`
+          : `<div class="review-answer your-incorrect">No respondiste esta pregunta.</div>`}
+        ${!esCorrecta ? `<div class="review-answer the-correct">Respuesta correcta: <b>${letras[q.correct]}</b>) ${q.options[q.correct]} ✅</div>` : ``}
+        <div class="explain-box">
+          <h4>Explicación</h4>
+          <p>${q.explanation}</p>
+          <h4>Justificación ética, ciudadana y social</h4>
+          <p>${q.justification}</p>
+        </div>
+      </div>`;
+    });
+    document.getElementById("reviewList").innerHTML = reviewHtml;
+  }
+
+  /* --------------------------------------------------------
+     9. CONTROLES GENERALES
+     -------------------------------------------------------- */
+  document.getElementById("soundBtn").addEventListener("click", function(){
+    state.sonidoActivo = !state.sonidoActivo;
+    this.textContent = state.sonidoActivo ? "ON" : "OFF";
+    this.setAttribute("aria-pressed", state.sonidoActivo);
+  });
+
+  document.getElementById("tiempoInput").addEventListener("input", function(){
+    const val = Math.max(5, Math.min(120, parseInt(this.value||45,10)));
+    document.getElementById("tiempoDisplayTile").textContent = val+" min";
+  });
+
+  document.getElementById("btnIniciar").addEventListener("click", function(){
+    const minutos = Math.max(5, Math.min(120, parseInt(document.getElementById("tiempoInput").value||45,10)));
+    iniciarSimulacro(minutos);
+  });
+
+  document.getElementById("btnReiniciar").addEventListener("click", function(){
+    document.getElementById("screen-results").classList.add("hidden");
+    document.getElementById("screen-intro").classList.remove("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  function iniciarSimulacro(minutos){
+    state.preguntas = seleccionarPreguntas();
+    state.respuestas = new Array(state.preguntas.length).fill(null);
+    state.actual = 0;
+    state.tiempoTotal = minutos*60;
+    state.tiempoRestante = minutos*60;
+    state.rachaActual = 0;
+    state.mejorRacha = 0;
+    state.finalizado = false;
+    document.getElementById("screen-intro").classList.add("hidden");
+    document.getElementById("screen-exam").classList.remove("hidden");
+    elTimerBox.textContent = fmtTime(state.tiempoRestante);
+    elTimerBox.classList.remove("warn");
+    renderAll();
+    iniciarTimer();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+})();
+</script>
+</body>
+</html>

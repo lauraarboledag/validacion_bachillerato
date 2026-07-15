@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador ICFES · Nivel 5 · Lengua Extranjera (Inglés)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap');
+
+  :root{
+    --azul-oscuro:#0B2545;
+    --azul-oscuro-2:#123163;
+    --dorado:#F5B301;
+    --dorado-claro:#FFE066;
+    --dorado-fuerte:#F59E0B;
+    --blanco:#FFFFFF;
+    --gris-claro:#F3F5F8;
+    --gris-medio:#8892A4;
+    --gris-borde:#E3E7EE;
+    --verde:#1E9E6B;
+    --rojo:#D64545;
+    --font-display:'Poppins', 'DM Sans', 'Segoe UI', sans-serif;
+    --font-body:'DM Sans', 'Poppins', 'Segoe UI', sans-serif;
+    --radius:18px;
+    --shadow:0 8px 30px rgba(11,37,69,0.10);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);
+    background:linear-gradient(180deg,#F6F8FC 0%,#EEF1F7 100%);
+    color:var(--azul-oscuro);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0; color:var(--azul-oscuro);}
+  p{line-height:1.55;}
+  button{font-family:var(--font-body); cursor:pointer;}
+  .visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
+
+  /* ============ LAYOUT ============ */
+  .app-shell{max-width:980px; margin:0 auto; padding:20px 16px 60px;}
+  .top-brand{
+    display:flex; align-items:center; gap:12px; padding:14px 4px 22px;
+  }
+  .top-brand .logo{
+    width:44px; height:44px; border-radius:12px;
+    background:linear-gradient(135deg,var(--dorado-claro),var(--dorado-fuerte));
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; box-shadow:var(--shadow);
+    flex-shrink:0;
+  }
+  .top-brand .brand-text small{color:var(--gris-medio); font-size:.78rem; letter-spacing:.5px; text-transform:uppercase;}
+  .top-brand .brand-text strong{display:block; font-size:1.05rem;}
+
+  .card{
+    background:var(--blanco);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:32px;
+    border:1px solid var(--gris-borde);
+  }
+  @media(max-width:640px){ .card{padding:20px;} }
+
+  .screen{display:none; animation:fadeUp .45s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ============ PANTALLA INICIAL ============ */
+  .hero-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--azul-oscuro); color:var(--dorado-claro);
+    padding:6px 16px; border-radius:999px; font-size:.78rem; font-weight:600;
+    letter-spacing:.5px; text-transform:uppercase; margin-bottom:18px;
+  }
+  .hero-title{font-size:1.85rem; font-weight:800; line-height:1.2; margin-bottom:10px;}
+  .hero-sub{color:var(--gris-medio); font-size:1.02rem; max-width:640px;}
+
+  .info-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:14px; margin:26px 0;
+  }
+  .info-chip{
+    background:var(--gris-claro); border-radius:14px; padding:16px 18px;
+    border:1px solid var(--gris-borde);
+  }
+  .info-chip .ic-icon{font-size:1.4rem; margin-bottom:6px; display:block;}
+  .info-chip .ic-label{font-size:.72rem; text-transform:uppercase; letter-spacing:.4px; color:var(--gris-medio); font-weight:700;}
+  .info-chip .ic-value{font-size:1.05rem; font-weight:700; margin-top:2px;}
+
+  .comp-box{
+    background:linear-gradient(135deg,#0B2545,#123163); color:#fff;
+    border-radius:16px; padding:20px 22px; margin:22px 0;
+  }
+  .comp-box h3{color:var(--dorado-claro); font-size:.95rem; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;}
+  .comp-box p{color:#DCE4F2; font-size:.96rem; margin:0;}
+
+  .subtemas-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; margin:20px 0 28px;}
+  .subtema-pill{
+    display:flex; align-items:center; gap:8px; background:#fff;
+    border:1px solid var(--gris-borde); border-radius:12px; padding:10px 12px; font-size:.85rem;
+  }
+  .subtema-pill .num{
+    width:22px; height:22px; border-radius:50%; background:var(--dorado);
+    color:var(--azul-oscuro); font-weight:800; font-size:.72rem;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+
+  .timer-config{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 26px; background:var(--gris-claro); padding:14px 18px; border-radius:14px; border:1px solid var(--gris-borde);}
+  .timer-config label{font-weight:700; font-size:.9rem;}
+  .timer-config select{
+    padding:8px 12px; border-radius:10px; border:1px solid var(--gris-borde); font-family:var(--font-body); font-size:.9rem;
+    background:#fff;
+  }
+  .sound-toggle{display:flex; align-items:center; gap:8px; margin-left:auto; font-size:.88rem; font-weight:600;}
+  .switch{position:relative; width:46px; height:26px; flex-shrink:0;}
+  .switch input{opacity:0; width:0; height:0;}
+  .slider{position:absolute; cursor:pointer; inset:0; background:#C7CEDB; border-radius:999px; transition:.25s;}
+  .slider::before{content:''; position:absolute; height:20px; width:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.25s; box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .switch input:checked + .slider{background:var(--dorado-fuerte);}
+  .switch input:checked + .slider::before{transform:translateX(20px);}
+
+  .btn-primary{
+    background:linear-gradient(135deg,var(--dorado-claro),var(--dorado-fuerte));
+    color:var(--azul-oscuro); border:none; font-weight:800; font-size:1.02rem;
+    padding:15px 34px; border-radius:50px; letter-spacing:.4px;
+    box-shadow:0 6px 22px rgba(245,158,11,.4); transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(245,158,11,.5);}
+  .btn-primary:focus-visible, button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible{
+    outline:3px solid #2B6FF6; outline-offset:2px;
+  }
+  .btn-secondary{
+    background:#fff; color:var(--azul-oscuro); border:2px solid var(--azul-oscuro);
+    font-weight:700; padding:13px 28px; border-radius:50px; font-size:.96rem;
+  }
+  .btn-secondary:hover{background:var(--azul-oscuro); color:#fff;}
+  .btn-ghost{
+    background:transparent; border:2px solid var(--gris-borde); color:var(--azul-oscuro);
+    font-weight:700; padding:11px 22px; border-radius:50px; font-size:.9rem;
+  }
+  .btn-ghost:hover{border-color:var(--azul-oscuro);}
+  .btn-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:10px;}
+
+  /* ============ EXAM HEADER (sticky) ============ */
+  .exam-header{
+    position:sticky; top:0; z-index:50; background:rgba(246,248,252,.96); backdrop-filter:blur(6px);
+    padding:12px 0 16px; margin:-4px -4px 18px;
+  }
+  .exam-top-row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
+  .timer-pill{
+    display:flex; align-items:center; gap:8px; background:var(--azul-oscuro); color:#fff;
+    padding:9px 18px; border-radius:999px; font-weight:800; font-size:1.05rem; letter-spacing:.5px;
+  }
+  .timer-pill.warning{background:var(--rojo); animation:pulse 1s infinite;}
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.04);} }
+  .qcounter{font-weight:700; font-size:.92rem; color:var(--azul-oscuro);}
+  .streak-badge{
+    display:inline-flex; align-items:center; gap:6px; background:var(--dorado-claro); color:var(--azul-oscuro);
+    padding:6px 14px; border-radius:999px; font-weight:800; font-size:.82rem; opacity:0; transform:scale(.7);
+    transition:all .3s ease;
+  }
+  .streak-badge.show{opacity:1; transform:scale(1);}
+
+  .progress-track{width:100%; height:10px; background:var(--gris-borde); border-radius:999px; overflow:hidden;}
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--dorado-fuerte),var(--dorado-claro)); border-radius:999px; transition:width .35s ease;}
+  .progress-meta{display:flex; justify-content:space-between; font-size:.78rem; color:var(--gris-medio); margin-top:6px; font-weight:600;}
+
+  .qnav-dots{display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 4px;}
+  .qdot{
+    width:30px; height:30px; border-radius:8px; border:1px solid var(--gris-borde); background:#fff;
+    font-size:.72rem; font-weight:700; color:var(--gris-medio); display:flex; align-items:center; justify-content:center;
+  }
+  .qdot.answered{background:var(--azul-oscuro); color:#fff; border-color:var(--azul-oscuro);}
+  .qdot.current{outline:3px solid var(--dorado-fuerte); outline-offset:1px;}
+
+  /* ============ PREGUNTA ============ */
+  .tag-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+  .tag{
+    font-size:.72rem; font-weight:700; padding:5px 12px; border-radius:999px;
+    background:var(--gris-claro); color:var(--azul-oscuro); border:1px solid var(--gris-borde); text-transform:uppercase; letter-spacing:.3px;
+  }
+  .tag.dificultad-basico{background:#E4F6EC; color:var(--verde); border-color:#BFEBD3;}
+  .tag.dificultad-intermedio{background:#FFF3D6; color:#8A5B00; border-color:#FCE2A0;}
+  .tag.dificultad-avanzado{background:#FBE4E4; color:#A8302F; border-color:#F4C2C2;}
+
+  .context-box{
+    background:var(--gris-claro); border:1px solid var(--gris-borde); border-radius:14px;
+    padding:18px 20px; margin-bottom:20px; font-size:.95rem; color:#1D2B44;
+  }
+  .context-box.mail{border-left:4px solid var(--azul-oscuro);}
+  .context-box .ctx-title{font-weight:800; margin-bottom:8px; display:flex; align-items:center; gap:8px;}
+  .mini-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:.88rem;}
+  .mini-table th, .mini-table td{border:1px solid var(--gris-borde); padding:7px 10px; text-align:left;}
+  .mini-table th{background:var(--azul-oscuro); color:#fff;}
+  .sign-box{
+    display:inline-block; border:3px solid var(--azul-oscuro); border-radius:10px; padding:14px 20px;
+    font-weight:800; text-align:center; background:#fff;
+  }
+  .map-box{background:#fff; border:1px dashed var(--gris-medio); border-radius:12px; padding:16px; font-family:monospace; white-space:pre; font-size:.82rem; overflow-x:auto;}
+
+  .question-text{font-size:1.12rem; font-weight:700; margin-bottom:20px; line-height:1.5;}
+
+  .options-list{display:flex; flex-direction:column; gap:12px; margin-bottom:26px;}
+  .option-btn{
+    display:flex; align-items:center; gap:14px; text-align:left; padding:15px 18px;
+    border:2px solid var(--gris-borde); border-radius:14px; background:#fff; font-size:.98rem; color:var(--azul-oscuro);
+    transition:all .16s ease;
+  }
+  .option-btn:hover{border-color:var(--dorado-fuerte); background:#FFFBF0;}
+  .option-btn.selected{border-color:var(--azul-oscuro); background:#EAF0FC;}
+  .option-letter{
+    width:30px; height:30px; border-radius:50%; background:var(--gris-claro); color:var(--azul-oscuro);
+    font-weight:800; font-size:.85rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid var(--gris-borde);
+  }
+  .option-btn.selected .option-letter{background:var(--azul-oscuro); color:#fff;}
+
+  .exam-footer-nav{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px;}
+
+  /* ============ RESULTADOS ============ */
+  .result-hero{text-align:center; padding:10px 0 26px;}
+  .result-score{font-size:3.4rem; font-weight:800; color:var(--azul-oscuro); line-height:1;}
+  .result-score span{font-size:1.6rem; color:var(--gris-medio); font-weight:700;}
+  .result-msg{max-width:560px; margin:14px auto 0; font-size:1rem; color:#334; background:var(--gris-claro); padding:16px 20px; border-radius:14px; border:1px solid var(--gris-borde);}
+
+  .stats-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:26px 0;}
+  .stat-card{background:var(--gris-claro); border:1px solid var(--gris-borde); border-radius:14px; padding:16px; text-align:center;}
+  .stat-card .sv{font-size:1.5rem; font-weight:800; color:var(--azul-oscuro);}
+  .stat-card .sl{font-size:.75rem; color:var(--gris-medio); text-transform:uppercase; font-weight:700; letter-spacing:.3px; margin-top:2px;}
+
+  .subtheme-bars{display:flex; flex-direction:column; gap:12px; margin:14px 0 24px;}
+  .subtheme-bar-row{display:grid; grid-template-columns:190px 1fr 48px; align-items:center; gap:10px; font-size:.84rem;}
+  @media(max-width:600px){ .subtheme-bar-row{grid-template-columns:110px 1fr 40px; font-size:.76rem;} }
+  .subtheme-bar-track{height:14px; background:var(--gris-borde); border-radius:999px; overflow:hidden;}
+  .subtheme-bar-fill{height:100%; border-radius:999px; background:linear-gradient(90deg,var(--dorado-fuerte),var(--dorado-claro));}
+
+  .fortalezas-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;}
+  @media(max-width:600px){ .fortalezas-grid{grid-template-columns:1fr;} }
+  .fort-box{border-radius:14px; padding:16px 18px; border:1px solid var(--gris-borde);}
+  .fort-box.fortaleza{background:#E9F8F0;}
+  .fort-box.mejora{background:#FDF1E9;}
+  .fort-box h4{font-size:.85rem; text-transform:uppercase; margin-bottom:8px;}
+  .fort-box ul{margin:0; padding-left:18px; font-size:.88rem;}
+
+  .badges-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:18px 0 24px;}
+  .badge-card{
+    text-align:center; padding:16px 10px; border-radius:14px; border:1px solid var(--gris-borde);
+    background:#fff; opacity:.35; filter:grayscale(1);
+  }
+  .badge-card.unlocked{opacity:1; filter:none; background:linear-gradient(160deg,#fff,#FFF7E0); border-color:var(--dorado);}
+  .badge-card .bicon{font-size:1.9rem; display:block; margin-bottom:6px;}
+  .badge-card .bname{font-size:.76rem; font-weight:700;}
+
+  /* ============ REVISION DETALLADA ============ */
+  .review-item{border:1px solid var(--gris-borde); border-radius:16px; padding:20px; margin-bottom:16px;}
+  .review-item.correct{border-left:5px solid var(--verde);}
+  .review-item.incorrect{border-left:5px solid var(--rojo);}
+  .review-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .review-result-badge{font-size:.75rem; font-weight:800; padding:4px 12px; border-radius:999px;}
+  .review-result-badge.correct{background:#E4F6EC; color:var(--verde);}
+  .review-result-badge.incorrect{background:#FBE4E4; color:var(--rojo);}
+  .review-answers{font-size:.88rem; margin:10px 0;}
+  .review-answers b{color:var(--azul-oscuro);}
+  .review-block{background:var(--gris-claro); border-radius:10px; padding:12px 14px; margin-top:8px; font-size:.87rem;}
+  .review-block h5{margin:0 0 4px; font-size:.75rem; text-transform:uppercase; color:var(--gris-medio); letter-spacing:.3px;}
+
+  .section-title{font-size:1.25rem; font-weight:800; margin:30px 0 14px; display:flex; align-items:center; gap:8px;}
+
+  .streak-toast{
+    position:fixed; top:18px; left:50%; transform:translate(-50%,-30px); z-index:999;
+    background:var(--azul-oscuro); color:#fff; padding:14px 26px; border-radius:16px; font-weight:700;
+    box-shadow:0 10px 30px rgba(0,0,0,.25); opacity:0; transition:all .4s ease; pointer-events:none; text-align:center;
+  }
+  .streak-toast.show{opacity:1; transform:translate(-50%,0);}
+
+  .confirm-overlay{
+    position:fixed; inset:0; background:rgba(11,37,69,.55); z-index:200; display:none;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .confirm-overlay.show{display:flex;}
+  .confirm-card{background:#fff; border-radius:16px; padding:26px; max-width:400px; text-align:center; box-shadow:var(--shadow);}
+  .confirm-card p{margin:10px 0 20px;}
+
+  footer.brand-footer{text-align:center; margin-top:44px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important; transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="top-brand">
+    <div class="logo" aria-hidden="true">🎓</div>
+    <div class="brand-text">
+      <small>Nivel 5 · Competencias Ciudadanas y Lengua Extranjera</small>
+      <strong>Simulador ICFES · English Reading Skills</strong>
+    </div>
+  </div>
+
+  <!-- ============ PANTALLA 1: INICIO ============ -->
+  <section id="screen-inicio" class="screen active card" aria-labelledby="tituloInicio">
+    <span class="hero-badge">📖 Temática 4 · Vocabulario básico y comprensión de textos</span>
+    <h1 id="tituloInicio" class="hero-title">Simulador de comprensión lectora en inglés</h1>
+    <p class="hero-sub">Practica el componente de Lengua Extranjera (Inglés) con preguntas inspiradas en el enfoque por competencias del ICFES: vocabulario en contexto, avisos, correos, horarios, mapas y textos cortos.</p>
+
+    <div class="comp-box">
+      <h3>Competencia evaluada</h3>
+      <p>Comprender vocabulario básico y textos escritos en inglés mediante estrategias de lectura, interpretación e inferencia, aplicando estas habilidades en situaciones cotidianas y en preguntas propias de las pruebas ICFES.</p>
+    </div>
+
+    <h3 style="font-size:1rem; margin-bottom:6px;">Objetivos del simulacro</h3>
+    <ul style="font-size:.92rem; color:#334; padding-left:20px; line-height:1.7;">
+      <li>Fortalecer el vocabulario funcional en situaciones cotidianas.</li>
+      <li>Practicar la inferencia de significados por contexto.</li>
+      <li>Interpretar avisos, correos, horarios, mapas y formularios en inglés.</li>
+      <li>Aplicar estrategias de lectura crítica tipo ICFES: idea principal, información específica, inferencia e intención comunicativa.</li>
+    </ul>
+
+    <div class="info-grid">
+      <div class="info-chip"><span class="ic-icon">📝</span><span class="ic-label">Preguntas</span><span class="ic-value">30 preguntas</span></div>
+      <div class="info-chip"><span class="ic-icon">⏱️</span><span class="ic-label">Tiempo disponible</span><span class="ic-value" id="chipTiempo">45 minutos</span></div>
+      <div class="info-chip"><span class="ic-icon">🧩</span><span class="ic-label">Subtemáticas</span><span class="ic-value">10 subtemas</span></div>
+      <div class="info-chip"><span class="ic-icon">🎯</span><span class="ic-label">Formato</span><span class="ic-value">Selección múltiple</span></div>
+    </div>
+
+    <h3 style="font-size:1rem; margin-bottom:6px;">Subtemáticas incluidas</h3>
+    <div class="subtemas-list" id="listaSubtemas"></div>
+
+    <div class="timer-config">
+      <label for="selectTiempo">⏱️ Duración del simulacro:</label>
+      <select id="selectTiempo">
+        <option value="20">20 minutos</option>
+        <option value="30">30 minutos</option>
+        <option value="45" selected>45 minutos (recomendado)</option>
+        <option value="60">60 minutos</option>
+      </select>
+      <div class="sound-toggle">
+        <span>🔊 Sonido</span>
+        <label class="switch">
+          <input type="checkbox" id="toggleSonido" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnIniciar">🚀 Iniciar simulacro</button>
+  </section>
+
+  <!-- ============ PANTALLA 2: EXAMEN ============ -->
+  <section id="screen-examen" class="screen" aria-labelledby="tituloExamen">
+    <h2 id="tituloExamen" class="visually-hidden">Simulacro en curso</h2>
+    <div class="exam-header">
+      <div class="exam-top-row">
+        <div class="timer-pill" id="timerPill" role="timer" aria-live="polite">⏱️ 45:00</div>
+        <span class="streak-badge" id="streakBadge">🔥 Racha x3</span>
+        <span class="qcounter" id="qCounter">Pregunta 1 de 30</span>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill" style="width:3.3%"></div></div>
+      <div class="progress-meta">
+        <span id="progressPct">3% completado</span>
+        <span id="progressAnswered">Respondidas: 0 · Pendientes: 30</span>
+      </div>
+      <div class="qnav-dots" id="qnavDots" aria-label="Navegación entre preguntas"></div>
+    </div>
+
+    <div class="tag-row" id="tagRow"></div>
+    <div id="contextArea"></div>
+    <p class="question-text" id="questionText"></p>
+    <div class="options-list" id="optionsList" role="radiogroup"></div>
+
+    <div class="exam-footer-nav">
+      <button class="btn-ghost" id="btnAnterior">← Anterior</button>
+      <button class="btn-secondary" id="btnFinalizarAntic">Finalizar simulacro</button>
+      <button class="btn-primary" id="btnSiguiente">Siguiente →</button>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA 3: RESULTADOS ============ -->
+  <section id="screen-resultados" class="screen card" aria-labelledby="tituloResultados">
+    <h2 id="tituloResultados" style="text-align:center;">📊 Informe final del simulacro</h2>
+    <div class="result-hero">
+      <div class="result-score" id="resultScorePct">0<span>%</span></div>
+      <div id="resultNivel" style="font-weight:700; color:var(--gris-medio); margin-top:6px;"></div>
+      <p class="result-msg" id="resultMsg"></p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="sv" id="statCorrectas">0</div><div class="sl">Correctas</div></div>
+      <div class="stat-card"><div class="sv" id="statIncorrectas">0</div><div class="sl">Incorrectas</div></div>
+      <div class="stat-card"><div class="sv" id="statTiempo">0:00</div><div class="sl">Tiempo empleado</div></div>
+      <div class="stat-card"><div class="sv" id="statPuntaje">0/30</div><div class="sl">Puntaje total</div></div>
+    </div>
+
+    <h3 class="section-title">🧩 Desempeño por subtemática</h3>
+    <div class="subtheme-bars" id="subthemeBars"></div>
+
+    <div class="fortalezas-grid">
+      <div class="fort-box fortaleza">
+        <h4>✅ Fortalezas identificadas</h4>
+        <ul id="listFortalezas"></ul>
+      </div>
+      <div class="fort-box mejora">
+        <h4>📌 Aspectos por mejorar</h4>
+        <ul id="listMejoras"></ul>
+      </div>
+    </div>
+
+    <h3 class="section-title">📈 Gráfico de desempeño</h3>
+    <svg id="chartDesempeno" width="100%" height="220" viewBox="0 0 700 220" role="img" aria-label="Gráfico de barras de desempeño por subtemática" style="max-width:100%;"></svg>
+
+    <h3 class="section-title">🏅 Insignias obtenidas</h3>
+    <div class="badges-grid" id="badgesGrid"></div>
+
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn-primary" id="btnVerRevision">🔍 Ver revisión detallada</button>
+      <button class="btn-secondary" id="btnReiniciar1">🔄 Reiniciar simulacro</button>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA 4: REVISION ============ -->
+  <section id="screen-revision" class="screen card" aria-labelledby="tituloRevision">
+    <h2 id="tituloRevision">🔎 Revisión detallada de las 30 preguntas</h2>
+    <p style="color:var(--gris-medio); font-size:.9rem;">Repasa cada pregunta con su explicación, vocabulario clave y la estrategia de comprensión lectora aplicada.</p>
+    <div id="reviewList"></div>
+    <div class="btn-row" style="justify-content:center; margin-top:10px;">
+      <button class="btn-secondary" id="btnReiniciar2">🔄 Reiniciar simulacro</button>
+    </div>
+  </section>
+
+  <footer class="brand-footer">
+    <a id="btn-volver"
+       href="https://institutoinnova.moodlecloud.com/mod/page/view.php?id=861"
+       style="display:inline-block;background:linear-gradient(135deg,#FFE066,#F59E0B);color:#2D1B0E;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1em;padding:14px 36px;border-radius:50px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(245,158,11,0.45);">
+      🏫 Regresar al Aula Virtual
+    </a>
+    <script>
+      const btn = document.getElementById('btn-volver');
+      const cursoUrl = 'https://institutoinnova.moodlecloud.com/mod/page/view.php?id=861';
+      const appUrl = 'moodlemobile://https://institutoinnova.moodlecloud.com?redirect=/mod/page/view.php?id=861';
+      const esMóvil = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (esMóvil) {
+        btn.href = appUrl;
+      }
+    </script>
+  </footer>
+</div>
+
+<div class="streak-toast" id="streakToast"></div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-card">
+    <h3>¿Finalizar simulacro?</h3>
+    <p id="confirmText">Tienes preguntas sin responder. ¿Deseas finalizar de todas formas?</p>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn-ghost" id="btnCancelarConfirm">Cancelar</button>
+      <button class="btn-primary" id="btnAceptarConfirm">Sí, finalizar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   SIMULADOR ICFES — NIVEL 5 — LENGUA EXTRANJERA (INGLÉS)
+   Código modular en JavaScript puro (sin dependencias externas)
+   ========================================================================= */
+
+/* -------------------------- 1. CONFIGURACIÓN GENERAL -------------------------- */
+const SUBTEMAS = [
+  { id:1,  nombre:"Vocabulario básico de la vida cotidiana" },
+  { id:2,  nombre:"Información personal y descripciones" },
+  { id:3,  nombre:"Comprensión de vocabulario en contexto" },
+  { id:4,  nombre:"Comprensión de instrucciones y avisos" },
+  { id:5,  nombre:"Comprensión de textos informativos" },
+  { id:6,  nombre:"Comprensión de textos narrativos" },
+  { id:7,  nombre:"Comprensión de textos descriptivos y funcionales" },
+  { id:8,  nombre:"Interpretación de información en diferentes formatos" },
+  { id:9,  nombre:"Estrategias de comprensión lectora" },
+  { id:10, nombre:"Comprensión de lectura tipo ICFES" }
+];
+
+const LOGROS = [
+  { id:"vocab",    icono:"📘", nombre:"Vocabulary Explorer", desc:"Acierta 3 preguntas de vocabulario en contexto", check:s=>s.porSub[3]>=3 },
+  { id:"reading",  icono:"📖", nombre:"Reading Detective",   desc:"Acierta 3 preguntas de textos narrativos",       check:s=>s.porSub[6]>=3 },
+  { id:"context",  icono:"🔍", nombre:"Context Master",      desc:"Acierta 5 preguntas de inferencia por contexto", check:s=>s.inferenciaCorrectas>=5 },
+  { id:"mail",     icono:"📧", nombre:"Text Interpreter",    desc:"Acierta 3 preguntas de textos informativos",     check:s=>s.porSub[5]>=3 },
+  { id:"nav",      icono:"🗺️", nombre:"Information Navigator", desc:"Acierta 3 preguntas de formatos (tablas/mapas)", check:s=>s.porSub[8]>=3 },
+  { id:"comm",     icono:"💬", nombre:"English Communicator", desc:"Responde correctamente 15 preguntas o más",     check:s=>s.correctas>=15 },
+  { id:"icfes",    icono:"🎯", nombre:"ICFES Reading Expert", desc:"Acierta 3 preguntas tipo ICFES (subtema 10)",   check:s=>s.porSub[10]>=3 },
+  { id:"champion", icono:"🏆", nombre:"English Reading Champion", desc:"Obtén 90% o más en el simulacro", check:s=>s.porcentaje>=90 }
+];
+
+let TIEMPO_TOTAL_SEG = 45*60;
+let SONIDO_ACTIVO = true;
+
+/* -------------------------- 2. BANCO DE PREGUNTAS -------------------------- */
+/* Cada pregunta: subtema, dificultad, tipo, context(HTML opcional), question,
+   options[4] (options[0] es SIEMPRE la correcta; se mezclan en tiempo de ejecución),
+   explanation, vocab, strategy, competencia */
+
+const BANCO = [
+
+/* ===================== SUBTEMA 1 — Vocabulario básico de la vida cotidiana ===================== */
+{
+  subtema:1, dificultad:"basico", tipo:"Diálogo cotidiano",
+  context:`<div class="context-box"><div class="ctx-title">💬 Short conversation</div>
+  <p><b>Anna:</b> Good morning! How are you today?<br><b>Marco:</b> ____________. Thanks for asking!</p></div>`,
+  question:"Which is the most natural reply to complete Marco's answer?",
+  options:[
+    "I'm fine, thank you",
+    "I go to school",
+    "It's blue",
+    "See you tomorrow"
+  ],
+  explanation:"La respuesta correcta responde directamente al saludo '¿Cómo estás?' con una expresión de cortesía típica en inglés cotidiano.",
+  vocab:"'How are you?' = ¿Cómo estás? / 'I'm fine, thank you' = Estoy bien, gracias.",
+  strategy:"Identificación de expresiones frecuentes en conversaciones básicas: relacionar la pregunta con la respuesta socialmente esperada.",
+  competencia:"Vocabulario básico de la vida cotidiana — saludos y despedidas."
+},
+{
+  subtema:1, dificultad:"basico", tipo:"Comprensión de vocabulario",
+  context:`<div class="context-box"><div class="ctx-title">👨‍👩‍👧‍👦 About my family</div>
+  <p>Hi! My name is Laura. I live with my mother, my father, and my younger brother, Tomás. My grandmother visits us every Sunday.</p></div>`,
+  question:"Who is Tomás?",
+  options:[
+    "Laura's brother",
+    "Laura's father",
+    "Laura's grandmother",
+    "Laura's neighbor"
+  ],
+  explanation:"El texto indica explícitamente 'my younger brother, Tomás', por lo que la información es directa y no requiere inferencia.",
+  vocab:"'younger brother' = hermano menor.",
+  strategy:"Identificación de información explícita: la respuesta aparece literalmente en el texto.",
+  competencia:"Vocabulario básico de la vida cotidiana — la familia."
+},
+{
+  subtema:1, dificultad:"intermedio", tipo:"Vocabulario en contexto",
+  context:`<div class="context-box"><div class="ctx-title">🧑‍⚕️ Occupation</div>
+  <p>Mr. Ramírez works at the hospital. He examines patients, gives medicine, and helps people feel better every day.</p></div>`,
+  question:"What is Mr. Ramírez's profession?",
+  options:[
+    "Doctor",
+    "Teacher",
+    "Waiter",
+    "Driver"
+  ],
+  explanation:"Las acciones descritas (examinar pacientes, dar medicina, ayudar a las personas a sentirse mejor) son propias de un médico, aunque la palabra 'doctor' no aparece explícitamente.",
+  vocab:"'examines patients' = examina pacientes / 'gives medicine' = da medicina.",
+  strategy:"Inferencia del significado por contexto: se deduce la profesión a partir de las acciones descritas.",
+  competencia:"Vocabulario básico de la vida cotidiana — profesiones y ocupaciones."
+},
+{
+  subtema:1, dificultad:"intermedio", tipo:"Ubicaciones de la ciudad",
+  context:`<div class="context-box"><div class="ctx-title">🏙️ City places</div>
+  <p>If you need fresh bread, milk, and fruit, you should go to the place where people buy food every week.</p></div>`,
+  question:"Where should you go according to the text?",
+  options:[
+    "Supermarket",
+    "Library",
+    "Pharmacy",
+    "Post office"
+  ],
+  explanation:"Las pistas 'fresh bread, milk, and fruit' y 'buy food every week' señalan claramente un supermercado, aunque la palabra no se mencione directamente.",
+  vocab:"'fresh bread' = pan fresco / 'buy food' = comprar comida.",
+  strategy:"Inferencia contextual a partir de palabras clave relacionadas con un lugar específico.",
+  competencia:"Vocabulario básico de la vida cotidiana — lugares de la ciudad."
+},
+{
+  subtema:1, dificultad:"avanzado", tipo:"Expresión idiomática",
+  context:`<div class="context-box"><div class="ctx-title">🛍️ At the store</div>
+  <p><b>Customer:</b> Excuse me, how much is this shirt?<br><b>Clerk:</b> It's $20. Here you go, sir.<br><b>Customer:</b> No problem, thank you!</p></div>`,
+  question:"What does the clerk mean when saying \"Here you go\"?",
+  options:[
+    "He is handing something to the customer",
+    "He is asking the customer to leave",
+    "He is refusing to sell the shirt",
+    "He is asking for more money"
+  ],
+  explanation:"'Here you go' es una expresión frecuente usada al entregar algo a otra persona, en este caso el vuelto o el producto comprado.",
+  vocab:"'Here you go' = Aquí tienes / toma.",
+  strategy:"Reconocimiento de expresiones frecuentes en conversaciones de la vida cotidiana y su función comunicativa.",
+  competencia:"Vocabulario básico de la vida cotidiana — expresiones frecuentes en conversaciones básicas."
+},
+
+/* ===================== SUBTEMA 2 — Información personal y descripciones ===================== */
+{
+  subtema:2, dificultad:"basico", tipo:"Formulario de datos personales",
+  context:`<div class="context-box"><div class="ctx-title">📋 Registration form</div>
+  <table class="mini-table"><tr><th>Field</th><th>Information</th></tr>
+  <tr><td>Full name</td><td>Sofía Herrera</td></tr>
+  <tr><td>Nationality</td><td>Colombian</td></tr>
+  <tr><td>Language spoken</td><td>Spanish, English</td></tr></table></div>`,
+  question:"What is Sofía's nationality?",
+  options:[
+    "Colombian",
+    "American",
+    "Spanish",
+    "English"
+  ],
+  explanation:"El formulario indica explícitamente que la nacionalidad es 'Colombian'.",
+  vocab:"'nationality' = nacionalidad.",
+  strategy:"Identificación de información específica dentro de un formulario.",
+  competencia:"Información personal y descripciones — nacionalidades e idiomas."
+},
+{
+  subtema:2, dificultad:"basico", tipo:"Descripción física",
+  context:`<div class="context-box"><div class="ctx-title">🧑 Description</div>
+  <p>My friend Daniel is tall, with short black hair and brown eyes. He always wears glasses.</p></div>`,
+  question:"What does Daniel wear?",
+  options:[
+    "Glasses",
+    "A hat",
+    "A watch",
+    "Boots"
+  ],
+  explanation:"El texto menciona directamente 'He always wears glasses' (siempre usa gafas).",
+  vocab:"'glasses' = gafas / lentes.",
+  strategy:"Identificación de información explícita en una descripción física.",
+  competencia:"Información personal y descripciones — descripción física."
+},
+{
+  subtema:2, dificultad:"intermedio", tipo:"Rasgos de personalidad",
+  context:`<div class="context-box"><div class="ctx-title">🙂 About Camila</div>
+  <p>Camila always helps her classmates with their homework and shares her lunch when someone forgets theirs. She listens carefully when her friends have problems.</p></div>`,
+  question:"Which personality trait best describes Camila?",
+  options:[
+    "Kind",
+    "Lazy",
+    "Shy",
+    "Rude"
+  ],
+  explanation:"Las acciones descritas (ayudar, compartir, escuchar) reflejan amabilidad, aunque la palabra 'kind' no aparece en el texto.",
+  vocab:"'kind' = amable / bondadosa.",
+  strategy:"Inferencia de un rasgo de personalidad a partir de comportamientos descritos.",
+  competencia:"Información personal y descripciones — rasgos de personalidad."
+},
+{
+  subtema:2, dificultad:"intermedio", tipo:"Rutina diaria",
+  context:`<div class="context-box"><div class="ctx-title">⏰ My daily routine</div>
+  <p>I wake up at 6:00 a.m. First, I take a shower. After that, I have breakfast, and then I go to school at 7:00 a.m.</p></div>`,
+  question:"What does the person do right after taking a shower?",
+  options:[
+    "Have breakfast",
+    "Wake up",
+    "Go to school",
+    "Sleep"
+  ],
+  explanation:"El texto usa el conector 'After that' para indicar que después de la ducha viene el desayuno, en ese orden secuencial.",
+  vocab:"'After that' = después de eso.",
+  strategy:"Relación entre ideas mediante conectores de secuencia temporal.",
+  competencia:"Información personal y descripciones — rutinas diarias."
+},
+{
+  subtema:2, dificultad:"avanzado", tipo:"Gustos y preferencias",
+  context:`<div class="context-box"><div class="ctx-title">🎸 Free time</div>
+  <p>Pedro loves playing the guitar and writing songs, but he doesn't really enjoy sports. On weekends, he prefers staying home to practice music rather than going out to play soccer with his friends.</p></div>`,
+  question:"What can be inferred about Pedro?",
+  options:[
+    "He values music more than physical activities",
+    "He never spends time with his friends",
+    "He dislikes staying at home",
+    "He wants to become a soccer player"
+  ],
+  explanation:"El texto contrasta explícitamente su gusto por la música con su desinterés por el deporte, permitiendo inferir que valora más la música.",
+  vocab:"'prefers... rather than' = prefiere... en lugar de.",
+  strategy:"Inferencia basada en la comparación de preferencias expresadas en el texto.",
+  competencia:"Información personal y descripciones — gustos y preferencias."
+},
+
+/* ===================== SUBTEMA 3 — Comprensión de vocabulario en contexto ===================== */
+{
+  subtema:3, dificultad:"basico", tipo:"Cognados",
+  context:`<div class="context-box"><div class="ctx-title">🏥 Sentence</div>
+  <p>After the accident, they took him to the hospital immediately.</p></div>`,
+  question:"What does the word \"hospital\" mean in this sentence?",
+  options:[
+    "Hospital",
+    "House",
+    "School",
+    "Hotel"
+  ],
+  explanation:"'Hospital' es un cognado directo entre el inglés y el español; su forma y significado son casi idénticos.",
+  vocab:"'hospital' = hospital (cognado).",
+  strategy:"Reconocimiento de cognados para facilitar la comprensión del vocabulario.",
+  competencia:"Comprensión de vocabulario en contexto — cognados."
+},
+{
+  subtema:3, dificultad:"basico", tipo:"Sinónimos",
+  context:`<div class="context-box"><div class="ctx-title">📝 Sentence</div>
+  <p>The movie was very happy and funny; everybody was laughing.</p></div>`,
+  question:"Which word is closest in meaning to \"happy\" in this sentence?",
+  options:[
+    "Joyful",
+    "Sad",
+    "Angry",
+    "Boring"
+  ],
+  explanation:"'Joyful' (alegre) es sinónimo de 'happy', mientras que las demás opciones expresan lo contrario o algo distinto.",
+  vocab:"'happy' = feliz / 'joyful' = alegre.",
+  strategy:"Identificación de sinónimos frecuentes para ampliar el vocabulario en contexto.",
+  competencia:"Comprensión de vocabulario en contexto — sinónimos y antónimos frecuentes."
+},
+{
+  subtema:3, dificultad:"intermedio", tipo:"Falso cognado",
+  context:`<div class="context-box"><div class="ctx-title">⚠️ Sentence</div>
+  <p>She is actually studying medicine, not law, even though everyone thought she was a lawyer.</p></div>`,
+  question:"What does \"actually\" mean in this sentence?",
+  options:[
+    "In fact / really",
+    "At this moment (actualmente)",
+    "Never",
+    "Quickly"
+  ],
+  explanation:"'Actually' es un falso cognado: no significa 'actualmente' sino 'en realidad / de hecho'. Confundirlo cambiaría el sentido de la oración.",
+  vocab:"'actually' = en realidad (NO significa 'actualmente').",
+  strategy:"Reconocimiento de falsos cognados para evitar errores de interpretación.",
+  competencia:"Comprensión de vocabulario en contexto — falsos cognados."
+},
+{
+  subtema:3, dificultad:"intermedio", tipo:"Inferencia de vocabulario",
+  context:`<div class="context-box"><div class="ctx-title">🌧️ Sentence</div>
+  <p>It was raining so hard that we had to use an umbrella to stay dry while walking to school.</p></div>`,
+  question:"What is an \"umbrella\" used for, according to the context?",
+  options:[
+    "To protect people from the rain",
+    "To carry books",
+    "To measure temperature",
+    "To clean the street"
+  ],
+  explanation:"El contexto ('raining hard', 'stay dry') permite inferir que un 'umbrella' (paraguas) sirve para protegerse de la lluvia, aunque no se dé una definición directa.",
+  vocab:"'umbrella' = paraguas / 'stay dry' = mantenerse seco.",
+  strategy:"Inferencia del significado de una palabra desconocida a partir de pistas contextuales.",
+  competencia:"Comprensión de vocabulario en contexto — inferencia del significado por contexto."
+},
+{
+  subtema:3, dificultad:"avanzado", tipo:"Palabras de enlace",
+  context:`<div class="context-box"><div class="ctx-title">📄 Paragraph</div>
+  <p>Many students want to travel abroad to improve their English. <b>However</b>, the cost of a trip can be very high for most families.</p></div>`,
+  question:"What is the function of the word \"However\" in this paragraph?",
+  options:[
+    "It introduces a contrast or contradiction",
+    "It adds an example",
+    "It shows a cause",
+    "It indicates the end of the text"
+  ],
+  explanation:"'However' es un conector que introduce una idea contraria a la anterior; aquí contrasta el deseo de viajar con el obstáculo del costo.",
+  vocab:"'however' = sin embargo.",
+  strategy:"Identificación de la función de conectores lógicos (palabras de enlace) dentro del texto.",
+  competencia:"Comprensión de vocabulario en contexto — palabras de enlace básicas."
+},
+
+/* ===================== SUBTEMA 4 — Comprensión de instrucciones y avisos ===================== */
+{
+  subtema:4, dificultad:"basico", tipo:"Señales",
+  context:`<div class="context-box"><div class="ctx-title">🚭 Public sign</div>
+  <div class="sign-box">NO SMOKING</div></div>`,
+  question:"What does this sign mean?",
+  options:[
+    "You are not allowed to smoke here",
+    "You must smoke quickly",
+    "Smoking is allowed only at night",
+    "This is a smoking area"
+  ],
+  explanation:"'No Smoking' indica una prohibición explícita: no está permitido fumar en ese lugar.",
+  vocab:"'no smoking' = prohibido fumar.",
+  strategy:"Comprensión directa de señales y símbolos de uso público.",
+  competencia:"Comprensión de instrucciones y avisos — señales y símbolos."
+},
+{
+  subtema:4, dificultad:"basico", tipo:"Instrucción básica",
+  context:`<div class="context-box"><div class="ctx-title">🎬 Notice at the cinema</div>
+  <div class="sign-box">Please turn off your phone before the movie starts.</div></div>`,
+  question:"What should visitors do according to this notice?",
+  options:[
+    "Turn off their phones before the movie begins",
+    "Take photos during the movie",
+    "Talk loudly during the film",
+    "Turn on their phones"
+  ],
+  explanation:"El aviso da una instrucción explícita y directa: apagar el teléfono antes de que empiece la película.",
+  vocab:"'turn off' = apagar.",
+  strategy:"Comprensión literal de una instrucción básica en un aviso público.",
+  competencia:"Comprensión de instrucciones y avisos — instrucciones básicas."
+},
+{
+  subtema:4, dificultad:"intermedio", tipo:"Horarios / avisos",
+  context:`<div class="context-box"><div class="ctx-title">🏪 Store hours</div>
+  <div class="sign-box">OPEN: Monday–Saturday, 8:00 a.m. – 7:00 p.m.<br>CLOSED on Sundays</div></div>`,
+  question:"Can a customer buy something on Sunday at 10:00 a.m.?",
+  options:[
+    "No, because the store is closed on Sundays",
+    "Yes, the store opens early on Sundays",
+    "Yes, but only in the afternoon",
+    "The sign does not mention Sundays"
+  ],
+  explanation:"El aviso indica claramente 'CLOSED on Sundays', por lo que la tienda no atiende ese día.",
+  vocab:"'closed' = cerrado / 'open' = abierto.",
+  strategy:"Interpretación de horarios y avisos para responder a una situación práctica.",
+  competencia:"Comprensión de instrucciones y avisos — horarios."
+},
+{
+  subtema:4, dificultad:"intermedio", tipo:"Etiquetas / advertencias",
+  context:`<div class="context-box"><div class="ctx-title">💊 Medicine label</div>
+  <div class="sign-box">WARNING: Keep out of reach of children.<br>Take one tablet every 8 hours.</div></div>`,
+  question:"What does the warning on the label tell parents to do?",
+  options:[
+    "Keep the medicine away from children",
+    "Give the medicine to children first",
+    "Store the medicine in the kitchen",
+    "Take the medicine every hour"
+  ],
+  explanation:"La etiqueta advierte explícitamente que se debe mantener el medicamento fuera del alcance de los niños.",
+  vocab:"'keep out of reach' = mantener fuera del alcance.",
+  strategy:"Comprensión de advertencias en etiquetas de uso cotidiano.",
+  competencia:"Comprensión de instrucciones y avisos — etiquetas."
+},
+{
+  subtema:4, dificultad:"avanzado", tipo:"Normas y reglamentos",
+  context:`<div class="context-box"><div class="ctx-title">🏫 School rules</div>
+  <p>1. Students must arrive before 7:00 a.m.<br>2. Uniforms are required every day except Fridays.<br>3. Cell phones must remain off during classes.</p></div>`,
+  question:"According to the rules, what should a student wear on Friday?",
+  options:[
+    "The uniform is not required, so casual clothes are allowed",
+    "A formal suit",
+    "Sports clothes only",
+    "The uniform, exactly like other days"
+  ],
+  explanation:"La regla 2 indica que el uniforme es obligatorio todos los días 'except Fridays' (excepto los viernes), por lo que ese día no es obligatorio.",
+  vocab:"'except' = excepto.",
+  strategy:"Aplicación de una norma específica a una situación concreta (viernes) dentro de un reglamento.",
+  competencia:"Comprensión de instrucciones y avisos — normas y reglamentos sencillos."
+},
+
+/* ===================== SUBTEMA 5 — Comprensión de textos informativos ===================== */
+{
+  subtema:5, dificultad:"basico", tipo:"Aviso informativo",
+  context:`<div class="context-box"><div class="ctx-title">📢 School notice</div>
+  <p>The Science Fair will take place on Friday, October 10th, in the school gym, starting at 9:00 a.m.</p></div>`,
+  question:"Where will the Science Fair take place?",
+  options:[
+    "In the school gym",
+    "In the library",
+    "In the cafeteria",
+    "At the park"
+  ],
+  explanation:"El aviso indica explícitamente que el evento será 'in the school gym'.",
+  vocab:"'gym' = gimnasio.",
+  strategy:"Identificación de información explícita en un aviso informativo.",
+  competencia:"Comprensión de textos informativos — avisos informativos."
+},
+{
+  subtema:5, dificultad:"basico", tipo:"Mensaje de texto",
+  context:`<div class="context-box mail"><div class="ctx-title">📱 Text message</div>
+  <p><b>Sara:</b> Hey! Are we still meeting at the mall at 4 p.m.?<br><b>Juan:</b> Yes, but let's meet at 4:30 instead, I have a class until 4.</p></div>`,
+  question:"What time will Sara and Juan actually meet?",
+  options:[
+    "4:30 p.m.",
+    "4:00 p.m.",
+    "5:00 p.m.",
+    "3:30 p.m."
+  ],
+  explanation:"Aunque la hora inicial propuesta era las 4 p.m., Juan la cambia explícitamente a las 4:30 p.m.",
+  vocab:"'instead' = en su lugar / en cambio.",
+  strategy:"Identificación de información específica y actualizada dentro de un intercambio de mensajes.",
+  competencia:"Comprensión de textos informativos — mensajes de texto."
+},
+{
+  subtema:5, dificultad:"intermedio", tipo:"Correo electrónico",
+  context:`<div class="context-box mail"><div class="ctx-title">📧 Email</div>
+  <p><b>From:</b> teacher.smith@school.edu<br><b>To:</b> students@school.edu<br><b>Subject:</b> Meeting rescheduled</p>
+  <p>Dear students, our meeting originally planned for Tuesday has been moved to Thursday at 3:00 p.m. in Room 204. Please bring your notebooks.</p></div>`,
+  question:"What day was the meeting originally planned for?",
+  options:[
+    "Tuesday",
+    "Thursday",
+    "Monday",
+    "Friday"
+  ],
+  explanation:"El correo indica que la reunión 'originally planned for Tuesday' fue cambiada, por lo que el día original era el martes.",
+  vocab:"'rescheduled' = reprogramada.",
+  strategy:"Identificación de información explícita distinguiendo el dato original del dato modificado.",
+  competencia:"Comprensión de textos informativos — correos electrónicos sencillos."
+},
+{
+  subtema:5, dificultad:"intermedio", tipo:"Noticia breve",
+  context:`<div class="context-box"><div class="ctx-title">📰 Short news</div>
+  <p>A new public library opened downtown this week. It offers free internet, more than 10,000 books, and reading spaces for children and adults.</p></div>`,
+  question:"What is the main idea of this short news article?",
+  options:[
+    "A new library with many services opened downtown",
+    "The downtown area needs more libraries",
+    "Children cannot use the new library",
+    "The library only has books for adults"
+  ],
+  explanation:"La idea principal resume el evento central: la apertura de una nueva biblioteca con múltiples servicios, sin enfocarse solo en un detalle.",
+  vocab:"'downtown' = centro de la ciudad.",
+  strategy:"Identificación de la idea principal frente a los detalles específicos del texto.",
+  competencia:"Comprensión de textos informativos — noticias breves."
+},
+{
+  subtema:5, dificultad:"avanzado", tipo:"Publicidad",
+  context:`<div class="context-box"><div class="ctx-title">📣 Advertisement</div>
+  <p>Tired of boring vacations? Discover Blue Beach Resort: unlimited water sports, live music every night, and rooms with ocean views. Book now and travel like never before!</p></div>`,
+  question:"What is the main purpose of this advertisement?",
+  options:[
+    "To persuade people to book a vacation at the resort",
+    "To warn tourists about dangerous beaches",
+    "To inform about local weather conditions",
+    "To describe the history of a city"
+  ],
+  explanation:"El lenguaje persuasivo ('Discover', 'Book now', 'like never before') muestra que la intención comunicativa es convencer al lector de reservar unas vacaciones.",
+  vocab:"'book now' = reserva ahora.",
+  strategy:"Identificación de la intención comunicativa a partir del lenguaje persuasivo del texto.",
+  competencia:"Comprensión de textos informativos — publicidad."
+},
+
+/* ===================== SUBTEMA 6 — Comprensión de textos narrativos ===================== */
+{
+  subtema:6, dificultad:"basico", tipo:"Anécdota",
+  context:`<div class="context-box"><div class="ctx-title">📔 A short story</div>
+  <p>Last Saturday, Marta woke up early, made breakfast for her family, and then went for a walk in the park with her dog.</p></div>`,
+  question:"What did Marta do first on Saturday?",
+  options:[
+    "She woke up early",
+    "She went for a walk",
+    "She made breakfast",
+    "She played with her dog"
+  ],
+  explanation:"La secuencia del texto muestra que despertarse temprano fue la primera acción, seguida de las demás en orden.",
+  vocab:"'woke up' = se despertó.",
+  strategy:"Identificación de la secuencia de eventos en un texto narrativo.",
+  competencia:"Comprensión de textos narrativos — secuencia de eventos."
+},
+{
+  subtema:6, dificultad:"intermedio", tipo:"Idea principal narrativa",
+  context:`<div class="context-box"><div class="ctx-title">🌟 Personal experience</div>
+  <p>When I was twelve, I moved to a new city and didn't know anyone. At first, I felt lonely, but after joining the school soccer team, I made many new friends and started to enjoy my new life.</p></div>`,
+  question:"What is the main idea of this narrative?",
+  options:[
+    "The narrator overcame loneliness by making new friends through soccer",
+    "The narrator dislikes playing soccer",
+    "The narrator never adapted to the new city",
+    "The narrator moved back to their old city"
+  ],
+  explanation:"El texto describe un proceso: sentirse solo al principio y luego superar esa soledad gracias al fútbol y a nuevas amistades; esa es la idea central.",
+  vocab:"'lonely' = solo/a (sentimiento) / 'joining' = unirse a.",
+  strategy:"Identificación de la idea principal a partir del desarrollo completo de la historia.",
+  competencia:"Comprensión de textos narrativos — idea principal del texto."
+},
+{
+  subtema:6, dificultad:"intermedio", tipo:"Inferencia de sentimiento",
+  context:`<div class="context-box"><div class="ctx-title">😥 Short narrative</div>
+  <p>Diego studied every night for two weeks. When he received his exam results, his hands were shaking and he couldn't stop smiling as he showed the paper to his mother.</p></div>`,
+  question:"How did Diego probably feel when he saw his results?",
+  options:[
+    "Happy and proud",
+    "Angry and confused",
+    "Bored and tired",
+    "Scared and worried"
+  ],
+  explanation:"Las pistas 'couldn't stop smiling' y mostrar el resultado con entusiasmo a su madre permiten inferir felicidad y orgullo, aunque el texto no lo diga directamente.",
+  vocab:"'couldn't stop smiling' = no podía dejar de sonreír.",
+  strategy:"Inferencia del estado emocional de un personaje a partir de sus acciones.",
+  competencia:"Comprensión de textos narrativos — personajes."
+},
+{
+  subtema:6, dificultad:"avanzado", tipo:"Inferencia de lugar y tiempo",
+  context:`<div class="context-box"><div class="ctx-title">🏕️ Narrative</div>
+  <p>We set up our tent near the lake as the sun began to set. The smell of the campfire filled the air, and we could hear owls in the distance while we roasted marshmallows.</p></div>`,
+  question:"Where does this scene most likely take place?",
+  options:[
+    "At a campsite in nature, in the evening",
+    "In a shopping mall, in the morning",
+    "In a classroom, at noon",
+    "On an airplane, at night"
+  ],
+  explanation:"Elementos como 'tent', 'lake', 'campfire', 'owls' y 'sun began to set' permiten inferir que la escena ocurre al aire libre, en un campamento, al atardecer.",
+  vocab:"'campfire' = fogata / 'set up a tent' = armar una carpa.",
+  strategy:"Inferencia del lugar y el tiempo a partir de detalles descriptivos del ambiente.",
+  competencia:"Comprensión de textos narrativos — lugar y tiempo."
+},
+{
+  subtema:6, dificultad:"avanzado", tipo:"Secuencia de eventos",
+  context:`<div class="context-box"><div class="ctx-title">📖 Narrative</div>
+  <p>First, the plane took off smoothly. Later, the pilot announced turbulence ahead, so passengers were asked to fasten their seatbelts. Finally, after a bumpy hour, the plane landed safely and everyone applauded.</p></div>`,
+  question:"What happened right before the plane landed?",
+  options:[
+    "There was turbulence and passengers fastened their seatbelts",
+    "The plane took off",
+    "Everyone applauded",
+    "The passengers boarded the plane"
+  ],
+  explanation:"Según la secuencia del texto, la turbulencia y el aviso de abrocharse el cinturón ocurrieron justo antes del aterrizaje ('after a bumpy hour, the plane landed').",
+  vocab:"'turbulence' = turbulencia / 'fasten seatbelts' = abrocharse el cinturón.",
+  strategy:"Identificación precisa del orden de los eventos usando conectores temporales (First, Later, Finally).",
+  competencia:"Comprensión de textos narrativos — secuencia de eventos."
+},
+
+/* ===================== SUBTEMA 7 — Comprensión de textos descriptivos y funcionales ===================== */
+{
+  subtema:7, dificultad:"basico", tipo:"Menú",
+  context:`<div class="context-box"><div class="ctx-title">🍽️ Café Menu</div>
+  <table class="mini-table"><tr><th>Item</th><th>Price</th></tr>
+  <tr><td>Cheese sandwich</td><td>$6.00</td></tr>
+  <tr><td>Orange juice</td><td>$3.00</td></tr>
+  <tr><td>Chocolate cake</td><td>$4.50</td></tr></table></div>`,
+  question:"How much does the cheese sandwich cost?",
+  options:[
+    "$6.00",
+    "$3.00",
+    "$4.50",
+    "$10.00"
+  ],
+  explanation:"La tabla del menú indica directamente que el precio del 'cheese sandwich' es $6.00.",
+  vocab:"'price' = precio.",
+  strategy:"Interpretación de información específica en un formato de menú.",
+  competencia:"Comprensión de textos descriptivos y funcionales — menús."
+},
+{
+  subtema:7, dificultad:"intermedio", tipo:"Descripción de lugar",
+  context:`<div class="context-box"><div class="ctx-title">🌳 Central Park</div>
+  <p>Central Park has wide green areas for picnics, a small lake for boat rides, and several paths for walking or biking. It is a popular place for families on weekends.</p></div>`,
+  question:"What can visitors do at Central Park, according to the text?",
+  options:[
+    "Go for a boat ride on the lake",
+    "Watch a movie in a theater",
+    "Go shopping for clothes",
+    "Visit a museum"
+  ],
+  explanation:"El texto menciona explícitamente 'a small lake for boat rides' como una de las actividades disponibles en el parque.",
+  vocab:"'boat ride' = paseo en bote.",
+  strategy:"Identificación de información específica en una descripción de lugar.",
+  competencia:"Comprensión de textos descriptivos y funcionales — descripción de lugares."
+},
+{
+  subtema:7, dificultad:"intermedio", tipo:"Horario / itinerario",
+  context:`<div class="context-box"><div class="ctx-title">🚆 Train schedule</div>
+  <table class="mini-table"><tr><th>Train</th><th>Departure</th><th>Arrival</th></tr>
+  <tr><td>Express 101</td><td>7:15 a.m.</td><td>9:00 a.m.</td></tr>
+  <tr><td>Regional 202</td><td>8:00 a.m.</td><td>10:45 a.m.</td></tr></table></div>`,
+  question:"Which train arrives earlier at its destination?",
+  options:[
+    "Express 101",
+    "Regional 202",
+    "Both arrive at the same time",
+    "The schedule does not say"
+  ],
+  explanation:"El tren Express 101 llega a las 9:00 a.m., antes que el Regional 202 que llega a las 10:45 a.m.",
+  vocab:"'departure' = salida / 'arrival' = llegada.",
+  strategy:"Comparación de datos numéricos (horarios) presentados en formato de tabla.",
+  competencia:"Comprensión de textos descriptivos y funcionales — horarios."
+},
+{
+  subtema:7, dificultad:"avanzado", tipo:"Folleto turístico",
+  context:`<div class="context-box"><div class="ctx-title">🧳 Travel brochure</div>
+  <p>Green Valley Eco-Lodge is perfect for families: enjoy guided nature walks, a swimming pool for kids, and a farm where children can feed the animals. Quiet rooms are also available for couples seeking rest.</p></div>`,
+  question:"Which activity would be most suitable for a family traveling with young children?",
+  options:[
+    "Feeding animals at the farm",
+    "Staying in the quiet rooms for couples",
+    "Attending a business conference",
+    "Visiting a nightclub"
+  ],
+  explanation:"El folleto describe la granja donde los niños pueden alimentar animales como una actividad pensada especialmente para familias con niños pequeños.",
+  vocab:"'guided nature walks' = caminatas guiadas por la naturaleza.",
+  strategy:"Selección de información relevante según una necesidad específica planteada (familia con niños).",
+  competencia:"Comprensión de textos descriptivos y funcionales — folletos informativos."
+},
+{
+  subtema:7, dificultad:"avanzado", tipo:"Comparación funcional",
+  context:`<div class="context-box"><div class="ctx-title">🏨 Two hotels</div>
+  <p><b>Hotel Sunrise:</b> $150/night, located downtown, very lively with music until late.<br><b>Hotel Serenity:</b> $90/night, located outside the city, quiet surroundings, ideal for resting.</p></div>`,
+  question:"Which hotel would be best for a traveler who wants a low price and a quiet environment?",
+  options:[
+    "Hotel Serenity",
+    "Hotel Sunrise",
+    "Both are equally suitable",
+    "Neither hotel is quiet"
+  ],
+  explanation:"Hotel Serenity ofrece tanto un precio más bajo ($90) como un ambiente tranquilo ('quiet surroundings'), cumpliendo ambos criterios solicitados.",
+  vocab:"'quiet surroundings' = alrededores tranquilos.",
+  strategy:"Comparación de dos textos descriptivos para seleccionar la opción que cumple varios criterios simultáneamente.",
+  competencia:"Comprensión de textos descriptivos y funcionales — información turística."
+},
+
+/* ===================== SUBTEMA 8 — Interpretación de información en diferentes formatos ===================== */
+{
+  subtema:8, dificultad:"basico", tipo:"Tabla / horario escolar",
+  context:`<div class="context-box"><div class="ctx-title">🗓️ Class schedule</div>
+  <table class="mini-table"><tr><th>Time</th><th>Monday</th><th>Tuesday</th></tr>
+  <tr><td>8:00–9:00</td><td>English</td><td>Math</td></tr>
+  <tr><td>9:00–10:00</td><td>Science</td><td>Art</td></tr></table></div>`,
+  question:"What class takes place on Monday from 8:00 to 9:00?",
+  options:[
+    "English",
+    "Math",
+    "Science",
+    "Art"
+  ],
+  explanation:"La tabla indica directamente que a esa hora del lunes hay clase de 'English'.",
+  vocab:"'schedule' = horario.",
+  strategy:"Lectura precisa de una tabla cruzando fila (hora) y columna (día).",
+  competencia:"Interpretación de información en diferentes formatos — tablas."
+},
+{
+  subtema:8, dificultad:"intermedio", tipo:"Gráfica sencilla",
+  context:`<div class="context-box"><div class="ctx-title">📊 Favorite subjects (survey of 20 students)</div>
+  <p>English: 8 students &nbsp;|&nbsp; Math: 5 students &nbsp;|&nbsp; Science: 4 students &nbsp;|&nbsp; Art: 3 students</p></div>`,
+  question:"Which subject is the most popular among the students surveyed?",
+  options:[
+    "English",
+    "Math",
+    "Science",
+    "Art"
+  ],
+  explanation:"English tiene el número más alto de estudiantes (8), por lo que es la materia más popular según los datos.",
+  vocab:"'survey' = encuesta.",
+  strategy:"Comparación de valores numéricos en un formato de gráfica simple para identificar el máximo.",
+  competencia:"Interpretación de información en diferentes formatos — gráficas sencillas."
+},
+{
+  subtema:8, dificultad:"intermedio", tipo:"Mapa",
+  context:`<div class="context-box"><div class="ctx-title">🗺️ Simple map</div>
+  <div class="map-box">  [School] --- Main St --- [Library]
+       |                        |
+    Oak Ave                 Elm Ave
+       |                        |
+   [Pharmacy]              [Park]</div>
+  <p>You are at the School and need to go straight down Oak Avenue.</p></div>`,
+  question:"Which place will you reach if you walk straight down Oak Avenue from the School?",
+  options:[
+    "Pharmacy",
+    "Library",
+    "Park",
+    "Main St"
+  ],
+  explanation:"Según el mapa, la 'Oak Ave' conecta directamente la 'School' con la 'Pharmacy'.",
+  vocab:"'straight down' = derecho / todo seguido.",
+  strategy:"Interpretación espacial de un mapa simple para seguir una indicación de dirección.",
+  competencia:"Interpretación de información en diferentes formatos — mapas."
+},
+{
+  subtema:8, dificultad:"avanzado", tipo:"Infografía / porcentajes",
+  context:`<div class="context-box"><div class="ctx-title">📈 Students' hobbies (infographic data)</div>
+  <p>Reading: 30% &nbsp;|&nbsp; Playing sports: 40% &nbsp;|&nbsp; Video games: 20% &nbsp;|&nbsp; Painting: 10%</p></div>`,
+  question:"According to the data, what percentage of students prefer an activity OTHER than sports?",
+  options:[
+    "60%",
+    "40%",
+    "70%",
+    "20%"
+  ],
+  explanation:"Si 'Playing sports' representa el 40%, el resto de actividades combinadas (Reading + Video games + Painting = 30+20+10) suman 60%.",
+  vocab:"'hobbies' = pasatiempos.",
+  strategy:"Interpretación e integración de datos porcentuales presentados en formato de infografía.",
+  competencia:"Interpretación de información en diferentes formatos — infografías."
+},
+{
+  subtema:8, dificultad:"avanzado", tipo:"Formulario",
+  context:`<div class="context-box"><div class="ctx-title">📝 Library membership form</div>
+  <table class="mini-table"><tr><th>Field</th><th>Value</th></tr>
+  <tr><td>Full name</td><td>_______________</td></tr>
+  <tr><td>Date of birth</td><td>15/03/2008</td></tr>
+  <tr><td>Phone number</td><td>_______________</td></tr></table></div>`,
+  question:"What information is still missing to complete this form?",
+  options:[
+    "Full name and phone number",
+    "Date of birth only",
+    "Nothing, the form is complete",
+    "The library's address"
+  ],
+  explanation:"Los campos 'Full name' y 'Phone number' aparecen vacíos (representados con líneas), mientras que 'Date of birth' ya está diligenciado.",
+  vocab:"'date of birth' = fecha de nacimiento.",
+  strategy:"Identificación de información faltante mediante el análisis de un formulario parcialmente diligenciado.",
+  competencia:"Interpretación de información en diferentes formatos — formularios."
+},
+
+/* ===================== SUBTEMA 9 — Estrategias de comprensión lectora ===================== */
+{
+  subtema:9, dificultad:"basico", tipo:"Idea principal",
+  context:`<div class="context-box"><div class="ctx-title">📄 Paragraph</div>
+  <p>Drinking enough water every day helps your body work properly. It keeps your skin healthy, helps digestion, and gives you more energy during the day.</p></div>`,
+  question:"What is the main idea of this paragraph?",
+  options:[
+    "Drinking enough water has several benefits for the body",
+    "Water is only good for the skin",
+    "People should avoid drinking water",
+    "Energy only comes from food"
+  ],
+  explanation:"El párrafo enumera varios beneficios del agua (piel, digestión, energía), por lo que la idea principal es general, no un solo beneficio.",
+  vocab:"'digestion' = digestión.",
+  strategy:"Identificación de la idea principal integrando todos los detalles del párrafo.",
+  competencia:"Estrategias de comprensión lectora — identificación de la idea principal."
+},
+{
+  subtema:9, dificultad:"intermedio", tipo:"Información específica",
+  context:`<div class="context-box"><div class="ctx-title">📄 Paragraph</div>
+  <p>The Amazon rainforest produces about 20% of the world's oxygen and is home to millions of species of plants and animals.</p></div>`,
+  question:"What percentage of the world's oxygen does the Amazon rainforest produce, according to the text?",
+  options:[
+    "20%",
+    "50%",
+    "10%",
+    "80%"
+  ],
+  explanation:"El texto menciona el dato exacto: 'about 20% of the world's oxygen'.",
+  vocab:"'rainforest' = selva tropical.",
+  strategy:"Localización de un dato específico mencionado explícitamente en el texto.",
+  competencia:"Estrategias de comprensión lectora — información específica."
+},
+{
+  subtema:9, dificultad:"intermedio", tipo:"Inferencia sencilla",
+  context:`<div class="context-box"><div class="ctx-title">📄 Paragraph</div>
+  <p>Carlos packed his suitcase, printed his boarding pass, and checked his passport twice before leaving the house.</p></div>`,
+  question:"What can be inferred about Carlos?",
+  options:[
+    "He is preparing to travel by plane",
+    "He is going to a birthday party",
+    "He is moving to a new house permanently",
+    "He is going to work as usual"
+  ],
+  explanation:"Elementos como 'suitcase', 'boarding pass' y 'passport' permiten inferir que Carlos se prepara para un viaje en avión.",
+  vocab:"'boarding pass' = pase de abordar / 'suitcase' = maleta.",
+  strategy:"Inferencia sencilla a partir de la combinación de varias pistas del texto.",
+  competencia:"Estrategias de comprensión lectora — inferencias sencillas."
+},
+{
+  subtema:9, dificultad:"avanzado", tipo:"Intención comunicativa",
+  context:`<div class="context-box"><div class="ctx-title">📄 Paragraph</div>
+  <p>Do you want to protect the planet? Turn off the lights when you leave a room, recycle plastic bottles, and walk instead of using the car for short trips. Every small action counts!</p></div>`,
+  question:"What is the author's main purpose in this text?",
+  options:[
+    "To encourage readers to adopt environmentally friendly habits",
+    "To explain how electricity is generated",
+    "To describe the history of recycling",
+    "To sell a new car model"
+  ],
+  explanation:"El uso de preguntas directas y recomendaciones ('Turn off the lights', 'recycle', 'walk instead') muestra que la intención es motivar al lector a actuar a favor del medio ambiente.",
+  vocab:"'recycle' = reciclar.",
+  strategy:"Identificación de la intención comunicativa del autor a través del lenguaje persuasivo y las recomendaciones directas.",
+  competencia:"Estrategias de comprensión lectora — intención comunicativa."
+},
+{
+  subtema:9, dificultad:"avanzado", tipo:"Organización del texto",
+  context:`<div class="context-box"><div class="ctx-title">📄 Paragraph</div>
+  <p>Many students struggle to concentrate while studying at home. To solve this problem, experts recommend creating a quiet study space, turning off notifications, and setting specific study times.</p></div>`,
+  question:"How is this paragraph organized?",
+  options:[
+    "It presents a problem and then offers solutions",
+    "It tells a story in chronological order",
+    "It compares two different countries",
+    "It describes a person's physical appearance"
+  ],
+  explanation:"El texto presenta primero un problema (dificultad para concentrarse) y luego ofrece soluciones concretas, siguiendo una estructura de problema-solución.",
+  vocab:"'struggle to concentrate' = les cuesta concentrarse.",
+  strategy:"Reconocimiento del patrón de organización del texto (problema-solución) como estrategia de comprensión lectora.",
+  competencia:"Estrategias de comprensión lectora — organización del texto."
+},
+
+/* ===================== SUBTEMA 10 — Comprensión de lectura tipo ICFES ===================== */
+{
+  subtema:10, dificultad:"basico", tipo:"Situación cotidiana",
+  context:`<div class="context-box"><div class="ctx-title">🎒 Situation</div>
+  <p>Valentina forgot her umbrella at home. When she left school, it was raining heavily, so she waited under the school roof until her mother arrived with a raincoat.</p></div>`,
+  question:"Why did Valentina wait under the school roof?",
+  options:[
+    "Because it was raining and she did not have an umbrella",
+    "Because the school was closed",
+    "Because she wanted to talk to her teacher",
+    "Because her mother told her to clean the roof"
+  ],
+  explanation:"El texto explica directamente la causa: 'it was raining heavily' y ella no tenía paraguas, por lo que esperó bajo el techo.",
+  vocab:"'raincoat' = impermeable.",
+  strategy:"Identificación de la relación causa-efecto explícita dentro de una situación cotidiana.",
+  competencia:"Comprensión de lectura tipo ICFES — interpretación de situaciones cotidianas."
+},
+{
+  subtema:10, dificultad:"intermedio", tipo:"Artículo breve",
+  context:`<div class="context-box"><div class="ctx-title">📰 Short article</div>
+  <p>A local school started a recycling program last year. Since then, students have collected more than 2,000 kilograms of plastic and paper, which has been sent to a recycling center in the city.</p></div>`,
+  question:"What is the main idea of this article?",
+  options:[
+    "A school's recycling program has successfully collected a large amount of waste",
+    "The school stopped its recycling program",
+    "Students are not interested in recycling",
+    "The recycling center closed last year"
+  ],
+  explanation:"El artículo se centra en el éxito del programa de reciclaje escolar y la cantidad recolectada, lo cual constituye la idea principal.",
+  vocab:"'recycling program' = programa de reciclaje.",
+  strategy:"Identificación de la idea principal en un artículo informativo breve.",
+  competencia:"Comprensión de lectura tipo ICFES — comprensión de artículos breves."
+},
+{
+  subtema:10, dificultad:"intermedio", tipo:"Interpretación de tabla",
+  context:`<div class="context-box"><div class="ctx-title">📊 Weekly temperatures</div>
+  <table class="mini-table"><tr><th>Day</th><th>Temperature</th></tr>
+  <tr><td>Monday</td><td>22°C</td></tr>
+  <tr><td>Tuesday</td><td>25°C</td></tr>
+  <tr><td>Wednesday</td><td>19°C</td></tr></table></div>`,
+  question:"On which day was the temperature the lowest?",
+  options:[
+    "Wednesday",
+    "Monday",
+    "Tuesday",
+    "The table does not show this"
+  ],
+  explanation:"Comparando los valores de la tabla (22°C, 25°C, 19°C), el miércoles presenta la temperatura más baja.",
+  vocab:"'temperature' = temperatura.",
+  strategy:"Comparación de datos numéricos en una tabla para identificar un valor mínimo.",
+  competencia:"Comprensión de lectura tipo ICFES — interpretación de gráficos y tablas en inglés."
+},
+{
+  subtema:10, dificultad:"avanzado", tipo:"Texto integrador (vocabulario + inferencia)",
+  context:`<div class="context-box"><div class="ctx-title">📄 Article</div>
+  <p>Remote work has become extremely popular in recent years. Although some employees miss the social interaction of an office, many appreciate the flexibility of working from home, since it allows them to save time on transportation and spend more time with their families.</p></div>`,
+  question:"Based on the text, what can be concluded about most employees' opinion of remote work?",
+  options:[
+    "They generally value its flexibility more than they miss office interaction",
+    "They think remote work should be banned",
+    "They believe remote work wastes more time than commuting",
+    "They prefer working in an office at all times"
+  ],
+  explanation:"Aunque el texto reconoce que algunos extrañan la interacción social, el uso de 'many appreciate the flexibility' y las razones dadas (ahorro de tiempo, familia) muestran una valoración positiva general hacia el trabajo remoto.",
+  vocab:"'remote work' = trabajo remoto / 'flexibility' = flexibilidad.",
+  strategy:"Integración de vocabulario en contexto e inferencia global para determinar una conclusión general del texto.",
+  competencia:"Comprensión de lectura tipo ICFES — comprensión de artículos breves e inferencia."
+},
+{
+  subtema:10, dificultad:"avanzado", tipo:"Gestión del tiempo / itinerario",
+  context:`<div class="context-box"><div class="ctx-title">✈️ Flight options</div>
+  <table class="mini-table"><tr><th>Flight</th><th>Departure</th><th>Duration</th></tr>
+  <tr><td>Flight A</td><td>6:00 a.m.</td><td>3 hours</td></tr>
+  <tr><td>Flight B</td><td>1:00 p.m.</td><td>2 hours</td></tr></table>
+  <p>You have an important meeting at 10:00 a.m. on the day you arrive.</p></div>`,
+  question:"Which flight should you choose to arrive in time for the 10:00 a.m. meeting?",
+  options:[
+    "Flight A, because it arrives at 9:00 a.m.",
+    "Flight B, because it arrives at 3:00 p.m.",
+    "Either flight works equally well",
+    "Neither flight allows you to arrive on time"
+  ],
+  explanation:"El Vuelo A sale a las 6:00 a.m. y dura 3 horas, llegando a las 9:00 a.m., a tiempo para la reunión de las 10:00 a.m.; el Vuelo B llegaría demasiado tarde.",
+  vocab:"'departure' = salida / 'duration' = duración.",
+  strategy:"Aplicación de estrategias de administración del tiempo e integración de datos numéricos para resolver una situación práctica tipo ICFES.",
+  competencia:"Comprensión de lectura tipo ICFES — estrategias de administración del tiempo en pruebas tipo ICFES."
+}
+
+];
+
+/* -------------------------- 3. ESTADO GLOBAL -------------------------- */
+let state = {
+  preguntas: [],        // 30 preguntas seleccionadas para el intento actual (con opciones ya mezcladas)
+  respuestas: [],        // índice de opción elegida por pregunta (o null)
+  actual: 0,
+  tiempoRestante: TIEMPO_TOTAL_SEG,
+  timerId: null,
+  rachaActual: 0,
+  rachaMaxima: 0,
+  inicioTs: null,
+  finTs: null,
+  logrosDesbloqueados: new Set()
+};
+
+/* -------------------------- 4. UTILIDADES -------------------------- */
+function shuffle(array){
+  const a = array.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function formatTime(totalSeconds){
+  const m = Math.floor(totalSeconds/60);
+  const s = totalSeconds%60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* -------------------------- 5. SONIDO (Web Audio, sin archivos externos) -------------------------- */
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  }
+  return audioCtx;
+}
+function playTone(freqs, duration, type){
+  if(!SONIDO_ACTIVO) return;
+  const ctx = getAudioCtx();
+  if(!ctx) return;
+  freqs.forEach((f,idx)=>{
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.02 + idx*0.09);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration + idx*0.09);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime + idx*0.09);
+    osc.stop(ctx.currentTime + duration + idx*0.09 + 0.05);
+  });
+}
+const sonidoCorrecto = ()=>playTone([660,880],0.18,'sine');
+const sonidoIncorrecto = ()=>playTone([220,180],0.22,'sawtooth');
+const sonidoFinal = ()=>playTone([523,659,784,1046],0.25,'sine');
+const sonidoLogro = ()=>playTone([784,988,1318],0.2,'triangle');
+
+/* -------------------------- 6. INICIALIZACIÓN DE PANTALLA INICIAL -------------------------- */
+function pintarListaSubtemas(){
+  const cont = document.getElementById('listaSubtemas');
+  cont.innerHTML = SUBTEMAS.map(s=>`<div class="subtema-pill"><span class="num">${s.id}</span>${s.nombre}</div>`).join('');
+}
+pintarListaSubtemas();
+
+document.getElementById('selectTiempo').addEventListener('change', e=>{
+  TIEMPO_TOTAL_SEG = parseInt(e.target.value,10)*60;
+  document.getElementById('chipTiempo').textContent = e.target.value + ' minutos';
+});
+document.getElementById('toggleSonido').addEventListener('change', e=>{
+  SONIDO_ACTIVO = e.target.checked;
+});
+
+/* -------------------------- 7. SELECCIÓN ALEATORIA DE 30 PREGUNTAS -------------------------- */
+function construirIntento(){
+  // Agrupar banco por subtema
+  const porSubtema = {};
+  SUBTEMAS.forEach(s=>porSubtema[s.id]=[]);
+  BANCO.forEach(q=>porSubtema[q.subtema].push(q));
+
+  let seleccionadas = [];
+  SUBTEMAS.forEach(s=>{
+    const disponibles = shuffle(porSubtema[s.id]);
+    // Selecciona 3 preguntas por subtema (equilibrio total = 30), priorizando variedad de dificultad
+    const basicas = disponibles.filter(q=>q.dificultad==='basico');
+    const intermedias = disponibles.filter(q=>q.dificultad==='intermedio');
+    const avanzadas = disponibles.filter(q=>q.dificultad==='avanzado');
+    let elegidas = [];
+    if(basicas[0]) elegidas.push(basicas[0]);
+    if(intermedias[0]) elegidas.push(intermedias[0]);
+    if(avanzadas[0]) elegidas.push(avanzadas[0]);
+    // Completar si falta alguna categoría (en caso de que un subtema no tenga las 3 dificultades)
+    let resto = shuffle(disponibles.filter(q=>!elegidas.includes(q)));
+    while(elegidas.length<3 && resto.length){ elegidas.push(resto.pop()); }
+    seleccionadas = seleccionadas.concat(elegidas.slice(0,3));
+  });
+
+  seleccionadas = shuffle(seleccionadas);
+
+  // Mezclar opciones de cada pregunta y guardar el índice correcto
+  return seleccionadas.map((q,idx)=>{
+    const opcionesConIndice = q.options.map((texto,i)=>({texto, esCorrecta:i===0}));
+    const mezcladas = shuffle(opcionesConIndice);
+    return {
+      ...q,
+      numero: idx+1,
+      opcionesMezcladas: mezcladas,
+      indiceCorrecto: mezcladas.findIndex(o=>o.esCorrecta)
+    };
+  });
+}
+
+/* -------------------------- 8. INICIO DEL SIMULACRO -------------------------- */
+document.getElementById('btnIniciar').addEventListener('click', iniciarSimulacro);
+
+function iniciarSimulacro(){
+  state.preguntas = construirIntento();
+  state.respuestas = new Array(state.preguntas.length).fill(null);
+  state.actual = 0;
+  state.tiempoRestante = TIEMPO_TOTAL_SEG;
+  state.rachaActual = 0;
+  state.rachaMaxima = 0;
+  state.inicioTs = Date.now();
+  state.logrosDesbloqueados = new Set();
+
+  pintarDots();
+  renderPregunta();
+  iniciarTemporizador();
+  showScreen('screen-examen');
+}
+
+/* -------------------------- 9. TEMPORIZADOR -------------------------- */
+function iniciarTemporizador(){
+  clearInterval(state.timerId);
+  actualizarTimerUI();
+  state.timerId = setInterval(()=>{
+    state.tiempoRestante--;
+    actualizarTimerUI();
+    if(state.tiempoRestante<=0){
+      clearInterval(state.timerId);
+      finalizarSimulacro(true);
+    }
+  },1000);
+}
+function actualizarTimerUI(){
+  const pill = document.getElementById('timerPill');
+  pill.textContent = '⏱️ ' + formatTime(Math.max(state.tiempoRestante,0));
+  pill.classList.toggle('warning', state.tiempoRestante<=60);
+}
+
+/* -------------------------- 10. RENDER DE PREGUNTA -------------------------- */
+function renderPregunta(){
+  const q = state.preguntas[state.actual];
+
+  document.getElementById('tagRow').innerHTML = `
+    <span class="tag dificultad-${q.dificultad}">${q.dificultad.charAt(0).toUpperCase()+q.dificultad.slice(1)}</span>
+    <span class="tag">${q.tipo}</span>
+    <span class="tag">Subtema ${q.subtema}: ${SUBTEMAS.find(s=>s.id===q.subtema).nombre}</span>
+  `;
+  document.getElementById('contextArea').innerHTML = q.context || '';
+  document.getElementById('questionText').textContent = q.question;
+
+  const optsList = document.getElementById('optionsList');
+  const letras = ['A','B','C','D'];
+  optsList.innerHTML = '';
+  q.opcionesMezcladas.forEach((op, i)=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn' + (state.respuestas[state.actual]===i ? ' selected':'');
+    btn.setAttribute('role','radio');
+    btn.setAttribute('aria-checked', state.respuestas[state.actual]===i ? 'true':'false');
+    btn.innerHTML = `<span class="option-letter">${letras[i]}</span><span>${op.texto}</span>`;
+    btn.addEventListener('click', ()=>seleccionarRespuesta(i));
+    optsList.appendChild(btn);
+  });
+
+  document.getElementById('qCounter').textContent = `Pregunta ${state.actual+1} de ${state.preguntas.length}`;
+  document.getElementById('btnAnterior').disabled = state.actual===0;
+  document.getElementById('btnAnterior').style.opacity = state.actual===0 ? '.4':'1';
+  document.getElementById('btnSiguiente').textContent = state.actual===state.preguntas.length-1 ? 'Finalizar simulacro' : 'Siguiente →';
+
+  actualizarProgreso();
+  pintarDots();
+}
+
+function seleccionarRespuesta(indice){
+  state.respuestas[state.actual] = indice;
+  renderPregunta();
+}
+
+/* -------------------------- 11. PROGRESO Y NAVEGACIÓN -------------------------- */
+function actualizarProgreso(){
+  const total = state.preguntas.length;
+  const respondidas = state.respuestas.filter(r=>r!==null).length;
+  const pct = Math.round(((state.actual+1)/total)*100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '% completado';
+  document.getElementById('progressAnswered').textContent = `Respondidas: ${respondidas} · Pendientes: ${total-respondidas}`;
+}
+
+function pintarDots(){
+  const cont = document.getElementById('qnavDots');
+  cont.innerHTML = '';
+  state.preguntas.forEach((q,i)=>{
+    const d = document.createElement('button');
+    d.className = 'qdot' + (state.respuestas[i]!==null ? ' answered':'') + (i===state.actual ? ' current':'');
+    d.textContent = i+1;
+    d.setAttribute('aria-label', `Ir a la pregunta ${i+1}`);
+    d.addEventListener('click', ()=>{ state.actual = i; renderPregunta(); });
+    cont.appendChild(d);
+  });
+}
+
+document.getElementById('btnAnterior').addEventListener('click', ()=>{
+  if(state.actual>0){ state.actual--; renderPregunta(); }
+});
+
+document.getElementById('btnSiguiente').addEventListener('click', ()=>{
+  evaluarRachaSiCorresponde();
+  if(state.actual < state.preguntas.length-1){
+    state.actual++;
+    renderPregunta();
+  } else {
+    intentarFinalizar();
+  }
+});
+
+document.getElementById('btnFinalizarAntic').addEventListener('click', intentarFinalizar);
+
+function intentarFinalizar(){
+  const pendientes = state.respuestas.filter(r=>r===null).length;
+  if(pendientes>0){
+    document.getElementById('confirmText').textContent = `Tienes ${pendientes} pregunta(s) sin responder. ¿Deseas finalizar de todas formas?`;
+  } else {
+    document.getElementById('confirmText').textContent = '¿Deseas finalizar el simulacro ahora?';
+  }
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+document.getElementById('btnCancelarConfirm').addEventListener('click', ()=>{
+  document.getElementById('confirmOverlay').classList.remove('show');
+});
+document.getElementById('btnAceptarConfirm').addEventListener('click', ()=>{
+  document.getElementById('confirmOverlay').classList.remove('show');
+  finalizarSimulacro(false);
+});
+
+/* -------------------------- 12. SISTEMA DE RACHAS -------------------------- */
+let rachaEvaluadaHasta = -1;
+function evaluarRachaSiCorresponde(){
+  const i = state.actual;
+  if(i<=rachaEvaluadaHasta) return; // ya evaluada
+  rachaEvaluadaHasta = i;
+  const q = state.preguntas[i];
+  const r = state.respuestas[i];
+  if(r===null) { state.rachaActual = 0; return; }
+  const esCorrecta = r===q.indiceCorrecto;
+  if(esCorrecta){
+    state.rachaActual++;
+    state.rachaMaxima = Math.max(state.rachaMaxima, state.rachaActual);
+    if([3,5,10].includes(state.rachaActual)){
+      mostrarRachaToast(state.rachaActual);
+      sonidoLogro();
+    }
+    sonidoCorrecto();
+  } else {
+    state.rachaActual = 0;
+    sonidoIncorrecto();
+  }
+}
+
+function mostrarRachaToast(n){
+  const msgs = {3:'🔥 ¡Racha de 3! Vas muy bien.', 5:'🔥🔥 ¡Racha de 5! Excelente comprensión.', 10:'🔥🔥🔥 ¡Racha de 10! Dominio sobresaliente.'};
+  const toast = document.getElementById('streakToast');
+  toast.textContent = msgs[n] || `🔥 Racha x${n}`;
+  toast.classList.add('show');
+  const badge = document.getElementById('streakBadge');
+  badge.textContent = `🔥 Racha x${n}`;
+  badge.classList.add('show');
+  setTimeout(()=>{ toast.classList.remove('show'); },2200);
+  setTimeout(()=>{ badge.classList.remove('show'); },3000);
+}
+
+/* -------------------------- 13. FINALIZACIÓN Y CÁLCULO DE RESULTADOS -------------------------- */
+function finalizarSimulacro(porTiempo){
+  clearInterval(state.timerId);
+  evaluarRachaSiCorresponde();
+  state.finTs = Date.now();
+  sonidoFinal();
+  const stats = calcularEstadisticas();
+  renderizarResultados(stats, porTiempo);
+  renderizarRevision();
+  showScreen('screen-resultados');
+}
+
+function calcularEstadisticas(){
+  const total = state.preguntas.length;
+  let correctas = 0;
+  const porSub = {}; const totalSub = {};
+  SUBTEMAS.forEach(s=>{ porSub[s.id]=0; totalSub[s.id]=0; });
+  let inferenciaCorrectas = 0;
+
+  state.preguntas.forEach((q,i)=>{
+    totalSub[q.subtema]++;
+    const r = state.respuestas[i];
+    const esCorrecta = r!==null && r===q.indiceCorrecto;
+    if(esCorrecta){
+      correctas++;
+      porSub[q.subtema]++;
+      if(/infer/i.test(q.strategy) || /infer/i.test(q.tipo)) inferenciaCorrectas++;
+    }
+  });
+
+  const incorrectas = total-correctas;
+  const porcentaje = Math.round((correctas/total)*100);
+  const tiempoUsadoSeg = Math.round((state.finTs - state.inicioTs)/1000);
+
+  return { total, correctas, incorrectas, porcentaje, porSub, totalSub, tiempoUsadoSeg, inferenciaCorrectas, rachaMaxima: state.rachaMaxima };
+}
+
+function nivelSegunPorcentaje(pct){
+  if(pct<50) return { nivel:'Nivel inicial', msg:'Cada texto leído es una nueva oportunidad para aprender. Sigue ampliando tu vocabulario y practicando estrategias de comprensión lectora en inglés.' };
+  if(pct<70) return { nivel:'Nivel en progreso', msg:'Vas por buen camino. Tu comprensión del inglés mejora constantemente. Continúa fortaleciendo tu vocabulario y tu capacidad para interpretar textos.' };
+  if(pct<90) return { nivel:'Nivel satisfactorio', msg:'Muy buen desempeño. Demuestras una sólida comprensión de textos en inglés y aplicas adecuadamente estrategias de lectura similares a las evaluadas por el ICFES.' };
+  return { nivel:'Nivel avanzado', msg:'¡Excelente trabajo! Has demostrado un dominio sobresaliente en comprensión lectora en inglés y un excelente manejo de las competencias evaluadas en las pruebas ICFES.' };
+}
+
+function renderizarResultados(stats, porTiempo){
+  document.getElementById('resultScorePct').innerHTML = stats.porcentaje + '<span>%</span>';
+  const nv = nivelSegunPorcentaje(stats.porcentaje);
+  document.getElementById('resultNivel').textContent = nv.nivel + (porTiempo ? ' · Tiempo agotado' : '');
+  document.getElementById('resultMsg').textContent = nv.msg;
+
+  document.getElementById('statCorrectas').textContent = stats.correctas;
+  document.getElementById('statIncorrectas').textContent = stats.incorrectas;
+  document.getElementById('statTiempo').textContent = formatTime(stats.tiempoUsadoSeg);
+  document.getElementById('statPuntaje').textContent = `${stats.correctas}/${stats.total}`;
+
+  // Barras por subtemática
+  const contBars = document.getElementById('subthemeBars');
+  contBars.innerHTML = SUBTEMAS.map(s=>{
+    const correctasS = stats.porSub[s.id] || 0;
+    const totalS = stats.totalSub[s.id] || 0;
+    const pctS = totalS ? Math.round((correctasS/totalS)*100) : 0;
+    return `<div class="subtheme-bar-row">
+      <span title="${s.nombre}">${s.id}. ${s.nombre}</span>
+      <div class="subtheme-bar-track"><div class="subtheme-bar-fill" style="width:${pctS}%"></div></div>
+      <span>${correctasS}/${totalS}</span>
+    </div>`;
+  }).join('');
+
+  // Fortalezas y aspectos a mejorar
+  const rendimientos = SUBTEMAS.map(s=>({
+    id:s.id, nombre:s.nombre,
+    pct: stats.totalSub[s.id] ? (stats.porSub[s.id]/stats.totalSub[s.id])*100 : 0
+  }));
+  const fortalezas = rendimientos.filter(r=>r.pct>=70).sort((a,b)=>b.pct-a.pct).slice(0,4);
+  const mejoras = rendimientos.filter(r=>r.pct<70).sort((a,b)=>a.pct-b.pct).slice(0,4);
+
+  document.getElementById('listFortalezas').innerHTML = fortalezas.length
+    ? fortalezas.map(f=>`<li>${f.nombre} (${Math.round(f.pct)}%)</li>`).join('')
+    : '<li>Sigue practicando para consolidar tus fortalezas.</li>';
+  document.getElementById('listMejoras').innerHTML = mejoras.length
+    ? mejoras.map(f=>`<li>${f.nombre} (${Math.round(f.pct)}%)</li>`).join('')
+    : '<li>¡Buen trabajo! No se identificaron debilidades marcadas.</li>';
+
+  dibujarGrafico(rendimientos);
+  renderizarLogros(stats);
+}
+
+/* -------------------------- 14. GRÁFICO DE DESEMPEÑO (SVG puro) -------------------------- */
+function dibujarGrafico(rendimientos){
+  const svg = document.getElementById('chartDesempeno');
+  const w = 700, h = 220, padding = 30, barGap = 8;
+  const n = rendimientos.length;
+  const barW = (w - padding*2 - barGap*(n-1)) / n;
+  let bars = '';
+  rendimientos.forEach((r,i)=>{
+    const barH = (r.pct/100) * (h - 60);
+    const x = padding + i*(barW+barGap);
+    const y = h - 30 - barH;
+    const color = r.pct>=70 ? '#1E9E6B' : (r.pct>=50 ? '#F5B301' : '#D64545');
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="${color}"></rect>`;
+    bars += `<text x="${x+barW/2}" y="${y-6}" font-size="11" text-anchor="middle" fill="#0B2545" font-family="DM Sans, sans-serif">${Math.round(r.pct)}%</text>`;
+    bars += `<text x="${x+barW/2}" y="${h-14}" font-size="10" text-anchor="middle" fill="#8892A4" font-family="DM Sans, sans-serif">S${r.id}</text>`;
+  });
+  svg.innerHTML = `<line x1="${padding}" y1="${h-30}" x2="${w-padding}" y2="${h-30}" stroke="#E3E7EE" stroke-width="2"></line>` + bars;
+}
+
+/* -------------------------- 15. LOGROS / INSIGNIAS -------------------------- */
+function renderizarLogros(stats){
+  const cont = document.getElementById('badgesGrid');
+  cont.innerHTML = LOGROS.map(l=>{
+    const desbloqueado = l.check(stats);
+    if(desbloqueado) state.logrosDesbloqueados.add(l.id);
+    return `<div class="badge-card ${desbloqueado?'unlocked':''}">
+      <span class="bicon">${l.icono}</span>
+      <span class="bname">${l.nombre}</span>
+    </div>`;
+  }).join('');
+}
+
+/* -------------------------- 16. REVISIÓN DETALLADA -------------------------- */
+function renderizarRevision(){
+  const letras = ['A','B','C','D'];
+  const cont = document.getElementById('reviewList');
+  cont.innerHTML = state.preguntas.map((q,i)=>{
+    const rIdx = state.respuestas[i];
+    const esCorrecta = rIdx!==null && rIdx===q.indiceCorrecto;
+    const textoSeleccionada = rIdx!==null ? q.opcionesMezcladas[rIdx].texto : 'Sin responder';
+    const textoCorrecta = q.opcionesMezcladas[q.indiceCorrecto].texto;
+    return `<div class="review-item ${esCorrecta?'correct':'incorrect'}">
+      <div class="review-head">
+        <strong>Pregunta ${i+1}</strong>
+        <span class="review-result-badge ${esCorrecta?'correct':'incorrect'}">${esCorrecta ? '✔ Correcta' : (rIdx===null?'— Sin responder':'✘ Incorrecta')}</span>
+      </div>
+      <div class="tag-row">
+        <span class="tag dificultad-${q.dificultad}">${q.dificultad}</span>
+        <span class="tag">${q.tipo}</span>
+        <span class="tag">Subtema ${q.subtema}</span>
+      </div>
+      ${q.context || ''}
+      <p style="font-weight:700;">${q.question}</p>
+      <div class="review-answers">
+        <p><b>Tu respuesta:</b> ${rIdx!==null ? letras[rIdx]+'. ' : ''}${textoSeleccionada}</p>
+        <p><b>Respuesta correcta:</b> ${letras[q.indiceCorrecto]}. ${textoCorrecta}</p>
+      </div>
+      <div class="review-block"><h5>Explicación</h5><p>${q.explanation}</p></div>
+      ${q.vocab ? `<div class="review-block"><h5>Vocabulario clave</h5><p>${q.vocab}</p></div>` : ''}
+      <div class="review-block"><h5>Estrategia de comprensión lectora</h5><p>${q.strategy}</p></div>
+      <div class="review-block"><h5>Competencia evaluada / subtemática</h5><p>${q.competencia} — Subtemática ${q.subtema}: ${SUBTEMAS.find(s=>s.id===q.subtema).nombre}</p></div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('btnVerRevision').addEventListener('click', ()=>showScreen('screen-revision'));
+
+/* -------------------------- 17. REINICIO -------------------------- */
+function reiniciarSimulacro(){
+  clearInterval(state.timerId);
+  rachaEvaluadaHasta = -1;
+  document.getElementById('streakBadge').classList.remove('show');
+  showScreen('screen-inicio');
+}
+document.getElementById('btnReiniciar1').addEventListener('click', reiniciarSimulacro);
+document.getElementById('btnReiniciar2').addEventListener('click', reiniciarSimulacro);
+
+/* -------------------------- 18. ACCESIBILIDAD: NAVEGACIÓN POR TECLADO -------------------------- */
+document.addEventListener('keydown', (e)=>{
+  const examenActivo = document.getElementById('screen-examen').classList.contains('active');
+  if(!examenActivo) return;
+  if(['1','2','3','4'].includes(e.key)){
+    const idx = parseInt(e.key,10)-1;
+    const opts = document.querySelectorAll('#optionsList .option-btn');
+    if(opts[idx]) opts[idx].click();
+  }
+  if(e.key==='ArrowRight'){ document.getElementById('btnSiguiente').click(); }
+  if(e.key==='ArrowLeft'){ document.getElementById('btnAnterior').click(); }
+});
+
+</script>
+</body>
+</html>
